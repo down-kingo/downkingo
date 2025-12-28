@@ -1,15 +1,11 @@
 import { create } from "zustand";
+import { youtube } from "../../wailsjs/go/models";
 
-// Types
-interface VideoInfo {
-  id: string;
-  title: string;
-  duration: number;
-  thumbnail: string;
-  uploader: string;
-  view_count: number;
-}
+// Re-export dos tipos do Wails para uso no resto da aplicação
+export type VideoInfo = youtube.VideoInfo;
 
+// DownloadProgress não é gerado pelo Wails (é enviado via evento, não retorno de função)
+// então mantemos a definição aqui
 interface DownloadProgress {
   percent: number;
   speed: string;

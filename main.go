@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 
+	"kinematic/internal/logger"
+
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -38,6 +40,6 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		logger.Log.Fatal().Err(err).Msg("wails runtime error")
 	}
 }

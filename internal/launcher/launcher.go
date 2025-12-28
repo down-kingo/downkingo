@@ -16,6 +16,9 @@ import (
 	"strings"
 	"time"
 
+	"kinematic/internal/events"
+	"kinematic/internal/logger"
+
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -203,21 +206,31 @@ func (l *Launcher) DownloadDependencies() error {
 		}
 	}
 
-	runtime.EventsEmit(l.ctx, "launcher:complete")
+	runtime.EventsEmit(l.ctx, events.LauncherComplete)
+	logger.Log.Info().Msg("all dependencies installed successfully")
 	return nil
 }
 
 func (l *Launcher) downloadDependency(dep Dependency) error {
 	l.emitProgress(dep.Name, 0, 0, 0, "downloading")
+	logger.Log.Info().Str("dependency", dep.Name).Str("url", dep.URL).Msg("starting download")
 
-	// Create HTTP request with timeout
-	resp, err := httpClient.Get(dep.URL)
+	// Create HTTP request with context for proper cancellation
+	req, err := http.NewRequestWithContext(l.ctx, "GET", dep.URL, nil)
 	if err != nil {
+		logger.Log.Error().Err(err).Str("dependency", dep.Name).Msg("failed to create request")
+		return fmt.Errorf("request error: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		logger.Log.Error().Err(err).Str("dependency", dep.Name).Msg("network error")
 		return fmt.Errorf("network error: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		logger.Log.Error().Int("statusCode", resp.StatusCode).Str("dependency", dep.Name).Msg("HTTP error")
 		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, resp.Status)
 	}
 
@@ -404,7 +417,7 @@ func (l *Launcher) emitProgress(name string, downloaded, total int64, percent fl
 	if l.ctx == nil {
 		return
 	}
-	runtime.EventsEmit(l.ctx, "launcher:progress", DownloadProgress{
+	runtime.EventsEmit(l.ctx, events.LauncherProgress, DownloadProgress{
 		Name:       name,
 		Downloaded: downloaded,
 		Total:      total,

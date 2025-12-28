@@ -88,6 +88,23 @@ Section
 
     !insertmacro wails.files
 
+    ; ============================================================
+    ; SIDECAR BINARIES: ffmpeg + yt-dlp empacotados no instalador
+    ; Isso elimina a necessidade de download em runtime
+    ; ============================================================
+    ; Cria subdiretório bin para os binários de dependência
+    CreateDirectory "$INSTDIR\bin"
+    SetOutPath "$INSTDIR\bin"
+    
+    ; Copia os binários da pasta sidecar para a pasta de instalação
+    ; Estes arquivos devem estar presentes em build/sidecar/windows/ antes do build
+    File "..\..\sidecar\windows\yt-dlp.exe"
+    File "..\..\sidecar\windows\ffmpeg.exe"
+    
+    ; Volta para o diretório principal
+    SetOutPath $INSTDIR
+    ; ============================================================
+
     CreateShortcut "$SMPROGRAMS\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
     CreateShortCut "$DESKTOP\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 

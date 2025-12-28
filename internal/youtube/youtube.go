@@ -12,8 +12,53 @@ import (
 	"strings"
 	"syscall"
 
+	"kinematic/internal/events"
+
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+// Resolution é um tipo customizado que lida com valores null/string do yt-dlp
+type Resolution string
+
+// UnmarshalJSON implementa json.Unmarshaler para lidar com null e string
+func (r *Resolution) UnmarshalJSON(data []byte) error {
+	// Handle null
+	if string(data) == "null" {
+		*r = ""
+		return nil
+	}
+	// Handle string
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		// Silently ignore invalid types, set empty
+		*r = ""
+		return nil
+	}
+	*r = Resolution(s)
+	return nil
+}
+
+// Quality é um tipo customizado que lida com valores numéricos ou string do yt-dlp
+type Quality string
+
+// UnmarshalJSON implementa json.Unmarshaler para lidar com number e string
+func (q *Quality) UnmarshalJSON(data []byte) error {
+	// Try as string first
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*q = Quality(s)
+		return nil
+	}
+	// Try as number
+	var n float64
+	if err := json.Unmarshal(data, &n); err == nil {
+		*q = Quality(fmt.Sprintf("%.0f", n))
+		return nil
+	}
+	// Fallback
+	*q = ""
+	return nil
+}
 
 // VideoInfo holds metadata about a video
 type VideoInfo struct {
@@ -28,15 +73,15 @@ type VideoInfo struct {
 }
 
 // Format represents an available video format
-// Note: yt-dlp returns mixed types for some fields, so we use interface{}
+// Usa tipos customizados para lidar com inconsistências do JSON do yt-dlp
 type Format struct {
-	FormatID   string      `json:"format_id"`
-	Ext        string      `json:"ext"`
-	Resolution interface{} `json:"resolution"` // Can be string or null
-	Filesize   int64       `json:"filesize"`
-	VCodec     string      `json:"vcodec"`
-	ACodec     string      `json:"acodec"`
-	Quality    interface{} `json:"quality"` // Can be number or string
+	FormatID   string     `json:"format_id"`
+	Ext        string     `json:"ext"`
+	Resolution Resolution `json:"resolution"`
+	Filesize   int64      `json:"filesize"`
+	VCodec     string     `json:"vcodec"`
+	ACodec     string     `json:"acodec"`
+	Quality    Quality    `json:"quality"`
 }
 
 // DownloadProgress represents download progress
@@ -186,5 +231,5 @@ func (c *Client) emitProgress(progress DownloadProgress) {
 	if c.ctx == nil {
 		return
 	}
-	wailsRuntime.EventsEmit(c.ctx, "download:progress", progress)
+	wailsRuntime.EventsEmit(c.ctx, events.DownloadProgress, progress)
 }

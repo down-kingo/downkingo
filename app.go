@@ -3,9 +3,13 @@ package main
 import (
 	"context"
 	"kinematic/internal/app"
+	"kinematic/internal/events"
 	"kinematic/internal/launcher"
+	"kinematic/internal/logger"
 	"kinematic/internal/updater"
 	"kinematic/internal/youtube"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // Version is set at build time via ldflags
@@ -32,14 +36,27 @@ func (a *App) startup(ctx context.Context) {
 	// Initialize paths
 	paths, err := app.GetPaths()
 	if err != nil {
-		println("Error getting paths:", err.Error())
+		logger.Log.Error().Err(err).Msg("failed to get paths")
 		return
 	}
 	a.paths = paths
 
+	// Inicializar logger (precisa do paths.AppData para saber onde gravar)
+	if err := logger.Init(paths.AppData); err != nil {
+		// Fallback: se não conseguir criar o logger, continuar sem ele
+		// (o logger já tem um valor zero que descarta logs)
+		println("Warning: failed to initialize logger:", err.Error())
+	}
+
+	logger.Log.Info().
+		Str("version", Version).
+		Str("binDir", paths.Bin).
+		Str("downloadsDir", paths.Downloads).
+		Msg("kinematic starting up")
+
 	// Ensure all directories exist
 	if err := paths.EnsureDirectories(); err != nil {
-		println("Error creating directories:", err.Error())
+		logger.Log.Error().Err(err).Msg("failed to create directories")
 		return
 	}
 
@@ -54,6 +71,14 @@ func (a *App) startup(ctx context.Context) {
 	// Initialize updater
 	a.updater = updater.NewUpdater(Version)
 	a.updater.SetContext(ctx)
+
+	// Emitir evento app:ready para o frontend
+	needsSetup := a.launcher.NeedsDependencies()
+	runtime.EventsEmit(ctx, events.AppReady, map[string]bool{
+		"needsSetup": needsSetup,
+	})
+
+	logger.Log.Info().Bool("needsSetup", needsSetup).Msg("startup complete")
 }
 
 // === Launcher Methods (exposed to Frontend) ===
