@@ -67,11 +67,11 @@ export namespace youtube {
 	export class Format {
 	    format_id: string;
 	    ext: string;
-	    resolution: any;
+	    resolution: string;
 	    filesize: number;
 	    vcodec: string;
 	    acodec: string;
-	    quality: any;
+	    quality: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Format(source);

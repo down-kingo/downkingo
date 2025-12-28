@@ -43,6 +43,16 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       # ============================================================
+      # WINDOWS DEPENDENCIES
+      # ============================================================
+      - name: Install NSIS (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          choco install nsis -y
+          echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
+
+      # ============================================================
       # LINUX DEPENDENCIES
       # ============================================================
       - name: Install Linux Dependencies
