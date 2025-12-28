@@ -151,7 +151,12 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
-          mv build/bin/*-installer.exe build/bin/${{ matrix.artifact }}
+          echo "Contents of build/bin:"
+          ls -la build/bin/
+          # Find the installer (can be 'baixar-midia-*-installer.exe' or similar)
+          INSTALLER=$(find build/bin -name "*-installer.exe" | head -1)
+          echo "Found installer: $INSTALLER"
+          mv "$INSTALLER" build/bin/${{ matrix.artifact }}
           echo "Windows installer ready:"
           ls -la build/bin/
 
@@ -159,8 +164,14 @@ jobs:
       - name: Package (macOS - DMG)
         if: matrix.os == 'macos-latest'
         run: |
+          echo "Contents of build/bin:"
+          ls -la build/bin/
+
+          # Find the app bundle (can be 'baixar-midia.app' or similar)
+          APP_BUNDLE=$(find build/bin -name "*.app" -type d | head -1)
+          echo "Found app bundle: $APP_BUNDLE"
+
           # Move sidecar binaries into the app bundle
-          APP_BUNDLE="build/bin/Kinematic.app"
           mkdir -p "$APP_BUNDLE/Contents/Resources/bin"
           cp build/sidecar/darwin/yt-dlp "$APP_BUNDLE/Contents/Resources/bin/"
           cp build/sidecar/darwin/ffmpeg "$APP_BUNDLE/Contents/Resources/bin/"
