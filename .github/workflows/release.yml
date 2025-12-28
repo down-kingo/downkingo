@@ -139,7 +139,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          wails build -clean -platform ${{ matrix.platform }} -ldflags "-s -w -X main.Version=${VERSION}"
+          # Ubuntu 24.04 requer webkit2gtk-4.1, usar flag especial do Wails
+          wails build -clean -platform ${{ matrix.platform }} -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION}"
 
       # ============================================================
       # PACKAGE: Create professional installers
