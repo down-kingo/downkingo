@@ -65,6 +65,7 @@ jobs:
         run: wails build -clean -platform ${{ matrix.platform }} -tags webkit2_41
 
       - name: Verify Build
+        shell: bash
         run: |
           echo "Build completed for ${{ matrix.platform }}"
-          ls -la build/bin/ || dir build\bin
+          ls -la build/bin/
