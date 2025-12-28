@@ -5,113 +5,272 @@
 <h1 align="center">Kinematic</h1>
 
 <p align="center">
-  <strong>Downloader de mídia profissional para Windows, macOS e Linux</strong>
+  <strong>O downloader de mídia definitivo para Windows, macOS e Linux.</strong>
+</p>
+
+<p align="center">
+  Simples. Rápido. Poderoso.
 </p>
 
 <p align="center">
   <a href="https://github.com/Capman002/kinematic/releases/latest">
-    <img src="https://img.shields.io/github/v/release/Capman002/kinematic?style=flat-square&color=E11D48" alt="Latest Release">
+    <img src="https://img.shields.io/github/v/release/Capman002/kinematic?style=for-the-badge&color=E11D48&logo=github" alt="Latest Release">
+  </a>
+  <a href="https://github.com/Capman002/kinematic/actions/workflows/release.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Capman002/kinematic/release.yml?style=for-the-badge&label=Build&logo=github-actions" alt="Build Status">
   </a>
   <a href="https://github.com/Capman002/kinematic/releases">
-    <img src="https://img.shields.io/github/downloads/Capman002/kinematic/total?style=flat-square&color=18181B" alt="Downloads">
+    <img src="https://img.shields.io/github/downloads/Capman002/kinematic/total?style=for-the-badge&color=18181B&logo=docusign" alt="Total Downloads">
   </a>
   <a href="https://github.com/Capman002/kinematic/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Capman002/kinematic?style=flat-square" alt="License">
+    <img src="https://img.shields.io/github/license/Capman002/kinematic?style=for-the-badge&color=E11D48" alt="License">
   </a>
 </p>
+
+<p align="center">
+  <a href="https://go.dev/">
+    <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
+  </a>
+  <a href="https://wails.io/">
+    <img src="https://img.shields.io/badge/Wails-CF3A3A?style=for-the-badge&logo=wails&logoColor=white" alt="Wails">
+  </a>
+  <a href="https://react.dev/">
+    <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+  </a>
+  <a href="https://www.typescriptlang.org/">
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  </a>
+</p>
+
+<p align="center">
+  <a href="#-por-que-kinematic">Por quê?</a> •
+  <a href="#-features">Features</a> •
+  <a href="#-instalação">Instalação</a> •
+  <a href="#-como-usar">Como Usar</a> •
+  <a href="#-desenvolvimento">Desenvolvimento</a> •
+  <a href="#-recursos">Recursos</a>
+</p>
+
+---
+
+<!--
+  📸 SCREENSHOT/GIF DO APP
+  Substitua o comentário abaixo por uma imagem real do app:
+  ![Kinematic Screenshot](docs/screenshot.png)
+-->
+
+<p align="center">
+  <em>📸 Screenshot do app em breve...</em>
+</p>
+
+---
+
+## 🎯 Por que Kinematic?
+
+- **📦 Zero Config** — FFmpeg e yt-dlp já vêm incluídos. Instala e funciona.
+- **🚀 Rápido** — Downloads multi-thread acelerados pelo yt-dlp.
+- **🎨 Interface Premium** — Design limpo e moderno, sem poluição visual.
+- **🔄 Auto-Updates** — Atualizações automáticas via GitHub Releases.
+- **💻 Multiplataforma** — Windows, macOS e Linux com instaladores nativos.
+- **🛡️ Open Source** — Código aberto sob licença MIT.
 
 ---
 
 ## ✨ Features
 
-- 🎬 **Download de vídeos** do YouTube e outras plataformas
-- 🎵 **Extração de áudio** em MP3 de alta qualidade
-- 📊 **Fila de downloads** com progresso em tempo real
-- 🔄 **Auto-update** automático via GitHub Releases
-- 🪄 **Smart Launcher** - baixa dependências automaticamente (yt-dlp, FFmpeg)
-- 🎨 **UI moderna** com tema Clinical Neon (branco + vermelho)
+### Core
 
-## 📥 Download
+| Feature                   | Descrição                                     |
+| ------------------------- | --------------------------------------------- |
+| 🎬 **Download Universal** | YouTube + centenas de outras plataformas      |
+| 🎵 **Extração de Áudio**  | Conversão direta para MP3 de alta qualidade   |
+| � **Fila de Downloads**   | Múltiplos downloads simultâneos com progresso |
 
-| Sistema | Download                                                                                                                   |
-| ------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Windows | [kinematic-windows-amd64.exe](https://github.com/Capman002/kinematic/releases/latest/download/kinematic-windows-amd64.exe) |
-| macOS   | [kinematic-darwin-universal](https://github.com/Capman002/kinematic/releases/latest/download/kinematic-darwin-universal)   |
-| Linux   | [kinematic-linux-amd64](https://github.com/Capman002/kinematic/releases/latest/download/kinematic-linux-amd64)             |
+### Técnico
 
-## 🚀 Primeiro Uso
+| Feature                    | Descrição                                       |
+| -------------------------- | ----------------------------------------------- |
+| 📦 **Binários Sidecar**    | ffmpeg + yt-dlp empacotados no instalador       |
+| � **Fallback Inteligente** | Download automático se binários não encontrados |
+| 📝 **Logging Estruturado** | Logs em `%AppData%/Kinematic/logs/`             |
 
-1. Baixe o executável para seu sistema
-2. Execute o aplicativo
-3. O **Smart Launcher** irá baixar automaticamente:
-   - `yt-dlp` - engine de download
-   - `FFmpeg` - processamento de mídia
-4. Pronto! Cole a URL do vídeo e baixe
+---
+
+## 📋 Requisitos do Sistema
+
+| Sistema     | Versão Mínima               | Arquitetura           |
+| ----------- | --------------------------- | --------------------- |
+| **Windows** | Windows 10                  | x64                   |
+| **macOS**   | macOS 10.15 (Catalina)      | Intel / Apple Silicon |
+| **Linux**   | Ubuntu 20.04+ / equivalente | x64                   |
+
+---
+
+## 📥 Instalação
+
+| Sistema     | Formato           | Download                                                                                                                                                                                                      |
+| :---------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Windows** | Instalador `.exe` | [![Windows](https://img.shields.io/badge/Download-Windows-0078D4?style=for-the-badge&logo=windows)](https://github.com/Capman002/kinematic/releases/latest/download/kinematic-windows-amd64-installer.exe)    |
+| **macOS**   | Disk Image `.dmg` | [![macOS](https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple)](https://github.com/Capman002/kinematic/releases/latest/download/Kinematic.dmg)                                  |
+| **Linux**   | AppImage          | [![Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Capman002/kinematic/releases/latest/download/Kinematic-linux-amd64.AppImage) |
+
+<details>
+<summary><strong>📋 Instruções Detalhadas</strong></summary>
+
+### Windows
+
+```powershell
+# 1. Baixe o instalador
+# 2. Execute kinematic-windows-amd64-installer.exe
+# 3. Siga o assistente de instalação
+# 4. Atalhos criados no Menu Iniciar e Desktop
+```
+
+### macOS
+
+```bash
+# 1. Baixe o .dmg
+# 2. Abra e arraste para Applications
+# 3. Primeira execução: clique direito → Abrir (bypass Gatekeeper)
+```
+
+### Linux
+
+```bash
+# Download
+curl -L -o Kinematic.AppImage \
+  https://github.com/Capman002/kinematic/releases/latest/download/Kinematic-linux-amd64.AppImage
+
+# Permissão de execução
+chmod +x Kinematic.AppImage
+
+# Executar
+./Kinematic.AppImage
+```
+
+</details>
+
+---
+
+## 🚀 Como Usar
+
+```
+1. Abra o Kinematic
+2. Cole a URL do vídeo (YouTube, Vimeo, Twitter, etc.)
+3. Escolha: 🎬 Vídeo (MP4) ou 🎵 Áudio (MP3)
+4. Clique em Download
+5. Arquivo salvo em ~/Videos/Kinematic/
+```
+
+---
 
 ## 🛠️ Desenvolvimento
 
 ### Pré-requisitos
 
-- [Go 1.21+](https://go.dev/dl/)
-- [Bun](https://bun.sh/)
-- [Wails CLI](https://wails.io/docs/gettingstarted/installation)
+| Ferramenta | Versão | Instalação                                                 |
+| :--------- | :----- | :--------------------------------------------------------- |
+| Go         | 1.21+  | [go.dev](https://go.dev/dl/)                               |
+| Bun        | Latest | [bun.sh](https://bun.sh/)                                  |
+| Wails CLI  | v2     | `go install github.com/wailsapp/wails/v2/cmd/wails@latest` |
 
-### Setup
+### Quick Start
 
 ```bash
-# Clonar repositório
-git clone https://github.com/Capman002/kinematic.git
-cd kinematic
+# Clone
+git clone https://github.com/Capman002/kinematic.git && cd kinematic
 
-# Instalar Wails CLI
-go install github.com/wailsapp/wails/v2/cmd/wails@latest
-
-# Instalar dependências frontend
+# Instale dependências do frontend
 cd frontend && bun install && cd ..
 
-# Rodar em modo desenvolvimento
+# Modo desenvolvimento (Hot Reload)
 wails dev
 ```
 
 ### Build de Produção
 
 ```bash
+# Windows (instalador NSIS)
+wails build --nsis
+
+# macOS / Linux
 wails build -clean -ldflags "-s -w"
 ```
 
-## 📁 Estrutura do Projeto
+---
+
+## 🏗️ Arquitetura
 
 ```
 kinematic/
-├── frontend/           # React + TypeScript + Tailwind
-│   ├── src/
-│   │   ├── pages/      # Setup, Home
-│   │   ├── stores/     # Zustand (state management)
-│   │   └── index.css   # Design System
+├── app.go                  # Métodos expostos ao frontend
+├── main.go                 # Entry point Wails
 ├── internal/
-│   ├── app/            # Paths e configuração
-│   ├── launcher/       # Smart Launcher (yt-dlp, FFmpeg)
-│   ├── youtube/        # Wrapper yt-dlp
-│   └── updater/        # Auto-update via GitHub API
-├── main.go             # Entrypoint
-└── app.go              # Métodos expostos ao frontend
+│   ├── app/                # Paths e diretórios
+│   ├── events/             # Constantes de eventos
+│   ├── launcher/           # Download de dependências (fallback)
+│   ├── logger/             # Structured logging (zerolog)
+│   ├── updater/            # Auto-update
+│   └── youtube/            # Wrapper yt-dlp
+├── frontend/
+│   ├── src/pages/          # React pages
+│   ├── src/components/     # Componentes UI
+│   └── src/stores/         # Estado (Zustand)
+└── build/
+    ├── sidecar/            # Binários empacotados
+    └── windows/installer/  # Script NSIS
 ```
 
-## 🎨 Design System
+---
 
-**Clinical Neon Light Theme**
+## 📖 Recursos
 
-- Background: `#FFFFFF` (branco)
-- Accent: `#E11D48` (vermelho rose-600)
-- Text: `#18181B` (zinc-900)
-- Fontes: Outfit (display), Inter (UI)
+### Documentação
+
+| Documento                                     | Descrição             |
+| --------------------------------------------- | --------------------- |
+| 📋 [Changelog](CHANGELOG.md)                  | Histórico de versões  |
+| 🤝 [Contribuindo](CONTRIBUTING.md)            | Guia de contribuição  |
+| 🛡️ [Segurança](SECURITY.md)                   | Política de segurança |
+| 🏗️ [Arquitetura](docs/ARCHITECTURE.md)        | Documentação técnica  |
+| ❓ [FAQ](docs/FAQ.md)                         | Perguntas frequentes  |
+| 🔧 [Troubleshooting](docs/TROUBLESHOOTING.md) | Solução de problemas  |
+| 🚀 [Release](docs/RELEASE.md)                 | Processo de release   |
+
+### Links
+
+| Recurso           | Link                                                                     |
+| ----------------- | ------------------------------------------------------------------------ |
+| 🐛 **Issues**     | [GitHub Issues](https://github.com/Capman002/kinematic/issues)           |
+| 💬 **Discussões** | [GitHub Discussions](https://github.com/Capman002/kinematic/discussions) |
+| 📦 **Releases**   | [GitHub Releases](https://github.com/Capman002/kinematic/releases)       |
+
+---
+
+## 🗺️ Roadmap
+
+- [x] Download de vídeo/áudio
+- [x] Instaladores nativos (NSIS, DMG, AppImage)
+- [x] Binários sidecar empacotados
+- [x] Logging estruturado
+- [ ] Download de playlists
+- [ ] Seletor de qualidade
+- [ ] Histórico persistente
+- [ ] Tema Escuro
+- [ ] i18n
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Veja o [Guia de Contribuição](CONTRIBUTING.md) para detalhes.
 
 ## 📄 Licença
 
-MIT © [Capman002](https://github.com/Capman002)
+[MIT License](LICENSE) © [Capman002](https://github.com/Capman002)
 
 ---
 
 <p align="center">
-  Feito com ❤️ usando <a href="https://wails.io">Wails</a>
+  Feito com ❤️ por <a href="https://github.com/Capman002">Capman002</a>
 </p>
