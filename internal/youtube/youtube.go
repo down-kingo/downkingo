@@ -7,10 +7,8 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"kinematic/internal/events"
 
@@ -120,13 +118,8 @@ func (c *Client) createCommand(args []string) *exec.Cmd {
 	// Use CommandContext to kill zombie processes when app closes
 	cmd := exec.CommandContext(c.ctx, c.ytDlpPath, args...)
 
-	// Hide the black terminal window on Windows
-	if runtime.GOOS == "windows" {
-		cmd.SysProcAttr = &syscall.SysProcAttr{
-			HideWindow:    true,
-			CreationFlags: 0x08000000, // CREATE_NO_WINDOW
-		}
-	}
+	// Platform-specific process attributes (hides console on Windows)
+	setSysProcAttr(cmd)
 
 	return cmd
 }
