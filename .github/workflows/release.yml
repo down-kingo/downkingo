@@ -174,13 +174,19 @@ jobs:
       - name: Package (Linux - AppImage)
         if: matrix.os == 'ubuntu-latest'
         run: |
+          # Debug: ver o que foi gerado
+          echo "Contents of build/bin:"
+          ls -la build/bin/
+
           # Create AppDir structure
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
-          # Copy main binary
-          cp build/bin/kinematic AppDir/usr/bin/
+          # Copy main binary (pode ser 'kinematic' ou 'baixar-midia')
+          BINARY=$(find build/bin -type f -executable | head -1)
+          echo "Found binary: $BINARY"
+          cp "$BINARY" AppDir/usr/bin/kinematic
           chmod +x AppDir/usr/bin/kinematic
 
           # Copy sidecar binaries
