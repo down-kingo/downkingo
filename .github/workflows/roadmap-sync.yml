@@ -1,0 +1,214 @@
+name: Roadmap Sync
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+
+  # Scheduled sync (every 30 minutes)
+  schedule:
+    - cron: "*/30 * * * *"
+
+  # Trigger on issue/project changes
+  issues:
+    types: [opened, edited, closed, labeled, unlabeled]
+
+  project:
+    types: [closed, edited, reopened]
+
+# Prevent concurrent syncs
+concurrency:
+  group: roadmap-sync
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  issues: read
+  repository-projects: read
+
+jobs:
+  sync:
+    name: Sync Roadmap to CDN
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: roadmap-data
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch Roadmap Data
+        id: fetch
+        uses: actions/github-script@v7
+        env:
+          PROJECT_NUMBER: 2
+          ORG_NAME: "down-kingo"
+        with:
+          script: |
+            const projectNumber = parseInt(process.env.PROJECT_NUMBER);
+            const orgName = process.env.ORG_NAME;
+
+            console.log(`Fetching Project V2 #${projectNumber} from ${orgName}...`);
+
+            const query = `
+              query($login: String!, $number: Int!) {
+                organization(login: $login) {
+                  projectV2(number: $number) {
+                    items(first: 100) {
+                      nodes {
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                            body
+                            url
+                            state
+                            closedAt
+                            comments { totalCount }
+                            reactions(content: THUMBS_UP) { totalCount }
+                            reactions_down: reactions(content: THUMBS_DOWN) { totalCount }
+                            labels(first: 10) { nodes { name } }
+                            author { login, avatarUrl }
+                            createdAt
+                          }
+                        }
+                        fieldValueByName(name: "Status") {
+                          ... on ProjectV2ItemFieldSingleSelectValue { name }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const result = await github.graphql(query, {
+              login: orgName,
+              number: projectNumber
+            });
+
+            const nodes = result.organization?.projectV2?.items?.nodes || [];
+            console.log(`Found ${nodes.length} items`);
+
+            // Map status names to our enum
+            const statusMapping = {
+              'bastidores': 'idea',
+              'em pauta': 'planned',
+              'em produção': 'in-progress',
+              'no ar': 'shipped',
+              'backlog': 'idea',
+              'todo': 'idea',
+              'ready': 'planned',
+              'planned': 'planned',
+              'in progress': 'in-progress',
+              'done': 'shipped',
+              'shipped': 'shipped',
+              'completed': 'shipped'
+            };
+
+            // Process items
+            const items = nodes
+              .filter(node => node.content?.number)
+              .map(node => {
+                const c = node.content;
+                const statusName = node.fieldValueByName?.name?.toLowerCase() || 'idea';
+                const status = statusMapping[statusName] || 'idea';
+                
+                // Truncate description to 150 chars
+                let description = (c.body || '').substring(0, 150);
+                if (c.body && c.body.length > 150) description += '...';
+                
+                return {
+                  id: c.number,
+                  title: c.title,
+                  friendly_title: null, // TODO: AI processing in Phase 4
+                  description,
+                  status,
+                  votes_up: c.reactions?.totalCount || 0,
+                  votes_down: c.reactions_down?.totalCount || 0,
+                  comments: c.comments?.totalCount || 0,
+                  url: c.url,
+                  labels: (c.labels?.nodes || []).map(l => l.name),
+                  author: c.author?.login || '',
+                  author_avatar: c.author?.avatarUrl || '',
+                  created_at: c.createdAt,
+                  shipped_at: c.state === 'CLOSED' ? c.closedAt : null
+                };
+              });
+
+            // Sort: shipped to bottom, rest by votes
+            items.sort((a, b) => {
+              if (a.status === 'shipped' && b.status === 'shipped') {
+                return b.id - a.id;
+              }
+              if (a.status === 'shipped') return 1;
+              if (b.status === 'shipped') return -1;
+              return b.votes_up - a.votes_up;
+            });
+
+            // Build roadmap.json
+            const roadmap = {
+              version: '1.0.0',
+              generated_at: new Date().toISOString(),
+              source: {
+                owner: orgName,
+                repo: 'downkingo',
+                project_number: projectNumber
+              },
+              items
+            };
+
+            core.setOutput('roadmap', JSON.stringify(roadmap, null, 2));
+            core.setOutput('items_count', items.length);
+
+            console.log(`Processed ${items.length} roadmap items`);
+
+      - name: Generate Files
+        run: |
+          # Create roadmap.json
+          echo '${{ steps.fetch.outputs.roadmap }}' > roadmap.json
+
+          # Compute SHA256 hash
+          HASH=$(sha256sum roadmap.json | cut -d' ' -f1)
+
+          # Create roadmap.meta.json
+          cat > roadmap.meta.json << EOF
+          {
+            "version": "1.0.0",
+            "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "items_count": ${{ steps.fetch.outputs.items_count }},
+            "content_hash": "sha256:${HASH}"
+          }
+          EOF
+
+          echo "Generated files:"
+          ls -la *.json
+          echo ""
+          echo "Meta content:"
+          cat roadmap.meta.json
+
+      - name: Commit Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check if files changed
+          if git diff --quiet roadmap.json roadmap.meta.json 2>/dev/null; then
+            echo "No changes detected, skipping commit"
+            exit 0
+          fi
+
+          git add roadmap.json roadmap.meta.json
+          git commit -m "chore: sync roadmap $(date +%Y-%m-%d)"
+          git push
+
+      - name: Trigger Cloudflare Pages Deploy
+        if: success()
+        run: |
+          echo "Cloudflare Pages will auto-deploy from the roadmap-data branch"
+          echo "URL: https://downkingo-roadmap.pages.dev/"
