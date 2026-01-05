@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="build/appicon.png" width="128" height="128" alt="Kinematic Logo">
+  <img src="build/appicon.png" width="128" height="128" alt="DownKingo Logo">
 </p>
 
-<h1 align="center">Kinematic</h1>
+<h1 align="center">DownKingo</h1>
 
 <p align="center">
   <strong>O downloader de mídia definitivo para Windows, macOS e Linux.</strong>
@@ -13,17 +13,17 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Capman002/kinematic/releases/latest">
-    <img src="https://img.shields.io/github/v/release/Capman002/kinematic?style=for-the-badge&color=E11D48&logo=github" alt="Latest Release">
+  <a href="https://github.com/Capman002/DownKingo/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Capman002/DownKingo?style=for-the-badge&color=E11D48&logo=github" alt="Latest Release">
   </a>
-  <a href="https://github.com/Capman002/kinematic/actions/workflows/release.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Capman002/kinematic/release.yml?style=for-the-badge&label=Build&logo=github-actions" alt="Build Status">
+  <a href="https://github.com/Capman002/DownKingo/actions/workflows/release.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Capman002/DownKingo/release.yml?style=for-the-badge&label=Build&logo=github-actions" alt="Build Status">
   </a>
-  <a href="https://github.com/Capman002/kinematic/releases">
-    <img src="https://img.shields.io/github/downloads/Capman002/kinematic/total?style=for-the-badge&color=18181B&logo=docusign" alt="Total Downloads">
+  <a href="https://github.com/Capman002/DownKingo/releases">
+    <img src="https://img.shields.io/github/downloads/Capman002/DownKingo/total?style=for-the-badge&color=18181B&logo=docusign" alt="Total Downloads">
   </a>
-  <a href="https://github.com/Capman002/kinematic/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Capman002/kinematic?style=for-the-badge&color=E11D48" alt="License">
+  <a href="https://github.com/Capman002/DownKingo/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Capman002/DownKingo?style=for-the-badge&color=E11D48" alt="License">
   </a>
 </p>
 
@@ -43,7 +43,7 @@
 </p>
 
 <p align="center">
-  <a href="#-por-que-kinematic">Por quê?</a> •
+  <a href="#-por-que-DownKingo">Por quê?</a> •
   <a href="#-features">Features</a> •
   <a href="#-instalação">Instalação</a> •
   <a href="#-como-usar">Como Usar</a> •
@@ -56,7 +56,7 @@
 <!--
   📸 SCREENSHOT/GIF DO APP
   Substitua o comentário abaixo por uma imagem real do app:
-  ![Kinematic Screenshot](docs/screenshot.png)
+  ![DownKingo Screenshot](docs/screenshot.png)
 -->
 
 <p align="center">
@@ -65,7 +65,7 @@
 
 ---
 
-## 🎯 Por que Kinematic?
+## 🎯 Por que DownKingo?
 
 - **📦 Zero Config** — FFmpeg e yt-dlp já vêm incluídos. Instala e funciona.
 - **🚀 Rápido** — Downloads multi-thread acelerados pelo yt-dlp.
@@ -92,7 +92,7 @@
 | -------------------------- | ----------------------------------------------- |
 | 📦 **Binários Sidecar**    | ffmpeg + yt-dlp empacotados no instalador       |
 | � **Fallback Inteligente** | Download automático se binários não encontrados |
-| 📝 **Logging Estruturado** | Logs em `%AppData%/Kinematic/logs/`             |
+| 📝 **Logging Estruturado** | Logs em `%AppData%/DownKingo/logs/`             |
 
 ---
 
@@ -110,9 +110,9 @@
 
 | Sistema     | Formato           | Download                                                                                                                                                                                                      |
 | :---------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Windows** | Instalador `.exe` | [![Windows](https://img.shields.io/badge/Download-Windows-0078D4?style=for-the-badge&logo=windows)](https://github.com/Capman002/kinematic/releases/latest/download/kinematic-windows-amd64-installer.exe)    |
-| **macOS**   | Disk Image `.dmg` | [![macOS](https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple)](https://github.com/Capman002/kinematic/releases/latest/download/Kinematic.dmg)                                  |
-| **Linux**   | AppImage          | [![Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Capman002/kinematic/releases/latest/download/Kinematic-linux-amd64.AppImage) |
+| **Windows** | Instalador `.exe` | [![Windows](https://img.shields.io/badge/Download-Windows-0078D4?style=for-the-badge&logo=windows)](https://github.com/Capman002/DownKingo/releases/latest/download/DownKingo-windows-amd64-installer.exe)    |
+| **macOS**   | Disk Image `.dmg` | [![macOS](https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple)](https://github.com/Capman002/DownKingo/releases/latest/download/DownKingo.dmg)                                  |
+| **Linux**   | AppImage          | [![Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Capman002/DownKingo/releases/latest/download/DownKingo-linux-amd64.AppImage) |
 
 <details>
 <summary><strong>📋 Instruções Detalhadas</strong></summary>
@@ -121,7 +121,7 @@
 
 ```powershell
 # 1. Baixe o instalador
-# 2. Execute kinematic-windows-amd64-installer.exe
+# 2. Execute DownKingo-windows-amd64-installer.exe
 # 3. Siga o assistente de instalação
 # 4. Atalhos criados no Menu Iniciar e Desktop
 ```
@@ -138,14 +138,14 @@
 
 ```bash
 # Download
-curl -L -o Kinematic.AppImage \
-  https://github.com/Capman002/kinematic/releases/latest/download/Kinematic-linux-amd64.AppImage
+curl -L -o DownKingo.AppImage \
+  https://github.com/Capman002/DownKingo/releases/latest/download/DownKingo-linux-amd64.AppImage
 
 # Permissão de execução
-chmod +x Kinematic.AppImage
+chmod +x DownKingo.AppImage
 
 # Executar
-./Kinematic.AppImage
+./DownKingo.AppImage
 ```
 
 </details>
@@ -155,11 +155,11 @@ chmod +x Kinematic.AppImage
 ## 🚀 Como Usar
 
 ```
-1. Abra o Kinematic
+1. Abra o DownKingo
 2. Cole a URL do vídeo (YouTube, Vimeo, Twitter, etc.)
 3. Escolha: 🎬 Vídeo (MP4) ou 🎵 Áudio (MP3)
 4. Clique em Download
-5. Arquivo salvo em ~/Videos/Kinematic/
+5. Arquivo salvo em ~/Videos/DownKingo/
 ```
 
 ---
@@ -178,7 +178,7 @@ chmod +x Kinematic.AppImage
 
 ```bash
 # Clone
-git clone https://github.com/Capman002/kinematic.git && cd kinematic
+git clone https://github.com/Capman002/DownKingo.git && cd DownKingo
 
 # Instale dependências do frontend
 cd frontend && bun install && cd ..
@@ -202,7 +202,7 @@ wails build -clean -ldflags "-s -w"
 ## 🏗️ Arquitetura
 
 ```
-kinematic/
+DownKingo/
 ├── app.go                  # Métodos expostos ao frontend
 ├── main.go                 # Entry point Wails
 ├── internal/
@@ -241,9 +241,9 @@ kinematic/
 
 | Recurso           | Link                                                                     |
 | ----------------- | ------------------------------------------------------------------------ |
-| 🐛 **Issues**     | [GitHub Issues](https://github.com/Capman002/kinematic/issues)           |
-| 💬 **Discussões** | [GitHub Discussions](https://github.com/Capman002/kinematic/discussions) |
-| 📦 **Releases**   | [GitHub Releases](https://github.com/Capman002/kinematic/releases)       |
+| 🐛 **Issues**     | [GitHub Issues](https://github.com/Capman002/DownKingo/issues)           |
+| 💬 **Discussões** | [GitHub Discussions](https://github.com/Capman002/DownKingo/discussions) |
+| 📦 **Releases**   | [GitHub Releases](https://github.com/Capman002/DownKingo/releases)       |
 
 ---
 

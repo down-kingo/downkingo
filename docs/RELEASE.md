@@ -1,6 +1,6 @@
 # Releases
 
-Este documento descreve o processo de release do Kinematic.
+Este documento descreve o processo de release do DownKingo.
 
 ## Versionamento
 
@@ -36,9 +36,9 @@ git push origin main --tags
 
 O GitHub Actions é disparado automaticamente quando uma tag `v*` é criada:
 
-1. **Windows**: Build com NSIS → `kinematic-windows-amd64-installer.exe`
-2. **macOS**: Build + DMG → `Kinematic.dmg`
-3. **Linux**: Build + AppImage → `Kinematic-linux-amd64.AppImage`
+1. **Windows**: Build com NSIS → `DownKingo-windows-amd64-installer.exe`
+2. **macOS**: Build + DMG → `DownKingo.dmg`
+3. **Linux**: Build + AppImage → `DownKingo-linux-amd64.AppImage`
 
 ### 4. Publicação
 

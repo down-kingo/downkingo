@@ -14,7 +14,7 @@ Se você descobrir uma vulnerabilidade de segurança, por favor **NÃO** abra um
 ### Como Reportar
 
 1. Envie um email para: **emanuelsoares02@gmail.com**
-2. Ou use o [GitHub Security Advisories](https://github.com/Capman002/kinematic/security/advisories/new)
+2. Ou use o [GitHub Security Advisories](https://github.com/Capman002/DownKingo/security/advisories/new)
 
 ### O que incluir no reporte
 
@@ -40,7 +40,7 @@ Vulnerabilidades nessas ferramentas devem ser reportadas diretamente aos mantene
 
 ## Boas Práticas
 
-O Kinematic segue estas práticas de segurança:
+O DownKingo segue estas práticas de segurança:
 
 - ✅ Verificação de checksums em downloads
 - ✅ Context propagation para evitar processos órfãos

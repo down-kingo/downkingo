@@ -11,15 +11,17 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	goruntime "runtime"
 	"strings"
+	"syscall"
 	"time"
 
-	"kinematic/internal/events"
-	"kinematic/internal/logger"
+	"kingo/internal/events"
+	"kingo/internal/logger"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // HTTP client with timeout to prevent hangs
@@ -29,13 +31,13 @@ var httpClient = &http.Client{
 
 // Dependency represents a required binary
 type Dependency struct {
-	Name          string
-	URL           string
-	FileName      string
-	IsArchive     bool   // Needs extraction (zip/tar.gz)
-	ArchiveType   string // "zip" or "tar.gz"
-	ExtractTarget string // Name of the file to extract
-	SHA256        string // Expected checksum (empty = skip verification)
+	Name           string
+	URL            string
+	FileName       string
+	IsArchive      bool     // Needs extraction (zip/tar.gz)
+	ArchiveType    string   // "zip" or "tar.gz"
+	ExtractTargets []string // Names of the files to extract
+	SHA256         string   // Expected checksum (empty = skip verification)
 }
 
 // Launcher handles dependency checking and downloading
@@ -64,12 +66,12 @@ func getDependencies() []Dependency {
 				FileName: "yt-dlp.exe",
 			},
 			{
-				Name:          "FFmpeg",
-				URL:           "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip",
-				FileName:      "ffmpeg.zip",
-				IsArchive:     true,
-				ArchiveType:   "zip",
-				ExtractTarget: "ffmpeg.exe",
+				Name:           "FFmpeg",
+				URL:            "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip",
+				FileName:       "ffmpeg.zip",
+				IsArchive:      true,
+				ArchiveType:    "zip",
+				ExtractTargets: []string{"ffmpeg.exe", "ffprobe.exe"},
 			},
 		}
 	case "darwin": // macOS
@@ -80,12 +82,12 @@ func getDependencies() []Dependency {
 				FileName: "yt-dlp",
 			},
 			{
-				Name:          "FFmpeg",
-				URL:           "https://evermeet.cx/ffmpeg/getrelease/zip",
-				FileName:      "ffmpeg.zip",
-				IsArchive:     true,
-				ArchiveType:   "zip",
-				ExtractTarget: "ffmpeg",
+				Name:           "FFmpeg",
+				URL:            "https://evermeet.cx/ffmpeg/getrelease/zip",
+				FileName:       "ffmpeg.zip",
+				IsArchive:      true,
+				ArchiveType:    "zip",
+				ExtractTargets: []string{"ffmpeg", "ffprobe"},
 			},
 		}
 	default: // Linux
@@ -96,12 +98,12 @@ func getDependencies() []Dependency {
 				FileName: "yt-dlp",
 			},
 			{
-				Name:          "FFmpeg",
-				URL:           "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
-				FileName:      "ffmpeg.tar.xz",
-				IsArchive:     true,
-				ArchiveType:   "tar.xz",
-				ExtractTarget: "ffmpeg",
+				Name:           "FFmpeg",
+				URL:            "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
+				FileName:       "ffmpeg.tar.xz",
+				IsArchive:      true,
+				ArchiveType:    "tar.xz",
+				ExtractTargets: []string{"ffmpeg", "ffprobe"},
 			},
 		}
 	}
@@ -123,7 +125,7 @@ func getYtDlpBinaryName() string {
 	return "yt-dlp"
 }
 
-// SetContext sets the Wails context for emitting events
+// SetContext sets the context for cancellation (kept for interface compatibility)
 func (l *Launcher) SetContext(ctx context.Context) {
 	l.ctx = ctx
 }
@@ -140,19 +142,29 @@ func (l *Launcher) CheckDependencies() []DependencyStatus {
 	statuses := make([]DependencyStatus, 0, len(l.deps))
 
 	for _, dep := range l.deps {
-		var targetFile string
-		if dep.IsArchive {
-			targetFile = filepath.Join(l.binDir, getFFmpegBinaryName())
-		} else {
-			targetFile = filepath.Join(l.binDir, getYtDlpBinaryName())
-		}
-
-		info, err := os.Stat(targetFile)
-		installed := err == nil && info.Size() > 0
-
+		installed := true
 		var size int64
-		if installed {
-			size = info.Size()
+
+		// Check all targets if archive
+		if dep.IsArchive {
+			for _, target := range dep.ExtractTargets {
+				targetFile := filepath.Join(l.binDir, target)
+				info, err := os.Stat(targetFile)
+				if err != nil || info.Size() == 0 {
+					installed = false
+					break
+				}
+				size += info.Size()
+			}
+		} else {
+			// Single file download
+			targetFile := filepath.Join(l.binDir, dep.FileName)
+			info, err := os.Stat(targetFile)
+			if err != nil || info.Size() == 0 {
+				installed = false
+			} else {
+				size = info.Size()
+			}
 		}
 
 		statuses = append(statuses, DependencyStatus{
@@ -187,15 +199,24 @@ type DownloadProgress struct {
 // DownloadDependencies downloads and installs all missing dependencies
 func (l *Launcher) DownloadDependencies() error {
 	for _, dep := range l.deps {
-		var targetFile string
+		installed := true
+
 		if dep.IsArchive {
-			targetFile = filepath.Join(l.binDir, getFFmpegBinaryName())
+			for _, target := range dep.ExtractTargets {
+				targetFile := filepath.Join(l.binDir, target)
+				if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
+					installed = false
+					break
+				}
+			}
 		} else {
-			targetFile = filepath.Join(l.binDir, getYtDlpBinaryName())
+			targetFile := filepath.Join(l.binDir, getYtDlpBinaryName())
+			if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
+				installed = false
+			}
 		}
 
-		// Skip if already installed
-		if info, err := os.Stat(targetFile); err == nil && info.Size() > 0 {
+		if installed {
 			l.emitProgress(dep.Name, 100, 100, 100, "complete")
 			continue
 		}
@@ -206,8 +227,213 @@ func (l *Launcher) DownloadDependencies() error {
 		}
 	}
 
-	runtime.EventsEmit(l.ctx, events.LauncherComplete)
+	// Emit completion event using Wails v3 API
+	l.emitEvent(events.LauncherComplete, nil)
 	logger.Log.Info().Msg("all dependencies installed successfully")
+	return nil
+}
+
+// DownloadAria2c baixa e instala o aria2c (download opcional, sob demanda)
+func (l *Launcher) DownloadAria2c() error {
+	var dep Dependency
+
+	switch goruntime.GOOS {
+	case "windows":
+		dep = Dependency{
+			Name:           "aria2c",
+			URL:            "https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip",
+			FileName:       "aria2c.zip",
+			IsArchive:      true,
+			ArchiveType:    "zip",
+			ExtractTargets: []string{"aria2c.exe"},
+		}
+	default:
+		// Linux/Mac: aria2c geralmente disponível via package manager
+		return fmt.Errorf("aria2c download não suportado neste OS, instale via package manager")
+	}
+
+	// Verificar se já existe
+	// Usa o primeiro alvo como referência principal
+	targetFile := filepath.Join(l.binDir, dep.ExtractTargets[0])
+	if info, err := os.Stat(targetFile); err == nil && info.Size() > 0 {
+		return nil // Já instalado
+	}
+
+	return l.downloadDependency(dep)
+}
+
+// RembgStatus represents the installation status of rembg
+type RembgStatus struct {
+	Installed   bool   `json:"installed"`
+	Path        string `json:"path"`
+	Version     string `json:"version"`
+	Downloading bool   `json:"downloading"`
+}
+
+// CheckRembgStatus verifica se o rembg está instalado
+func (l *Launcher) CheckRembgStatus() RembgStatus {
+	// Tentar encontrar rembg no PATH ou na pasta bin
+	locations := []string{
+		filepath.Join(l.binDir, "rembg.exe"),
+		"rembg",
+	}
+
+	for _, loc := range locations {
+		cmd := exec.Command(loc, "--version")
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		output, err := cmd.Output()
+		if err == nil {
+			version := strings.TrimSpace(string(output))
+			return RembgStatus{
+				Installed: true,
+				Path:      loc,
+				Version:   version,
+			}
+		}
+	}
+
+	// Tentar como módulo Python
+	cmd := exec.Command("python", "-m", "rembg.cli", "--version")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	output, err := cmd.Output()
+	if err == nil {
+		version := strings.TrimSpace(string(output))
+		return RembgStatus{
+			Installed: true,
+			Path:      "python -m rembg.cli",
+			Version:   version,
+		}
+	}
+
+	return RembgStatus{Installed: false}
+}
+
+// DownloadRembg baixa e instala o rembg (ferramenta de remoção de fundo via IA)
+func (l *Launcher) DownloadRembg() error {
+	// Verificar se já está instalado
+	status := l.CheckRembgStatus()
+	if status.Installed {
+		l.emitProgress("rembg", 100, 100, 100, "complete")
+		return nil
+	}
+
+	switch goruntime.GOOS {
+	case "windows":
+		return l.downloadRembgWindows()
+	default:
+		return fmt.Errorf("instalação automática do rembg não suportada neste OS. Instale manualmente: pip install rembg[cli]")
+	}
+}
+
+// downloadRembgWindows baixa e instala o rembg no Windows
+func (l *Launcher) downloadRembgWindows() error {
+	// URL do instalador standalone do rembg
+	installerURL := "https://github.com/danielgatis/rembg/releases/latest/download/rembg-cli-installer.exe"
+	installerPath := filepath.Join(l.binDir, "rembg-installer.exe")
+
+	l.emitProgress("rembg", 0, 0, 0, "downloading")
+	logger.Log.Info().Str("url", installerURL).Msg("baixando instalador do rembg")
+
+	// Download do instalador
+	req, err := http.NewRequestWithContext(l.ctx, "GET", installerURL, nil)
+	if err != nil {
+		return fmt.Errorf("erro ao criar request: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("erro de rede: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, resp.Status)
+	}
+
+	total := resp.ContentLength
+	out, err := os.Create(installerPath)
+	if err != nil {
+		return fmt.Errorf("erro ao criar arquivo: %w", err)
+	}
+
+	var downloaded int64
+	buf := make([]byte, 32*1024)
+
+	for {
+		n, err := resp.Body.Read(buf)
+		if n > 0 {
+			_, writeErr := out.Write(buf[:n])
+			if writeErr != nil {
+				out.Close()
+				os.Remove(installerPath)
+				return writeErr
+			}
+			downloaded += int64(n)
+			percent := float64(downloaded) / float64(total) * 100
+			l.emitProgress("rembg", downloaded, total, percent, "downloading")
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			out.Close()
+			os.Remove(installerPath)
+			return err
+		}
+	}
+	out.Close()
+
+	// Executar instalador em modo silencioso
+	l.emitProgress("rembg", downloaded, total, 100, "installing")
+	logger.Log.Info().Msg("executando instalador do rembg em modo silencioso")
+
+	// O instalador NSIS aceita /S para instalação silenciosa
+	// e /D=<path> para definir o diretório de instalação
+	installDir := filepath.Join(l.binDir, "rembg")
+	cmd := exec.Command(installerPath, "/S", "/D="+installDir)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+
+	if err := cmd.Run(); err != nil {
+		// Tentar sem o /D (instalação padrão)
+		logger.Log.Warn().Err(err).Msg("instalação com path customizado falhou, tentando instalação padrão")
+		cmd = exec.Command(installerPath, "/S")
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("erro ao executar instalador: %w", err)
+		}
+	}
+
+	// Limpar instalador
+	os.Remove(installerPath)
+
+	// Verificar se a instalação foi bem-sucedida
+	// Aguardar um pouco para o instalador finalizar
+	time.Sleep(2 * time.Second)
+
+	status := l.CheckRembgStatus()
+	if !status.Installed {
+		// Tentar encontrar na pasta de instalação
+		rembgExe := filepath.Join(installDir, "rembg.exe")
+		if _, err := os.Stat(rembgExe); err == nil {
+			logger.Log.Info().Str("path", rembgExe).Msg("rembg instalado em pasta customizada")
+			l.emitProgress("rembg", 100, 100, 100, "complete")
+			return nil
+		}
+
+		return fmt.Errorf("instalação do rembg falhou - não foi possível encontrar o executável")
+	}
+
+	l.emitProgress("rembg", 100, 100, 100, "complete")
+	logger.Log.Info().Str("version", status.Version).Msg("rembg instalado com sucesso")
+	return nil
+}
+
+// DeleteRembg remove a instalação do rembg
+func (l *Launcher) DeleteRembg() error {
+	installDir := filepath.Join(l.binDir, "rembg")
+	if err := os.RemoveAll(installDir); err != nil {
+		return fmt.Errorf("erro ao remover rembg: %w", err)
+	}
 	return nil
 }
 
@@ -291,9 +517,9 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 		var extractErr error
 		switch dep.ArchiveType {
 		case "zip":
-			extractErr = l.extractFromZip(tempFile, dep.ExtractTarget)
+			extractErr = l.extractFromZip(tempFile, dep.ExtractTargets)
 		case "tar.xz", "tar.gz":
-			extractErr = l.extractFromTarGz(tempFile, dep.ExtractTarget)
+			extractErr = l.extractFromTarGz(tempFile, dep.ExtractTargets)
 		}
 		os.Remove(tempFile)
 		if extractErr != nil {
@@ -315,32 +541,42 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 	return nil
 }
 
-// extractFromZip extracts a specific file from a zip archive
-func (l *Launcher) extractFromZip(zipPath, targetName string) error {
+// extractFromZip extracts specific files from a zip archive
+func (l *Launcher) extractFromZip(zipPath string, targets []string) error {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	// Find target file in the zip (might be in a subdirectory)
+	foundCount := 0
+	targetMap := make(map[string]bool)
+	for _, t := range targets {
+		targetMap[t] = true
+	}
+
 	for _, f := range r.File {
 		baseName := filepath.Base(f.Name)
-		if baseName == targetName || strings.HasSuffix(f.Name, "/"+targetName) {
+
+		// Verifique se o arquivo atual corresponde a algum dos targets
+		if targetMap[baseName] {
 			rc, err := f.Open()
 			if err != nil {
 				return err
 			}
-			defer rc.Close()
 
-			outPath := filepath.Join(l.binDir, targetName)
+			// Extrai o arquivo
+			outPath := filepath.Join(l.binDir, baseName)
 			out, err := os.Create(outPath)
 			if err != nil {
+				rc.Close()
 				return err
 			}
-			defer out.Close()
 
 			_, err = io.Copy(out, rc)
+			out.Close()
+			rc.Close()
+
 			if err != nil {
 				return err
 			}
@@ -349,15 +585,20 @@ func (l *Launcher) extractFromZip(zipPath, targetName string) error {
 			if goruntime.GOOS != "windows" {
 				os.Chmod(outPath, 0755)
 			}
-			return nil
+
+			foundCount++
 		}
 	}
 
-	return fmt.Errorf("%s not found in zip", targetName)
+	if foundCount < len(targets) {
+		return fmt.Errorf("alguns arquivos não foram encontrados no zip (encontrados: %d/%d)", foundCount, len(targets))
+	}
+
+	return nil
 }
 
-// extractFromTarGz extracts a specific file from a tar.gz/tar.xz archive
-func (l *Launcher) extractFromTarGz(archivePath, targetName string) error {
+// extractFromTarGz extracts specific files from a tar.gz/tar.xz archive
+func (l *Launcher) extractFromTarGz(archivePath string, targets []string) error {
 	file, err := os.Open(archivePath)
 	if err != nil {
 		return err
@@ -381,6 +622,12 @@ func (l *Launcher) extractFromTarGz(archivePath, targetName string) error {
 
 	tarReader := tar.NewReader(reader)
 
+	targetMap := make(map[string]bool)
+	for _, t := range targets {
+		targetMap[t] = true
+	}
+	foundCount := 0
+
 	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
@@ -391,37 +638,48 @@ func (l *Launcher) extractFromTarGz(archivePath, targetName string) error {
 		}
 
 		baseName := filepath.Base(header.Name)
-		if baseName == targetName {
-			outPath := filepath.Join(l.binDir, targetName)
+		if targetMap[baseName] {
+			outPath := filepath.Join(l.binDir, baseName)
 			out, err := os.Create(outPath)
 			if err != nil {
 				return err
 			}
-			defer out.Close()
 
 			_, err = io.Copy(out, tarReader)
+			out.Close()
+
 			if err != nil {
 				return err
 			}
 
 			// Make executable
 			os.Chmod(outPath, 0755)
-			return nil
+
+			foundCount++
 		}
 	}
 
-	return fmt.Errorf("%s not found in archive", targetName)
+	if foundCount < len(targets) {
+		return fmt.Errorf("alguns arquivos não foram encontrados no archive (encontrados: %d/%d)", foundCount, len(targets))
+	}
+
+	return nil
 }
 
+// emitProgress emits download progress via Wails v3 events
 func (l *Launcher) emitProgress(name string, downloaded, total int64, percent float64, status string) {
-	if l.ctx == nil {
-		return
-	}
-	runtime.EventsEmit(l.ctx, events.LauncherProgress, DownloadProgress{
+	l.emitEvent(events.LauncherProgress, DownloadProgress{
 		Name:       name,
 		Downloaded: downloaded,
 		Total:      total,
 		Percent:    percent,
 		Status:     status,
 	})
+}
+
+// emitEvent emits an event using Wails v2 API
+func (l *Launcher) emitEvent(eventName string, data any) {
+	if l.ctx != nil {
+		wailsRuntime.EventsEmit(l.ctx, eventName, data)
+	}
 }

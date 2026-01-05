@@ -17,7 +17,7 @@ import (
 
 const (
 	GitHubOwner = "Capman002"
-	GitHubRepo  = "kinematic"
+	GitHubRepo  = "magpie"
 )
 
 // HTTP client with timeout for API calls
@@ -36,6 +36,7 @@ type Release struct {
 	Name        string  `json:"name"`
 	Body        string  `json:"body"` // Changelog
 	PublishedAt string  `json:"published_at"`
+	Prerelease  bool    `json:"prerelease"`
 	Assets      []Asset `json:"assets"`
 }
 
@@ -69,9 +70,31 @@ func NewUpdater(currentVersion string) *Updater {
 	}
 }
 
-// SetContext sets the Wails runtime context
+// SetContext sets the Wails runtime context (kept for interface compatibility)
 func (u *Updater) SetContext(ctx context.Context) {
 	u.ctx = ctx
+}
+
+// GetAvailableReleases fetches all releases from GitHub
+func (u *Updater) GetAvailableReleases() ([]Release, error) {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases", GitHubOwner, GitHubRepo)
+
+	resp, err := httpClient.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("network error: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("GitHub API returned %d", resp.StatusCode)
+	}
+
+	var releases []Release
+	if err := json.NewDecoder(resp.Body).Decode(&releases); err != nil {
+		return nil, err
+	}
+
+	return releases, nil
 }
 
 // CheckForUpdate checks GitHub for a newer release
@@ -154,7 +177,7 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	}
 	defer resp.Body.Close()
 
-	tempPath := filepath.Join(os.TempDir(), "kinematic-update.exe")
+	tempPath := filepath.Join(os.TempDir(), "magpie-update.exe")
 	out, err := os.Create(tempPath)
 	if err != nil {
 		return err
@@ -203,19 +226,55 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	return nil
 }
 
-// RestartApp restarts the application
+// RestartApp restarts the application using Wails v2 API
 func (u *Updater) RestartApp() {
 	if u.ctx != nil {
 		wailsRuntime.Quit(u.ctx)
+	} else {
+		os.Exit(0)
 	}
 }
 
-func (u *Updater) emitProgress(status string, percent float64) {
-	if u.ctx == nil {
-		return
+// InstallVersion finds a release by tag and installs it
+func (u *Updater) InstallVersion(tag string) error {
+	releases, err := u.GetAvailableReleases()
+	if err != nil {
+		return err
 	}
-	wailsRuntime.EventsEmit(u.ctx, "updater:progress", map[string]interface{}{
-		"status":  status,
-		"percent": percent,
-	})
+
+	var targetRelease *Release
+	for i := range releases {
+		if releases[i].TagName == tag {
+			targetRelease = &releases[i]
+			break
+		}
+	}
+
+	if targetRelease == nil {
+		return fmt.Errorf("version %s not found", tag)
+	}
+
+	assetName := u.getAssetName()
+	var downloadURL string
+	for _, asset := range targetRelease.Assets {
+		if strings.Contains(strings.ToLower(asset.Name), assetName) {
+			downloadURL = asset.BrowserDownloadURL
+			break
+		}
+	}
+
+	if downloadURL == "" {
+		return fmt.Errorf("no compatible asset found for %s", tag)
+	}
+
+	return u.DownloadAndApply(downloadURL)
+}
+
+func (u *Updater) emitProgress(status string, percent float64) {
+	if u.ctx != nil {
+		wailsRuntime.EventsEmit(u.ctx, "updater:progress", map[string]interface{}{
+			"status":  status,
+			"percent": percent,
+		})
+	}
 }

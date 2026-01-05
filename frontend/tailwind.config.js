@@ -1,33 +1,47 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class", // Ativa dark mode via classe 'dark' no html
   theme: {
     extend: {
       colors: {
-        // Clinical Neon Light Theme
+        // Cores mapeadas para Variáveis CSS
         primary: {
-          50: "#FFF1F3",
-          100: "#FFE4E8",
-          200: "#FECDD6",
-          300: "#FDA4B4",
-          400: "#FB7189",
-          500: "#F43F5E",
-          600: "#E11D48", // Main accent
-          700: "#BE123C",
-          800: "#9F1239",
-          900: "#881337",
+          50: "var(--primary-50)",
+          100: "var(--primary-100)",
+          200: "var(--primary-200)",
+          300: "var(--primary-300)",
+          400: "var(--primary-400)",
+          500: "var(--primary-500)",
+          600: "var(--primary-600)",
+          700: "var(--primary-700)",
+          800: "var(--primary-800)",
+          900: "var(--primary-900)",
         },
         surface: {
-          50: "#FAFAFA",
-          100: "#F4F4F5",
-          200: "#E4E4E7",
-          300: "#D4D4D8",
-          400: "#A1A1AA",
-          500: "#71717A",
-          600: "#52525B", // Secondary text (accessible)
-          700: "#3F3F46",
-          800: "#27272A",
-          900: "#18181B",
+          50: "var(--surface-50)",
+          100: "var(--surface-100)",
+          200: "var(--surface-200)",
+          300: "var(--surface-300)",
+          400: "var(--surface-400)",
+          500: "var(--surface-500)",
+          600: "var(--surface-600)",
+          700: "var(--surface-700)",
+          800: "var(--surface-800)",
+          900: "var(--surface-900)",
+        },
+        emerald: {
+          50: "#ECFDF5",
+          100: "#D1FAE5",
+          500: "#10B981",
+          600: "#059669",
+          700: "#047857",
+        },
+        amber: {
+          50: "#FFFBEB",
+          100: "#FEF3C7",
+          500: "#F59E0B",
+          700: "#B45309",
         },
       },
       fontFamily: {

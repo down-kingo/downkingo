@@ -5,13 +5,13 @@
 !include "FileFunc.nsh"
 
 !ifndef INFO_PROJECTNAME
-    !define INFO_PROJECTNAME "kinematic"
+    !define INFO_PROJECTNAME "magpie"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "kinematic"
+    !define INFO_COMPANYNAME "magpie"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "kinematic"
+    !define INFO_PRODUCTNAME "magpie"
 !endif
 !ifndef INFO_PRODUCTVERSION
     !define INFO_PRODUCTVERSION "1.0.0"

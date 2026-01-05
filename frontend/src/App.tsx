@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
+import { NeedsDependencies } from "../wailsjs/go/main/App";
+import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
 import Setup from "./pages/Setup";
 import Home from "./pages/Home";
 
@@ -11,17 +12,127 @@ interface AppReadyPayload {
 
 function App() {
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+  const mountedRef = useRef(true);
+  const eventReceivedRef = useRef(false); // Track if event was already received
 
   useEffect(() => {
-    // Escutar evento app:ready emitido pelo OnStartup do Go
-    // Isso garante que o frontend só renderiza quando o backend está 100% pronto
-    const unsubscribe = EventsOn("app:ready", (payload: AppReadyPayload) => {
-      setNeedsSetup(payload.needsSetup);
-    });
+    mountedRef.current = true;
+    eventReceivedRef.current = false;
+    console.log("[App] Registering app:ready listener");
+
+    // Registrar listener de forma assíncrona e segura
+    const registerListener = async () => {
+      try {
+        const unsubscribe = await safeEventsOn<AppReadyPayload>(
+          "app:ready",
+          (payload) => {
+            if (mountedRef.current && !eventReceivedRef.current) {
+              eventReceivedRef.current = true;
+              console.log("[App] Received app:ready event:", payload);
+              setNeedsSetup(payload.needsSetup);
+            }
+          }
+        );
+        if (mountedRef.current) {
+          unsubscribeRef.current = unsubscribe;
+        } else {
+          // Componente desmontou antes do registro completar
+          unsubscribe();
+        }
+      } catch (e) {
+        console.warn(
+          "[App] Failed to register app:ready listener, relying on fallback.",
+          e
+        );
+      }
+    };
+
+    registerListener();
+
+    // Fallback: se o evento não chegar em 2 segundos, chamar diretamente
+    const timeout = setTimeout(async () => {
+      if (mountedRef.current && !eventReceivedRef.current) {
+        console.log("[App] Timeout - calling NeedsDependencies directly");
+        eventReceivedRef.current = true;
+        try {
+          const needs = await NeedsDependencies();
+          if (mountedRef.current) {
+            setNeedsSetup(needs);
+          }
+        } catch (err) {
+          console.error("[App] Error calling NeedsDependencies:", err);
+          if (mountedRef.current) {
+            setNeedsSetup(false); // Assume ready on error
+          }
+        }
+      }
+    }, 2000);
 
     // Cleanup ao desmontar
     return () => {
-      EventsOff("app:ready");
+      mountedRef.current = false;
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      } else {
+        tryEventsOff("app:ready");
+      }
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  // Listen for deep-link events from the backend (protocol handler)
+  useEffect(() => {
+    let deepLinkUnsubscribe: (() => void) | null = null;
+
+    const registerDeepLinkListener = async () => {
+      try {
+        deepLinkUnsubscribe = await safeEventsOn<string>(
+          "deep-link",
+          (protocolUrl) => {
+            console.log("[App] Received deep-link:", protocolUrl);
+
+            // Parse the protocol URL: kingo://open?url=<encoded_url>
+            try {
+              // Remove the protocol prefix
+              const withoutProtocol = protocolUrl.replace(/^kingo:\/\//, "");
+
+              // Parse as URL to extract query params
+              const fakeBase = "http://localhost/";
+              const parsed = new URL(withoutProtocol, fakeBase);
+              const targetUrl = parsed.searchParams.get("url");
+
+              if (targetUrl) {
+                const decodedUrl = decodeURIComponent(targetUrl);
+                console.log(
+                  "[App] Dispatching kinematic:fill-url with:",
+                  decodedUrl
+                );
+
+                // Dispatch custom event to fill the URL input
+                window.dispatchEvent(
+                  new CustomEvent("kinematic:fill-url", { detail: decodedUrl })
+                );
+              }
+            } catch (e) {
+              console.error("[App] Failed to parse deep-link URL:", e);
+            }
+          }
+        );
+      } catch (e) {
+        console.warn("[App] Failed to register deep-link listener:", e);
+      }
+    };
+
+    registerDeepLinkListener();
+
+    return () => {
+      if (deepLinkUnsubscribe) {
+        deepLinkUnsubscribe();
+      } else {
+        tryEventsOff("deep-link");
+      }
     };
   }, []);
 
@@ -38,10 +149,13 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <Routes>
         <Route path="/setup" element={<Setup />} />
         <Route path="/home" element={<Home />} />
+
         <Route
           path="/"
           element={<Navigate to={needsSetup ? "/setup" : "/home"} replace />}

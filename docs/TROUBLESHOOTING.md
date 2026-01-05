@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Guia para resolver problemas comuns do Kinematic.
+Guia para resolver problemas comuns do DownKingo.
 
 ## Índice
 
@@ -37,7 +37,7 @@ Baixe e instale o [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_r
 
 ```bash
 # No Terminal:
-xattr -cr /Applications/Kinematic.app
+xattr -cr /Applications/DownKingo.app
 ```
 
 Ou: Clique direito → Abrir → Confirmar.
@@ -47,7 +47,7 @@ Ou: Clique direito → Abrir → Confirmar.
 **Causa 1:** Sem permissão de execução.
 
 ```bash
-chmod +x Kinematic-linux-amd64.AppImage
+chmod +x DownKingo-linux-amd64.AppImage
 ```
 
 **Causa 2:** FUSE não instalado.
@@ -73,7 +73,7 @@ sudo pacman -S fuse2
 
 **Soluções:**
 
-1. Atualize o Kinematic para a última versão
+1. Atualize o DownKingo para a última versão
 2. Aguarde alguns minutos e tente novamente
 3. Verifique se o vídeo não é privado
 
@@ -81,7 +81,7 @@ sudo pacman -S fuse2
 
 **Causa:** Formato do site mudou ou yt-dlp desatualizado.
 
-**Solução:** Aguarde uma atualização do Kinematic que inclua nova versão do yt-dlp.
+**Solução:** Aguarde uma atualização do DownKingo que inclua nova versão do yt-dlp.
 
 ### Download lento
 
@@ -101,7 +101,7 @@ sudo pacman -S fuse2
 
 **Causa:** Alguns sites separam vídeo e áudio em streams diferentes.
 
-**Solução:** O Kinematic usa FFmpeg para mesclar automaticamente. Se falhar:
+**Solução:** O DownKingo usa FFmpeg para mesclar automaticamente. Se falhar:
 
 1. Verifique os logs
 2. Tente baixar como "Apenas Áudio" separadamente
@@ -143,9 +143,9 @@ sudo pacman -S fuse2
 
 | Sistema | Caminho                                                      |
 | ------- | ------------------------------------------------------------ |
-| Windows | `%AppData%\Kinematic\logs\kinematic.log`                     |
-| macOS   | `~/Library/Application Support/Kinematic/logs/kinematic.log` |
-| Linux   | `~/.config/Kinematic/logs/kinematic.log`                     |
+| Windows | `%AppData%\DownKingo\logs\DownKingo.log`                     |
+| macOS   | `~/Library/Application Support/DownKingo/logs/DownKingo.log` |
+| Linux   | `~/.config/DownKingo/logs/DownKingo.log`                     |
 
 ### Como ler os logs
 
@@ -160,7 +160,7 @@ Os logs são em formato JSON estruturado:
 
 Ao abrir uma issue, inclua:
 
-1. **Versão do Kinematic**
+1. **Versão do DownKingo**
 2. **Sistema operacional e versão**
 3. **Passos para reproduzir**
 4. **Logs relevantes** (remova informações sensíveis)
@@ -171,5 +171,5 @@ Ao abrir uma issue, inclua:
 ## Ainda com problemas?
 
 - 📖 Consulte o [FAQ](FAQ.md)
-- 🐛 Abra uma [Issue](https://github.com/Capman002/kinematic/issues)
-- 💬 Pergunte nas [Discussões](https://github.com/Capman002/kinematic/discussions)
+- 🐛 Abra uma [Issue](https://github.com/Capman002/DownKingo/issues)
+- 💬 Pergunte nas [Discussões](https://github.com/Capman002/DownKingo/discussions)

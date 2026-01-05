@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
@@ -6,7 +6,7 @@ import {
   CheckDependencies,
   DownloadDependencies,
 } from "../../wailsjs/go/main/App";
-import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
+import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
 
 export default function Setup() {
   const navigate = useNavigate();
@@ -44,22 +44,71 @@ export default function Setup() {
     }
   };
 
+  const unsubscribeRef = useRef<{
+    progress?: () => void;
+    complete?: () => void;
+  }>({});
+  const mountedRef = useRef(true);
+
   useEffect(() => {
-    // Listen for progress events
-    EventsOn("launcher:progress", (data: any) => {
-      updateProgress(data);
-    });
+    mountedRef.current = true;
 
-    EventsOn("launcher:complete", () => {
-      setComplete();
-      setTimeout(() => navigate("/home"), 1500);
-    });
+    // Registrar listeners de forma assíncrona e segura
+    const registerListeners = async () => {
+      try {
+        // Listen for progress events
+        const unsubProgress = await safeEventsOn<any>(
+          "launcher:progress",
+          (data) => {
+            if (mountedRef.current) {
+              updateProgress(data);
+            }
+          }
+        );
+        if (mountedRef.current) {
+          unsubscribeRef.current.progress = unsubProgress;
+        } else {
+          unsubProgress();
+        }
 
+        const unsubComplete = await safeEventsOn<void>(
+          "launcher:complete",
+          () => {
+            if (mountedRef.current) {
+              setComplete();
+              setTimeout(() => {
+                if (mountedRef.current) {
+                  navigate("/home");
+                }
+              }, 1500);
+            }
+          }
+        );
+        if (mountedRef.current) {
+          unsubscribeRef.current.complete = unsubComplete;
+        } else {
+          unsubComplete();
+        }
+      } catch (e) {
+        console.warn("[Setup] Failed to register event listeners:", e);
+      }
+    };
+
+    registerListeners();
     startSetup();
 
     return () => {
-      EventsOff("launcher:progress");
-      EventsOff("launcher:complete");
+      mountedRef.current = false;
+      if (unsubscribeRef.current.progress) {
+        unsubscribeRef.current.progress();
+      } else {
+        tryEventsOff("launcher:progress");
+      }
+      if (unsubscribeRef.current.complete) {
+        unsubscribeRef.current.complete();
+      } else {
+        tryEventsOff("launcher:complete");
+      }
     };
   }, []);
 
@@ -113,7 +162,7 @@ export default function Setup() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            Kinematic
+            Magpie
           </motion.h1>
           <motion.p
             className="text-surface-600"

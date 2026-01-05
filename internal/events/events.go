@@ -11,6 +11,12 @@ const (
 // Eventos de Download (yt-dlp)
 const (
 	DownloadProgress = "download:progress"
+	DownloadAdded    = "download:added"
+	DownloadComplete = "download:complete"
+	DownloadFailed   = "download:failed"
+	QueueUpdated     = "queue:updated"
+	DownloadLog      = "download:log"
+	ConsoleLog       = "console:log" // Logs amigáveis para o usuário final
 )
 
 // Eventos de Ciclo de Vida da Aplicação
