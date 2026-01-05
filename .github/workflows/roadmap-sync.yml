@@ -49,6 +49,7 @@ jobs:
           PROJECT_NUMBER: 2
           ORG_NAME: "down-kingo"
         with:
+          github-token: ${{ secrets.ROADMAP_PAT }}
           script: |
             const projectNumber = parseInt(process.env.PROJECT_NUMBER);
             const orgName = process.env.ORG_NAME;
