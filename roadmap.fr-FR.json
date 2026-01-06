@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-06T22:49:16.693Z",
+  "generated_at": "2026-01-06T23:26:30.893Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "description": "## Contexte\nActuellement, après avoir téléchargé une vidéo ou une image sur Kingo (PC), l'utilisateur n'a pas de moyen natif et rapide de transférer ce contenu sur son téléphone. Dépendre du cloud (Google Drive/WhatsApp) est lent et consomme inutilement de la bande passante Internet.\n## Motivation\nCréer une expérience \"zéro friction\" où l'utilisateur pointe simplement l'appareil photo de son téléphone vers Kingo et le téléchargement commence instantanément via le réseau local (P2P), en tirant parti de la vitesse maximale du Wi-Fi.\n## Problème\nTransférer des fichiers volumineux d'un PC vers des appareils mobiles est un processus fastidieux qui implique généralement des câbles USB ou des téléchargements vers des services externes, ce qui tue l'agilité d'une application de téléchargement.\n## Proposition Technique\nImplémenter un **Serveur de Transmission Éphémère** en Go :\n1. **Backend (Go):** \n   - Utiliser `net/http` pour démarrer un serveur web temporaire sur un port aléatoire.\n   - Implémenter un système de **IP Discovery** pour identifier l'adresse du PC sur le réseau local (ex: 192.168.x.x).\n   - Servir le fichier di",
+      "description": "## Contexte\nActuellement, après avoir téléchargé une vidéo ou une image sur Kingo (PC), l'utilisateur n'a pas de moyen natif et rapide de transférer ce contenu sur son téléphone. Dépendre du cloud (Google Drive/WhatsApp) est lent et consomme inutilement de la bande passante internet.\n## Motivation\nCréer une expérience \"zéro friction\" où l'utilisateur pointe simplement l'appareil photo de son téléphone vers Kingo et le téléchargement démarre instantanément via le réseau local (P2P), en tirant parti de la vitesse maximale du Wi-Fi.\n## Problème\nTransférer des fichiers volumineux d'un PC vers des appareils mobiles est un processus fastidieux qui implique généralement des câbles USB ou des téléchargements vers des services externes, ce qui nuit à l'agilité d'une application de téléchargement.\n## Proposition Technique\nImplémenter un **Serveur de Transmission Éphémère** en Go :\n1. **Backend (Go):** \n   - Utiliser `net/http` pour démarrer un serveur web temporaire sur un port aléatoire.\n   - Implémenter un système de **IP Discovery** pour identifier l'adresse du PC sur le réseau local (ex: 192.168.x.x).\n   - Servir le fichier di",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -23,12 +23,12 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:34:40Z",
       "shipped_at": null,
-      "friendly_title": "Partage Local via Code QR (Magic Share)"
+      "friendly_title": "Partage local via QR Code (Magic Share)"
     },
     {
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "description": "## Contexte\nL'écosystème Kingo a besoin d'une intégration plus fluide avec le navigateur. Actuellement, l'utilisateur dépend du moniteur presse-papiers ou du copier/coller manuel. Le schéma de protocole `kingo://` existe déjà dans le code, mais le comportement \"instance unique\" n'a pas encore été affiné.\n## Motivation\nPermettre à l'utilisateur d'envoyer des vidéos à Kingo en un seul clic directement depuis YouTube/Instagram, sans avoir besoin de copier les liens dans le presse-papiers. Cela rend le flux de travail beaucoup plus rapide et plus professionnel.\n## Problème\n1. **Manque de Bridge :** Il n'existe pas d'extension officielle qui facilite l'envoi d'URL.\n2. **Redondance des fenêtres :** En cliquant sur un lien `kingo://` alors que l'application est déjà ouverte, Windows tente d'ouvrir une seconde instance de Kingo, ce qui entraîne deux fenêtres et une erreur de concurrence de base de données.\n## Proposition technique\n### 1. Extension de navigateur (Kingo Bridge)\n* Créer une extension (Manifest v3) compatible avec Chrome, Edge et Brave.\n* Ajouter un bouton \"Ba",
+      "description": "## Contexte\nL'écosystème Kingo a besoin d'une intégration plus fluide avec le navigateur. Actuellement, l'utilisateur dépend du moniteur presse-papiers ou du copier/coller manuel. Le schéma de protocole `kingo://` existe déjà dans le code, mais le comportement \"instance unique\" n'a pas encore été affiné.\n## Motivation\nPermettre à l'utilisateur d'envoyer des vidéos à Kingo en un seul clic directement depuis YouTube/Instagram, sans avoir besoin de copier les liens dans le presse-papiers. Cela rend le flux de travail beaucoup plus rapide et plus professionnel.\n## Problème\n1. **Manque de Bridge :** Il n'existe pas d'extension officielle qui facilite l'envoi d'URL.\n2. **Redondance des fenêtres :** En cliquant sur un lien `kingo://` avec l'application déjà ouverte, Windows essaie d'ouvrir une seconde instance de Kingo, ce qui entraîne deux fenêtres et une erreur de concurrence dans la base de données.\n## Proposition Technique\n### 1. Extension de navigateur (Kingo Bridge)\n* Créer une extension (Manifest v3) compatible avec Chrome, Edge et Brave.\n* Ajouter un bouton \"Ba",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -40,7 +40,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
       "shipped_at": null,
-      "friendly_title": "Extension de navigateur et affinement des liens profonds (Warm Start)"
+      "friendly_title": "Extension Officielle et Raffinement des Liens Profonds"
     },
     {
       "id": 7,

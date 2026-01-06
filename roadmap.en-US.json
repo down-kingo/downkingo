@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-06T22:49:16.693Z",
+  "generated_at": "2026-01-06T23:26:30.893Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -28,7 +28,7 @@
     {
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "description": "## Context\nThe Kingo ecosystem needs a more fluid integration with the browser. Currently, the user depends on the clipboard monitor or manual copy/paste. The `kingo://` protocol scheme already exists in the code, but the \"single instance\" behavior has not yet been refined.\n## Motivation\nAllow the user to send videos to Kingo with just one click directly from YouTube/Instagram, without the need to copy links to the clipboard. This makes the workflow much faster and more professional.\n## Problem\n1. **Lack of Bridge:** There is no official extension that facilitates sending URLs.\n2. **Window Redundancy:** When clicking a `kingo://` link with the app already open, Windows tries to open a second instance of Kingo, resulting in two windows and a database concurrency error.\n## Technical Proposal\n### 1. Browser Extension (Kingo Bridge)\n* Create an extension (Manifest v3) compatible with Chrome, Edge, and Brave.\n* Add a \"Ba",
+      "description": "## Context\nThe Kingo ecosystem needs a more seamless integration with the browser. Currently, the user relies on the clipboard monitor or manual copy/paste. The `kingo://` protocol scheme already exists in the code, but the \"single instance\" behavior has not yet been refined.\n## Motivation\nAllow the user to send videos to Kingo with just one click directly from YouTube/Instagram, without the need to copy links to the clipboard. This makes the workflow much faster and more professional.\n## Problem\n1. **Lack of Bridge:** There is no official extension that facilitates sending URLs.\n2. **Window Redundancy:** When clicking a `kingo://` link with the app already open, Windows tries to open a second instance of Kingo, resulting in two windows and a database concurrency error.\n## Technical Proposal\n### 1. Browser Extension (Kingo Bridge)\n* Create an extension (Manifest v3) compatible with Chrome, Edge, and Brave.\n* Add a \"Ba",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -40,7 +40,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
       "shipped_at": null,
-      "friendly_title": "Browser Extension and Deep Link Refinement (Warm Start)"
+      "friendly_title": "Official Extension and Deep Link Refinement"
     },
     {
       "id": 7,

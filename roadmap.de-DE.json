@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-06T22:49:16.693Z",
+  "generated_at": "2026-01-06T23:26:30.893Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -28,7 +28,7 @@
     {
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "description": "## Kontext\nDas Kingo-Ökosystem benötigt eine flüssigere Integration mit dem Browser. Derzeit ist der Benutzer vom Clipboard-Monitor oder manuellem Kopieren/Einfügen abhängig. Das Protokollschema `kingo://` existiert bereits im Code, aber das Verhalten \"Single Instance\" wurde noch nicht verfeinert.\n## Motivation\nDem Benutzer ermöglichen, Videos mit nur einem Klick direkt von YouTube/Instagram an Kingo zu senden, ohne Links in die Zwischenablage kopieren zu müssen. Dies macht den Workflow viel schneller und professioneller.\n## Problem\n1. **Fehlender Bridge:** Es gibt keine offizielle Erweiterung, die das Senden von URLs erleichtert.\n2. **Fensterredundanz:** Wenn auf einen `kingo://`-Link geklickt wird, während die App bereits geöffnet ist, versucht Windows, eine zweite Instanz von Kingo zu öffnen, was zu zwei Fenstern und einem Datenbank-Concurrency-Fehler führt.\n## Technischer Vorschlag\n### 1. Browsererweiterung (Kingo Bridge)\n* Erstellen Sie eine Erweiterung (Manifest v3), die mit Chrome, Edge und Brave kompatibel ist.\n* Fügen Sie eine \"Ba",
+      "description": "## Kontext\nDas Kingo-Ökosystem benötigt eine reibungslosere Integration mit dem Browser. Derzeit ist der Benutzer auf die Zwischenablage-Überwachung oder manuelles Kopieren/Einfügen angewiesen. Das Protokollschema `kingo://` existiert bereits im Code, aber das Verhalten der \"Einzelinstanz\" wurde noch nicht verfeinert.\n## Motivation\nDem Benutzer ermöglichen, Videos mit nur einem Klick direkt von YouTube/Instagram an Kingo zu senden, ohne Links in die Zwischenablage kopieren zu müssen. Dies macht den Workflow viel schneller und professioneller.\n## Problem\n1. **Fehlender Bridge:** Es gibt keine offizielle Erweiterung, die das Senden von URLs erleichtert.\n2. **Fensterredundanz:** Wenn auf einen `kingo://`-Link geklickt wird, während die App bereits geöffnet ist, versucht Windows, eine zweite Instanz von Kingo zu öffnen, was zu zwei Fenstern und einem Datenbank-Concurrency-Fehler führt.\n## Technischer Vorschlag\n### 1. Browsererweiterung (Kingo Bridge)\n* Erstellen Sie eine Erweiterung (Manifest v3), die mit Chrome, Edge und Brave kompatibel ist.\n* Fügen Sie eine \"Ba",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -40,7 +40,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
       "shipped_at": null,
-      "friendly_title": "Browsererweiterung und Deep-Link-Verfeinerung (Warm Start)"
+      "friendly_title": "Offizielle Erweiterung und Deep-Link-Verfeinerung"
     },
     {
       "id": 7,
