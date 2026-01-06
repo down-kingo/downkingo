@@ -109,7 +109,13 @@ export const useSettingsStore = create<SettingsState>()(
       setLayout: (layout) => set({ layout }),
       setPrimaryColor: (color) => set({ primaryColor: color }),
 
-      setLanguage: (lang) => set({ language: lang }),
+      setLanguage: (lang) => {
+        // Sincroniza com i18next
+        import("../i18n").then((module) => {
+          module.default.changeLanguage(lang);
+        });
+        set({ language: lang });
+      },
 
       setAnonymousMode: (enabled) => set({ anonymousMode: enabled }),
 

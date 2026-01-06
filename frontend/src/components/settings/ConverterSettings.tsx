@@ -15,6 +15,7 @@ import {
   DownloadRembg,
   DeleteRembg,
 } from "../../../wailsjs/go/main/App";
+import { useTranslation } from "react-i18next";
 
 // Componentes locais (reutilizados para consistência visual)
 const SettingItem = ({
@@ -94,6 +95,7 @@ interface RembgStatus {
 }
 
 export default function ConverterSettings() {
+  const { t } = useTranslation("settings");
   const [rembgStatus, setRembgStatus] = useState<RembgStatus | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -155,13 +157,13 @@ export default function ConverterSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconFolder size={14} />
-          Comportamento
+          {t("converter_settings.behavior_title")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconFolder}
-            label="Abrir Pasta Automaticamente"
-            desc="Abrir o diretório de saída ao finalizar a conversão"
+            label={t("converter_settings.open_folder")}
+            desc={t("converter_settings.open_folder_desc")}
             active={openFolder}
           >
             <Switch checked={openFolder} onChange={setOpenFolder} />
@@ -169,8 +171,8 @@ export default function ConverterSettings() {
 
           <SettingItem
             icon={IconBell}
-            label="Notificar Conclusão"
-            desc="Exibir uma notificação do sistema ao terminar"
+            label={t("converter_settings.notify_finish")}
+            desc={t("converter_settings.notify_finish_desc")}
             active={notifyFinish}
           >
             <Switch checked={notifyFinish} onChange={setNotifyFinish} />
@@ -182,7 +184,7 @@ export default function ConverterSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconWand size={14} />
-          Inteligência Artificial (Rembg)
+          {t("rembg_settings.title")}
         </h3>
 
         <div className="p-4 bg-white dark:bg-surface-100 border border-surface-200 dark:border-zinc-800 rounded-xl space-y-4 shadow-sm dark:shadow-none">
@@ -201,16 +203,16 @@ export default function ConverterSettings() {
               </div>
               <div>
                 <span className="text-sm font-semibold text-surface-900">
-                  Rembg Core
+                  {t("rembg_settings.core")}
                 </span>
                 <p className="text-xs text-surface-500">
                   {isDownloading
-                    ? "Instalando..."
+                    ? t("rembg_settings.installing")
                     : isDeleting
-                    ? "Removendo..."
+                    ? t("rembg_settings.removing")
                     : rembgStatus?.installed
-                    ? "Disponível para uso"
-                    : "Módulo de remoção de fundo"}
+                    ? t("rembg_settings.installed")
+                    : t("rembg_settings.not_installed_desc")}
                 </p>
               </div>
             </div>
@@ -226,12 +228,12 @@ export default function ConverterSettings() {
                 className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-2"
               >
                 <IconDownload size={14} />
-                Instalar
+                {t("rembg_settings.install_btn")}
               </button>
             ) : (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-medium border border-green-200 dark:border-green-800">
                 <IconCheck size={14} />
-                Instalado
+                {t("rembg_settings.status_installed")}
               </div>
             )}
           </div>
@@ -241,7 +243,7 @@ export default function ConverterSettings() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-surface-500 flex items-center gap-2">
                 <IconCpu size={14} />
-                Modelo Padrão
+                {t("rembg_settings.model_default")}
               </span>
               <select
                 value={rembgModel}
@@ -249,24 +251,34 @@ export default function ConverterSettings() {
                 className="bg-transparent text-surface-600 font-medium text-xs text-right cursor-pointer focus:outline-none"
                 disabled={!rembgStatus?.installed}
               >
-                <option value="u2net">U²-Net (Padrão)</option>
-                <option value="u2netp">U²-Net Lite (Rápido)</option>
-                <option value="u2net_human_seg">Human Seg</option>
-                <option value="silueta">Silueta</option>
-                <option value="isnet-general-use">IS-Net</option>
+                <option value="u2net">{t("rembg_settings.model_u2net")}</option>
+                <option value="u2netp">
+                  {t("rembg_settings.model_u2netp")}
+                </option>
+                <option value="u2net_human_seg">
+                  {t("rembg_settings.model_human_seg")}
+                </option>
+                <option value="silueta">
+                  {t("rembg_settings.model_silueta")}
+                </option>
+                <option value="isnet-general-use">
+                  {t("rembg_settings.model_isnet")}
+                </option>
               </select>
             </div>
 
             {rembgStatus?.installed && (
               <div className="flex items-center justify-between text-xs border-t border-surface-200 dark:border-zinc-700/50 pt-2">
-                <span className="text-surface-500">Gerenciar</span>
+                <span className="text-surface-500">
+                  {t("rembg_settings.manage")}
+                </span>
                 <button
                   onClick={handleDeleteRembg}
                   disabled={isDeleting}
                   className="text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
                 >
                   <IconTrash size={14} />
-                  Desinstalar
+                  {t("rembg_settings.uninstall")}
                 </button>
               </div>
             )}

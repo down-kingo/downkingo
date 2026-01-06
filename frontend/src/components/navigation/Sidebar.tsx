@@ -8,8 +8,7 @@ import {
   IconSettings,
   IconMap2,
 } from "@tabler/icons-react";
-import { translations } from "../../translations";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 export type TabType =
   | "home"
@@ -35,8 +34,7 @@ export default function Sidebar({
   version,
   onOpenSettings,
 }: SidebarProps) {
-  const { language } = useSettingsStore();
-  const t = translations[language];
+  const { t } = useTranslation("common");
 
   return (
     <aside className="sidebar">
@@ -86,7 +84,7 @@ export default function Sidebar({
               }`}
             >
               <IconHome size={18} />
-              <span>Início</span>
+              <span>{t("nav.home")}</span>
             </button>
             <button
               onClick={() => setActiveTab("queue")}
@@ -95,7 +93,7 @@ export default function Sidebar({
               }`}
             >
               <IconList size={18} />
-              <span>{t.nav.queue}</span>
+              <span>{t("nav.queue")}</span>
               {activeTab !== "queue" && queueCount > 0 && (
                 <span className="ml-auto text-xs font-bold bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
                   {queueCount}
@@ -117,7 +115,7 @@ export default function Sidebar({
                 }`}
               >
                 <IconDownload size={18} />
-                <span>Vídeos</span>
+                <span>{t("nav.videos")}</span>
               </button>
               <button
                 onClick={() => setActiveTab("images")}
@@ -126,7 +124,7 @@ export default function Sidebar({
                 }`}
               >
                 <IconPhoto size={18} />
-                <span>Imagens</span>
+                <span>{t("nav.images")}</span>
               </button>
             </div>
           </div>
@@ -134,7 +132,7 @@ export default function Sidebar({
           {/* Conversion Category */}
           <div>
             <h3 className="text-xs font-bold text-surface-400 dark:text-surface-600 uppercase tracking-widest px-4 mb-3">
-              Conversão
+              {t("nav.converter")}
             </h3>
             <div className="space-y-1">
               <button
@@ -144,7 +142,7 @@ export default function Sidebar({
                 }`}
               >
                 <IconTransform size={18} />
-                <span>Converter</span>
+                <span>{t("nav.converter")}</span>
               </button>
             </div>
           </div>
@@ -152,7 +150,7 @@ export default function Sidebar({
           {/* Library Category */}
           <div>
             <h3 className="text-xs font-bold text-surface-400 dark:text-surface-600 uppercase tracking-widest px-4 mb-3">
-              Biblioteca
+              {t("nav.history")}
             </h3>
             <div className="space-y-1">
               <button
@@ -162,7 +160,7 @@ export default function Sidebar({
                 }`}
               >
                 <IconHistory size={18} />
-                <span>Histórico</span>
+                <span>{t("nav.history")}</span>
               </button>
             </div>
           </div>
@@ -170,7 +168,7 @@ export default function Sidebar({
           {/* Community Category */}
           <div>
             <h3 className="text-xs font-bold text-surface-400 dark:text-surface-600 uppercase tracking-widest px-4 mb-3">
-              Comunidade
+              {t("nav.roadmap")}
             </h3>
             <div className="space-y-1">
               <button
@@ -180,7 +178,7 @@ export default function Sidebar({
                 }`}
               >
                 <IconMap2 size={18} />
-                <span>Roadmap</span>
+                <span>{t("nav.roadmap")}</span>
               </button>
             </div>
           </div>
@@ -198,7 +196,7 @@ export default function Sidebar({
               size={18}
               className="text-surface-500 group-hover:text-surface-900 group-hover:dark:text-surface-100 transition-colors"
             />
-            <span>{t.nav.settings}</span>
+            <span>{t("nav.settings")}</span>
           </div>
         </button>
 

@@ -1,0 +1,60 @@
+{
+  "auth": {
+    "auth_failed": "Échec du démarrage de l'authentification.",
+    "cancel": "Annuler",
+    "connect_github": "Connecter GitHub",
+    "copy_and_open": "Copier & Ouvrir GitHub",
+    "description": "Pour voter et suggérer sans quitter l'app, nous devons autoriser DownKingo sur votre GitHub.",
+    "error_title": "Erreur d'Authentification",
+    "invalid_response": "Réponse invalide de GitHub.",
+    "logout": "Déconnexion",
+    "retry": "Réessayer",
+    "starting": "Démarrage...",
+    "timeout": "Timeout ou erreur d'autorisation.",
+    "title": "Connecter GitHub",
+    "waiting_auth": "En attente d'autorisation...",
+    "your_code": "Votre Code:"
+  },
+  "card": {
+    "dislike": "Je n'aime pas",
+    "id": "ID",
+    "like": "J'aime",
+    "url": "URL"
+  },
+  "columns": {
+    "idea": {
+      "label": "Coulisses",
+      "sub": "Idées & Concepts"
+    },
+    "in_progress": {
+      "label": "En Production",
+      "sub": "En cours"
+    },
+    "planned": {
+      "label": "À l'ordre du jour",
+      "sub": "Planifié"
+    },
+    "shipped": {
+      "label": "Livré",
+      "sub": "Terminé"
+    }
+  },
+  "detail": {
+    "back": "retour",
+    "labels": "Labels",
+    "no_description": "Aucune description disponible.",
+    "no_labels": "Aucun label",
+    "project_status": "État du Projet",
+    "view_discussion": "Voir discussion et commenter"
+  },
+  "empty": "Vide",
+  "live": "En direct",
+  "suggestion": {
+    "new": "Nouvelle Suggestion",
+    "placeholder_body": "Décrivez votre idée en détail...",
+    "placeholder_title": "Titre de la suggestion",
+    "submit": "Envoyer Suggestion",
+    "title": "Suggérer Fonctionnalité"
+  },
+  "title": "Développement Ouvert"
+}

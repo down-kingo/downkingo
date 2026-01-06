@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   IconX,
@@ -36,6 +37,7 @@ interface SettingsPanelProps {
 
 // Tab groups for better organization
 interface TabGroup {
+  id?: string;
   label?: string;
   tabs: {
     id: SettingsTab;
@@ -45,44 +47,59 @@ interface TabGroup {
   }[];
 }
 
-const tabGroups: TabGroup[] = [
-  {
-    tabs: [
-      { id: "general", label: "Geral", icon: IconSettings },
-      { id: "appearance", label: "Aparência", icon: IconPalette },
-    ],
-  },
-  {
-    label: "Downloads",
-    tabs: [
-      { id: "video", label: "Vídeos", icon: IconVideo, indent: true },
-      { id: "images", label: "Imagens", icon: IconPhoto, indent: true },
-    ],
-  },
-  {
-    label: "Conversão",
-    tabs: [
+export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
+  const { t } = useTranslation("settings");
+  const [activeTab, setActiveTab] = useState<SettingsTab>("general");
+
+  const tabGroups = useMemo<TabGroup[]>(
+    () => [
       {
-        id: "converter",
-        label: "Converter",
-        icon: IconTransform,
-        indent: true,
+        tabs: [
+          { id: "general", label: t("tabs.general"), icon: IconSettings },
+          { id: "appearance", label: t("tabs.appearance"), icon: IconPalette },
+        ],
+      },
+      {
+        id: "downloads",
+        label: t("categories.downloads"),
+        tabs: [
+          {
+            id: "video",
+            label: t("tabs.video"),
+            icon: IconVideo,
+            indent: true,
+          },
+          {
+            id: "images",
+            label: t("tabs.images"),
+            icon: IconPhoto,
+            indent: true,
+          },
+        ],
+      },
+      {
+        id: "conversion",
+        label: t("categories.conversion"),
+        tabs: [
+          {
+            id: "converter",
+            label: t("tabs.converter"),
+            icon: IconTransform,
+            indent: true,
+          },
+        ],
+      },
+      {
+        tabs: [
+          { id: "shortcuts", label: t("tabs.shortcuts"), icon: IconKeyboard },
+          { id: "about", label: t("tabs.about"), icon: IconInfoCircle },
+        ],
       },
     ],
-  },
-  {
-    tabs: [
-      { id: "shortcuts", label: "Atalhos", icon: IconKeyboard },
-      { id: "about", label: "Sobre", icon: IconInfoCircle },
-    ],
-  },
-];
+    [t]
+  );
 
-// Flat list for header title lookup
-const allTabs = tabGroups.flatMap((g) => g.tabs);
-
-export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
-  const [activeTab, setActiveTab] = useState<SettingsTab>("general");
+  const allTabs = useMemo(() => tabGroups.flatMap((g) => g.tabs), [tabGroups]);
 
   return (
     <AnimatePresence>
@@ -118,7 +135,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                     />
                   </div>
                   <span className="font-semibold text-surface-900 dark:text-white">
-                    Configurações
+                    {t("panel.title")}
                   </span>
                 </div>
               </div>
@@ -130,19 +147,19 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                     {/* Group Label */}
                     {group.label && (
                       <div className="flex items-center gap-2 px-3 py-2">
-                        {group.label === "Downloads" && (
+                        {group.id === "downloads" && (
                           <IconDownload
                             size={14}
                             className="text-surface-400"
                           />
                         )}
-                        {group.label === "Conversão" && (
+                        {group.id === "conversion" && (
                           <IconTransform
                             size={14}
                             className="text-surface-400"
                           />
                         )}
-                        {group.label === "Integração" && (
+                        {group.id === "integration" && (
                           <IconPuzzle size={14} className="text-surface-400" />
                         )}
                         <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">
@@ -200,7 +217,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-white dark:hover:bg-[#27272a] rounded-lg transition-colors"
                 >
                   <IconX size={16} />
-                  <span>Fechar</span>
+                  <span>{t("panel.close")}</span>
                 </button>
               </div>
             </div>

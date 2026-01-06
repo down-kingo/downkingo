@@ -29,21 +29,22 @@ const (
 
 // RoadmapItem represents a single feature or task in the roadmap (frontend contract)
 type RoadmapItem struct {
-	ID            int      `json:"id"`
-	Title         string   `json:"title"`
-	FriendlyTitle string   `json:"friendly_title,omitempty"`
-	Description   string   `json:"description"`
-	Status        Status   `json:"status"`
-	Votes         int      `json:"votes"`
-	VotesUp       int      `json:"votes_up,omitempty"`
-	VotesDown     int      `json:"votes_down,omitempty"`
-	Comments      int      `json:"comments"`
-	URL           string   `json:"url"`
-	Labels        []string `json:"labels"`
-	Author        string   `json:"author"`
-	AuthorAvatar  string   `json:"author_avatar"`
-	CreatedAt     string   `json:"created_at"`
-	ShippedAt     string   `json:"shipped_at,omitempty"`
+	ID            int               `json:"id"`
+	Title         string            `json:"title"`
+	FriendlyTitle string            `json:"friendly_title,omitempty"`
+	TitleI18n     map[string]string `json:"title_i18n,omitempty"`
+	Description   string            `json:"description"`
+	Status        Status            `json:"status"`
+	Votes         int               `json:"votes"`
+	VotesUp       int               `json:"votes_up,omitempty"`
+	VotesDown     int               `json:"votes_down,omitempty"`
+	Comments      int               `json:"comments"`
+	URL           string            `json:"url"`
+	Labels        []string          `json:"labels"`
+	Author        string            `json:"author"`
+	AuthorAvatar  string            `json:"author_avatar"`
+	CreatedAt     string            `json:"created_at"`
+	ShippedAt     string            `json:"shipped_at,omitempty"`
 }
 
 // TokenProvider is a function that returns the current auth token
@@ -244,6 +245,8 @@ func (s *Service) FetchRoadmap() ([]RoadmapItem, error) {
 	useCDN := s.useCDN
 	s.mu.RUnlock()
 
+	logger.Log.Debug().Bool("useCDN", useCDN).Msg("FetchRoadmap: no cache, fetching synchronously")
+
 	if useCDN {
 		return s.fetchFromCDNSync()
 	}
@@ -384,8 +387,7 @@ func (s *Service) fetchFromCDNWithCache() ([]RoadmapItem, error) {
 	// New data - save to SQLite cache
 	if s.cacheRepo != nil && result.Roadmap != nil {
 		if err := s.cacheRepo.Save(result.Roadmap, result.ContentHash, result.ETag); err != nil {
-			// Log but don't fail - cache is optional
-			fmt.Printf("roadmap: failed to save cache: %v\n", err)
+			logger.Log.Warn().Err(err).Msg("failed to save roadmap cache")
 		}
 	}
 
@@ -394,12 +396,15 @@ func (s *Service) fetchFromCDNWithCache() ([]RoadmapItem, error) {
 
 // fetchFromCDNSync fetches from CDN synchronously (for first load)
 func (s *Service) fetchFromCDNSync() ([]RoadmapItem, error) {
+	logger.Log.Debug().Str("url", extractHost(s.config.JSONUrl)).Msg("fetching roadmap from CDN")
 	result, err := s.cdnFetcher.FetchRoadmap("")
 	if err != nil {
+		logger.Log.Warn().Err(err).Msg("CDN fetch failed")
 		return nil, err
 	}
 
 	if result.Roadmap == nil {
+		logger.Log.Warn().Msg("CDN returned empty roadmap")
 		return []RoadmapItem{}, nil
 	}
 
@@ -407,7 +412,9 @@ func (s *Service) fetchFromCDNSync() ([]RoadmapItem, error) {
 
 	// Save to cache
 	if s.cacheRepo != nil {
-		_ = s.cacheRepo.Save(result.Roadmap, result.ContentHash, result.ETag)
+		if err := s.cacheRepo.Save(result.Roadmap, result.ContentHash, result.ETag); err != nil {
+			logger.Log.Warn().Err(err).Msg("failed to persist roadmap cache")
+		}
 	}
 
 	s.updateMemoryCache(items)
@@ -617,7 +624,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 		items = append(items, RoadmapItem{
 			ID:           content.Number,
 			Title:        content.Title,
-			Description:  truncateDescription(content.Body),
+			Description:  content.Body,
 			Status:       status,
 			Votes:        content.Reactions.TotalCount,
 			VotesUp:      content.Reactions.TotalCount,
@@ -636,8 +643,18 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 
 // VoteOnIssue adds a thumbs-up reaction to an issue (direct GitHub API)
 func (s *Service) VoteOnIssue(token string, issueID int) error {
+	return s.addReaction(token, issueID, "+1")
+}
+
+// VoteDownOnIssue adds a thumbs-down reaction to an issue (direct GitHub API)
+func (s *Service) VoteDownOnIssue(token string, issueID int) error {
+	return s.addReaction(token, issueID, "-1")
+}
+
+// addReaction is a helper that adds a reaction to an issue
+func (s *Service) addReaction(token string, issueID int, reaction string) error {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions", s.repoOwner, s.repoName, issueID)
-	body := map[string]string{"content": "+1"}
+	body := map[string]string{"content": reaction}
 	jsonBody, _ := json.Marshal(body)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
@@ -652,7 +669,7 @@ func (s *Service) VoteOnIssue(token string, issueID int) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		return fmt.Errorf("vote failed: status %d", resp.StatusCode)
+		return fmt.Errorf("reaction failed: status %d", resp.StatusCode)
 	}
 
 	s.invalidateCache()
@@ -694,14 +711,6 @@ func (s *Service) invalidateCache() {
 	s.mu.Lock()
 	s.lastFetch = time.Time{}
 	s.mu.Unlock()
-}
-
-func truncateDescription(desc string) string {
-	const maxLength = 150
-	if len(desc) > maxLength {
-		return desc[:maxLength] + "..."
-	}
-	return desc
 }
 
 func parseDate(dateStr string) string {

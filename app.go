@@ -481,6 +481,13 @@ func (a *App) VoteFeature(issueID int) error {
 	return a.roadmap.VoteOnIssue(a.auth.Token, issueID)
 }
 
+func (a *App) VoteDownFeature(issueID int) error {
+	if a.auth.Token == "" {
+		return fmt.Errorf("authentication required")
+	}
+	return a.roadmap.VoteDownOnIssue(a.auth.Token, issueID)
+}
+
 func (a *App) SuggestFeature(title, desc string) error {
 	if a.auth.Token == "" {
 		return fmt.Errorf("authentication required")

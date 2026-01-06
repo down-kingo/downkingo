@@ -4,6 +4,8 @@ import { NeedsDependencies } from "../wailsjs/go/main/App";
 import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
 import Setup from "./pages/Setup";
 import Home from "./pages/Home";
+import { useSettingsStore } from "./stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 // Payload enviado pelo backend no evento app:ready
 interface AppReadyPayload {
@@ -15,6 +17,16 @@ function App() {
   const unsubscribeRef = useRef<(() => void) | null>(null);
   const mountedRef = useRef(true);
   const eventReceivedRef = useRef(false); // Track if event was already received
+
+  const { language } = useSettingsStore();
+  const { i18n } = useTranslation();
+
+  // Sincroniza i18n com settings store ao iniciar
+  useEffect(() => {
+    if (i18n.language !== language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, i18n]);
 
   useEffect(() => {
     mountedRef.current = true;

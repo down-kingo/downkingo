@@ -1,6 +1,7 @@
 package roadmap
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -78,9 +79,8 @@ func (f *CDNFetcher) FetchRoadmap(previousETag string) (*FetchRoadmapResult, err
 
 	req.Header.Set("User-Agent", "DownKingo-Desktop/1.0")
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Accept-Encoding", "gzip, br")
-
-	// Conditional request - only download if changed
+	// request gzip transparently if we don't set this header manually.
+	// req.Header.Set("Accept-Encoding", "gzip, br") <- REMOVED to avoid receiving Brotli (br) which Go doesn't natively decode
 	if previousETag != "" {
 		req.Header.Set("If-None-Match", previousETag)
 	}
@@ -107,8 +107,23 @@ func (f *CDNFetcher) FetchRoadmap(previousETag string) (*FetchRoadmapResult, err
 		return nil, fmt.Errorf("read roadmap body: %w", err)
 	}
 
+	// Sanitize body: Remove ANSI escape codes (colors) that might have polluted the file
+	// This happens if the GitHub Action injected terminal colors into the file
+	body = bytes.ReplaceAll(body, []byte{0x1b}, []byte{})
+	// Also strip potential leading/trailing whitespace
+	body = bytes.TrimSpace(body)
+
 	var roadmap CDNRoadmap
 	if err := json.Unmarshal(body, &roadmap); err != nil {
+		// Log snippet (UTF-8 safe) for debugging malformed responses
+		runes := []rune(string(body))
+		if len(runes) > 80 {
+			runes = runes[:80]
+		}
+		logger.Log.Warn().
+			Str("snippet", string(runes)).
+			Err(err).
+			Msg("failed to decode CDN roadmap response")
 		return nil, fmt.Errorf("decode roadmap: %w", err)
 	}
 

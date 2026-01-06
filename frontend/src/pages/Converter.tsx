@@ -17,6 +17,7 @@ import {
   IconSparkles,
   IconFileDescription,
 } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 import {
   SelectVideoFile,
@@ -73,6 +74,8 @@ function getFileName(path: string): string {
 }
 
 export default function Converter() {
+  const { t } = useTranslation("converter");
+
   // Tab state
   const [activeTab, setActiveTab] = useState<ConversionTab>("video-to-video");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -143,38 +146,38 @@ export default function Converter() {
   const tabs = [
     {
       id: "video-to-video" as ConversionTab,
-      label: "Converter Vídeo",
-      shortLabel: "Vídeo",
+      label: t("tabs.video_converter"),
+      shortLabel: t("tabs.video_short"),
       icon: IconVideo,
     },
     {
       id: "video-to-audio" as ConversionTab,
-      label: "Extrair Áudio",
-      shortLabel: "Áudio",
+      label: t("tabs.audio_extractor"),
+      shortLabel: t("tabs.audio_short"),
       icon: IconMusic,
     },
     {
       id: "image-to-image" as ConversionTab,
-      label: "Converter Imagem",
-      shortLabel: "Imagem",
+      label: t("tabs.image_converter"),
+      shortLabel: t("tabs.image_short"),
       icon: IconPhoto,
     },
     {
       id: "compress-video" as ConversionTab,
-      label: "Comprimir Vídeo",
-      shortLabel: "Comp. Vídeo",
+      label: t("tabs.video_compressor"),
+      shortLabel: t("tabs.video_comp_short"),
       icon: IconFileZip,
     },
     {
       id: "compress-image" as ConversionTab,
-      label: "Comprimir Imagem",
-      shortLabel: "Comp. Img",
+      label: t("tabs.image_compressor"),
+      shortLabel: t("tabs.image_comp_short"),
       icon: IconFileZip,
     },
     {
       id: "remove-bg" as ConversionTab,
-      label: "Remover Fundo",
-      shortLabel: "Fundo",
+      label: t("tabs.remove_bg"),
+      shortLabel: t("tabs.bg_short"),
       icon: IconWand,
     },
   ];
@@ -212,7 +215,7 @@ export default function Converter() {
   // Handle conversion
   const handleConvert = async () => {
     if (!inputPath) {
-      setError("Selecione um arquivo de entrada");
+      setError(t("error_select_input"));
       return;
     }
 
@@ -279,12 +282,12 @@ export default function Converter() {
           break;
 
         default:
-          throw new Error("Tipo de conversão não suportado");
+          throw new Error(t("error_unsupported_type"));
       }
 
       setResult(conversionResult);
       if (!conversionResult.success) {
-        setError(conversionResult.errorMessage || "Erro desconhecido");
+        setError(conversionResult.errorMessage || t("error_unknown"));
       }
     } catch (err) {
       setError(String(err));
@@ -343,10 +346,10 @@ export default function Converter() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-xl font-display font-bold text-surface-900 dark:text-white">
-                Conversão
+                {t("title")}
               </h1>
               <p className="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-                Converta e processe arquivos de mídia localmente
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -440,8 +443,8 @@ export default function Converter() {
                         </div>
                         <div>
                           <p className="font-medium text-sm text-surface-700 dark:text-surface-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                            Selecionar Arquivo de{" "}
-                            {isVideoTab ? "Vídeo" : "Imagem"}
+                            {t("select_file_prefix")}{" "}
+                            {isVideoTab ? t("video") : t("image")}
                           </p>
                           <p className="text-xs text-surface-400">
                             {isVideoTab
@@ -473,7 +476,7 @@ export default function Converter() {
                       {activeTab === "video-to-video" && (
                         <div className="space-y-4">
                           <div>
-                            <SectionHeader>Formato de Saída</SectionHeader>
+                            <SectionHeader>{t("output_format")}</SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {["mp4", "mkv", "webm", "avi", "mov"].map(
                                 (fmt) => (
@@ -490,14 +493,34 @@ export default function Converter() {
                           </div>
 
                           <div>
-                            <SectionHeader>Qualidade (CRF)</SectionHeader>
+                            <SectionHeader>{t("quality_crf")}</SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
-                                { id: "lossless", label: "Lossless", crf: "0" },
-                                { id: "high", label: "Alta", crf: "18" },
-                                { id: "medium", label: "Média", crf: "23" },
-                                { id: "low", label: "Baixa", crf: "28" },
-                                { id: "tiny", label: "Mínima", crf: "35" },
+                                {
+                                  id: "lossless",
+                                  label: t("quality.lossless"),
+                                  crf: "0",
+                                },
+                                {
+                                  id: "high",
+                                  label: t("quality.high"),
+                                  crf: "18",
+                                },
+                                {
+                                  id: "medium",
+                                  label: t("quality.medium"),
+                                  crf: "23",
+                                },
+                                {
+                                  id: "low",
+                                  label: t("quality.low"),
+                                  crf: "28",
+                                },
+                                {
+                                  id: "tiny",
+                                  label: t("quality.tiny"),
+                                  crf: "35",
+                                },
                               ].map((q) => (
                                 <PillButton
                                   key={q.id}
@@ -523,7 +546,7 @@ export default function Converter() {
                                   showAdvanced ? "rotate-180" : ""
                                 }`}
                               />
-                              Mais opções
+                              {t("more_options")}
                             </button>
 
                             <AnimatePresence>
@@ -537,20 +560,29 @@ export default function Converter() {
                                   <div className="pt-3 space-y-3">
                                     <div>
                                       <SectionHeader>
-                                        Preset de Encoding
+                                        {t("encoding_preset")}
                                       </SectionHeader>
                                       <div className="flex flex-wrap gap-1.5">
                                         {[
                                           {
                                             id: "ultrafast",
-                                            label: "Ultra Rápido",
+                                            label: t("preset.ultrafast"),
                                           },
-                                          { id: "fast", label: "Rápido" },
-                                          { id: "medium", label: "Médio" },
-                                          { id: "slow", label: "Lento" },
+                                          {
+                                            id: "fast",
+                                            label: t("preset.fast"),
+                                          },
+                                          {
+                                            id: "medium",
+                                            label: t("preset.medium"),
+                                          },
+                                          {
+                                            id: "slow",
+                                            label: t("preset.slow"),
+                                          },
                                           {
                                             id: "veryslow",
-                                            label: "Muito Lento",
+                                            label: t("preset.veryslow"),
                                           },
                                         ].map((p) => (
                                           <PillButton
@@ -578,7 +610,7 @@ export default function Converter() {
                                         htmlFor="keepAudio"
                                         className="text-xs font-medium text-surface-700 dark:text-surface-300"
                                       >
-                                        Manter trilha de áudio
+                                        {t("keep_audio_track")}
                                       </label>
                                     </div>
                                   </div>
@@ -593,27 +625,39 @@ export default function Converter() {
                       {activeTab === "video-to-audio" && (
                         <div className="space-y-4">
                           <div>
-                            <SectionHeader>Formato de Áudio</SectionHeader>
+                            <SectionHeader>{t("audio_format")}</SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
-                                { id: "mp3", label: "MP3", desc: "Universal" },
+                                {
+                                  id: "mp3",
+                                  label: "MP3",
+                                  desc: t("format_desc.universal"),
+                                },
                                 {
                                   id: "aac",
                                   label: "AAC",
-                                  desc: "Alta qualidade",
+                                  desc: t("format_desc.high_quality"),
                                 },
-                                { id: "flac", label: "FLAC", desc: "Lossless" },
+                                {
+                                  id: "flac",
+                                  label: "FLAC",
+                                  desc: t("format_desc.lossless"),
+                                },
                                 {
                                   id: "wav",
                                   label: "WAV",
-                                  desc: "Sem compressão",
+                                  desc: t("format_desc.uncompressed"),
                                 },
                                 {
                                   id: "ogg",
                                   label: "OGG",
-                                  desc: "Open source",
+                                  desc: t("format_desc.opensource"),
                                 },
-                                { id: "opus", label: "OPUS", desc: "Moderno" },
+                                {
+                                  id: "opus",
+                                  label: "OPUS",
+                                  desc: t("format_desc.modern"),
+                                },
                               ].map((fmt) => (
                                 <PillButton
                                   key={fmt.id}
@@ -628,27 +672,29 @@ export default function Converter() {
                           </div>
 
                           <div>
-                            <SectionHeader>Qualidade (Bitrate)</SectionHeader>
+                            <SectionHeader>
+                              {t("quality_bitrate")}
+                            </SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
                                 {
                                   id: "low",
-                                  label: "Baixa",
+                                  label: t("quality.low"),
                                   bitrate: "128 kbps",
                                 },
                                 {
                                   id: "medium",
-                                  label: "Média",
+                                  label: t("quality.medium"),
                                   bitrate: "192 kbps",
                                 },
                                 {
                                   id: "high",
-                                  label: "Alta",
+                                  label: t("quality.high"),
                                   bitrate: "256 kbps",
                                 },
                                 {
                                   id: "best",
-                                  label: "Máxima",
+                                  label: t("quality.max"),
                                   bitrate: "320 kbps",
                                 },
                               ].map((q) => (
@@ -671,25 +717,33 @@ export default function Converter() {
                       {activeTab === "image-to-image" && (
                         <div className="space-y-4">
                           <div>
-                            <SectionHeader>Formato de Saída</SectionHeader>
+                            <SectionHeader>{t("output_format")}</SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
                                 {
                                   id: "webp",
                                   label: "WebP",
-                                  desc: "Moderno, menor",
+                                  desc: t("format_desc.modern_smaller"),
                                 },
                                 {
                                   id: "avif",
                                   label: "AVIF",
-                                  desc: "Muito menor",
+                                  desc: t("format_desc.much_smaller"),
                                 },
-                                { id: "jpg", label: "JPEG", desc: "Universal" },
-                                { id: "png", label: "PNG", desc: "Lossless" },
+                                {
+                                  id: "jpg",
+                                  label: "JPEG",
+                                  desc: t("format_desc.universal"),
+                                },
+                                {
+                                  id: "png",
+                                  label: "PNG",
+                                  desc: t("format_desc.lossless"),
+                                },
                                 {
                                   id: "bmp",
                                   label: "BMP",
-                                  desc: "Sem compressão",
+                                  desc: t("format_desc.uncompressed"),
                                 },
                               ].map((fmt) => (
                                 <PillButton
@@ -706,7 +760,7 @@ export default function Converter() {
 
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <SectionHeader>Qualidade</SectionHeader>
+                              <SectionHeader>{t("quality")}</SectionHeader>
                               <span className="text-xs font-semibold text-surface-900 dark:text-white">
                                 {imageQuality}%
                               </span>
@@ -722,8 +776,8 @@ export default function Converter() {
                               className="w-full h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full appearance-none cursor-pointer accent-primary-600"
                             />
                             <div className="flex justify-between text-[10px] text-surface-400 mt-1">
-                              <span>Menor arquivo</span>
-                              <span>Melhor qualidade</span>
+                              <span>{t("smaller_file")}</span>
+                              <span>{t("better_quality")}</span>
                             </div>
                           </div>
                         </div>
@@ -733,32 +787,34 @@ export default function Converter() {
                       {activeTab === "compress-video" && (
                         <div className="space-y-4">
                           <div>
-                            <SectionHeader>Nível de Compressão</SectionHeader>
+                            <SectionHeader>
+                              {t("compression_level")}
+                            </SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
                                 {
                                   id: "high",
-                                  label: "Leve",
+                                  label: t("compression.light"),
                                   crf: "18",
-                                  desc: "Alta qualidade",
+                                  desc: t("format_desc.high_quality"),
                                 },
                                 {
                                   id: "medium",
-                                  label: "Médio",
+                                  label: t("compression.medium"),
                                   crf: "23",
-                                  desc: "Equilibrado",
+                                  desc: t("compression.balanced"),
                                 },
                                 {
                                   id: "low",
-                                  label: "Forte",
+                                  label: t("compression.strong"),
                                   crf: "28",
-                                  desc: "Arquivo menor",
+                                  desc: t("compression.smaller_file"),
                                 },
                                 {
                                   id: "tiny",
-                                  label: "Máximo",
+                                  label: t("compression.max"),
                                   crf: "35",
-                                  desc: "Muito menor",
+                                  desc: t("compression.much_smaller"),
                                 },
                               ].map((q) => (
                                 <PillButton
@@ -774,15 +830,16 @@ export default function Converter() {
                           </div>
 
                           <div>
-                            <SectionHeader>
-                              Velocidade de Encoding
-                            </SectionHeader>
+                            <SectionHeader>{t("encoding_speed")}</SectionHeader>
                             <div className="flex flex-wrap gap-1.5">
                               {[
-                                { id: "ultrafast", label: "Ultra Rápido" },
-                                { id: "fast", label: "Rápido" },
-                                { id: "medium", label: "Médio" },
-                                { id: "slow", label: "Lento" },
+                                {
+                                  id: "ultrafast",
+                                  label: t("preset.ultrafast"),
+                                },
+                                { id: "fast", label: t("preset.fast") },
+                                { id: "medium", label: t("preset.medium") },
+                                { id: "slow", label: t("preset.slow") },
                               ].map((p) => (
                                 <PillButton
                                   key={p.id}
@@ -802,7 +859,7 @@ export default function Converter() {
                         <div className="space-y-4">
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <SectionHeader>Qualidade</SectionHeader>
+                              <SectionHeader>{t("quality")}</SectionHeader>
                               <span className="text-xs font-semibold text-surface-900 dark:text-white">
                                 {imageQuality}%
                               </span>
@@ -818,8 +875,8 @@ export default function Converter() {
                               className="w-full h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full appearance-none cursor-pointer accent-primary-600"
                             />
                             <div className="flex justify-between text-[10px] text-surface-400 mt-1">
-                              <span>Compressão máxima</span>
-                              <span>Qualidade máxima</span>
+                              <span>{t("max_compression")}</span>
+                              <span>{t("max_quality")}</span>
                             </div>
                           </div>
                         </div>
@@ -837,11 +894,10 @@ export default function Converter() {
                                 />
                                 <div className="flex-1">
                                   <h4 className="font-semibold text-sm text-surface-900 dark:text-white mb-1">
-                                    Rembg não instalado
+                                    {t("rembg.not_installed")}
                                   </h4>
                                   <p className="text-xs text-surface-600 dark:text-surface-400 mb-3">
-                                    Instale o Rembg para usar remoção de fundo
-                                    com IA. Instalação automática.
+                                    {t("rembg.install_desc")}
                                   </p>
                                   <div className="flex flex-wrap items-center gap-2">
                                     <motion.button
@@ -857,12 +913,12 @@ export default function Converter() {
                                             size={14}
                                             className="animate-spin"
                                           />
-                                          <span>Instalando...</span>
+                                          <span>{t("rembg.installing")}</span>
                                         </>
                                       ) : (
                                         <>
                                           <IconSparkles size={14} />
-                                          <span>Instalar (~8 MB)</span>
+                                          <span>{t("rembg.install")}</span>
                                         </>
                                       )}
                                     </motion.button>
@@ -874,7 +930,7 @@ export default function Converter() {
                                       }
                                       className="px-3 py-1.5 text-pink-600 dark:text-pink-400 font-medium rounded-lg hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors text-xs"
                                     >
-                                      Saber mais
+                                      {t("rembg.learn_more")}
                                     </button>
                                   </div>
                                 </div>
@@ -882,7 +938,7 @@ export default function Converter() {
                             </div>
                           ) : (
                             <div>
-                              <SectionHeader>Modelo de IA</SectionHeader>
+                              <SectionHeader>{t("ai_model")}</SectionHeader>
                               <div className="grid gap-2">
                                 {bgModels.map((model) => (
                                   <motion.button
@@ -934,7 +990,7 @@ export default function Converter() {
         <div className="w-72 lg:w-80 shrink-0 bg-white dark:bg-surface-900 border-l border-surface-200 dark:border-surface-800 flex flex-col z-20 shadow-xl shadow-black/5">
           <div className="p-4 flex flex-col h-full">
             <h3 className="font-semibold text-sm text-surface-900 dark:text-white mb-4">
-              Resumo e Ação
+              {t("summary_action")}
             </h3>
 
             {/* Action Section */}
@@ -942,7 +998,7 @@ export default function Converter() {
               {/* Output Directory Moved Here */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-semibold text-surface-400 uppercase tracking-wider">
-                  Destino
+                  {t("destination")}
                 </label>
                 <button
                   onClick={handleSelectOutput}
@@ -957,13 +1013,15 @@ export default function Converter() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-surface-700 dark:text-surface-300 truncate">
-                      {outputDir ? getFileName(outputDir) : "Pasta original"}
+                      {outputDir
+                        ? getFileName(outputDir)
+                        : t("original_folder")}
                     </p>
                   </div>
                   <IconChevronDown size={14} className="text-surface-400" />
                 </button>
                 <p className="text-[10px] text-surface-400 px-1">
-                  Onde o arquivo convertido será salvo.
+                  {t("destination_desc")}
                 </p>
               </div>
 
@@ -974,7 +1032,7 @@ export default function Converter() {
                 {isProcessing && (
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-xs font-medium text-primary-600 dark:text-primary-400">
-                      <span>Processando...</span>
+                      <span>{t("processing")}</span>
                       <IconLoader2 size={12} className="animate-spin" />
                     </div>
                     <div className="h-1 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
@@ -1004,11 +1062,11 @@ export default function Converter() {
                   className="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 dark:disabled:bg-surface-800 disabled:text-surface-400 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-primary-500/25 disabled:shadow-none flex items-center justify-center gap-2 transition-all text-sm"
                 >
                   {isProcessing ? (
-                    <span>Aguarde...</span>
+                    <span>{t("wait")}</span>
                   ) : (
                     <>
                       <IconPlayerPlay size={16} className="fill-current" />
-                      <span>Iniciar</span>
+                      <span>{t("start")}</span>
                     </>
                   )}
                 </motion.button>
@@ -1044,18 +1102,22 @@ export default function Converter() {
                   >
                     <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-bold text-xs">
                       <IconCheck size={14} />
-                      <span>Concluído com Sucesso</span>
+                      <span>{t("success")}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-[10px]">
                       <div className="bg-white/60 dark:bg-black/20 p-1.5 rounded">
-                        <span className="block text-surface-500">Antes</span>
+                        <span className="block text-surface-500">
+                          {t("before")}
+                        </span>
                         <span className="font-mono font-medium">
                           {formatSize(result.inputSize)}
                         </span>
                       </div>
                       <div className="bg-white/60 dark:bg-black/20 p-1.5 rounded">
-                        <span className="block text-green-600">Depois</span>
+                        <span className="block text-green-600">
+                          {t("after")}
+                        </span>
                         <span className="font-mono font-bold text-green-700 dark:text-green-400">
                           {formatSize(result.outputSize)}
                         </span>
@@ -1064,7 +1126,9 @@ export default function Converter() {
 
                     {result.compression !== 0 && (
                       <div className="text-center text-[10px] font-medium text-green-800 dark:text-green-300 pt-0.5">
-                        {result.compression > 0 ? "Economia de" : "Aumento de"}{" "}
+                        {result.compression > 0
+                          ? t("savings_of")
+                          : t("increase_of")}{" "}
                         {Math.abs(result.compression).toFixed(1)}%
                       </div>
                     )}

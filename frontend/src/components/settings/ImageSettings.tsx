@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { GetSettings, SaveSettings } from "../../../wailsjs/go/main/App";
+import { useTranslation, Trans } from "react-i18next";
 
 // Components locais
 const SettingItem = ({
@@ -37,6 +38,7 @@ const SettingItem = ({
 
 export default function ImageSettings() {
   const { imageFormat, imageQuality, setSetting } = useSettingsStore();
+  const { t } = useTranslation("settings");
 
   // Sync com backend
   useEffect(() => {
@@ -79,24 +81,26 @@ export default function ImageSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconPhoto size={14} />
-          Formato de Saída
+          {t("image_settings.output_format")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconPhoto}
-            label="Formato de Conversão"
-            desc="Converter imagens automaticamente ao baixar"
+            label={t("image_settings.conversion_format")}
+            desc={t("image_settings.conversion_desc")}
           >
             <select
               value={imageFormat}
               onChange={(e) => setSetting("imageFormat", e.target.value as any)}
               className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-600 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
             >
-              <option value="original">Original (Sem conversão)</option>
-              <option value="jpg">JPEG (Compatível)</option>
-              <option value="png">PNG (Sem perdas)</option>
-              <option value="webp">WebP (Moderno)</option>
-              <option value="avif">AVIF (Melhor compressão)</option>
+              <option value="original">
+                {t("image_settings.formats.original")}
+              </option>
+              <option value="jpg">{t("image_settings.formats.jpg")}</option>
+              <option value="png">{t("image_settings.formats.png")}</option>
+              <option value="webp">{t("image_settings.formats.webp")}</option>
+              <option value="avif">{t("image_settings.formats.avif")}</option>
             </select>
           </SettingItem>
         </div>
@@ -107,18 +111,18 @@ export default function ImageSettings() {
         <section>
           <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
             <IconSparkles size={14} />
-            Qualidade
+            {t("image_settings.quality_title")}
           </h3>
           <div className="space-y-3">
             <SettingItem
               icon={IconSparkles}
-              label="Nível de Qualidade"
+              label={t("image_settings.quality_level")}
               desc={`${imageQuality}% — ${
                 imageQuality > 80
-                  ? "Alta qualidade"
+                  ? t("image_settings.quality_high")
                   : imageQuality > 50
-                  ? "Qualidade média"
-                  : "Baixa qualidade (menor tamanho)"
+                  ? t("image_settings.quality_medium")
+                  : t("image_settings.quality_low")
               }`}
             >
               <div className="flex items-center gap-4 w-32 sm:w-48">
@@ -145,16 +149,10 @@ export default function ImageSettings() {
           <IconPhoto size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-              Dica de Formatos
+              {t("image_settings.tips_title")}
             </p>
             <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-              <strong>JPEG:</strong> Menor tamanho, compatível com tudo.
-              <br />
-              <strong>PNG:</strong> Sem perdas, ideal para prints e arte.
-              <br />
-              <strong>WebP:</strong> Moderno, ótimo balanço tamanho/qualidade.
-              <br />
-              <strong>AVIF:</strong> Melhor compressão, suporte limitado.
+              <Trans i18nKey="image_settings.tips_content" ns="settings" />
             </p>
           </div>
         </div>

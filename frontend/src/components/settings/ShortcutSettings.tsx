@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { IconKeyboard, IconCommand } from "@tabler/icons-react";
 import { useSettingsStore, ShortcutsConfig } from "../../stores/settingsStore";
-import { translations } from "../../translations";
+import { useTranslation } from "react-i18next";
 
 export default function ShortcutSettings() {
-  const { shortcuts, setShortcuts, language } = useSettingsStore();
-  const t = translations[language].settings.shortcuts;
+  const { shortcuts, setShortcuts } = useSettingsStore();
+  const { t } = useTranslation("settings");
 
   const [recordingKey, setRecordingKey] = useState<
     keyof ShortcutsConfig | null
@@ -43,22 +43,22 @@ export default function ShortcutSettings() {
   }, [recordingKey, shortcuts, setShortcuts]);
 
   const shortcutItems: { key: keyof ShortcutsConfig; label: string }[] = [
-    { key: "focusInput", label: t.focus_input },
-    { key: "openSettings", label: t.open_settings },
-    { key: "openQueue", label: t.open_queue },
-    { key: "openHistory", label: t.open_history },
-    { key: "openDownloads", label: t.open_downloads },
-    { key: "openTerminal", label: t.open_terminal },
+    { key: "focusInput", label: t("shortcuts.focus_input") },
+    { key: "openSettings", label: t("shortcuts.open_settings") },
+    { key: "openQueue", label: t("shortcuts.open_queue") },
+    { key: "openHistory", label: t("shortcuts.open_history") },
+    { key: "openDownloads", label: t("shortcuts.open_downloads") },
+    { key: "openTerminal", label: t("shortcuts.open_terminal") },
   ];
 
   return (
     <div className="space-y-6">
       <div className="space-y-1">
         <h3 className="text-lg font-medium text-surface-900 dark:text-white">
-          {t.title}
+          {t("shortcuts.title")}
         </h3>
         <p className="text-sm text-surface-500 dark:text-surface-400">
-          {t.desc}
+          {t("shortcuts.desc")}
         </p>
       </div>
 
@@ -86,7 +86,9 @@ export default function ShortcutSettings() {
               }`}
             >
               {recordingKey === item.key ? (
-                <span className="animate-pulse">{t.press_key}</span>
+                <span className="animate-pulse">
+                  {t("shortcuts.press_key")}
+                </span>
               ) : (
                 <div className="flex items-center justify-center gap-1.5">
                   <IconCommand size={14} className="opacity-50" />

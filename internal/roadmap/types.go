@@ -1,6 +1,8 @@
 package roadmap
 
-import "time"
+import (
+	"time"
+)
 
 // CDN Response Types (external contract)
 

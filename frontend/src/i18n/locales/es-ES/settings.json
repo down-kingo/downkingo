@@ -1,0 +1,181 @@
+{
+  "about": {
+    "copyright": "Todos los derechos reservados.",
+    "description": "Una herramienta potente y sencilla para descargar videos e imágenes de tus redes sociales favoritas.",
+    "documentation": "Documentación",
+    "documentation_desc": "Guías de uso y preguntas frecuentes",
+    "donate": "Donar",
+    "github": "GitHub",
+    "github_desc": "Código fuente y contribuciones",
+    "resources": "Recursos",
+    "support": "Apoya el Proyecto",
+    "support_desc": "Ayuda a mantener el desarrollo activo",
+    "title": "Acerca de",
+    "version": "Versión"
+  },
+  "appearance": {
+    "desc": "Personaliza la visualización.",
+    "theme": "Tema",
+    "theme_dark": "Oscuro",
+    "theme_light": "Claro",
+    "theme_system": "Sistema",
+    "title": "Apariencia"
+  },
+  "appearance_settings": {
+    "accent_color": "Color de resaltado",
+    "accent_desc": "Personaliza el color de la interfaz principal",
+    "layout": "Disposición",
+    "menu_desc": "Elija cómo navegar por la aplicación",
+    "menu_layout": "Diseño del menú",
+    "sidebar": "Lado",
+    "style_theme": "Estilo y tema",
+    "system_theme": "Tema del sistema",
+    "theme_desc": "Cambiar entre modo claro y oscuro",
+    "topbar": "Más alto"
+  },
+  "aria2c_settings": {
+    "component": "Componente",
+    "connections": "Conexiones",
+    "delete_btn": "Eliminar del sistema",
+    "deleting": "A excepción de...",
+    "install_btn": "Instalar (~3MB)",
+    "installed": "Instalado",
+    "installing": "Instalando...",
+    "name": "aria2c",
+    "not_installed": "Requiere instalación",
+    "path_label": "Ubicación",
+    "status_active": "Activo: descargas aceleradas",
+    "status_inactive": "Acelera las descargas con conexiones paralelas",
+    "status_label": "Estado",
+    "title": "Descargas aceleradas"
+  },
+  "categories": {
+    "conversion": "Conversión",
+    "downloads": "Descargas",
+    "integration": "Integración"
+  },
+  "converter_settings": {
+    "behavior_title": "Comportamiento",
+    "notify_finish": "Notificar finalización",
+    "notify_finish_desc": "Mostrar una notificación del brindis cuando haya terminado",
+    "open_folder": "Abrir carpeta automáticamente",
+    "open_folder_desc": "Abra el directorio de salida cuando se complete la conversión"
+  },
+  "downloads": {
+    "remux": "Convertir a MP4 (Remux)",
+    "remux_desc": "Asegura compatibilidad sin recodificar",
+    "skip_existing": "Omitir archivos existentes",
+    "thumbnail": "Incrustar Miniatura",
+    "title": "Opciones de Descarga"
+  },
+  "image_settings": {
+    "conversion_desc": "Convertir imágenes automáticamente al descargar",
+    "conversion_format": "Formato de conversión",
+    "formats": {
+      "avif": "AVIF (Mejor compresión)",
+      "jpg": "JPEG (Compatible)",
+      "original": "Original (sin conversión)",
+      "png": "PNG (sin pérdidas)",
+      "webp": "WebP (moderno)"
+    },
+    "output_format": "Formato de salida",
+    "quality_high": "Alta calidad",
+    "quality_level": "Nivel de calidad",
+    "quality_low": "Baja calidad (tamaño más pequeño)",
+    "quality_medium": "Calidad media",
+    "quality_title": "Calidad",
+    "tips_content": "<strong>JPEG:</strong> Tamaño más pequeño, compatible con todo.<br /><strong>PNG:</strong> Sin pérdidas, ideal para impresiones y arte.<br /><strong>WebP:</strong> Moderno, excelente equilibrio tamaño/calidad.<br /><strong>AVIF:</strong> Mejor compresión, soporte limitado.",
+    "tips_title": "Consejo de formato"
+  },
+  "language": {
+    "select": "Idioma de la interfaz",
+    "title": "Idioma"
+  },
+  "panel": {
+    "close": "para cerrar",
+    "title": "Ajustes"
+  },
+  "privacy": {
+    "anonymous": "Modo Incógnito",
+    "anonymous_desc": "No guardar historial de descargas",
+    "title": "Privacidad"
+  },
+  "rembg_settings": {
+    "core": "Núcleo Rembg",
+    "install_btn": "Instalar",
+    "installed": "Disponible para su uso",
+    "installing": "Instalando...",
+    "manage": "Administrar",
+    "model_default": "Modelo estándar",
+    "model_human_seg": "Mon humano",
+    "model_isnet": "IS-Net",
+    "model_silueta": "Silueta",
+    "model_u2net": "U²-Net (Estándar)",
+    "model_u2netp": "U²-Net Lite (Rápido)",
+    "not_installed_desc": "Módulo de eliminación de fondo",
+    "removing": "Eliminando...",
+    "status_installed": "Instalado",
+    "title": "Inteligencia Artificial (Rembg)",
+    "uninstall": "Desinstalar"
+  },
+  "sections": {
+    "about": "Acerca de",
+    "appearance": "Apariencia",
+    "converter": "Conversión",
+    "image": "Imagen",
+    "privacy": "Privacidad",
+    "regional": "Regional",
+    "shortcuts": "Atajos",
+    "storage": "Almacenamiento",
+    "system": "Sistema",
+    "video": "Video"
+  },
+  "shortcuts": {
+    "desc": "Personalizar atajos de teclado.",
+    "focus_input": "Enfocar Entrada URL",
+    "open_downloads": "Abrir Descargas",
+    "open_history": "Abrir Historial",
+    "open_queue": "Abrir Cola",
+    "open_settings": "Abrir Configuración",
+    "open_terminal": "Abrir Terminal",
+    "press_key": "Presione teclas...",
+    "title": "Atajos"
+  },
+  "storage": {
+    "change_btn": "Cambiar Carpeta",
+    "desc": "Dónde guardar los archivos.",
+    "path_image_label": "Carpeta de Imágenes",
+    "path_label": "Ubicación",
+    "path_video_label": "Carpeta de Videos",
+    "title": "Almacenamiento"
+  },
+  "system": {
+    "channel": "Canal de Actualización",
+    "clipboard_monitor": "Monitorear Portapapeles",
+    "clipboard_monitor_desc": "Detectar enlaces copiados y sugerir descarga",
+    "start_windows": "Iniciar con Windows",
+    "start_windows_desc": "Abrir automáticamente al encender",
+    "title": "Sistema",
+    "update_ytdlp": "Mantener yt-dlp actualizado"
+  },
+  "tabs": {
+    "about": "En",
+    "appearance": "Apariencia",
+    "converter": "Convertir",
+    "general": "General",
+    "images": "Imágenes",
+    "shortcuts": "Atajos",
+    "video": "Vídeos"
+  },
+  "title": "Configuración",
+  "video_settings": {
+    "compatibility": "Compatibilidad de vídeo",
+    "compatibility_modern": "🚀 Moderno (VP9/Opus)",
+    "compatibility_modern_desc": "VP9 + Opus: la mejor calidad, requiere VLC",
+    "compatibility_universal": "🎬 Universal (H.264/AAC)",
+    "compatibility_universal_desc": "H.264 + AAC: funciona en TODOS los reproductores",
+    "format_quality": "Formato y calidad",
+    "remux": "Remux de vídeo",
+    "remux_desc": "Convertir a un formato específico"
+  }
+}

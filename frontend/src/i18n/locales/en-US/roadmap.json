@@ -1,0 +1,60 @@
+{
+  "auth": {
+    "auth_failed": "Failed to start authentication.",
+    "cancel": "Cancel",
+    "connect_github": "Connect GitHub",
+    "copy_and_open": "Copy & Open GitHub",
+    "description": "To vote and suggest without leaving the app, we need to authorize DownKingo on your GitHub.",
+    "error_title": "Authentication Error",
+    "invalid_response": "Invalid response from GitHub.",
+    "logout": "Logout",
+    "retry": "Try Again",
+    "starting": "Starting...",
+    "timeout": "Timeout or authorization error.",
+    "title": "Connect GitHub",
+    "waiting_auth": "Waiting for authorization...",
+    "your_code": "Your Code:"
+  },
+  "card": {
+    "dislike": "Dislike",
+    "id": "ID",
+    "like": "Like",
+    "url": "URL"
+  },
+  "columns": {
+    "idea": {
+      "label": "Backstage",
+      "sub": "Ideas & Concepts"
+    },
+    "in_progress": {
+      "label": "In Production",
+      "sub": "Building"
+    },
+    "planned": {
+      "label": "On Deck",
+      "sub": "Planned"
+    },
+    "shipped": {
+      "label": "Shipped",
+      "sub": "Delivered"
+    }
+  },
+  "detail": {
+    "back": "back",
+    "labels": "Labels",
+    "no_description": "No description available.",
+    "no_labels": "No labels",
+    "project_status": "Project Status",
+    "view_discussion": "View discussion and comment"
+  },
+  "empty": "Empty",
+  "live": "Live",
+  "suggestion": {
+    "new": "New Suggestion",
+    "placeholder_body": "Describe your idea in detail...",
+    "placeholder_title": "Suggestion title",
+    "submit": "Submit Suggestion",
+    "title": "Suggest Feature"
+  },
+  "title": "Open Development"
+}

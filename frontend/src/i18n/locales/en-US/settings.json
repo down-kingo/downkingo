@@ -1,0 +1,181 @@
+{
+  "about": {
+    "copyright": "All rights reserved.",
+    "description": "A powerful and simple tool to download videos and images from your favorite social networks.",
+    "documentation": "Documentation",
+    "documentation_desc": "Usage guides and FAQ",
+    "donate": "Donate",
+    "github": "GitHub",
+    "github_desc": "Source code and contributions",
+    "resources": "Resources",
+    "support": "Support the Project",
+    "support_desc": "Help keep development active",
+    "title": "About",
+    "version": "Version"
+  },
+  "appearance": {
+    "desc": "Customize the look.",
+    "theme": "Theme",
+    "theme_dark": "Dark",
+    "theme_light": "Light",
+    "theme_system": "System",
+    "title": "Appearance"
+  },
+  "appearance_settings": {
+    "accent_color": "Accent Color",
+    "accent_desc": "Customize the main interface color",
+    "layout": "Layout",
+    "menu_desc": "Choose how to navigate the application",
+    "menu_layout": "Menu Layout",
+    "sidebar": "Sidebar",
+    "style_theme": "Style & Theme",
+    "system_theme": "System Theme",
+    "theme_desc": "Toggle between light and dark mode",
+    "topbar": "Topbar"
+  },
+  "aria2c_settings": {
+    "component": "Component",
+    "connections": "Connections",
+    "delete_btn": "Delete from system",
+    "deleting": "Deleting...",
+    "install_btn": "Install (~3MB)",
+    "installed": "Installed",
+    "installing": "Installing...",
+    "name": "Aria2c",
+    "not_installed": "Req. Installation",
+    "path_label": "Location",
+    "status_active": "Active — accelerated downloads",
+    "status_inactive": "Accelerates downloads with parallel connections",
+    "status_label": "Status",
+    "title": "Accelerated Downloads"
+  },
+  "categories": {
+    "conversion": "Conversion",
+    "downloads": "Downloads",
+    "integration": "Integration"
+  },
+  "converter_settings": {
+    "behavior_title": "Behavior",
+    "notify_finish": "Notify Completion",
+    "notify_finish_desc": "Show system notification when done",
+    "open_folder": "Open Folder Automatically",
+    "open_folder_desc": "Open output directory after conversion"
+  },
+  "downloads": {
+    "remux": "Convert to MP4 (Remux)",
+    "remux_desc": "Ensures compatibility without re-encoding",
+    "skip_existing": "Skip existing files",
+    "thumbnail": "Embed Thumbnail",
+    "title": "Download Options"
+  },
+  "image_settings": {
+    "conversion_desc": "Automatically convert images when downloading",
+    "conversion_format": "Conversion Format",
+    "formats": {
+      "avif": "AVIF (Best compression)",
+      "jpg": "JPEG (Compatible)",
+      "original": "Original (No conversion)",
+      "png": "PNG (Lossless)",
+      "webp": "WebP (Modern)"
+    },
+    "output_format": "Output Format",
+    "quality_high": "High quality",
+    "quality_level": "Quality Level",
+    "quality_low": "Low quality (smaller size)",
+    "quality_medium": "Medium quality",
+    "quality_title": "Quality",
+    "tips_content": "<strong>JPEG:</strong> Smaller size, compatible with everything.<br /><strong>PNG:</strong> Lossless, ideal for screenshots and art.<br /><strong>WebP:</strong> Modern, great size/quality balance.<br /><strong>AVIF:</strong> Best compression, limited support.",
+    "tips_title": "Format Tips"
+  },
+  "language": {
+    "select": "Interface language",
+    "title": "Language"
+  },
+  "panel": {
+    "close": "Close",
+    "title": "Settings"
+  },
+  "privacy": {
+    "anonymous": "Anonymous Mode",
+    "anonymous_desc": "Do not save download history",
+    "title": "Privacy"
+  },
+  "rembg_settings": {
+    "core": "Rembg Core",
+    "install_btn": "Install",
+    "installed": "Ready to use",
+    "installing": "Installing...",
+    "manage": "Manage",
+    "model_default": "Default Model",
+    "model_human_seg": "Human Seg",
+    "model_isnet": "IS-Net",
+    "model_silueta": "Silueta",
+    "model_u2net": "U²-Net (Default)",
+    "model_u2netp": "U²-Net Lite (Fast)",
+    "not_installed_desc": "Background removal module",
+    "removing": "Removing...",
+    "status_installed": "Installed",
+    "title": "Artificial Intelligence (Rembg)",
+    "uninstall": "Uninstall"
+  },
+  "sections": {
+    "about": "About",
+    "appearance": "Appearance",
+    "converter": "Conversion",
+    "image": "Image",
+    "privacy": "Privacy",
+    "regional": "Regional",
+    "shortcuts": "Shortcuts",
+    "storage": "Storage",
+    "system": "System",
+    "video": "Video"
+  },
+  "shortcuts": {
+    "desc": "Customize keyboard shortcuts.",
+    "focus_input": "Focus URL Input",
+    "open_downloads": "Open Downloads",
+    "open_history": "Open History",
+    "open_queue": "Open Queue",
+    "open_settings": "Open Settings",
+    "open_terminal": "Open Terminal",
+    "press_key": "Press keys...",
+    "title": "Shortcuts"
+  },
+  "storage": {
+    "change_btn": "Change Folder",
+    "desc": "Where to save files.",
+    "path_image_label": "Images Folder",
+    "path_label": "Location",
+    "path_video_label": "Videos Folder",
+    "title": "Storage"
+  },
+  "system": {
+    "channel": "Update Channel",
+    "clipboard_monitor": "Monitor Clipboard",
+    "clipboard_monitor_desc": "Detect copied links and suggest download",
+    "start_windows": "Start with Windows",
+    "start_windows_desc": "Open automatically on startup",
+    "title": "System",
+    "update_ytdlp": "Keep yt-dlp updated"
+  },
+  "tabs": {
+    "about": "About",
+    "appearance": "Appearance",
+    "converter": "Converter",
+    "general": "General",
+    "images": "Images",
+    "shortcuts": "Shortcuts",
+    "video": "Videos"
+  },
+  "title": "Settings",
+  "video_settings": {
+    "compatibility": "Video Compatibility",
+    "compatibility_modern": "🚀 Modern (VP9/Opus)",
+    "compatibility_modern_desc": "VP9 + Opus — Better quality, requires VLC",
+    "compatibility_universal": "🎬 Universal (H.264/AAC)",
+    "compatibility_universal_desc": "H.264 + AAC — Works on ALL players",
+    "format_quality": "Format & Quality",
+    "remux": "Remux Video",
+    "remux_desc": "Convert to specific format"
+  }
+}

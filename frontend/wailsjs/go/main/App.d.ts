@@ -120,4 +120,6 @@ export function SuggestFeature(arg1:string,arg2:string):Promise<void>;
 
 export function UpdateYtDlp(arg1:string):Promise<string>;
 
+export function VoteDownFeature(arg1:number):Promise<void>;
+
 export function VoteFeature(arg1:number):Promise<void>;

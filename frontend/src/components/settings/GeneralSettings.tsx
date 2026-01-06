@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   IconLanguage,
   IconFolder,
@@ -10,7 +11,7 @@ import {
   IconClipboard,
 } from "@tabler/icons-react";
 import { useSettingsStore, Language } from "../../stores/settingsStore";
-import { translations } from "../../translations";
+import { supportedLanguages } from "../../i18n";
 import {
   GetVideoDownloadPath,
   GetImageDownloadPath,
@@ -90,6 +91,7 @@ const Switch = ({
 );
 
 export default function GeneralSettings() {
+  const { t } = useTranslation("settings");
   const {
     language,
     anonymousMode,
@@ -99,7 +101,6 @@ export default function GeneralSettings() {
     setSetting,
   } = useSettingsStore();
 
-  const t = (translations[language] || translations["pt-BR"] || {}) as any;
   const [videoPath, setVideoPath] = useState("");
   const [imagePath, setImagePath] = useState("");
 
@@ -115,7 +116,7 @@ export default function GeneralSettings() {
         setVideoPath(newPath);
       }
     } catch (e) {
-      console.error("Erro ao selecionar pasta de vídeo", e);
+      console.error("Error selecting video folder", e);
     }
   };
 
@@ -126,45 +127,45 @@ export default function GeneralSettings() {
         setImagePath(newPath);
       }
     } catch (e) {
-      console.error("Erro ao selecionar pasta de imagem", e);
+      console.error("Error selecting image folder", e);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Geral */}
+      {/* Regional */}
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconLanguage size={14} />
-          Regional
+          {t("sections.regional")}
         </h3>
         <div className="space-y-3">
-          <SettingItem icon={IconLanguage} label="Idioma">
+          <SettingItem icon={IconLanguage} label={t("language.title")}>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}
               className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
             >
-              <option value="pt-BR">🇧🇷 Português (Brasil)</option>
-              <option value="en-US">🇺🇸 English (US)</option>
-              <option value="es-ES">🇪🇸 Español</option>
-              <option value="fr-FR">🇫🇷 Français</option>
-              <option value="de-DE">🇩🇪 Deutsch</option>
+              {supportedLanguages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.name}
+                </option>
+              ))}
             </select>
           </SettingItem>
         </div>
       </section>
 
-      {/* Armazenamento */}
+      {/* Storage */}
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconFolder size={14} />
-          Armazenamento
+          {t("sections.storage")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconVideo}
-            label={t.settings.storage.path_video_label || "Pasta de Vídeos"}
+            label={t("storage.path_video_label")}
             desc={videoPath || "..."}
           >
             <button
@@ -172,13 +173,13 @@ export default function GeneralSettings() {
               className="flex items-center gap-2 px-3 py-2 text-xs font-medium bg-surface-100 hover:bg-surface-200 dark:bg-surface-200 dark:hover:bg-surface-300 rounded-lg transition-colors border border-surface-200 dark:border-zinc-800 text-surface-700 dark:text-white"
             >
               <IconFolder size={16} />
-              {t.settings.storage.change_btn}
+              {t("storage.change_btn")}
             </button>
           </SettingItem>
 
           <SettingItem
             icon={IconPhoto}
-            label={t.settings.storage.path_image_label || "Pasta de Imagens"}
+            label={t("storage.path_image_label")}
             desc={imagePath || "..."}
           >
             <button
@@ -186,23 +187,23 @@ export default function GeneralSettings() {
               className="flex items-center gap-2 px-3 py-2 text-xs font-medium bg-surface-100 hover:bg-surface-200 dark:bg-surface-200 dark:hover:bg-surface-300 rounded-lg transition-colors border border-surface-200 dark:border-zinc-800 text-surface-700 dark:text-white"
             >
               <IconFolder size={16} />
-              {t.settings.storage.change_btn}
+              {t("storage.change_btn")}
             </button>
           </SettingItem>
         </div>
       </section>
 
-      {/* Privacidade */}
+      {/* Privacy */}
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconLock size={14} />
-          Privacidade
+          {t("sections.privacy")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={anonymousMode ? IconEyeOff : IconLock}
-            label="Modo Anônimo"
-            desc="Não salvar histórico de downloads"
+            label={t("privacy.anonymous")}
+            desc={t("privacy.anonymous_desc")}
             active={anonymousMode}
           >
             <Switch
@@ -213,17 +214,17 @@ export default function GeneralSettings() {
         </div>
       </section>
 
-      {/* Sistema */}
+      {/* System */}
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconDeviceDesktop size={14} />
-          Sistema
+          {t("sections.system")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconDeviceDesktop}
-            label="Iniciar com Windows"
-            desc="Abrir automaticamente ao ligar o PC"
+            label={t("system.start_windows")}
+            desc={t("system.start_windows_desc")}
             active={startWithWindows}
           >
             <Switch
@@ -234,8 +235,8 @@ export default function GeneralSettings() {
 
           <SettingItem
             icon={IconClipboard}
-            label="Monitorar Área de Transferência"
-            desc="Detectar links copiados e sugerir download"
+            label={t("system.clipboard_monitor")}
+            desc={t("system.clipboard_monitor_desc")}
             active={clipboardMonitorEnabled}
           >
             <Switch

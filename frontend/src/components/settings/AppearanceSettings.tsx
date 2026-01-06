@@ -11,6 +11,7 @@ import {
   AppColor,
   AppLayout,
 } from "../../stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 // Components locais (reutilizados para consistência visual)
 const SettingItem = ({
@@ -98,20 +99,21 @@ export default function AppearanceSettings() {
     setLayout,
     setPrimaryColor,
   } = useSettingsStore();
+  const { t } = useTranslation("settings");
 
   return (
     <div className="space-y-6">
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconPalette size={14} />
-          Estilo & Tema
+          {t("appearance_settings.style_theme")}
         </h3>
         <div className="space-y-3">
           {/* Tema Light/Dark */}
           <SettingItem
             icon={theme === "dark" ? IconGhost : IconSun}
-            label="Tema do Sistema"
-            desc="Alternar entre modo claro e escuro"
+            label={t("appearance_settings.system_theme")}
+            desc={t("appearance_settings.theme_desc")} // Using consistent key format
           >
             <div className="flex p-1 bg-surface-100 dark:bg-surface-50 rounded-lg border border-surface-200 dark:border-zinc-800">
               <button
@@ -140,8 +142,8 @@ export default function AppearanceSettings() {
           {/* Cor de Destaque */}
           <SettingItem
             icon={IconPalette}
-            label="Cor de Destaque"
-            desc="Personalize a cor principal da interface"
+            label={t("appearance_settings.accent_color")}
+            desc={t("appearance_settings.accent_desc")}
           >
             <div className="flex gap-3">
               {(
@@ -162,14 +164,14 @@ export default function AppearanceSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconLayoutSidebar size={14} />
-          Layout
+          {t("appearance_settings.layout")}
         </h3>
         <div className="space-y-3">
           {/* Layout Selector */}
           <SettingItem
             icon={layout === "sidebar" ? IconLayoutSidebar : IconLayoutNavbar}
-            label="Disposição do Menu"
-            desc="Escolha como navegar pela aplicação"
+            label={t("appearance_settings.menu_layout")}
+            desc={t("appearance_settings.menu_desc")}
           >
             <div className="flex p-1 bg-surface-100 dark:bg-surface-50 rounded-lg border border-surface-200 dark:border-zinc-800">
               <button
@@ -181,7 +183,7 @@ export default function AppearanceSettings() {
                 }`}
               >
                 <IconLayoutSidebar size={16} />
-                <span>Lateral</span>
+                <span>{t("appearance_settings.sidebar")}</span>
               </button>
               <button
                 onClick={() => setLayout("topbar")}
@@ -192,7 +194,7 @@ export default function AppearanceSettings() {
                 }`}
               >
                 <IconLayoutNavbar size={16} />
-                <span>Superior</span>
+                <span>{t("appearance_settings.topbar")}</span>
               </button>
             </div>
           </SettingItem>

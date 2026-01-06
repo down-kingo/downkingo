@@ -222,6 +222,10 @@ export function UpdateYtDlp(arg1) {
   return window['go']['main']['App']['UpdateYtDlp'](arg1);
 }
 
+export function VoteDownFeature(arg1) {
+  return window['go']['main']['App']['VoteDownFeature'](arg1);
+}
+
 export function VoteFeature(arg1) {
   return window['go']['main']['App']['VoteFeature'](arg1);
 }

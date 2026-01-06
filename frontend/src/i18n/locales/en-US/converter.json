@@ -1,0 +1,172 @@
+{
+  "after": "After",
+  "ai_model": "AI Model",
+  "audio_format": "Audio Format",
+  "audio_formats": {
+    "aac": {
+      "desc": "Much smaller",
+      "name": "AAC"
+    },
+    "flac": {
+      "desc": "Uncompressed",
+      "name": "FLAC"
+    },
+    "mp3": {
+      "desc": "Universal",
+      "name": "MP3"
+    },
+    "ogg": {
+      "desc": "Open source",
+      "name": "OGG"
+    },
+    "wav": {
+      "desc": "Lossless",
+      "name": "WAV"
+    }
+  },
+  "before": "Before",
+  "better_quality": "Better quality",
+  "compression": {
+    "balanced": "Balanced",
+    "light": "Light",
+    "max": "Max",
+    "medium": "Medium",
+    "much_smaller": "Much smaller",
+    "smaller_file": "Smaller file",
+    "strong": "Strong"
+  },
+  "compression_level": "Compression Level",
+  "conversion_complete": "Conversion complete!",
+  "convert": "Convert",
+  "convert_another": "Convert another",
+  "converting": "Converting...",
+  "destination": "Destination",
+  "destination_desc": "Where the file will be saved",
+  "encoding_preset": "Encoding Preset",
+  "encoding_speed": "Encoding Speed",
+  "error": {
+    "generic": "Unknown error",
+    "no_file": "Select an input file",
+    "unsupported": "Conversion type not supported"
+  },
+  "error_select_input": "",
+  "error_unknown": "",
+  "error_unsupported_type": "",
+  "format_desc": {
+    "high_quality": "High Quality",
+    "lossless": "Lossless",
+    "modern": "Modern",
+    "modern_smaller": "Modern & Smaller",
+    "much_smaller": "Much Smaller",
+    "opensource": "Open Source",
+    "uncompressed": "Uncompressed",
+    "universal": "Universal"
+  },
+  "formats": {
+    "audio": "Audio",
+    "image": "Image",
+    "video": "Video"
+  },
+  "image": "Image",
+  "image_formats": {
+    "avif": {
+      "desc": "Much smaller",
+      "name": "AVIF"
+    },
+    "jpg": {
+      "desc": "High quality",
+      "name": "JPG"
+    },
+    "png": {
+      "desc": "Uncompressed",
+      "name": "PNG"
+    },
+    "webp": {
+      "desc": "Smaller file",
+      "name": "WebP"
+    }
+  },
+  "increase_of": "Increase of",
+  "keep_audio_track": "Keep audio track",
+  "max_compression": "Max Compression",
+  "max_quality": "Max Quality",
+  "more_options": "More options",
+  "open_file": "Open file",
+  "open_folder": "Open folder",
+  "original_folder": "Original folder",
+  "output_folder": "Output folder",
+  "output_format": "Output Format",
+  "preset": {
+    "fast": "Fast",
+    "medium": "Medium",
+    "slow": "Slow",
+    "ultrafast": "Ultrafast",
+    "veryslow": "Very Slow"
+  },
+  "processing": "Processing...",
+  "quality": "Quality",
+  "quality_bitrate": "Quality (Bitrate)",
+  "quality_crf": "Quality (CRF)",
+  "quality_levels": {
+    "high": "High",
+    "lossless": "Lossless",
+    "low": "Low",
+    "max": "Best",
+    "medium": "Medium",
+    "tiny": "Tiny"
+  },
+  "rembg": {
+    "install": "Install Component",
+    "install_desc": "To remove backgrounds, you need to install the AI component.",
+    "installing": "Installing...",
+    "learn_more": "Learn more",
+    "not_installed": "RemBG not installed"
+  },
+  "result": {
+    "increase": "Increase of",
+    "new_size": "New size",
+    "original_size": "Original size",
+    "savings": "Savings of",
+    "success": "Conversion complete!"
+  },
+  "savings_of": "Savings of",
+  "select_file": "Select file",
+  "select_file_prefix": "Select",
+  "select_input": "Select input file",
+  "smaller_file": "Smaller file",
+  "start": "Start",
+  "subtitle": "Convert media files to different formats.",
+  "success": "Success!",
+  "summary_action": "Summary",
+  "tabs": {
+    "audio_extractor": "",
+    "audio_short": "",
+    "bg_short": "",
+    "image_comp_short": "",
+    "image_compressor": "",
+    "image_converter": "",
+    "image_short": "",
+    "remove_bg": "",
+    "video_comp_short": "",
+    "video_compressor": "",
+    "video_converter": "",
+    "video_short": ""
+  },
+  "title": "Converter",
+  "video": "Video",
+  "video_formats": {
+    "mkv": {
+      "desc": "Open source",
+      "name": "MKV"
+    },
+    "mp4": {
+      "desc": "High quality",
+      "name": "MP4"
+    },
+    "webm": {
+      "desc": "Uncompressed",
+      "name": "WebM"
+    }
+  },
+  "wait": "Wait..."
+}

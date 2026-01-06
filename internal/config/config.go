@@ -57,7 +57,7 @@ func Default() *Config {
 			OpenDownloads: "Ctrl+D",
 		},
 		Roadmap: RoadmapConfig{
-			CDNEnabled: false, // Safe default: use direct GitHub API
+			CDNEnabled: true, // CDN enabled by default for optimal performance
 			CDNBaseURL: "https://downkingo-roadmap.pages.dev",
 		},
 	}

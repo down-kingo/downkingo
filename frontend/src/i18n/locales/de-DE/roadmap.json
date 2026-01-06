@@ -1,0 +1,60 @@
+{
+  "auth": {
+    "auth_failed": "Authentifizierung konnte nicht gestartet werden.",
+    "cancel": "Abbrechen",
+    "connect_github": "GitHub verbinden",
+    "copy_and_open": "Kopieren & GitHub öffnen",
+    "description": "Um ohne die App zu verlassen abstimmen und vorschlagen zu können, müssen wir DownKingo auf Ihrem GitHub autorisieren.",
+    "error_title": "Authentifizierungsfehler",
+    "invalid_response": "Ungültige Antwort von GitHub.",
+    "logout": "Abmelden",
+    "retry": "Erneut versuchen",
+    "starting": "Starten...",
+    "timeout": "Timeout oder Autorisierungsfehler.",
+    "title": "GitHub verbinden",
+    "waiting_auth": "Warte auf Autorisierung...",
+    "your_code": "Ihr Code:"
+  },
+  "card": {
+    "dislike": "Gefällt mir nicht",
+    "id": "ID",
+    "like": "Gefällt mir",
+    "url": "URL"
+  },
+  "columns": {
+    "idea": {
+      "label": "Backstage",
+      "sub": "Ideen & Konzepte"
+    },
+    "in_progress": {
+      "label": "In Produktion",
+      "sub": "In Arbeit"
+    },
+    "planned": {
+      "label": "Geplant",
+      "sub": "In Planung"
+    },
+    "shipped": {
+      "label": "Ausgeliefert",
+      "sub": "Fertig"
+    }
+  },
+  "detail": {
+    "back": "zurück",
+    "labels": "Labels",
+    "no_description": "Keine Beschreibung verfügbar.",
+    "no_labels": "Keine Labels",
+    "project_status": "Projektstatus",
+    "view_discussion": "Diskussion ansehen und kommentieren"
+  },
+  "empty": "Leer",
+  "live": "Live",
+  "suggestion": {
+    "new": "Neuer Vorschlag",
+    "placeholder_body": "Beschreiben Sie Ihre Idee im Detail...",
+    "placeholder_title": "Vorschlagstitel",
+    "submit": "Vorschlag senden",
+    "title": "Funktion vorschlagen"
+  },
+  "title": "Offene Entwicklung"
+}

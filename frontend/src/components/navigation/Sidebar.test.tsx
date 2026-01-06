@@ -1,3 +1,4 @@
+import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Sidebar, { TabType } from "./Sidebar";
@@ -6,6 +7,25 @@ import Sidebar, { TabType } from "./Sidebar";
 vi.mock("../../stores/settingsStore", () => ({
   useSettingsStore: () => ({
     language: "pt-BR",
+  }),
+}));
+
+// Mock translations with consistent debug keys
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        "nav.home": "TEXT_HOME",
+        "nav.queue": "TEXT_QUEUE",
+        "nav.videos": "TEXT_VIDEOS",
+        "nav.images": "TEXT_IMAGES",
+        "nav.converter": "TEXT_CONVERTER",
+        "nav.history": "TEXT_HISTORY",
+        "nav.roadmap": "TEXT_ROADMAP",
+        "nav.settings": "TEXT_SETTINGS",
+      };
+      return map[key] || key;
+    },
   }),
 }));
 
@@ -40,7 +60,7 @@ describe("Sidebar", () => {
 
   it("highlights active tab", () => {
     render(<Sidebar {...defaultProps} activeTab="video" />);
-    const videoButton = screen.getByText("Vídeos").closest("button");
+    const videoButton = screen.getByText("TEXT_VIDEOS").closest("button");
     expect(videoButton).toHaveClass("active");
   });
 
@@ -48,16 +68,20 @@ describe("Sidebar", () => {
     const mockSetActiveTab = vi.fn();
     render(<Sidebar {...defaultProps} setActiveTab={mockSetActiveTab} />);
 
-    fireEvent.click(screen.getByText("Vídeos"));
+    fireEvent.click(screen.getByText("TEXT_VIDEOS"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("video");
 
-    fireEvent.click(screen.getByText("Imagens"));
+    fireEvent.click(screen.getByText("TEXT_IMAGES"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("images");
 
-    fireEvent.click(screen.getByText("Converter"));
+    const converters = screen.getAllByText("TEXT_CONVERTER");
+    const converterButton = converters.find((el) => el.closest("button"));
+    if (converterButton) fireEvent.click(converterButton);
     expect(mockSetActiveTab).toHaveBeenCalledWith("converter");
 
-    fireEvent.click(screen.getByText("Histórico"));
+    const histories = screen.getAllByText("TEXT_HISTORY");
+    const historyButton = histories.find((el) => el.closest("button"));
+    if (historyButton) fireEvent.click(historyButton);
     expect(mockSetActiveTab).toHaveBeenCalledWith("history");
   });
 
@@ -65,8 +89,7 @@ describe("Sidebar", () => {
     const mockOnOpenSettings = vi.fn();
     render(<Sidebar {...defaultProps} onOpenSettings={mockOnOpenSettings} />);
 
-    // Find and click the settings button
-    const settingsButton = screen.getByText("Configurações").closest("button");
+    const settingsButton = screen.getByText("TEXT_SETTINGS").closest("button");
     if (settingsButton) {
       fireEvent.click(settingsButton);
       expect(mockOnOpenSettings).toHaveBeenCalled();
@@ -77,7 +100,8 @@ describe("Sidebar", () => {
     render(<Sidebar {...defaultProps} />);
 
     expect(screen.getByText("Downloads")).toBeInTheDocument();
-    expect(screen.getByText("Conversão")).toBeInTheDocument();
-    expect(screen.getByText("Biblioteca")).toBeInTheDocument();
+    expect(screen.getAllByText("TEXT_CONVERTER").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("TEXT_HISTORY").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("TEXT_ROADMAP").length).toBeGreaterThan(0);
   });
 });

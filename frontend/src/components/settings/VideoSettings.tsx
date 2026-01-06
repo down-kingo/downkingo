@@ -16,6 +16,7 @@ import {
   DownloadAria2c,
   DeleteAria2c,
 } from "../../../wailsjs/go/main/App";
+import { useTranslation } from "react-i18next";
 
 // Components locais
 const SettingItem = ({
@@ -94,6 +95,7 @@ interface Aria2cStatus {
 }
 
 export default function VideoSettings() {
+  const { t } = useTranslation("settings");
   const {
     remuxVideo,
     remuxFormat,
@@ -162,16 +164,16 @@ export default function VideoSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconDeviceTv size={14} />
-          Formato e Qualidade
+          {t("video_settings.format_quality")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconDeviceTv}
-            label="Compatibilidade de Vídeo"
+            label={t("video_settings.compatibility")}
             desc={
               videoCompatibility === "universal"
-                ? "H.264 + AAC — Funciona em TODOS players"
-                : "VP9 + Opus — Melhor qualidade, requer VLC"
+                ? t("video_settings.compatibility_universal_desc")
+                : t("video_settings.compatibility_modern_desc")
             }
           >
             <select
@@ -179,15 +181,19 @@ export default function VideoSettings() {
               onChange={(e) => setSetting("videoCompatibility", e.target.value)}
               className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-600 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
             >
-              <option value="universal">🎬 Universal (H.264/AAC)</option>
-              <option value="modern">🚀 Modern (VP9/Opus)</option>
+              <option value="universal">
+                {t("video_settings.compatibility_universal")}
+              </option>
+              <option value="modern">
+                {t("video_settings.compatibility_modern")}
+              </option>
             </select>
           </SettingItem>
 
           <SettingItem
             icon={IconFileExport}
-            label="Remux Vídeo"
-            desc="Converter para formato específico"
+            label={t("video_settings.remux")}
+            desc={t("video_settings.remux_desc")}
             active={remuxVideo}
           >
             <div className="flex items-center gap-3">
@@ -217,13 +223,13 @@ export default function VideoSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconDownload size={14} />
-          Opções de Download
+          {t("downloads.title")}
         </h3>
         <div className="space-y-3">
           <SettingItem
             icon={IconPhoto}
-            label="Embutir Thumbnail"
-            desc="Adiciona capa ao arquivo de mídia"
+            label={t("downloads.thumbnail")}
+            desc={t("downloads.thumbnail")} // Reutilizando a chave se apropriado, ou criar uma nova se a desc for diferente
             active={embedThumbnail}
           >
             <Switch
@@ -234,8 +240,8 @@ export default function VideoSettings() {
 
           <SettingItem
             icon={IconPlayerSkipForward}
-            label="Pular Existentes"
-            desc="Não baixar se arquivo já existe"
+            label={t("downloads.skip_existing")}
+            desc={t("downloads.skip_existing")}
             active={skipExisting}
           >
             <Switch
@@ -250,7 +256,7 @@ export default function VideoSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconRocket size={14} />
-          Downloads Acelerados
+          {t("aria2c_settings.title")}
         </h3>
         <div className="p-4 bg-white dark:bg-surface-100 border border-surface-200 dark:border-zinc-800 rounded-xl space-y-4 shadow-sm dark:shadow-none">
           {/* Toggle */}
@@ -266,16 +272,16 @@ export default function VideoSettings() {
               </div>
               <div>
                 <span className="text-sm font-semibold text-surface-900">
-                  Aria2c
+                  {t("aria2c_settings.name")}
                 </span>
                 <p className="text-xs text-surface-500">
                   {isDownloading
-                    ? "Instalando..."
+                    ? t("aria2c_settings.installing")
                     : isDeleting
-                    ? "Excluindo..."
+                    ? t("aria2c_settings.deleting")
                     : useAria2c
-                    ? "Ativo — downloads acelerados"
-                    : "Acelera downloads com conexões paralelas"}
+                    ? t("aria2c_settings.status_active")
+                    : t("aria2c_settings.status_inactive")}
                 </p>
               </div>
             </div>
@@ -293,21 +299,25 @@ export default function VideoSettings() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-surface-500 flex items-center gap-2">
                 <IconCheck size={14} />
-                Status
+                {t("aria2c_settings.status_label")}
               </span>
               <span
                 className={`font-medium ${
                   aria2cStatus?.installed ? "text-green-600" : "text-amber-600"
                 }`}
               >
-                {aria2cStatus?.installed ? "Instalado" : "Requer instalação"}
+                {aria2cStatus?.installed
+                  ? t("aria2c_settings.installed")
+                  : t("aria2c_settings.not_installed")}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-surface-500 flex items-center gap-2">
                 <IconFolder size={14} />
-                {aria2cStatus?.installed ? "Local" : "Componente"}
+                {aria2cStatus?.installed
+                  ? t("aria2c_settings.path_label")
+                  : t("aria2c_settings.component")}
               </span>
               <span
                 className={`text-[10px] ${
@@ -323,7 +333,7 @@ export default function VideoSettings() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-surface-500 flex items-center gap-2">
                 <IconRocket size={14} />
-                Conexões
+                {t("aria2c_settings.connections")}
               </span>
               <select
                 value={aria2cConnections}
@@ -345,7 +355,7 @@ export default function VideoSettings() {
                 className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors"
               >
                 <IconDownload size={14} />
-                Instalar (~3MB)
+                {t("aria2c_settings.install_btn")}
               </button>
             )}
 
@@ -355,7 +365,7 @@ export default function VideoSettings() {
                 className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs font-medium rounded-lg transition-colors border border-red-200 dark:border-red-800"
               >
                 <IconTrash size={14} />
-                Excluir do sistema
+                {t("aria2c_settings.delete_btn")}
               </button>
             )}
           </div>

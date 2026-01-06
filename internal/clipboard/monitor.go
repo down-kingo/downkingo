@@ -2,7 +2,7 @@ package clipboard
 
 import (
 	"context"
-	"regexp"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -12,21 +12,33 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+// supportedDomains lista os domínios de mídia que o Kingo suporta.
+// A validação é feita via net/url, não regex.
+var supportedDomains = []string{
+	"youtube.com", "youtu.be",
+	"instagram.com",
+	"tiktok.com",
+	"twitter.com", "x.com",
+	"facebook.com", "fb.watch",
+	"twitch.tv",
+	"vimeo.com",
+	"dailymotion.com",
+	"pinterest.com",
+	"reddit.com",
+	"threads.net",
+	"soundcloud.com",
+}
+
 type Monitor struct {
 	ctx       context.Context
 	cancel    context.CancelFunc
 	mu        sync.Mutex
 	lastText  string
 	isRunning bool
-	urlRegex  *regexp.Regexp
 }
 
 func NewMonitor() *Monitor {
-	regex := regexp.MustCompile(`(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
-
-	return &Monitor{
-		urlRegex: regex,
-	}
+	return &Monitor{}
 }
 
 func (m *Monitor) Start(ctx context.Context) {
@@ -102,31 +114,33 @@ func limitString(s string, max int) string {
 }
 
 func (m *Monitor) isValidURL(text string) bool {
-	if !m.urlRegex.MatchString(text) {
+	// Trim espaços em branco
+	text = strings.TrimSpace(text)
+
+	// Parse estrutural da URL (RFC 3986)
+	parsedURL, err := url.Parse(text)
+	if err != nil {
 		return false
 	}
 
-	// Filtra apenas domínios de mídia suportados
-	supported := []string{
-		"youtube.com", "youtu.be",
-		"instagram.com",
-		"tiktok.com",
-		"twitter.com", "x.com",
-		"facebook.com", "fb.watch",
-		"twitch.tv",
-		"vimeo.com",
-		"dailymotion.com",
-		"pinterest.com",
-		"reddit.com",
-		"threads.net",
-		"soundcloud.com",
+	// Deve ter scheme http ou https
+	scheme := strings.ToLower(parsedURL.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return false
 	}
 
-	input := strings.ToLower(text)
-	for _, domain := range supported {
-		if strings.Contains(input, domain) {
+	// Deve ter host não-vazio
+	host := strings.ToLower(parsedURL.Host)
+	if host == "" {
+		return false
+	}
+
+	// Verifica se é um domínio de mídia suportado
+	for _, domain := range supportedDomains {
+		if strings.Contains(host, domain) {
 			return true
 		}
 	}
+
 	return false
 }

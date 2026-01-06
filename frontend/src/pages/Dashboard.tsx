@@ -8,6 +8,7 @@ import {
   IconSparkles,
 } from "@tabler/icons-react";
 import { useDownloadStore } from "../stores/downloadStore";
+import { useTranslation } from "react-i18next";
 
 interface DashboardProps {
   onNavigate: (tab: "video" | "images" | "history") => void;
@@ -15,6 +16,7 @@ interface DashboardProps {
 
 export default function Dashboard({ onNavigate }: DashboardProps) {
   const { history } = useDownloadStore();
+  const { t } = useTranslation("common");
 
   // Recent items limited to 5 for density
   const recentDownloads = history.slice(0, 5);
@@ -42,10 +44,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           className="mb-8 border-b border-surface-200 dark:border-surface-700 pb-6"
         >
           <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-900 tracking-tight font-display">
-            Visão Geral
+            {t("dashboard.overview")}
           </h1>
           <p className="text-sm text-surface-500 dark:text-surface-500 mt-2 font-medium">
-            Gerencie suas ferramentas e downloads recentes.
+            {t("dashboard.manage_tools")}
           </p>
         </motion.div>
 
@@ -75,10 +77,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 />
               </div>
               <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
-                Video Downloader
+                {t("dashboard.tools.video_downloader.title")}
               </h3>
               <p className="text-xs text-surface-500 dark:text-surface-500 leading-relaxed">
-                Baixe vídeos e áudios de Youtube, TikTok e mais.
+                {t("dashboard.tools.video_downloader.desc")}
               </p>
             </button>
           </motion.div>
@@ -102,10 +104,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 />
               </div>
               <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
-                Image Extractor
+                {t("dashboard.tools.image_extractor.title")}
               </h3>
               <p className="text-xs text-surface-500 dark:text-surface-500 leading-relaxed">
-                Extraia imagens de links e redes sociais.
+                {t("dashboard.tools.image_extractor.desc")}
               </p>
             </button>
           </motion.div>
@@ -119,13 +121,13 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-surface-500 dark:text-surface-500">
-              Atividade Recente
+              {t("dashboard.recent_activity")}
             </h3>
             <button
               onClick={() => onNavigate("history")}
               className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline transition-all"
             >
-              Ver histórico completo
+              {t("dashboard.view_full_history")}
             </button>
           </div>
 
@@ -149,7 +151,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                         {item.title}
                       </h4>
                       <p className="text-xs text-surface-500 dark:text-surface-500 truncate mt-0.5 font-medium">
-                        {item.uploader || "Desconhecido"}
+                        {item.uploader || t("dashboard.unknown")}
                       </p>
                     </div>
                     <div
@@ -159,7 +161,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                           : "bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400"
                       }`}
                     >
-                      {item.status === "completed" ? "Finalizado" : item.status}
+                      {item.status === "completed"
+                        ? t("status.completed")
+                        : item.status}
                     </div>
                   </div>
                 ))}
@@ -167,7 +171,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             ) : (
               <div className="p-12 text-center text-surface-400 dark:text-surface-500">
                 <IconHistory size={32} className="mx-auto mb-3 opacity-50" />
-                <p className="text-sm font-medium">Nenhum download recente</p>
+                <p className="text-sm font-medium">
+                  {t("home.no_recent_downloads")}
+                </p>
               </div>
             )}
           </div>

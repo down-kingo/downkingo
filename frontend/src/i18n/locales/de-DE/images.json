@@ -1,0 +1,32 @@
+{
+  "basic_mode": "Basis-Modus (Cover)",
+  "carousel_mode": "Web-Modus (Karussell)",
+  "download_another": "Weiteres Bild herunterladen",
+  "download_image": "Bild herunterladen",
+  "downloading": "Wird heruntergeladen...",
+  "error": {
+    "auth_required": "Diese Seite erfordert Authentifizierung oder hat den Zugriff blockiert.",
+    "blocked_description": "Seit Dezember 2024 erfordern diese Netzwerke eine Anmeldung. Folgen Sie den Schritten:",
+    "blocked_title": "{{platform}} hat automatischen Zugriff blockiert",
+    "download": "Download-Fehler: {{message}}",
+    "not_found": "Kein Bild unter dieser URL gefunden.",
+    "open_browser": "Im Browser öffnen",
+    "step_1": "Klicken Sie auf \"Im Browser öffnen\" unten",
+    "step_2": "Klicken Sie auf der Seite auf das Bild um es zu vergrößern",
+    "step_3": "Rechtsklick → \"Bild in neuem Tab öffnen\"",
+    "step_4": "Kopieren Sie die URL aus dem neuen Tab",
+    "step_5": "Fügen Sie sie hier in Kingo ein"
+  },
+  "gallery": "Galerie ({{count}} Bilder)",
+  "gallery_one": "",
+  "gallery_other": "",
+  "original": "Original",
+  "placeholder": "Bild-Link einfügen...",
+  "resolution": "Auflösung",
+  "saved": "Gespeichert!",
+  "search": "Suchen",
+  "size": "Größe",
+  "subtitle": "Extrahieren und laden Sie hochauflösende Bilder von Links herunter.",
+  "title": "Galerie & Bilder",
+  "type": "Typ"
+}

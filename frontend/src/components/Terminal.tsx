@@ -7,6 +7,7 @@ import {
   IconTrash,
   IconMaximize,
 } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 // --- TYPES & CONSTANTS ---
 
@@ -140,14 +141,17 @@ const LogLine = memo(({ line, index }: { line: string; index: number }) => {
 
 LogLine.displayName = "LogLine";
 
-const EmptyState = () => (
-  <div className="h-full flex flex-col items-center justify-center text-surface-300 dark:text-surface-700 gap-3 select-none pointer-events-none">
-    <div className="p-4 bg-white dark:bg-[#18181b] rounded-full border border-surface-200 dark:border-surface-800 shadow-sm">
-      <IconTerminal size={32} className="opacity-50" />
+const EmptyState = () => {
+  const { t } = useTranslation("common");
+  return (
+    <div className="h-full flex flex-col items-center justify-center text-surface-300 dark:text-surface-700 gap-3 select-none pointer-events-none">
+      <div className="p-4 bg-white dark:bg-[#18181b] rounded-full border border-surface-200 dark:border-surface-800 shadow-sm">
+        <IconTerminal size={32} className="opacity-50" />
+      </div>
+      <span className="text-sm font-medium">{t("terminal.ready")}</span>
     </div>
-    <span className="text-sm font-medium">Ready to capture output...</span>
-  </div>
-);
+  );
+};
 
 const TerminalControls = ({
   isOpen,
@@ -156,6 +160,7 @@ const TerminalControls = ({
   onClose,
   onClear,
 }: any) => {
+  const { t } = useTranslation("common");
   if (!isOpen) {
     return (
       <div className="flex items-center text-surface-400 group-hover:text-surface-600 dark:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
@@ -169,18 +174,18 @@ const TerminalControls = ({
       <ActionButton
         onClick={onClear}
         icon={IconTrash}
-        title="Clear Console"
+        title={t("terminal.clear")}
         hoverColor="hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
       />
       <ActionButton
         onClick={onToggleMax}
         icon={IconMaximize}
-        title="Maximize"
+        title={t("terminal.maximize")}
       />
       <ActionButton
         onClick={onClose}
         icon={IconChevronDown}
-        title="Minimize"
+        title={t("terminal.minimize")}
         size={16}
       />
     </div>
@@ -213,8 +218,10 @@ interface TerminalProps {
 }
 
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import React from "react";
 
 export default function Terminal({ layout = "sidebar" }: TerminalProps) {
+  const { t } = useTranslation("common");
   const { logs, clearLogs } = useTerminalLogs();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -262,7 +269,7 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-xs font-bold text-surface-400 group-hover:text-primary-600 dark:text-surface-500 dark:group-hover:text-primary-400 transition-colors uppercase tracking-wider">
               <IconTerminal size={14} className="stroke-[2.5]" />
-              <span>Console</span>
+              <span>{t("nav.console")}</span>
             </div>
 
             {!isOpen && logs.length > 0 && (

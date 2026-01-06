@@ -11,7 +11,11 @@ import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
 
 // Wails runtime imports
 import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
-import { GetRoadmap, VoteFeature } from "../../wailsjs/go/main/App";
+import {
+  GetRoadmap,
+  VoteFeature,
+  VoteDownFeature,
+} from "../../wailsjs/go/main/App";
 
 interface RoadmapState {
   // Data
@@ -26,6 +30,7 @@ interface RoadmapState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   voteForItem: (id: number) => Promise<void>;
+  voteDownForItem: (id: number) => Promise<void>;
   getItemsByStatus: (status: RoadmapStatus) => RoadmapItem[];
 
   // Event handling
@@ -93,8 +98,8 @@ export const useRoadmapStore = create<RoadmapState>()(
             item.id === id
               ? {
                   ...item,
-                  votes: item.votes + 1,
-                  votes_up: (item.votes_up || item.votes) + 1,
+                  votes: (item.votes || 0) + 1,
+                  votes_up: (item.votes_up || 0) + 1,
                 }
               : item
           ),
@@ -104,6 +109,34 @@ export const useRoadmapStore = create<RoadmapState>()(
           await VoteFeature(id);
         } catch (err) {
           console.error("Vote failed:", err);
+          // Rollback on failure
+          set({ items: originalItems });
+          throw err;
+        }
+      },
+
+      // Optimistic downvote with rollback on failure
+      voteDownForItem: async (id) => {
+        const { items } = get();
+        const originalItems = [...items];
+
+        // Optimistic update
+        set({
+          items: items.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  votes: (item.votes || 0) + 1, // GitHub counts reactions as activity
+                  votes_down: (item.votes_down || 0) + 1,
+                }
+              : item
+          ),
+        });
+
+        try {
+          await VoteDownFeature(id);
+        } catch (err) {
+          console.error("Vote down failed:", err);
           // Rollback on failure
           set({ items: originalItems });
           throw err;

@@ -7,9 +7,8 @@ import {
 import { useDownloadStore, Download } from "../stores/downloadStore";
 import { useDownloadSync } from "../hooks/useDownloadSync";
 import { useSettingsStore } from "../stores/settingsStore";
-import { translations } from "../translations";
+import { useTranslation } from "react-i18next";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-import Settings from "../components/Settings";
 import SettingsPanel from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
 import ClipboardToast from "../components/ClipboardToast";
@@ -82,7 +81,7 @@ export default function Home() {
     useAria2c,
     aria2cConnections,
   } = useSettingsStore();
-  const t = translations[language];
+  const { t } = useTranslation("common");
 
   // Gerar formatos baseados na compatibilidade selecionada
   const VIDEO_QUALITIES = getVideoQualities(videoCompatibility);
@@ -327,7 +326,7 @@ export default function Home() {
       pending: (
         <span className="badge badge-pending">
           <span className="w-1.5 h-1.5 rounded-full bg-surface-400" />
-          Na fila
+          {t("status.in_queue")}
         </span>
       ),
       downloading: (
@@ -335,20 +334,26 @@ export default function Home() {
           {download.progress.toFixed(0)}%
         </span>
       ),
-      merging: <span className="badge badge-downloading">Processando</span>,
+      merging: (
+        <span className="badge badge-downloading">
+          {t("status.processing")}
+        </span>
+      ),
       completed: (
         <span className="badge badge-completed">
           <IconCheck size={14} />
-          Concluído
+          {t("status.completed")}
         </span>
       ),
       failed: (
         <span className="badge badge-failed">
           <IconX size={14} />
-          Erro
+          {t("status.error")}
         </span>
       ),
-      cancelled: <span className="badge badge-pending">Cancelado</span>,
+      cancelled: (
+        <span className="badge badge-pending">{t("status.cancelled")}</span>
+      ),
     };
     return badges[download.status] || null;
   };
@@ -411,7 +416,7 @@ export default function Home() {
                             type="url"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
-                            placeholder={t.home.placeholder}
+                            placeholder={t("home.placeholder")}
                             className="input input-lg pl-12 pr-12 focus:ring-0"
                             disabled={isLoading}
                           />
@@ -435,7 +440,7 @@ export default function Home() {
                         className="flex items-center gap-2 mt-3 text-sm text-surface-500"
                       >
                         <IconLoader2 size={16} className="animate-spin" />
-                        <span>{t.home.fetching}</span>
+                        <span>{t("home.fetching")}</span>
                       </motion.div>
                     )}
 
@@ -510,7 +515,7 @@ export default function Home() {
                             {videoInfo.view_count > 0 && (
                               <p className="text-xs text-surface-400 mt-1">
                                 {formatViews(videoInfo.view_count)}{" "}
-                                visualizações
+                                {t("home.views")}
                               </p>
                             )}
                           </div>
@@ -527,7 +532,7 @@ export default function Home() {
                             }`}
                           >
                             <IconVideo size={18} />
-                            <span>{t.home.video_mode}</span>
+                            <span>{t("home.video_mode")}</span>
                           </button>
                           <button
                             onClick={() => setDownloadMode("audio")}
@@ -538,7 +543,7 @@ export default function Home() {
                             }`}
                           >
                             <IconMusic size={18} />
-                            <span>{t.home.audio_mode}</span>
+                            <span>{t("home.audio_mode")}</span>
                           </button>
                         </div>
 
@@ -550,7 +555,7 @@ export default function Home() {
                             className="mb-5"
                           >
                             <label className="block text-sm font-medium text-surface-700 mb-2">
-                              {t.home.quality}
+                              {t("home.quality")}
                             </label>
                             <div className="flex flex-wrap gap-2">
                               {VIDEO_QUALITIES.filter((q) => {
@@ -602,7 +607,7 @@ export default function Home() {
                             className="mb-5"
                           >
                             <label className="block text-sm font-medium text-surface-700 mb-2">
-                              {t.home.format}
+                              {t("home.format")}
                             </label>
                             <div className="flex flex-wrap gap-2">
                               {AUDIO_FORMATS.map((f) => {
@@ -648,8 +653,8 @@ export default function Home() {
                               <IconDownload size={20} />
                               <span>
                                 {downloadMode === "video"
-                                  ? t.home.add_queue
-                                  : t.home.add_audio_queue}
+                                  ? t("home.add_queue")
+                                  : t("home.add_audio_queue")}
                               </span>
                             </>
                           )}
@@ -674,16 +679,18 @@ export default function Home() {
                               <IconList size={32} />
                             </div>
                             <h3 className="text-lg font-bold text-surface-900 mb-1">
-                              {queue.length} downloads em andamento
+                              {t("home.active_downloads", {
+                                count: queue.length,
+                              })}
                             </h3>
                             <p className="text-surface-500 mb-6 text-sm">
-                              Acompanhe o progresso na aba dedicada.
+                              {t("home.check_progress")}
                             </p>
                             <button
                               onClick={() => setActiveTab("queue")}
                               className="btn btn-primary px-6"
                             >
-                              Ir para a Fila
+                              {t("home.go_to_queue")}
                             </button>
                           </div>
                         ) : !videoInfo ? (
@@ -699,10 +706,10 @@ export default function Home() {
                               />
                             </motion.div>
                             <h3 className="empty-state-title">
-                              {t.home.empty_queue_title}
+                              {t("home.empty_queue_title")}
                             </h3>
                             <p className="empty-state-text">
-                              {t.home.empty_queue_text}
+                              {t("home.empty_queue_text")}
                             </p>
                           </div>
                         ) : null}
@@ -718,7 +725,9 @@ export default function Home() {
                           <>
                             <div className="flex items-center justify-between mb-4">
                               <h2 className="text-lg font-bold font-display text-surface-900">
-                                {t.home.history_title}
+                                <h2 className="text-lg font-bold font-display text-surface-900">
+                                  {t("home.history_title")}
+                                </h2>
                               </h2>
                               <div className="flex items-center gap-3">
                                 <span className="text-sm text-surface-500">
@@ -781,7 +790,7 @@ export default function Home() {
                                           OpenDownloadFolder(download.id);
                                         }}
                                         className="p-1.5 text-surface-400 hover:text-primary-500 hover:bg-surface-200/50 rounded-lg transition-colors"
-                                        title={t.actions.openFolder}
+                                        title={t("actions.openFolder")}
                                       >
                                         <IconFolder size={18} />
                                       </button>
@@ -791,7 +800,7 @@ export default function Home() {
                                           OpenUrl(download.url);
                                         }}
                                         className="p-1.5 text-surface-400 hover:text-secondary-500 hover:bg-surface-200/50 rounded-lg transition-colors"
-                                        title={t.actions.openUrl}
+                                        title={t("actions.openUrl")}
                                       >
                                         <IconWorld size={18} />
                                       </button>
@@ -810,10 +819,10 @@ export default function Home() {
                               />
                             </div>
                             <h3 className="empty-state-title">
-                              {t.home.empty_history_title}
+                              {t("home.empty_history_title")}
                             </h3>
                             <p className="empty-state-text">
-                              {t.home.empty_history_text}
+                              {t("home.empty_history_text")}
                             </p>
                           </div>
                         )}
@@ -829,8 +838,8 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Footer Terminal (Docked) */}
-      <Terminal layout={layout} />
+      {/* Footer Terminal (Docked) - Escondido no Roadmap */}
+      {activeTab !== "roadmap" && <Terminal layout={layout} />}
       {/* Settings Panel Overlay */}
       <SettingsPanel
         isOpen={isSettingsOpen}

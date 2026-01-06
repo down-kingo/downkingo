@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconAlertCircle } from "@tabler/icons-react";
 
@@ -7,6 +8,7 @@ interface DisclaimerModalProps {
 }
 
 export default function DisclaimerModal({ onAccept }: DisclaimerModalProps) {
+  const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
@@ -50,20 +52,24 @@ export default function DisclaimerModal({ onAccept }: DisclaimerModalProps) {
                     <IconAlertCircle className="w-8 h-8 text-red-500" />
                   </div>
                   <h2 className="text-2xl font-bold text-surface-900 font-display">
-                    Aviso legal de direitos autorais
+                    {t("disclaimer.title")}
                   </h2>
                 </div>
 
                 <div className="text-surface-600 leading-relaxed mb-8 text-center space-y-4">
+                  <p>{t("disclaimer.text1")}</p>
                   <p>
-                    Vídeos no YouTube e em outros sites podem estar sujeitos à
-                    proteção da DMCA.
-                  </p>
-                  <p>
-                    Os autores do{" "}
-                    <strong className="text-surface-900">DownKingo</strong> não
-                    endossam nem se responsabilizam pelo uso deste aplicativo de
-                    forma que viole essas leis.
+                    <Trans
+                      i18nKey="disclaimer.text2"
+                      t={t}
+                      components={{
+                        0: (
+                          <strong className="text-surface-900">
+                            DownKingo
+                          </strong>
+                        ),
+                      }}
+                    />
                   </p>
                 </div>
 
@@ -78,7 +84,7 @@ export default function DisclaimerModal({ onAccept }: DisclaimerModalProps) {
                       />
                     </div>
                     <span className="text-sm font-medium text-surface-700 group-hover:text-surface-900 transition-colors">
-                      Não mostrar esta mensagem novamente
+                      {t("disclaimer.dont_show_again")}
                     </span>
                   </label>
 
@@ -86,7 +92,7 @@ export default function DisclaimerModal({ onAccept }: DisclaimerModalProps) {
                     onClick={handleAccept}
                     className="w-full py-4 bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white font-bold rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-primary-600/20 text-lg"
                   >
-                    Eu entendo
+                    {t("disclaimer.accept")}
                   </button>
                 </div>
               </div>

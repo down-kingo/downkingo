@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   IconSearch,
@@ -50,6 +51,7 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 export default function Images() {
+  const { t } = useTranslation("images");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState<ImageInfo | null>(null);
@@ -210,10 +212,10 @@ export default function Images() {
     <div className="max-w-4xl mx-auto p-6 md:p-8 h-full overflow-hidden">
       <div className="mb-8 border-b border-surface-200 dark:border-surface-800 pb-6">
         <h1 className="text-2xl font-semibold text-surface-900 mb-1 dark:text-surface-50 tracking-tight">
-          Galeria & Imagens
+          {t("title")}
         </h1>
         <p className="text-sm text-surface-500 dark:text-surface-400">
-          Extraia e baixe imagens de alta resolução a partir de links.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -229,7 +231,7 @@ export default function Images() {
           <input
             type="text"
             className="w-full pl-10 pr-32 py-3 bg-white dark:bg-surface-100 border border-surface-200 dark:border-surface-700 rounded-md focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all placeholder:text-surface-400 text-sm text-surface-900 dark:text-surface-200"
-            placeholder="Cole o link da imagem..."
+            placeholder={t("placeholder")}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
@@ -243,7 +245,7 @@ export default function Images() {
             ) : (
               <IconSearch size={16} />
             )}
-            <span>Buscar</span>
+            <span>{t("search")}</span>
           </button>
         </div>
       </form>
@@ -264,26 +266,21 @@ export default function Images() {
                   <IconAlertCircle size={20} className="mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold mb-2">
-                      {error.startsWith("INSTAGRAM_BLOCKED:")
-                        ? "Instagram"
-                        : "Twitter/X"}{" "}
-                      bloqueou o acesso automático
+                      {t("error.blocked_title", {
+                        platform: error.startsWith("INSTAGRAM_BLOCKED:")
+                          ? "Instagram"
+                          : "Twitter/X",
+                      })}
                     </p>
                     <p className="text-sm mb-3 text-amber-600 dark:text-amber-300">
-                      Desde dezembro/2024, essas redes exigem login. Siga os
-                      passos abaixo:
+                      {t("error.blocked_description")}
                     </p>
                     <ol className="text-sm list-decimal list-inside space-y-1 mb-4 text-amber-600 dark:text-amber-300">
-                      <li>Clique em "Abrir no navegador" abaixo</li>
-                      <li>Na página, clique na imagem para ampliá-la</li>
-                      <li>
-                        Clique com botão direito → "Abrir imagem em nova aba"
-                      </li>
-                      <li>
-                        Copie a URL da nova aba (começa com scontent... ou
-                        pbs.twimg...)
-                      </li>
-                      <li>Cole aqui no Magpie</li>
+                      <li>{t("error.step_1")}</li>
+                      <li>{t("error.step_2")}</li>
+                      <li>{t("error.step_3")}</li>
+                      <li>{t("error.step_4")}</li>
+                      <li>{t("error.step_5")}</li>
                     </ol>
                     <button
                       onClick={() => {
@@ -293,7 +290,7 @@ export default function Images() {
                       className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md text-sm font-medium transition-colors"
                     >
                       <IconExternalLink size={16} />
-                      Abrir no navegador
+                      {t("error.open_browser")}
                     </button>
                   </div>
                 </div>
@@ -345,8 +342,8 @@ export default function Images() {
                   {/* Badge de Fonte para Debug */}
                   <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-white text-[10px] rounded backdrop-blur-sm z-20">
                     {mediaItems.length > 1
-                      ? "Modo Web (Carrossel)"
-                      : "Modo Básico (Capa)"}
+                      ? t("carousel_mode")
+                      : t("basic_mode")}
                   </div>
                 </div>
 
@@ -354,7 +351,7 @@ export default function Images() {
                 {mediaItems.length > 1 && (
                   <div className="w-full mt-6 pt-4 border-t border-surface-200 dark:border-surface-700">
                     <p className="text-xs font-semibold uppercase tracking-wider text-surface-500 mb-3 text-center">
-                      Galeria ({mediaItems.length} imagens)
+                      {t("gallery", { count: mediaItems.length })}
                     </p>
                     <div className="flex gap-2 overflow-x-auto pb-2 justify-center px-4">
                       {mediaItems.map((item, idx) => (
@@ -438,7 +435,7 @@ export default function Images() {
                       </div>
                       <div>
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
-                          Tipo
+                          {t("type")}
                         </p>
                         <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
                           {info.contentType}
@@ -452,7 +449,7 @@ export default function Images() {
                       </div>
                       <div>
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
-                          Tamanho
+                          {t("size")}
                         </p>
                         <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
                           {formatBytes(info.size)}
@@ -466,12 +463,12 @@ export default function Images() {
                       </div>
                       <div>
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
-                          Resolução
+                          {t("resolution")}
                         </p>
                         <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
                           {mediaItems[selectedIndex]?.width
                             ? `${mediaItems[selectedIndex].width}x${mediaItems[selectedIndex].height}`
-                            : "Original"}
+                            : t("original")}
                         </p>
                       </div>
                     </div>
@@ -491,18 +488,18 @@ export default function Images() {
                     {downloading ? (
                       <>
                         <IconLoader2 className="animate-spin" size={18} />
-                        <span>Baixando...</span>
+                        <span>{t("downloading")}</span>
                       </>
                     ) : downloadPath ? (
                       <>
                         <IconCheck size={18} />
-                        <span>Salvo!</span>
+                        <span>{t("saved")}</span>
                       </>
                     ) : (
                       <>
                         <IconDownload size={18} />
                         <span>
-                          Baixar Imagem{" "}
+                          {t("download_image")}{" "}
                           {mediaItems.length > 1
                             ? `(${selectedIndex + 1})`
                             : ""}
@@ -522,7 +519,7 @@ export default function Images() {
                       }}
                       className="w-full py-2 px-4 rounded-md font-medium text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                     >
-                      Baixar outra imagem
+                      {t("download_another")}
                     </button>
                   )}
                 </div>

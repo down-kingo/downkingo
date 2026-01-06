@@ -13,8 +13,10 @@ export type RoadmapStatus = "idea" | "planned" | "in-progress" | "shipped";
 export interface RoadmapItem {
   id: number;
   title: string;
-  /** AI-processed user-friendly title (optional) */
+  /** AI-processed user-friendly title (optional) - defaults to PT-BR/Source */
   friendly_title?: string;
+  /** Localized titles map (new v2 architecture) */
+  title_i18n?: Record<string, string>;
   /** Description (may contain markdown, max 150 chars) */
   description: string;
   status: RoadmapStatus;

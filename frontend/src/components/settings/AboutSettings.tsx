@@ -6,8 +6,7 @@ import {
   IconExternalLink,
 } from "@tabler/icons-react";
 import { safeBrowserOpenURL } from "../../lib/wailsRuntime";
-import { useSettingsStore } from "../../stores/settingsStore";
-import { translations } from "../../translations";
+import { useTranslation } from "react-i18next";
 
 const SettingItem = ({
   icon: Icon,
@@ -53,8 +52,7 @@ const SettingItem = ({
 );
 
 export default function AboutSettings() {
-  const { language } = useSettingsStore();
-  const t = (translations[language] || translations["pt-BR"] || {}) as any;
+  const { t } = useTranslation("settings");
 
   const appVersion = "2.0.0"; // Idealmente viria do backend/config
 
@@ -81,7 +79,7 @@ export default function AboutSettings() {
             v{appVersion}
           </p>
           <p className="text-sm text-surface-600 dark:text-surface-300 max-w-md mx-auto leading-relaxed">
-            {t.settings.about.description}
+            {t("about.description")}
           </p>
         </div>
       </section>
@@ -90,15 +88,15 @@ export default function AboutSettings() {
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconInfoCircle size={14} />
-          {t.settings.about.resources}
+          {t("about.resources")}
         </h3>
         <div className="space-y-3">
           {/* Documentação */}
 
           <SettingItem
             icon={IconBook}
-            label={t.settings.about.documentation}
-            desc={t.settings.about.documentation_desc}
+            label={t("about.documentation")}
+            desc={t("about.documentation_desc")}
             onClick={() => handleOpenLink("https://downkingo.app/docs")} // Substituir URL real
           >
             <IconExternalLink size={18} className="text-surface-400" />
@@ -107,8 +105,8 @@ export default function AboutSettings() {
           {/* GitHub */}
           <SettingItem
             icon={IconBrandGithub}
-            label={t.settings.about.github}
-            desc={t.settings.about.github_desc}
+            label={t("about.github")}
+            desc={t("about.github_desc")}
             onClick={() =>
               handleOpenLink("https://github.com/Capman002/downkingo")
             } // Substituir URL real
@@ -120,12 +118,12 @@ export default function AboutSettings() {
           <div className="relative overflow-hidden rounded-xl border border-pink-200 dark:border-pink-900/30 bg-gradient-to-br from-pink-50 to-white dark:from-pink-900/10 dark:to-surface-100 p-1">
             <SettingItem
               icon={IconHeart}
-              label={t.settings.about.support}
-              desc={t.settings.about.support_desc}
+              label={t("about.support")}
+              desc={t("about.support_desc")}
               onClick={() => handleOpenLink("https://ko-fi.com/seulink")} // Substituir URL real
             >
               <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-lg text-xs font-bold uppercase tracking-wide">
-                {t.settings.about.donate}
+                {t("about.donate")}
               </div>
             </SettingItem>
           </div>
@@ -135,7 +133,7 @@ export default function AboutSettings() {
       {/* Copyright */}
       <div className="text-center pt-4 pb-2">
         <p className="text-xs text-surface-400 dark:text-surface-600">
-          © 2026 DownKingo. {t.settings.about.copyright}
+          © 2026 DownKingo. {t("about.copyright")}
         </p>
       </div>
     </div>

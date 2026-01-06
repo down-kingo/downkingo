@@ -37,9 +37,6 @@ var DangerousPathPatterns = []string{
 	"%",
 }
 
-// urlRegex matches valid HTTP(S) URLs.
-var urlRegex = regexp.MustCompile(`^https?://[^\s/$.?#].[^\s]*$`)
-
 // filenameUnsafeChars matches characters not allowed in filenames.
 var filenameUnsafeChars = regexp.MustCompile(`[<>:"/\\|?*\x00-\x1f]`)
 

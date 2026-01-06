@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconClipboard, IconDownload, IconX } from "@tabler/icons-react";
 import { safeEventsOn } from "../lib/wailsRuntime";
 
 export default function ClipboardToast() {
+  const { t } = useTranslation("common");
   const [url, setUrl] = useState<string | null>(null);
   const mountedRef = useRef(true);
   const autoHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,7 +87,7 @@ export default function ClipboardToast() {
 
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-sm text-surface-900 dark:text-white mb-1">
-                Link Detectado
+                {t("clipboard.link_detected")}
               </h4>
               <p className="text-xs text-surface-500 dark:text-surface-400 truncate mb-3 font-mono bg-surface-50 dark:bg-surface-900 rounded px-2 py-1">
                 {url}
@@ -97,13 +99,13 @@ export default function ClipboardToast() {
                   className="flex-1 bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <IconDownload size={14} />
-                  Baixar Agora
+                  {t("clipboard.download_now")}
                 </button>
                 <button
                   onClick={handleDismiss}
                   className="px-3 py-2 bg-surface-100 hover:bg-surface-200 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-600 dark:text-surface-300 rounded-lg text-xs font-medium transition-colors"
                 >
-                  Dispensar
+                  {t("clipboard.dismiss")}
                 </button>
               </div>
             </div>

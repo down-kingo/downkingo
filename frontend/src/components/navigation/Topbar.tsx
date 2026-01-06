@@ -7,6 +7,7 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { TabType } from "./Sidebar";
+import { useTranslation } from "react-i18next";
 
 interface TopbarProps {
   activeTab: TabType;
@@ -21,6 +22,7 @@ export default function Topbar({
   queueCount,
   onOpenSettings,
 }: TopbarProps) {
+  const { t } = useTranslation("common");
   return (
     <header className="flex items-center justify-between px-6 py-3 bg-surface-50 dark:bg-surface-50 border-b border-surface-200 dark:border-surface-800">
       {/* Brand Logo (Simplified) */}
@@ -56,7 +58,7 @@ export default function Topbar({
           }`}
         >
           <IconHome size={16} />
-          <span>Início</span>
+          <span>{t("nav.home")}</span>
         </button>
         <button
           onClick={() => setActiveTab("video")}
@@ -67,7 +69,7 @@ export default function Topbar({
           }`}
         >
           <IconDownload size={16} />
-          <span>Vídeos</span>
+          <span>{t("nav.videos")}</span>
         </button>
         <button
           onClick={() => setActiveTab("images")}
@@ -78,7 +80,7 @@ export default function Topbar({
           }`}
         >
           <IconPhoto size={16} />
-          <span>Imagens</span>
+          <span>{t("nav.images")}</span>
         </button>
         <button
           onClick={() => setActiveTab("converter")}
@@ -89,7 +91,7 @@ export default function Topbar({
           }`}
         >
           <IconTransform size={16} />
-          <span>Converter</span>
+          <span>{t("nav.converter")}</span>
         </button>
         <button
           onClick={() => setActiveTab("queue")}
@@ -100,7 +102,7 @@ export default function Topbar({
           }`}
         >
           <IconList size={16} />
-          <span>Fila</span>
+          <span>{t("nav.queue")}</span>
           {queueCount > 0 && (
             <span className="text-xs font-bold bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-full ml-1">
               {queueCount}

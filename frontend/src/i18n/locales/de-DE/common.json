@@ -1,0 +1,127 @@
+{
+  "actions": {
+    "back": "Zurück",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "copy": "Kopieren",
+    "delete": "Löschen",
+    "download": "Herunterladen",
+    "edit": "Bearbeiten",
+    "next": "Weiter",
+    "openFolder": "Ordner öffnen",
+    "openUrl": "Original-Link öffnen",
+    "refresh": "Aktualisieren",
+    "retry": "Wiederholen",
+    "save": "Speichern",
+    "search": "Suchen"
+  },
+  "clipboard": {
+    "dismiss": "Verwerfen",
+    "download_now": "Jetzt Herunterladen",
+    "link_detected": "Link Erkannt"
+  },
+  "dashboard": {
+    "manage_tools": "Verwalten Sie Tools und aktuelle Downloads.",
+    "overview": "Übersicht",
+    "recent_activity": "Aktuelle Aktivität",
+    "tools": {
+      "image_extractor": {
+        "desc": "Extrahieren Sie Bilder aus Links und sozialen Netzwerken.",
+        "title": "Bild-Extraktor"
+      },
+      "video_downloader": {
+        "desc": "Laden Sie Videos und Audios von YouTube, TikTok und mehr herunter.",
+        "title": "Video Downloader"
+      }
+    },
+    "unknown": "Unbekannt",
+    "view_full_history": "Vollständigen Verlauf anzeigen"
+  },
+  "disclaimer": {
+    "accept": "Ich verstehe",
+    "dont_show_again": "Diese Nachricht nicht mehr anzeigen",
+    "text1": "Videos auf YouTube und anderen Seiten können urheberrechtlich geschützt sein (DMCA).",
+    "text2": "Die Autoren von <0>DownKingo</0> sind nicht verantwortlich für die Nutzung dieser Anwendung unter Verletzung dieser Gesetze.",
+    "title": "Urheberrechtshinweis"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
+    "invalid_url": "Ungültige URL.",
+    "network": "Verbindungsfehler. Überprüfen Sie Ihr Internet.",
+    "not_found": "Inhalt nicht gefunden.",
+    "unsupported": "Plattform nicht unterstützt."
+  },
+  "home": {
+    "active_downloads_one": "aktiver Download",
+    "active_downloads_other": "{{count}} aktive Downloads",
+    "add_audio_queue": "Audio hinzufügen",
+    "add_queue": "Zur Warteschlange",
+    "audio_mode": "Nur Audio",
+    "check_progress": "Fortschritt im dedizierten Tab prüfen.",
+    "empty_history_text": "Ihre Downloads erscheinen hier.",
+    "empty_history_title": "Kein Verlauf",
+    "empty_queue_text": "Fügen Sie eine URL von YouTube, TikTok oder Instagram ein.",
+    "empty_queue_title": "Warteschlange leer",
+    "fetching": "Informationen abrufen...",
+    "format": "Format",
+    "go_to_queue": "Zur Warteschlange",
+    "history_title": "Verlauf",
+    "no_recent_downloads": "Keine aktuellen Downloads",
+    "placeholder": "Video-URL hier einfügen...",
+    "quality": "Qualität",
+    "queue_title": "Warteschlange",
+    "video_mode": "Video",
+    "views": "Aufrufe",
+    "active_downloads": "{{count}} Downloads laufen"
+  },
+  "nav": {
+    "console": "Konsole",
+    "converter": "Konvertieren",
+    "folder": "Download-Ordner",
+    "history": "Verlauf",
+    "home": "Startseite",
+    "images": "Bilder",
+    "queue": "Warteschlange",
+    "roadmap": "Roadmap",
+    "settings": "Einstellungen",
+    "videos": "Videos"
+  },
+  "setup": {
+    "installation_error": "Installationsfehler",
+    "overall_progress": "Gesamtfortschritt",
+    "ready_redirecting": "Alles bereit! Weiterleitung...",
+    "retry": "Wiederholen",
+    "retrying": "Erneuter Versuch...",
+    "status": {
+      "completed": "Fertig",
+      "downloading": "Herunterladen...",
+      "error": "Fehler",
+      "extracting": "Extrahieren...",
+      "installed": "Installiert",
+      "verifying": "Verifizieren...",
+      "waiting": "Warten..."
+    },
+    "title": "Wichtige Komponenten werden vorbereitet..."
+  },
+  "status": {
+    "available": "Verfügbar",
+    "cancelled": "Abgebrochen",
+    "completed": "Abgeschlossen",
+    "downloading": "Wird heruntergeladen...",
+    "empty": "Leer",
+    "error": "Fehler",
+    "failed": "Fehlgeschlagen",
+    "in_queue": "In Warteschlange",
+    "loading": "Wird geladen...",
+    "pending": "Ausstehend",
+    "processing": "Wird verarbeitet...",
+    "success": "Erfolg"
+  },
+  "terminal": {
+    "clear": "Konsole leeren",
+    "maximize": "Maximieren",
+    "minimize": "Minimieren",
+    "ready": "Bereit für Ausgabeaufnahme..."
+  }
+}
