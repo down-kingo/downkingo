@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-06T19:20:50.523Z",
+  "generated_at": "2026-01-06T19:42:17.218Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "description": "## Kontext\nDerzeit hat der Benutzer nach dem Herunterladen eines Videos oder Bildes auf Kingo (PC) keine native und schnelle Möglichkeit, diesen Inhalt auf sein Telefon zu übertragen. Die Abhängigkeit von der Cloud (Google Drive/WhatsApp) ist langsam und verbraucht unnötig Internetbandbreite.\n## Motivation\nErstellen Sie eine \"reibungslose\" Erfahrung, bei der der Benutzer einfach die Kamera seines Telefons auf Kingo richtet und der Download sofort über das lokale Netzwerk (P2P) beginnt, wobei die maximale Wi-Fi-Geschwindigkeit genutzt wird.\n## Problem\nDas Übertragen großer Dateien vom PC auf mobile Geräte ist ein mühsamer Prozess, der normalerweise USB-Kabel oder Uploads zu externen Diensten beinhaltet, was die Agilität einer Download-App beeinträchtigt.\n## Technischer Vorschlag\nImplementieren Sie einen **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Verwenden Sie `net/http`, um einen temporären Webserver auf einem zufälligen Port zu starten.\n   - Implementieren Sie ein **IP Discovery**-System, um die Adresse des PCs im lokalen Netzwerk zu identifizieren (z. B. 192.168.x.x).\n   - Dienen Sie der Datei di",
+      "description": "## Kontext\nDerzeit hat der Benutzer nach dem Herunterladen eines Videos oder Bildes auf Kingo (PC) keine native und schnelle Möglichkeit, diesen Inhalt auf sein Telefon zu übertragen. Die Nutzung der Cloud (Google Drive/WhatsApp) ist langsam und verbraucht unnötig Internetbandbreite.\n## Motivation\nErstellen Sie eine \"reibungslose\" Erfahrung, bei der der Benutzer einfach die Kamera seines Telefons auf Kingo richtet und der Download sofort über das lokale Netzwerk (P2P) beginnt, wobei die maximale Wi-Fi-Geschwindigkeit genutzt wird.\n## Problem\nDas Übertragen großer Dateien vom PC auf mobile Geräte ist ein mühsamer Prozess, der normalerweise USB-Kabel oder Uploads zu externen Diensten beinhaltet, was die Agilität einer Download-App beeinträchtigt.\n## Technischer Vorschlag\nImplementieren Sie einen **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Verwenden Sie `net/http`, um einen temporären Webserver auf einem zufälligen Port zu starten.\n   - Implementieren Sie ein **IP Discovery**-System, um die Adresse des PCs im lokalen Netzwerk zu identifizieren (z. B. 192.168.x.x).\n   - Dienen Sie der Datei di",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
