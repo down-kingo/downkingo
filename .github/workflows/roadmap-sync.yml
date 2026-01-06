@@ -31,23 +31,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository (Source)
-        uses: actions/checkout@v4
-
-      - name: Checkout Data Branch
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: roadmap-data
-          path: roadmap-data
-
-      - name: Load Cache
-        run: |
-          if [ -f roadmap-data/roadmap.json ]; then
-            echo "Loading cache from roadmap-data branch..."
-            cp roadmap-data/roadmap.json .
-          else
-            echo "No cache found (first run?)"
-          fi
+          fetch-depth: 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -64,20 +52,13 @@ jobs:
           ORG_NAME: "down-kingo"
           PROJECT_NUMBER: 2
         run: |
-          # This generates roadmap.json and roadmap.meta.json in root
           node .github/scripts/generate_roadmap.js
 
       # ============================================================
       # Step 2: Commit and Push
       # ============================================================
-      - name: Commit Changes to Data Branch
+      - name: Commit Changes
         run: |
-          # Move generated files to data branch folder
-          mv roadmap.json roadmap-data/
-          mv roadmap.meta.json roadmap-data/
-
-          cd roadmap-data
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -89,7 +70,7 @@ jobs:
 
           git add roadmap.json roadmap.meta.json
           git commit -m "chore: sync roadmap $(date +%Y-%m-%d)"
-          git push origin roadmap-data
+          git push
 
       - name: Trigger Cloudflare Pages Deploy
         if: success()
