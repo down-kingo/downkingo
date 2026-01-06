@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-01-05T23:43:36.418Z",
+  "generated_at": "2026-01-06T00:10:53Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -10,7 +10,7 @@
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "friendly_title": null,
+      "friendly_title": "Compartilhamento local com QR Code",
       "description": "## Contexto\nAtualmente, após baixar um vídeo ou imagem no Kingo (PC), o usuário não tem uma forma nativa e rápida de passar esse conteúdo para o celul...",
       "status": "idea",
       "votes_up": 0,
@@ -26,7 +26,7 @@
     {
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "friendly_title": null,
+      "friendly_title": "Extensão do navegador e deep links otimizados",
       "description": "## Contexto\nO ecossistema Kingo precisa de uma integração mais fluida com o navegador. Atualmente, o usuário depende do monitor de clipboard ou de cop...",
       "status": "idea",
       "votes_up": 0,
@@ -42,7 +42,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "friendly_title": null,
+      "friendly_title": "Core: Migração para Wails v3",
       "description": "## Contexto\nO Kingo amadureceu e sua arquitetura atual em Wails v2 começa a limitar a experiência de \"App Nativo\". A migração para a v3 Alpha/Beta é o...",
       "status": "planned",
       "votes_up": 0,
