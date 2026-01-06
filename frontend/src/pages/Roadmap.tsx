@@ -99,7 +99,7 @@ const getColumns = (t: (key: string) => string): ColumnConfig[] => [
 ];
 
 export default function Roadmap() {
-  const { t } = useTranslation("roadmap");
+  const { t, i18n } = useTranslation("roadmap");
   const COLUMNS = getColumns(t);
 
   // Store state
@@ -134,11 +134,11 @@ export default function Roadmap() {
 
   useEffect(() => {
     // Initialize store and subscribe to live updates
-    const cleanup = initialize();
+    const cleanup = initialize(i18n.language);
     checkAuth();
 
     return cleanup;
-  }, []);
+  }, [initialize, i18n.language]);
 
   const checkAuth = async () => {
     const token = await GetGitHubToken();

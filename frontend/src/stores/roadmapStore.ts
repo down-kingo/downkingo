@@ -25,7 +25,7 @@ interface RoadmapState {
   lastUpdated: number | null;
 
   // Actions
-  fetchRoadmap: () => Promise<void>;
+  fetchRoadmap: (lang?: string) => Promise<void>;
   setItems: (items: RoadmapItem[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -47,7 +47,7 @@ export const useRoadmapStore = create<RoadmapState>()(
       lastUpdated: null,
 
       // Fetch roadmap from backend
-      fetchRoadmap: async () => {
+      fetchRoadmap: async (lang: string = "pt-BR") => {
         const { items } = get();
 
         // Only show loading if we have no cached data
@@ -56,7 +56,8 @@ export const useRoadmapStore = create<RoadmapState>()(
         }
 
         try {
-          const data = await GetRoadmap();
+          // Pass current language to backend to fetch correct JSON
+          const data = await GetRoadmap(lang);
           if (data && Array.isArray(data)) {
             set({
               items: data as RoadmapItem[],
@@ -192,9 +193,9 @@ export function useRoadmapInit() {
   const { fetchRoadmap, subscribeToUpdates } = useRoadmapStore();
 
   return {
-    initialize: () => {
+    initialize: (lang: string = "pt-BR") => {
       // Fetch initial data
-      fetchRoadmap();
+      fetchRoadmap(lang);
 
       // Subscribe to live updates
       const unsubscribe = subscribeToUpdates();

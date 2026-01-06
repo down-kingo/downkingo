@@ -57,20 +57,27 @@ jobs:
       # ============================================================
       # Step 2: Commit and Push
       # ============================================================
-      - name: Commit Changes
+      - name: Commit Changes to Data Branch
         run: |
+          # Move generated files to data branch folder
+          # Move all roadmap.*.json (roadmap.json, roadmap.pt-BR.json, etc)
+          mv roadmap*.json roadmap-data/
+
+          cd roadmap-data
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Check if files changed
-          if git diff --quiet roadmap.json roadmap.meta.json 2>/dev/null; then
+          if git diff --quiet . 2>/dev/null; then
             echo "No changes detected, skipping commit"
             exit 0
           fi
 
-          git add roadmap.json roadmap.meta.json
+          # Add all JSON files
+          git add roadmap*.json
           git commit -m "chore: sync roadmap $(date +%Y-%m-%d)"
-          git push
+          git push origin roadmap-data
 
       - name: Trigger Cloudflare Pages Deploy
         if: success()

@@ -429,8 +429,8 @@ func (a *App) GetVersion() string {
 }
 
 // GetRoadmap fetches roadmap items from the configured source
-func (a *App) GetRoadmap() ([]roadmap.RoadmapItem, error) {
-	return a.roadmap.FetchRoadmap()
+func (a *App) GetRoadmap(lang string) ([]roadmap.RoadmapItem, error) {
+	return a.roadmap.FetchRoadmap(lang)
 }
 
 func (a *App) Shutdown(ctx context.Context) {

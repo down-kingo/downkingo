@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"kingo/internal/logger"
@@ -71,8 +72,22 @@ type FetchRoadmapResult struct {
 }
 
 // FetchRoadmap retrieves the full roadmap JSON with conditional request support
-func (f *CDNFetcher) FetchRoadmap(previousETag string) (*FetchRoadmapResult, error) {
-	req, err := http.NewRequest(http.MethodGet, f.config.JSONUrl, nil)
+func (f *CDNFetcher) FetchRoadmap(previousETag string, lang string) (*FetchRoadmapResult, error) {
+	// Construct URL based on lang: roadmap.pt-BR.json
+	targetURL := f.config.JSONUrl
+	if lang != "" {
+		// Replace 'roadmap.json' with 'roadmap.{lang}.json'
+		// BaseURL is something like https://host/
+		// config.JSONUrl is usually https://host/roadmap.json
+		// We can just append to base
+		baseURL := f.config.CDNURL
+		if !strings.HasSuffix(baseURL, "/") {
+			baseURL += "/"
+		}
+		targetURL = fmt.Sprintf("%sroadmap.%s.json", baseURL, lang)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, targetURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create roadmap request: %w", err)
 	}

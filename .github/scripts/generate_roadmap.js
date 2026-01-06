@@ -270,31 +270,75 @@ async function main() {
     return b.votes - a.votes;
   });
 
-  // 5. Generate Output
+  // 5. Generate Output Files (One per language)
+  const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
   const now = new Date().toISOString();
-  const output = {
-    version: "2.0.0", // Bumped version for new schema
+
+  // Helper to create item for specific lang
+  const createItemForLang = (item, lang) => {
+    // Get translated title or fallback
+    let displayTitle = item.title; // default technical
+
+    if (item.title_i18n && item.title_i18n[lang]) {
+      displayTitle = item.title_i18n[lang];
+    } else if (item.friendly_title && typeof item.friendly_title === "string") {
+      // Legacy cache/fallback
+      displayTitle = item.friendly_title;
+    }
+
+    return {
+      ...item,
+      friendly_title: displayTitle, // Simple string, as requested
+      // Remove internal/bulk fields to keep payload clean
+      title_i18n: undefined,
+      _needs_ai: undefined,
+    };
+  };
+
+  for (const lang of languages) {
+    const localizedItems = items.map((i) => createItemForLang(i, lang));
+
+    const output = {
+      version: "2.1.0",
+      generated_at: now,
+      lang: lang,
+      source: {
+        owner: ORG_NAME,
+        repo: "downkingo",
+        project_number: PROJECT_NUMBER,
+      },
+      items: localizedItems,
+    };
+
+    const fileName = `roadmap.${lang}.json`;
+    fs.writeFileSync(fileName, JSON.stringify(output, null, 2));
+    console.log(`✅ Generated ${fileName}`);
+  }
+
+  // Generate Default 'roadmap.json' (Copy of pt-BR for backward compatibility)
+  // This ensures v1/v2 apps don't break
+  const defaultItems = items.map((i) => createItemForLang(i, "pt-BR"));
+  const defaultOutput = {
+    version: "2.1.0",
     generated_at: now,
     source: {
       owner: ORG_NAME,
       repo: "downkingo",
       project_number: PROJECT_NUMBER,
     },
-    items,
+    items: defaultItems,
   };
-
-  fs.writeFileSync("roadmap.json", JSON.stringify(output, null, 2));
+  fs.writeFileSync("roadmap.json", JSON.stringify(defaultOutput, null, 2));
+  console.log(`✅ Generated roadmap.json (Default/Legacy)`);
 
   // Meta file
   const meta = {
-    version: "2.0.0",
+    version: "2.1.0",
     generated_at: now,
     items_count: items.length,
-    content_hash: "SHA256_PLACEHOLDER", // In a real CI we'd calc this, but for now simple metadata
+    languages: languages,
   };
   fs.writeFileSync("roadmap.meta.json", JSON.stringify(meta, null, 2));
-
-  console.log("✅ Generated roadmap.json and roadmap.meta.json");
 }
 
 main().catch((err) => {

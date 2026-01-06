@@ -221,12 +221,12 @@ func (s *Service) EnableCDN(enabled bool) {
 // 1. Returns cached data immediately (instant UI)
 // 2. Triggers background sync to CDN
 // 3. Emits "roadmap:update" event when new data arrives
-func (s *Service) FetchRoadmap() ([]RoadmapItem, error) {
+func (s *Service) FetchRoadmap(lang string) ([]RoadmapItem, error) {
 	// Step 1: Try to return cached data immediately
 	cachedItems := s.loadFromMemoryCache()
 	if len(cachedItems) > 0 {
 		// Trigger background sync (non-blocking)
-		go s.syncInBackground("startup")
+		go s.syncInBackground("startup", lang)
 		return cachedItems, nil
 	}
 
@@ -235,7 +235,7 @@ func (s *Service) FetchRoadmap() ([]RoadmapItem, error) {
 		dbItems, err := s.loadFromDatabaseCache()
 		if err == nil && len(dbItems) > 0 {
 			s.updateMemoryCache(dbItems)
-			go s.syncInBackground("startup")
+			go s.syncInBackground("startup", lang)
 			return dbItems, nil
 		}
 	}
@@ -248,7 +248,7 @@ func (s *Service) FetchRoadmap() ([]RoadmapItem, error) {
 	logger.Log.Debug().Bool("useCDN", useCDN).Msg("FetchRoadmap: no cache, fetching synchronously")
 
 	if useCDN {
-		return s.fetchFromCDNSync()
+		return s.fetchFromCDNSync(lang)
 	}
 
 	// Fallback to direct GitHub (requires auth)
@@ -298,42 +298,41 @@ func (s *Service) updateMemoryCache(items []RoadmapItem) {
 // syncReason: "startup", "timer", "manual" - helps debugging
 func (s *Service) syncInBackground(syncReason string) {
 	// Prevent concurrent syncs
-	s.syncMu.Lock()
-	if s.syncState.InProgress {
-		s.syncMu.Unlock()
+// syncInBackground updates data from source and emits event if changed
+func (s *Service) syncInBackground(reason string, lang string) {
+	if s.isFetching.Load() {
 		return
 	}
-	s.syncState.InProgress = true
-	s.syncMu.Unlock()
+	s.isFetching.Store(true)
+	defer s.isFetching.Store(false)
 
-	defer func() {
-		s.syncMu.Lock()
-		s.syncState.InProgress = false
-		s.syncMu.Unlock()
-	}()
+	logger.Log.Debug().Str("reason", reason).Msg("Starting background sync")
 
 	// Apply jitter to prevent thundering herd (skip for manual syncs)
-	if syncReason != "manual" {
+	if reason != "manual" {
 		jitter := time.Duration(rand.Intn(int(s.config.JitterMax.Seconds()))) * time.Second
 		time.Sleep(jitter)
 	}
+
+	// Check if update is needed (Lightweight HEAD request or Meta check)
+	// For simplicity, we just fetch fresh data and compare
+	var freshItems []RoadmapItem
+	var err error
 
 	s.mu.RLock()
 	useCDN := s.useCDN
 	s.mu.RUnlock()
 
-	var newItems []RoadmapItem
-	var err error
-
 	if useCDN {
-		newItems, err = s.fetchFromCDNWithCache()
+		// CDN defines its own concurrency and update check inside FetchRoadmap
+		freshItems, err = s.fetchFromCDNSync(lang)
 	} else {
-		newItems, err = s.fetchFromGitHubDirect()
+		freshItems, err = s.fetchFromGitHubDirect()
 	}
 
 	if err != nil {
 		// Log error but NEVER clear existing cache - keep last good snapshot
-		s.handleSyncError(err, syncReason)
+		s.handleSyncError(err, reason)
 		return
 	}
 
@@ -347,21 +346,21 @@ func (s *Service) syncInBackground(syncReason string) {
 
 	// Compare with current cache
 	s.mu.RLock()
-	hasChanges := !itemsEqual(s.cache, newItems)
+	hasChanges := !itemsEqual(s.cache, freshItems)
 	s.mu.RUnlock()
 
 	if hasChanges {
-		s.updateMemoryCache(newItems)
+		s.updateMemoryCache(freshItems)
 
 		// Log successful sync with reason
 		logger.Log.Debug().
-			Str("syncReason", syncReason).
-			Int("items", len(newItems)).
+			Str("syncReason", reason).
+			Int("items", len(freshItems)).
 			Msg("roadmap synced successfully")
 
 		// Emit event to frontend for live update
 		if s.eventEmitter != nil {
-			s.eventEmitter("roadmap:update", newItems)
+			s.eventEmitter("roadmap:update", freshItems)
 		}
 	}
 }
@@ -374,7 +373,7 @@ func (s *Service) fetchFromCDNWithCache() ([]RoadmapItem, error) {
 		etag, _ = s.cacheRepo.GetETag()
 	}
 
-	result, err := s.cdnFetcher.FetchRoadmap(etag)
+	result, err := s.cdnFetcher.FetchRoadmap(etag, "") // Keep original behavior for now, lang not passed here
 	if err != nil {
 		return nil, fmt.Errorf("CDN fetch failed: %w", err)
 	}
@@ -394,12 +393,17 @@ func (s *Service) fetchFromCDNWithCache() ([]RoadmapItem, error) {
 	return ToRoadmapItems(result.Roadmap.Items), nil
 }
 
-// fetchFromCDNSync fetches from CDN synchronously (for first load)
-func (s *Service) fetchFromCDNSync() ([]RoadmapItem, error) {
-	logger.Log.Debug().Str("url", extractHost(s.config.JSONUrl)).Msg("fetching roadmap from CDN")
-	result, err := s.cdnFetcher.FetchRoadmap("")
+// fetchFromCDNSync handles the logic of calling cdnFetcher and checking ETag
+func (s *Service) fetchFromCDNSync(lang string) ([]RoadmapItem, error) {
+	// Check local hash vs remote meta (optional optimization, skipped for now to prefer ETag)
+
+	s.mu.RLock()
+	etag := s.lastETag
+	s.mu.RUnlock()
+
+	result, err := s.cdnFetcher.FetchRoadmap(etag, lang)
 	if err != nil {
-		logger.Log.Warn().Err(err).Msg("CDN fetch failed")
+		logger.Log.Error().Err(err).Msg("CDN fetch failed")
 		return nil, err
 	}
 
