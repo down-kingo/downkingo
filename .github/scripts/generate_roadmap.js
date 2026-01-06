@@ -168,23 +168,26 @@ async function callGemini(technicalTitle, description) {
 async function main() {
   console.log("🚀 Starting Roadmap Generation...");
 
-  // 1. Load Cache
-  let titleCache = {};
-  if (fs.existsSync("roadmap.json")) {
+  // 1. Load Cache (NEW FORMAT: requires both title_i18n AND description_i18n)
+  let translationCache = {};
+  const CACHE_FILE = "roadmap.cache.json";
+
+  if (fs.existsSync(CACHE_FILE)) {
     try {
-      const oldData = JSON.parse(fs.readFileSync("roadmap.json", "utf8"));
-      (oldData.items || []).forEach((item) => {
-        if (item.friendly_title && typeof item.friendly_title === "object") {
-          titleCache[item.id] = {
-            original_title: item.title, // store original to detect changes
-            friendly_title: item.friendly_title,
-          };
-        }
-      });
-      console.log(`📦 Loaded cache: ${Object.keys(titleCache).length} items`);
+      const cacheData = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8"));
+      // Cache format: { [id]: { original_title, original_desc_hash, title_i18n, description_i18n } }
+      translationCache = cacheData;
+      console.log(
+        `📦 Loaded MASTER CACHE: ${Object.keys(translationCache).length} items`
+      );
     } catch (e) {
-      console.warn("Cache load failed or empty");
+      console.warn("Master cache load failed, will re-translate all");
     }
+  } else if (fs.existsSync("roadmap.json")) {
+    // Migration: Try loading from legacy roadmap.json but mark all for re-translation
+    console.log(
+      "⚠️ No master cache found. Will translate all items from scratch."
+    );
   }
 
   // 2. Fetch from GitHub
@@ -197,6 +200,13 @@ async function main() {
 
   const items = [];
 
+  // Helper to create a hash of description for change detection
+  const hashDesc = (desc) => {
+    if (!desc) return "";
+    // Simple hash: first 100 chars + length
+    return `${desc.slice(0, 100).replace(/\s/g, "")}_${desc.length}`;
+  };
+
   for (const node of nodes) {
     const c = node.content;
     if (!c || !c.number) continue;
@@ -204,15 +214,27 @@ async function main() {
     const statusName = node.fieldValueByName?.name?.toLowerCase() || "idea";
     const status = STATUS_MAPPING[statusName] || "idea";
 
-    // Check Cache
-    const cached = titleCache[c.number];
-    let friendly_title = null;
+    // Check Cache - now requires both title AND description translations
+    const cached = translationCache[c.number];
+    const currentDescHash = hashDesc(c.body);
+
+    let title_i18n = null;
+    let description_i18n = null;
     let needsAi = false;
 
-    if (cached && cached.original_title === c.title) {
-      friendly_title = cached.friendly_title;
+    if (
+      cached &&
+      cached.original_title === c.title &&
+      cached.original_desc_hash === currentDescHash &&
+      cached.title_i18n &&
+      cached.description_i18n
+    ) {
+      // Cache hit - both title and description are valid
+      title_i18n = cached.title_i18n;
+      description_i18n = cached.description_i18n;
       process.stdout.write("."); // Dot progress for cache hit
     } else {
+      // Cache miss - need AI translation
       needsAi = true;
       process.stdout.write("!"); // Exclamation for new/changed
     }
@@ -220,8 +242,10 @@ async function main() {
     items.push({
       id: c.number,
       title: c.title,
-      friendly_title, // null if needs AI
+      title_i18n, // Pre-filled from cache or null
       description: c.body || "",
+      description_i18n, // Pre-filled from cache or null
+      _original_desc_hash: hashDesc(c.body), // For cache update
       status,
       votes: c.reactions.totalCount || 0,
       votes_up: c.reactions.totalCount || 0,
@@ -288,8 +312,35 @@ async function main() {
     } catch (err) {
       console.error(`   ❌ Failed #${item.id}:`, err.message);
     }
-    delete item._needs_ai;
   }
+
+  // 3.5. Update and Save Master Cache
+  const newCache = {};
+  for (const item of items) {
+    if (item.title_i18n && item.description_i18n) {
+      newCache[item.id] = {
+        original_title: item.title,
+        original_desc_hash: item._original_desc_hash,
+        title_i18n: item.title_i18n,
+        description_i18n: item.description_i18n,
+      };
+    }
+    // Clean internal fields
+    delete item._needs_ai;
+    delete item._original_desc_hash;
+
+    // Compute friendly_title for backward compatibility
+    if (item.title_i18n) {
+      item.friendly_title =
+        item.title_i18n["pt-BR"] ||
+        item.title_i18n["en-US"] ||
+        Object.values(item.title_i18n)[0] ||
+        item.title;
+    }
+  }
+
+  fs.writeFileSync("roadmap.cache.json", JSON.stringify(newCache, null, 2));
+  console.log(`💾 Saved MASTER CACHE: ${Object.keys(newCache).length} items`);
 
   // 4. Sort
   items.sort((a, b) => {
