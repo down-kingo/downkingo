@@ -60,7 +60,7 @@ func TestCDNFetcher_FetchRoadmap_Success(t *testing.T) {
 	cfg := Config{JSONUrl: server.URL}
 	fetcher := NewCDNFetcher(cfg)
 
-	result, err := fetcher.FetchRoadmap("")
+	result, err := fetcher.FetchRoadmap("", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -115,7 +115,7 @@ func TestCDNFetcher_FetchRoadmap_304NotModified(t *testing.T) {
 	cfg := Config{JSONUrl: server.URL}
 	fetcher := NewCDNFetcher(cfg)
 
-	result, err := fetcher.FetchRoadmap(`"cached-etag"`)
+	result, err := fetcher.FetchRoadmap(`"cached-etag"`, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -154,7 +154,7 @@ func TestCDNFetcher_FetchRoadmap_ServerError(t *testing.T) {
 			cfg := Config{JSONUrl: server.URL}
 			fetcher := NewCDNFetcher(cfg)
 
-			_, err := fetcher.FetchRoadmap("")
+			_, err := fetcher.FetchRoadmap("", "")
 			if err == nil {
 				t.Errorf("expected error for status %d", tt.statusCode)
 			}
@@ -189,7 +189,7 @@ func TestCDNFetcher_FetchRoadmap_MalformedJSON(t *testing.T) {
 			cfg := Config{JSONUrl: server.URL}
 			fetcher := NewCDNFetcher(cfg)
 
-			_, err := fetcher.FetchRoadmap("")
+			_, err := fetcher.FetchRoadmap("", "")
 			if err == nil && tt.name != "wrong structure" {
 				t.Error("expected error for malformed JSON")
 			}
@@ -215,7 +215,7 @@ func TestCDNFetcher_FetchRoadmap_NetworkTimeout(t *testing.T) {
 		},
 	}
 
-	_, err := fetcher.FetchRoadmap("")
+	_, err := fetcher.FetchRoadmap("", "")
 	if err == nil {
 		t.Error("expected timeout error")
 	}
@@ -242,7 +242,7 @@ func TestCDNFetcher_FetchRoadmap_GzipCompression(t *testing.T) {
 	cfg := Config{JSONUrl: server.URL}
 	fetcher := NewCDNFetcher(cfg)
 
-	result, err := fetcher.FetchRoadmap("")
+	result, err := fetcher.FetchRoadmap("", "")
 	if err != nil {
 		t.Fatalf("unexpected error with gzip: %v", err)
 	}
@@ -267,7 +267,7 @@ func TestCDNFetcher_FetchRoadmap_SanitizesANSICodes(t *testing.T) {
 	cfg := Config{JSONUrl: server.URL}
 	fetcher := NewCDNFetcher(cfg)
 
-	result, err := fetcher.FetchRoadmap("")
+	result, err := fetcher.FetchRoadmap("", "")
 	if err != nil {
 		t.Fatalf("expected sanitization to handle ESC bytes: %v", err)
 	}
@@ -402,7 +402,7 @@ func BenchmarkCDNFetcher_FetchRoadmap(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		fetcher.FetchRoadmap("")
+		fetcher.FetchRoadmap("", "")
 	}
 }
 

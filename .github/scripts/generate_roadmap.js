@@ -90,31 +90,41 @@ async function graphql(query, variables) {
   });
 }
 
-async function callGemini(technicalTitle) {
+async function callGemini(technicalTitle, description) {
   const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
 
+  // Truncate description to avoid token overflow (keep first 1000 chars)
+  const shortDesc = description ? description.slice(0, 1000) : "";
+
   const prompt = `
-    Task: Translate the following technical GitHub Issue title into user-friendly titles for multiple languages.
+    Task: Translate the following GitHub Issue content into multiple languages.
+
+    === ORIGINAL CONTENT ===
     Technical Title: "${technicalTitle}"
+    Description (Markdown):
+    """
+    ${shortDesc}
+    """
 
-    Rules:
-    1. Remove valid prefixes like feat:, fix:, chore:, docs:, refactor:, style:, test:, ci:.
-    2. Make it a clear, concise feature name (max 60 chars).
-    3. No trailing punctuation.
-    4. Provide translations for: ${languages.join(", ")}.
-    5. RETURN ONLY RAW VALID JSON. No Markdown block. No explanation.
+    === RULES ===
+    1. For TITLE: Remove prefixes like feat:, fix:, chore:, docs:, refactor:, style:, test:, ci:. Make it a clear, concise feature name (max 60 chars). No trailing punctuation.
+    2. For DESCRIPTION: Translate the full text preserving Markdown formatting (headers, lists, bold, etc). Keep technical terms if appropriate.
+    3. Provide translations for: ${languages.join(", ")}.
+    4. RETURN ONLY RAW VALID JSON. No Markdown block. No explanation.
 
-    Expected JSON Format:
+    === EXPECTED JSON FORMAT ===
     {
-      "pt-BR": "Título em Português",
-      "en-US": "Title in English",
-      ...
+      "pt-BR": { "title": "Título em Português", "description": "Descrição traduzida..." },
+      "en-US": { "title": "Title in English", "description": "Translated description..." },
+      "es-ES": { "title": "Título en Español", "description": "Descripción traducida..." },
+      "fr-FR": { "title": "Titre en Français", "description": "Description traduite..." },
+      "de-DE": { "title": "Titel auf Deutsch", "description": "Übersetzte Beschreibung..." }
     }
   `;
 
   const body = JSON.stringify({
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.3, maxOutputTokens: 300 },
+    generationConfig: { temperature: 0.3, maxOutputTokens: 4000 },
   });
 
   return new Promise((resolve, reject) => {
@@ -141,7 +151,7 @@ async function callGemini(technicalTitle) {
             resolve(JSON.parse(cleanJson));
           } catch (e) {
             console.error("Gemini Parse Error:", e);
-            console.error("Raw Response:", responseBody);
+            console.error("Raw Response:", responseBody.slice(0, 500));
             resolve(null);
           }
         });
@@ -235,27 +245,46 @@ async function main() {
   for (const item of itemsToProcess) {
     console.log(`   > Translating #${item.id}: ${item.title}`);
     try {
-      const translations = await callGemini(item.title);
+      // NEW: Pass both title and description for translation
+      const translations = await callGemini(item.title, item.description);
       if (translations) {
-        // BACKWARD COMPATIBILITY:
-        // Old apps expect friendly_title to be a string. We keep it as pt-BR (or fallback to en-US).
-        // New apps will read 'title_i18n' for dynamic translation.
+        // translations format: { "pt-BR": { title: "...", description: "..." }, ... }
+
+        // Extract title translations for backward compatibility
+        const titleI18n = {};
+        const descI18n = {};
+
+        for (const [lang, content] of Object.entries(translations)) {
+          if (content && typeof content === "object") {
+            titleI18n[lang] = content.title || item.title;
+            descI18n[lang] = content.description || item.description;
+          }
+        }
+
+        // BACKWARD COMPATIBILITY: friendly_title as string (pt-BR default)
         item.friendly_title =
-          translations["pt-BR"] ||
-          translations["en-US"] ||
-          Object.values(translations)[0];
-        item.title_i18n = translations;
+          titleI18n["pt-BR"] ||
+          titleI18n["en-US"] ||
+          Object.values(titleI18n)[0] ||
+          item.title;
+
+        item.title_i18n = titleI18n;
+        item.description_i18n = descI18n;
       } else {
-        // Fallback
+        // Fallback - no translation available
         const fallback = item.title.replace(
           /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
           ""
         );
         item.friendly_title = fallback;
         item.title_i18n = { "en-US": fallback, "pt-BR": fallback };
+        item.description_i18n = {
+          "en-US": item.description,
+          "pt-BR": item.description,
+        };
       }
-      // Rate limiting
-      await new Promise((r) => setTimeout(r, 1500));
+      // Rate limiting - increased due to larger payload
+      await new Promise((r) => setTimeout(r, 2000));
     } catch (err) {
       console.error(`   ❌ Failed #${item.id}:`, err.message);
     }
@@ -278,6 +307,7 @@ async function main() {
   const createItemForLang = (item, lang) => {
     // Get translated title or fallback
     let displayTitle = item.title; // default technical
+    let displayDescription = item.description; // default original
 
     if (item.title_i18n && item.title_i18n[lang]) {
       displayTitle = item.title_i18n[lang];
@@ -286,11 +316,18 @@ async function main() {
       displayTitle = item.friendly_title;
     }
 
+    // Get translated description
+    if (item.description_i18n && item.description_i18n[lang]) {
+      displayDescription = item.description_i18n[lang];
+    }
+
     return {
       ...item,
-      friendly_title: displayTitle, // Simple string, as requested
+      friendly_title: displayTitle, // Simple string for title
+      description: displayDescription, // Translated description
       // Remove internal/bulk fields to keep payload clean
       title_i18n: undefined,
+      description_i18n: undefined,
       _needs_ai: undefined,
     };
   };

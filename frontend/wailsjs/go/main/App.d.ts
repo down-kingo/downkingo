@@ -72,7 +72,7 @@ export function GetImageInfo(arg1:string):Promise<images.ImageInfo>;
 
 export function GetInstagramCarousel(arg1:string):Promise<handlers.MediaInfo>;
 
-export function GetRoadmap():Promise<Array<roadmap.RoadmapItem>>;
+export function GetRoadmap(arg1:string):Promise<Array<roadmap.RoadmapItem>>;
 
 export function GetSettings():Promise<config.Config>;
 

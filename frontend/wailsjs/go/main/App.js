@@ -126,8 +126,8 @@ export function GetInstagramCarousel(arg1) {
   return window['go']['main']['App']['GetInstagramCarousel'](arg1);
 }
 
-export function GetRoadmap() {
-  return window['go']['main']['App']['GetRoadmap']();
+export function GetRoadmap(arg1) {
+  return window['go']['main']['App']['GetRoadmap'](arg1);
 }
 
 export function GetSettings() {

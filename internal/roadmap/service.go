@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -69,13 +70,16 @@ type Service struct {
 
 	// State
 	cache      []RoadmapItem
+	cacheLang  string // Language of cached data
 	lastFetch  time.Time
+	lastETag   string
 	syncState  SyncState
 	mu         sync.RWMutex
 	syncMu     sync.Mutex
 	ctx        context.Context
 	cancelSync context.CancelFunc
 	useCDN     bool // Toggle between CDN and direct GitHub
+	isFetching atomic.Bool
 }
 
 // statusMapping maps GitHub Project column names to internal Status types
@@ -294,10 +298,6 @@ func (s *Service) updateMemoryCache(items []RoadmapItem) {
 	s.mu.Unlock()
 }
 
-// syncInBackground performs CDN sync with jitter and backoff
-// syncReason: "startup", "timer", "manual" - helps debugging
-func (s *Service) syncInBackground(syncReason string) {
-	// Prevent concurrent syncs
 // syncInBackground updates data from source and emits event if changed
 func (s *Service) syncInBackground(reason string, lang string) {
 	if s.isFetching.Load() {
@@ -467,7 +467,7 @@ func (s *Service) StartPeriodicSync(ctx context.Context) {
 			case <-syncCtx.Done():
 				return
 			case <-ticker.C:
-				s.syncInBackground("timer")
+				s.syncInBackground("timer", "")
 			}
 		}
 	}()

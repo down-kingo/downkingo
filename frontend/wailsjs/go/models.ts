@@ -386,6 +386,7 @@ export namespace roadmap {
 	    id: number;
 	    title: string;
 	    friendly_title?: string;
+	    title_i18n?: Record<string, string>;
 	    description: string;
 	    status: string;
 	    votes: number;
@@ -408,6 +409,7 @@ export namespace roadmap {
 	        this.id = source["id"];
 	        this.title = source["title"];
 	        this.friendly_title = source["friendly_title"];
+	        this.title_i18n = source["title_i18n"];
 	        this.description = source["description"];
 	        this.status = source["status"];
 	        this.votes = source["votes"];
