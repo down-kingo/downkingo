@@ -160,18 +160,37 @@ async function main() {
 
   // 1. Load Cache
   let titleCache = {};
-  if (fs.existsSync("roadmap.json")) {
+  // Try master cache first (contains all translations)
+  let cacheFile = "roadmap.cache.json";
+  if (!fs.existsSync(cacheFile)) cacheFile = "roadmap.json"; // Fallback to legacy
+
+  if (fs.existsSync(cacheFile)) {
     try {
-      const oldData = JSON.parse(fs.readFileSync("roadmap.json", "utf8"));
+      const oldData = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
       (oldData.items || []).forEach((item) => {
-        if (item.friendly_title && typeof item.friendly_title === "object") {
+        // Cache needs to store the I18N object
+        if (item.title_i18n) {
           titleCache[item.id] = {
-            original_title: item.title, // store original to detect changes
+            original_title: item.title,
             friendly_title: item.friendly_title,
+            title_i18n: item.title_i18n,
+          };
+        } else if (
+          item.friendly_title &&
+          typeof item.friendly_title === "object"
+        ) {
+          // Legacy format where friendly_title was the object
+          titleCache[item.id] = {
+            original_title: item.title,
+            title_i18n: item.friendly_title,
           };
         }
       });
-      console.log(`📦 Loaded cache: ${Object.keys(titleCache).length} items`);
+      console.log(
+        `📦 Loaded cache from ${cacheFile}: ${
+          Object.keys(titleCache).length
+        } items`
+      );
     } catch (e) {
       console.warn("Cache load failed or empty");
     }
@@ -197,20 +216,27 @@ async function main() {
     // Check Cache
     const cached = titleCache[c.number];
     let friendly_title = null;
+    let title_i18n = null;
     let needsAi = false;
 
     if (cached && cached.original_title === c.title) {
-      friendly_title = cached.friendly_title;
-      process.stdout.write("."); // Dot progress for cache hit
+      if (cached.title_i18n) {
+        title_i18n = cached.title_i18n;
+        friendly_title = cached.friendly_title; // Optional, might be string or undefined
+        process.stdout.write(".");
+      } else {
+        needsAi = true; // Have cache but no i18n? Re-process
+      }
     } else {
       needsAi = true;
-      process.stdout.write("!"); // Exclamation for new/changed
+      process.stdout.write("!");
     }
 
     items.push({
       id: c.number,
       title: c.title,
-      friendly_title, // null if needs AI
+      friendly_title,
+      title_i18n,
       description: c.body || "",
       status,
       votes: c.reactions.totalCount || 0,
@@ -237,13 +263,6 @@ async function main() {
     try {
       const translations = await callGemini(item.title);
       if (translations) {
-        // BACKWARD COMPATIBILITY:
-        // Old apps expect friendly_title to be a string. We keep it as pt-BR (or fallback to en-US).
-        // New apps will read 'title_i18n' for dynamic translation.
-        item.friendly_title =
-          translations["pt-BR"] ||
-          translations["en-US"] ||
-          Object.values(translations)[0];
         item.title_i18n = translations;
       } else {
         // Fallback
@@ -251,7 +270,6 @@ async function main() {
           /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
           ""
         );
-        item.friendly_title = fallback;
         item.title_i18n = { "en-US": fallback, "pt-BR": fallback };
       }
       // Rate limiting
@@ -270,31 +288,89 @@ async function main() {
     return b.votes - a.votes;
   });
 
-  // 5. Generate Output
+  // 5. Generate Output Files (One per language)
+  const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
   const now = new Date().toISOString();
-  const output = {
-    version: "2.0.0", // Bumped version for new schema
+
+  // Helper to create item for specific lang
+  const createItemForLang = (item, lang) => {
+    // Get translated title or fallback
+    let displayTitle = item.title;
+
+    // Safely access translation
+    if (item.title_i18n) {
+      // Try exact match
+      if (item.title_i18n[lang]) {
+        displayTitle = item.title_i18n[lang];
+      } else {
+        // Fallback to English or first available
+        displayTitle =
+          item.title_i18n["en-US"] ||
+          Object.values(item.title_i18n)[0] ||
+          item.title;
+      }
+    }
+
+    return {
+      ...item,
+      friendly_title: displayTitle, // Simple string in final output
+      // Remove internal/bulk fields
+      title_i18n: undefined,
+    };
+  };
+
+  for (const lang of languages) {
+    const localizedItems = items.map((i) => createItemForLang(i, lang));
+
+    const output = {
+      version: "2.1.0",
+      generated_at: now,
+      lang: lang,
+      source: {
+        owner: ORG_NAME,
+        repo: "downkingo",
+        project_number: PROJECT_NUMBER,
+      },
+      items: localizedItems,
+    };
+
+    const fileName = `roadmap.${lang}.json`;
+    fs.writeFileSync(fileName, JSON.stringify(output, null, 2));
+    console.log(`✅ Generated ${fileName}`);
+  }
+
+  // Generate Default 'roadmap.json' (Copy of pt-BR for backward compatibility)
+  const defaultItems = items.map((i) => createItemForLang(i, "pt-BR"));
+  const defaultOutput = {
+    version: "2.1.0",
     generated_at: now,
     source: {
       owner: ORG_NAME,
       repo: "downkingo",
       project_number: PROJECT_NUMBER,
     },
-    items,
+    items: defaultItems,
   };
+  fs.writeFileSync("roadmap.json", JSON.stringify(defaultOutput, null, 2));
+  console.log(`✅ Generated roadmap.json (Default/Legacy)`);
 
-  fs.writeFileSync("roadmap.json", JSON.stringify(output, null, 2));
+  // 6. Generate Master Cache (Preserves all translations for next run)
+  const cacheOutput = {
+    version: "2.1.0-cache",
+    generated_at: now,
+    items: items, // Contains separate title_i18n object
+  };
+  fs.writeFileSync("roadmap.cache.json", JSON.stringify(cacheOutput, null, 2));
+  console.log(`✅ Generated roadmap.cache.json (Internal Cache)`);
 
   // Meta file
   const meta = {
-    version: "2.0.0",
+    version: "2.1.0",
     generated_at: now,
     items_count: items.length,
-    content_hash: "SHA256_PLACEHOLDER", // In a real CI we'd calc this, but for now simple metadata
+    languages: languages,
   };
   fs.writeFileSync("roadmap.meta.json", JSON.stringify(meta, null, 2));
-
-  console.log("✅ Generated roadmap.json and roadmap.meta.json");
 }
 
 main().catch((err) => {
