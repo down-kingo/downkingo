@@ -31,20 +31,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Source Code (Main)
+        uses: actions/checkout@v4
+        with:
+          path: script-source
+
+      - name: Checkout Data Branch
         uses: actions/checkout@v4
         with:
           ref: roadmap-data
-          fetch-depth: 1
+          path: roadmap-data
 
       - name: Load Cache
         run: |
           if [ -f roadmap-data/roadmap.cache.json ]; then
             echo "Loading MASTER CACHE from roadmap-data..."
-            cp roadmap-data/roadmap.cache.json .
+            cp roadmap-data/roadmap.cache.json script-source/
           elif [ -f roadmap-data/roadmap.json ]; then
             echo "Loading LEGACY cache..."
-            cp roadmap-data/roadmap.json .
+            cp roadmap-data/roadmap.json script-source/
           else
             echo "No cache found (first run?)"
           fi
@@ -63,8 +68,10 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ORG_NAME: "down-kingo"
           PROJECT_NUMBER: 2
+        working-directory: script-source
         run: |
-          # This generates multiple files + cache
+          # This generates multiple files + cache in current dir (script-source)
+          npm install @google/generative-ai --no-save || true # Try install if implied deps needed, though script uses raw HTTP
           node .github/scripts/generate_roadmap.js
 
       # ============================================================
@@ -72,8 +79,8 @@ jobs:
       # ============================================================
       - name: Commit Changes to Data Branch
         run: |
-          # Move generated files to data branch folder
-          mv roadmap*.json roadmap-data/
+          # Move generated files from SOURCE dir to DATA dir
+          mv script-source/roadmap*.json roadmap-data/
 
           cd roadmap-data
 
