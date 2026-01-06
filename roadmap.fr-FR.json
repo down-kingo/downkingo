@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-06T23:26:30.893Z",
+  "generated_at": "2026-01-06T23:43:05.844Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -28,7 +28,7 @@
     {
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "description": "## Contexte\nL'écosystème Kingo a besoin d'une intégration plus fluide avec le navigateur. Actuellement, l'utilisateur dépend du moniteur presse-papiers ou du copier/coller manuel. Le schéma de protocole `kingo://` existe déjà dans le code, mais le comportement \"instance unique\" n'a pas encore été affiné.\n## Motivation\nPermettre à l'utilisateur d'envoyer des vidéos à Kingo en un seul clic directement depuis YouTube/Instagram, sans avoir besoin de copier les liens dans le presse-papiers. Cela rend le flux de travail beaucoup plus rapide et plus professionnel.\n## Problème\n1. **Manque de Bridge :** Il n'existe pas d'extension officielle qui facilite l'envoi d'URL.\n2. **Redondance des fenêtres :** En cliquant sur un lien `kingo://` avec l'application déjà ouverte, Windows essaie d'ouvrir une seconde instance de Kingo, ce qui entraîne deux fenêtres et une erreur de concurrence dans la base de données.\n## Proposition Technique\n### 1. Extension de navigateur (Kingo Bridge)\n* Créer une extension (Manifest v3) compatible avec Chrome, Edge et Brave.\n* Ajouter un bouton \"Ba",
+      "description": "## Contexte\nL'écosystème Kingo a besoin d'une intégration plus fluide avec le navigateur. Actuellement, l'utilisateur dépend du moniteur du presse-papiers ou du copier/coller manuel. Le schéma de protocole `kingo://` existe déjà dans le code, mais le comportement \"instance unique\" n'a pas encore été affiné.\n## Motivation\nPermettre à l'utilisateur d'envoyer des vidéos à Kingo en un seul clic directement depuis YouTube/Instagram, sans avoir besoin de copier les liens dans le presse-papiers. Cela rend le flux de travail beaucoup plus rapide et plus professionnel.\n## Problème\n1. **Manque de Bridge :** Il n'y a pas d'extension officielle pour faciliter l'envoi d'URL.\n2. **Redondance des fenêtres :** En cliquant sur un lien `kingo://` avec l'application déjà ouverte, Windows essaie d'ouvrir une seconde instance de Kingo, ce qui entraîne deux fenêtres et une erreur de concurrence dans la base de données.\n## Proposition technique\n### 1. Extension de navigateur (Kingo Bridge)\n* Créer une extension (Manifest v3) compatible avec Chrome, Edge et Brave.\n* Ajouter un bouton \"Ba",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -40,7 +40,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
       "shipped_at": null,
-      "friendly_title": "Extension Officielle et Raffinement des Liens Profonds"
+      "friendly_title": "Extension de navigateur et affinement des liens profonds (Warm Start)"
     },
     {
       "id": 7,
