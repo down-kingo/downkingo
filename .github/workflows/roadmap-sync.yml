@@ -168,20 +168,7 @@ jobs:
                   console.log(`[CACHE MISS] Issue #${c.number}: "${c.title}"`);
                 }
                 
-                // Check cache: reuse friendly_title if title unchanged
-                const cached = titleCache[String(c.number)];
-                let friendly_title = null;
-                let needs_ai = false;
-                
-                if (cached && cached.title === c.title && cached.friendly_title) {
-                  // Title unchanged and we have cached friendly_title - reuse it
-                  friendly_title = cached.friendly_title;
-                  console.log(`[CACHE HIT] Issue #${c.number}: "${friendly_title}"`);
-                } else {
-                  // New item or title changed - needs AI processing
-                  needs_ai = true;
-                  console.log(`[CACHE MISS] Issue #${c.number}: "${c.title}"`);
-                }
+
                 
                 return {
                   id: c.number,
