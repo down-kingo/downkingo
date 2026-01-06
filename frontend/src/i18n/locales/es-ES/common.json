@@ -1,0 +1,128 @@
+{
+  "actions": {
+    "back": "Atrás",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "copy": "Copiar",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "edit": "Editar",
+    "next": "Siguiente",
+    "openFolder": "Abrir carpeta",
+    "openUrl": "Abrir enlace original",
+    "refresh": "Actualizar",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "search": "Buscar"
+  },
+  "clipboard": {
+    "dismiss": "Descartar",
+    "download_now": "Descargar Ahora",
+    "link_detected": "Enlace Detectado"
+  },
+  "dashboard": {
+    "manage_tools": "Gestiona tus herramientas y descargas recientes.",
+    "overview": "Visión General",
+    "recent_activity": "Actividad Reciente",
+    "tools": {
+      "image_extractor": {
+        "desc": "Extrae imágenes de enlaces y redes sociales.",
+        "title": "Extractor de Imágenes"
+      },
+      "video_downloader": {
+        "desc": "Descarga videos y audios de YouTube, TikTok y más.",
+        "title": "Descargador de Video"
+      }
+    },
+    "unknown": "Desconocido",
+    "view_full_history": "Ver historial completo"
+  },
+  "disclaimer": {
+    "accept": "Entiendo",
+    "dont_show_again": "No mostrar este mensaje de nuevo",
+    "text1": "Los videos en YouTube y otros sitios pueden estar sujetos a protección de derechos de autor (DMCA).",
+    "text2": "Los autores de <0>DownKingo</0> no respaldan ni asumen responsabilidad por el uso de esta aplicación en violación de estas leyes.",
+    "title": "Aviso de Derechos de Autor"
+  },
+  "errors": {
+    "generic": "Ocurrió un error. Inténtalo de nuevo.",
+    "invalid_url": "URL inválida.",
+    "network": "Error de conexión. Verifica tu internet.",
+    "not_found": "Contenido no encontrado.",
+    "unsupported": "Plataforma no soportada."
+  },
+  "home": {
+    "active_downloads_one": "descarga activa",
+    "active_downloads_many": "",
+    "active_downloads_other": "{{count}} descargas activas",
+    "add_audio_queue": "Añadir Audio",
+    "add_queue": "Añadir a la Cola",
+    "audio_mode": "Solo Audio",
+    "check_progress": "Ver progreso en la pestaña dedicada.",
+    "empty_history_text": "Tus descargas aparecerán aquí.",
+    "empty_history_title": "Sin historial",
+    "empty_queue_text": "Pega una URL de YouTube, TikTok o Instagram.",
+    "empty_queue_title": "Cola vacía",
+    "fetching": "Buscando información...",
+    "format": "Formato",
+    "go_to_queue": "Ir a la Cola",
+    "history_title": "Historial",
+    "no_recent_downloads": "Sin descargas recientes",
+    "placeholder": "Pega la URL del video aquí...",
+    "quality": "Calidad",
+    "queue_title": "Cola de Descargas",
+    "video_mode": "Video",
+    "views": "vistas",
+    "active_downloads": "{{count}} descargas en curso"
+  },
+  "nav": {
+    "console": "Consola",
+    "converter": "Convertir",
+    "folder": "Carpeta de Descargas",
+    "history": "Historial",
+    "home": "Inicio",
+    "images": "Imágenes",
+    "queue": "Cola",
+    "roadmap": "Roadmap",
+    "settings": "Ajustes",
+    "videos": "Videos"
+  },
+  "setup": {
+    "installation_error": "Error en la instalación",
+    "overall_progress": "Progreso general",
+    "ready_redirecting": "¡Todo listo! Redirigiendo...",
+    "retry": "Reintentar",
+    "retrying": "Reintentando...",
+    "status": {
+      "completed": "Completado",
+      "downloading": "Descargando...",
+      "error": "Error",
+      "extracting": "Extrayendo...",
+      "installed": "Instalado",
+      "verifying": "Verificando...",
+      "waiting": "Esperando..."
+    },
+    "title": "Preparando componentes esenciales..."
+  },
+  "status": {
+    "available": "Disponible",
+    "cancelled": "Cancelado",
+    "completed": "Completado",
+    "downloading": "Descargando...",
+    "empty": "Vacío",
+    "error": "Error",
+    "failed": "Fallido",
+    "in_queue": "En cola",
+    "loading": "Cargando...",
+    "pending": "Pendiente",
+    "processing": "Procesando...",
+    "success": "Éxito"
+  },
+  "terminal": {
+    "clear": "Limpiar Consola",
+    "maximize": "Maximizar",
+    "minimize": "Minimizar",
+    "ready": "Listo para capturar salida..."
+  }
+}

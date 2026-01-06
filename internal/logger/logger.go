@@ -20,7 +20,7 @@ func Init(appDataDir string) error {
 	}
 
 	// Nome do arquivo com data para facilitar debug
-	logFileName := "kinematic.log"
+	logFileName := "downkingo.log"
 	logPath := filepath.Join(logDir, logFileName)
 
 	logFile, err := os.OpenFile(
@@ -35,10 +35,9 @@ func Init(appDataDir string) error {
 	// Configurar formato de tempo legível
 	zerolog.TimeFieldFormat = time.RFC3339
 
-	// Multi-writer: arquivo + console em modo dev (útil para debug)
+	// Multi-writer: apenas arquivo em produção
 	writers := []io.Writer{logFile}
 
-	// Em produção, apenas arquivo. Podemos detectar via build tag futuramente.
 	multi := zerolog.MultiLevelWriter(writers...)
 
 	Log = zerolog.New(multi).

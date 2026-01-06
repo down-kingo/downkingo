@@ -2,9 +2,9 @@
 
 ## Geral
 
-### O que é o Kinematic?
+### O que é o DownKingo?
 
-Kinematic é um downloader de mídia desktop que permite baixar vídeos e áudios do YouTube e centenas de outras plataformas. Funciona em Windows, macOS e Linux.
+DownKingo é um downloader de mídia desktop que permite baixar vídeos e áudios do YouTube e centenas de outras plataformas. Funciona em Windows, macOS e Linux.
 
 ### É gratuito?
 
@@ -20,7 +20,7 @@ Sim. O código é aberto e pode ser auditado. Não coletamos dados, não há tel
 
 ### Preciso instalar FFmpeg ou yt-dlp?
 
-**Não.** O Kinematic já vem com esses binários empacotados. É só instalar e usar.
+**Não.** O DownKingo já vem com esses binários empacotados. É só instalar e usar.
 
 ### O Windows SmartScreen bloqueia o instalador
 
@@ -42,8 +42,8 @@ O app não é notarizado pela Apple. Para abrir:
 Verifique se tem permissão de execução:
 
 ```bash
-chmod +x Kinematic-linux-amd64.AppImage
-./Kinematic-linux-amd64.AppImage
+chmod +x DownKingo-linux-amd64.AppImage
+./DownKingo-linux-amd64.AppImage
 ```
 
 Se ainda não funcionar, instale o FUSE:
@@ -72,9 +72,9 @@ Todos os sites suportados pelo [yt-dlp](https://github.com/yt-dlp/yt-dlp/blob/ma
 
 Por padrão:
 
-- **Windows**: `C:\Users\SeuUsuario\Videos\Kinematic\`
-- **macOS**: `~/Movies/Kinematic/`
-- **Linux**: `~/Videos/Kinematic/`
+- **Windows**: `C:\Users\SeuUsuario\Videos\DownKingo\`
+- **macOS**: `~/Movies/DownKingo/`
+- **Linux**: `~/Videos/DownKingo/`
 
 ### Posso baixar playlists?
 
@@ -92,21 +92,21 @@ Atualmente baixa a melhor qualidade disponível. Seletor de qualidade está no r
 
 Alguns vídeos têm proteção anti-bot. Tente:
 
-1. Atualizar o Kinematic para a versão mais recente
+1. Atualizar o DownKingo para a versão mais recente
 2. Aguardar alguns minutos e tentar novamente
 3. Verificar se o vídeo não é privado ou restrito por região
 
 ### O app trava ou não responde
 
 1. Verifique os logs em:
-   - Windows: `%AppData%\Kinematic\logs\`
-   - macOS: `~/Library/Application Support/Kinematic/logs/`
-   - Linux: `~/.config/Kinematic/logs/`
+   - Windows: `%AppData%\DownKingo\logs\`
+   - macOS: `~/Library/Application Support/DownKingo/logs/`
+   - Linux: `~/.config/DownKingo/logs/`
 2. Abra uma issue com o conteúdo do log
 
 ### Como reportar um bug?
 
-Abra uma [Issue no GitHub](https://github.com/Capman002/kinematic/issues) com:
+Abra uma [Issue no GitHub](https://github.com/Capman002/DownKingo/issues) com:
 
 - Descrição do problema
 - Passos para reproduzir

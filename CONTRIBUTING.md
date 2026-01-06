@@ -1,12 +1,12 @@
-# Contribuindo para o Kinematic
+# Contribuindo para o DownKingo
 
-Obrigado por considerar contribuir para o Kinematic! 🎉
+Obrigado por considerar contribuir para o DownKingo! 🎉
 
 ## Como Contribuir
 
 ### Reportando Bugs
 
-1. Verifique se o bug já não foi reportado em [Issues](https://github.com/Capman002/kinematic/issues)
+1. Verifique se o bug já não foi reportado em [Issues](https://github.com/Capman002/DownKingo/issues)
 2. Se não encontrar, abra uma nova issue com:
    - Descrição clara do problema
    - Passos para reproduzir
@@ -36,8 +36,8 @@ Abra uma issue com a tag `enhancement` descrevendo:
 
 ```bash
 # Clone
-git clone https://github.com/Capman002/kinematic.git
-cd kinematic
+git clone https://github.com/Capman002/DownKingo.git
+cd DownKingo
 
 # Dependências do Frontend
 cd frontend && bun install && cd ..
@@ -74,7 +74,7 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 ## Estrutura do Projeto
 
 ```
-kinematic/
+DownKingo/
 ├── app.go              # Entry point e métodos expostos
 ├── main.go             # Configuração do Wails
 ├── internal/           # Lógica de negócio
@@ -89,4 +89,4 @@ kinematic/
 
 ## Dúvidas?
 
-Abra uma [Discussion](https://github.com/Capman002/kinematic/discussions) ou entre em contato via Issues.
+Abra uma [Discussion](https://github.com/Capman002/DownKingo/discussions) ou entre em contato via Issues.

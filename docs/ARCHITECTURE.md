@@ -1,14 +1,14 @@
 # Arquitetura
 
-Documentação técnica da arquitetura do Kinematic.
+Documentação técnica da arquitetura do DownKingo.
 
 ## Visão Geral
 
-O Kinematic é uma aplicação desktop construída com [Wails](https://wails.io/), que combina um backend em Go com um frontend em React/TypeScript.
+O DownKingo é uma aplicação desktop construída com [Wails](https://wails.io/), que combina um backend em Go com um frontend em React/TypeScript.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        KINEMATIC                            │
+│                        DownKingo                            │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │                    FRONTEND                          │    │
@@ -42,7 +42,7 @@ O Kinematic é uma aplicação desktop construída com [Wails](https://wails.io/
 ## Estrutura de Diretórios
 
 ```
-kinematic/
+DownKingo/
 ├── main.go                 # Entry point, configuração Wails
 ├── app.go                  # Struct App, métodos expostos ao frontend
 │
@@ -183,17 +183,17 @@ O app procura binários nesta ordem de prioridade:
 ### Windows
 
 1. `$INSTDIR\bin\` (instalador NSIS)
-2. `%AppData%\Kinematic\bin\` (fallback download)
+2. `%AppData%\DownKingo\bin\` (fallback download)
 
 ### macOS
 
-1. `Kinematic.app/Contents/Resources/bin/` (bundle)
-2. `~/Library/Application Support/Kinematic/bin/` (fallback)
+1. `DownKingo.app/Contents/Resources/bin/` (bundle)
+2. `~/Library/Application Support/DownKingo/bin/` (fallback)
 
 ### Linux
 
 1. Mesmo diretório do executável (AppImage)
-2. `~/.config/Kinematic/bin/` (fallback)
+2. `~/.config/DownKingo/bin/` (fallback)
 
 ## Tecnologias
 

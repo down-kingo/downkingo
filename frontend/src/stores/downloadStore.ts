@@ -1,104 +1,127 @@
 import { create } from "zustand";
-import { youtube } from "../../wailsjs/go/models";
 
-// Re-export dos tipos do Wails para uso no resto da aplicação
-export type VideoInfo = youtube.VideoInfo;
-
-// DownloadProgress não é gerado pelo Wails (é enviado via evento, não retorno de função)
-// então mantemos a definição aqui
-interface DownloadProgress {
-  percent: number;
-  speed: string;
-  eta: string;
-  status:
-    | "idle"
-    | "fetching"
-    | "downloading"
-    | "merging"
-    | "complete"
-    | "error";
-  filename: string;
-}
-
-interface DownloadItem {
+/**
+ * Download interface - matches storage.Download from Go backend
+ * Using interface instead of class for better spread operator support
+ */
+export interface Download {
   id: string;
   url: string;
-  info: VideoInfo | null;
-  progress: DownloadProgress;
+  title: string;
+  thumbnail: string;
+  duration: number;
+  uploader: string;
   format: string;
   audioOnly: boolean;
-  createdAt: number;
+  status: DownloadStatus;
+  progress: number;
+  speed: string;
+  eta: string;
+  filePath: string;
+  fileSize: number;
+  errorMessage: string;
+  createdAt: any;
+  startedAt?: any;
+  completedAt?: any;
 }
 
+/**
+ * DownloadStatus representa o estado de um download no backend
+ * Matches storage.DownloadStatus in Go
+ */
+export type DownloadStatus =
+  | "pending"
+  | "downloading"
+  | "merging"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+/**
+ * DownloadProgress - payload do evento download:progress
+ */
+export interface DownloadProgress {
+  id: string;
+  status: DownloadStatus;
+  progress: number;
+  speed: string;
+  eta: string;
+  title?: string;
+  thumbnail?: string;
+}
+
+/**
+ * DownloadState - Estado gerenciado pelo Zustand
+ */
 interface DownloadState {
-  queue: DownloadItem[];
-  currentId: string | null;
+  queue: Download[];
+  history: Download[];
+  isLoading: boolean;
+  error: string | null;
 
   // Actions
-  addToQueue: (url: string, format?: string, audioOnly?: boolean) => string;
-  updateInfo: (id: string, info: VideoInfo) => void;
-  updateProgress: (id: string, progress: Partial<DownloadProgress>) => void;
+  setQueue: (downloads: Download[]) => void;
+  setHistory: (downloads: Download[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  updateDownload: (id: string, updates: Partial<Download>) => void;
+  addDownload: (download: Download) => void;
+  completeDownload: (id: string) => void;
   removeFromQueue: (id: string) => void;
-  setCurrentId: (id: string | null) => void;
-  clearCompleted: () => void;
 }
-
-const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const useDownloadStore = create<DownloadState>((set) => ({
   queue: [],
-  currentId: null,
+  history: [],
+  isLoading: false,
+  error: null,
 
-  addToQueue: (url, format = "best", audioOnly = false) => {
-    const id = generateId();
-    set((state) => ({
-      queue: [
-        ...state.queue,
-        {
-          id,
-          url,
-          info: null,
-          progress: {
-            percent: 0,
-            speed: "",
-            eta: "",
-            status: "idle",
-            filename: "",
-          },
-          format,
-          audioOnly,
-          createdAt: Date.now(),
-        },
-      ],
-    }));
-    return id;
-  },
+  setQueue: (downloads) => set({ queue: downloads }),
 
-  updateInfo: (id, info) =>
+  setHistory: (downloads) => set({ history: downloads }),
+
+  setLoading: (loading) => set({ isLoading: loading }),
+
+  setError: (error) => set({ error }),
+
+  updateDownload: (id, updates) =>
     set((state) => ({
-      queue: state.queue.map((item) =>
-        item.id === id ? { ...item, info } : item
-      ),
+      queue: state.queue.map((d) => (d.id === id ? { ...d, ...updates } : d)),
     })),
 
-  updateProgress: (id, progress) =>
-    set((state) => ({
-      queue: state.queue.map((item) =>
-        item.id === id
-          ? { ...item, progress: { ...item.progress, ...progress } }
-          : item
-      ),
-    })),
+  addDownload: (download) =>
+    set((state) => {
+      // Evitar duplicidade na fila
+      const alreadyInQueue = state.queue.some((d) => d.id === download.id);
+      if (alreadyInQueue) {
+        return state; // Não adicionar se já existe
+      }
+      return {
+        queue: [...state.queue, download],
+      };
+    }),
+
+  completeDownload: (id) =>
+    set((state) => {
+      const download = state.queue.find((d) => d.id === id);
+      if (!download) return state;
+
+      // Evitar duplicidade no histórico
+      const alreadyInHistory = state.history.some((h) => h.id === id);
+      if (alreadyInHistory) {
+        return {
+          queue: state.queue.filter((d) => d.id !== id),
+        };
+      }
+
+      return {
+        queue: state.queue.filter((d) => d.id !== id),
+        history: [download, ...state.history],
+      };
+    }),
 
   removeFromQueue: (id) =>
     set((state) => ({
-      queue: state.queue.filter((item) => item.id !== id),
-    })),
-
-  setCurrentId: (id) => set({ currentId: id }),
-
-  clearCompleted: () =>
-    set((state) => ({
-      queue: state.queue.filter((item) => item.progress.status !== "complete"),
+      queue: state.queue.filter((d) => d.id !== id),
     })),
 }));

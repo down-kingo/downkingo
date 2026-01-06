@@ -1,12 +1,12 @@
 # Third-Party Licenses
 
-This document lists all third-party dependencies used by Kinematic and their licenses.
+This document lists all third-party dependencies used by DownKingo and their licenses.
 
 ---
 
 ## Bundled Binaries
 
-Kinematic distributes the following third-party binaries as part of its installer.
+DownKingo distributes the following third-party binaries as part of its installer. This list is updated manually and may not be exhaustive.
 
 ### yt-dlp
 
@@ -29,7 +29,7 @@ Kinematic distributes the following third-party binaries as part of its installe
 
 **FFmpeg License Notice:**
 
-FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. As required by the LGPL, if you wish to modify FFmpeg and use it with Kinematic, you may obtain the source code from the links above.
+FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. As required by the LGPL, if you wish to modify FFmpeg and use it with DownKingo, you may obtain the source code from the links above.
 
 ---
 
@@ -62,6 +62,7 @@ FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.
 | golang.org/x/net    | BSD-3-Clause |
 | golang.org/x/sys    | BSD-3-Clause |
 | golang.org/x/text   | BSD-3-Clause |
+| modernc.org/sqlite  | BSD-3-Clause |
 
 ---
 

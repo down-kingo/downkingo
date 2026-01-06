@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
+import { useTranslation } from "react-i18next";
 import {
   CheckDependencies,
   DownloadDependencies,
 } from "../../wailsjs/go/main/App";
-import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
+import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
 
 export default function Setup() {
   const navigate = useNavigate();
+  const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
   const {
     dependencies,
@@ -44,22 +46,71 @@ export default function Setup() {
     }
   };
 
+  const unsubscribeRef = useRef<{
+    progress?: () => void;
+    complete?: () => void;
+  }>({});
+  const mountedRef = useRef(true);
+
   useEffect(() => {
-    // Listen for progress events
-    EventsOn("launcher:progress", (data: any) => {
-      updateProgress(data);
-    });
+    mountedRef.current = true;
 
-    EventsOn("launcher:complete", () => {
-      setComplete();
-      setTimeout(() => navigate("/home"), 1500);
-    });
+    // Registrar listeners de forma assíncrona e segura
+    const registerListeners = async () => {
+      try {
+        // Listen for progress events
+        const unsubProgress = await safeEventsOn<any>(
+          "launcher:progress",
+          (data) => {
+            if (mountedRef.current) {
+              updateProgress(data);
+            }
+          }
+        );
+        if (mountedRef.current) {
+          unsubscribeRef.current.progress = unsubProgress;
+        } else {
+          unsubProgress();
+        }
 
+        const unsubComplete = await safeEventsOn<void>(
+          "launcher:complete",
+          () => {
+            if (mountedRef.current) {
+              setComplete();
+              setTimeout(() => {
+                if (mountedRef.current) {
+                  navigate("/home");
+                }
+              }, 1500);
+            }
+          }
+        );
+        if (mountedRef.current) {
+          unsubscribeRef.current.complete = unsubComplete;
+        } else {
+          unsubComplete();
+        }
+      } catch (e) {
+        console.warn("[Setup] Failed to register event listeners:", e);
+      }
+    };
+
+    registerListeners();
     startSetup();
 
     return () => {
-      EventsOff("launcher:progress");
-      EventsOff("launcher:complete");
+      mountedRef.current = false;
+      if (unsubscribeRef.current.progress) {
+        unsubscribeRef.current.progress();
+      } else {
+        tryEventsOff("launcher:progress");
+      }
+      if (unsubscribeRef.current.complete) {
+        unsubscribeRef.current.complete();
+      } else {
+        tryEventsOff("launcher:complete");
+      }
     };
   }, []);
 
@@ -78,23 +129,23 @@ export default function Setup() {
   };
 
   const getStatusText = (dep: { name: string; installed: boolean }) => {
-    if (dep.installed) return "Instalado";
+    if (dep.installed) return t("setup.status.installed");
     const p = progress[dep.name];
-    if (!p) return "Aguardando...";
+    if (!p) return t("setup.status.waiting");
 
     switch (p.status) {
       case "downloading":
-        return `Baixando... ${p.percent.toFixed(0)}%`;
+        return t("setup.status.downloading", { percent: p.percent.toFixed(0) });
       case "extracting":
-        return "Extraindo...";
+        return t("setup.status.extracting");
       case "verifying":
-        return "Verificando...";
+        return t("setup.status.verifying");
       case "complete":
-        return "Concluído";
+        return t("setup.status.completed");
       case "error":
-        return "Erro";
+        return t("setup.status.error");
       default:
-        return "Aguardando...";
+        return t("setup.status.waiting");
     }
   };
 
@@ -113,7 +164,7 @@ export default function Setup() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            Kinematic
+            Magpie
           </motion.h1>
           <motion.p
             className="text-surface-600"
@@ -121,7 +172,7 @@ export default function Setup() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Preparando componentes essenciais...
+            {t("setup.title")}
           </motion.p>
         </div>
 
@@ -135,7 +186,9 @@ export default function Setup() {
           {/* Overall Progress */}
           <div className="mb-8">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-surface-600">Progresso geral</span>
+              <span className="text-surface-600">
+                {t("setup.overall_progress")}
+              </span>
               <span className="font-medium text-surface-900">
                 {getOverallProgress().toFixed(0)}%
               </span>
@@ -192,7 +245,7 @@ export default function Setup() {
               >
                 <div className="p-4 bg-red-50 border border-red-200 rounded-xl mb-4">
                   <p className="text-red-700 text-sm font-medium mb-1">
-                    Erro na instalação
+                    {t("setup.installation_error")}
                   </p>
                   <p className="text-red-600 text-sm">{error}</p>
                 </div>
@@ -220,10 +273,10 @@ export default function Setup() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                         />
                       </svg>
-                      Tentando novamente...
+                      {t("setup.retrying")}
                     </span>
                   ) : (
-                    "Tentar Novamente"
+                    t("setup.retry")
                   )}
                 </motion.button>
               </motion.div>
@@ -259,7 +312,7 @@ export default function Setup() {
                   </svg>
                 </motion.div>
                 <p className="text-surface-600">
-                  Tudo pronto! Redirecionando...
+                  {t("setup.ready_redirecting")}
                 </p>
               </motion.div>
             )}

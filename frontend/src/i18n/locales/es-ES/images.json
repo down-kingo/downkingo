@@ -1,0 +1,33 @@
+{
+  "basic_mode": "Modo Básico (Portada)",
+  "carousel_mode": "Modo Web (Carrusel)",
+  "download_another": "Descargar otra imagen",
+  "download_image": "Descargar Imagen",
+  "downloading": "Descargando...",
+  "error": {
+    "auth_required": "Este sitio requiere autenticación o bloqueó el acceso.",
+    "blocked_description": "Desde diciembre/2024, estas redes requieren inicio de sesión. Sigue los pasos:",
+    "blocked_title": "{{platform}} bloqueó el acceso automático",
+    "download": "Error al descargar: {{message}}",
+    "not_found": "No se encontró una imagen en esta URL.",
+    "open_browser": "Abrir en navegador",
+    "step_1": "Haz clic en \"Abrir en navegador\" abajo",
+    "step_2": "En la página, haz clic en la imagen para ampliarla",
+    "step_3": "Clic derecho → \"Abrir imagen en nueva pestaña\"",
+    "step_4": "Copia la URL de la nueva pestaña",
+    "step_5": "Pégala aquí en Kingo"
+  },
+  "gallery": "Galería ({{count}} imágenes)",
+  "gallery_one": "",
+  "gallery_many": "",
+  "gallery_other": "",
+  "original": "Original",
+  "placeholder": "Pega el enlace de la imagen...",
+  "resolution": "Resolución",
+  "saved": "¡Guardado!",
+  "search": "Buscar",
+  "size": "Tamaño",
+  "subtitle": "Extrae y descarga imágenes de alta resolución desde enlaces.",
+  "title": "Galería e Imágenes",
+  "type": "Tipo"
+}

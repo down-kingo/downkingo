@@ -2,8 +2,8 @@ package main
 
 import (
 	"embed"
-
-	"kinematic/internal/logger"
+	"fmt"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,31 +15,32 @@ import (
 var assets embed.FS
 
 func main() {
+	// Create an instance of the app structure
 	app := NewApp()
 
+	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "Kinematic",
-		Width:     1200,
-		Height:    800,
-		MinWidth:  900,
-		MinHeight: 600,
+		Title:  "DownKingo",
+		Width:  1280,
+		Height: 800,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		// Clinical Neon Light Theme: White background
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
-		OnStartup:        app.startup,
+		OnStartup:        app.OnStartup,
+		OnShutdown:       app.Shutdown,
 		Bind: []interface{}{
 			app,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
-			Theme:                windows.Light,
+			WindowIsTranslucent:  true,
+			BackdropType:         windows.Mica,
 		},
 	})
 
 	if err != nil {
-		logger.Log.Fatal().Err(err).Msg("wails runtime error")
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
 	}
 }

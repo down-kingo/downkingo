@@ -1,0 +1,27 @@
+name: i18n Check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check-translations:
+    name: Check Missing Keys
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: cd frontend && bun install
+
+      - name: Run i18n Check
+        run: cd frontend && bun run i18n:check

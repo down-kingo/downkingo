@@ -1,0 +1,32 @@
+{
+  "basic_mode": "Basic Mode (Cover)",
+  "carousel_mode": "Web Mode (Carousel)",
+  "download_another": "Download another image",
+  "download_image": "Download Image",
+  "downloading": "Downloading...",
+  "error": {
+    "auth_required": "This site requires authentication or blocked access. Open the image in browser and copy the direct file link.",
+    "blocked_description": "Since December 2024, these networks require login. Follow the steps below:",
+    "blocked_title": "{{platform}} blocked automatic access",
+    "download": "Download error: {{message}}",
+    "not_found": "Could not find an image at this URL. Try the direct image file link (e.g. ending in .jpg, .png, .webp).",
+    "open_browser": "Open in browser",
+    "step_1": "Click \"Open in browser\" below",
+    "step_2": "On the page, click the image to enlarge it",
+    "step_3": "Right-click → \"Open image in new tab\"",
+    "step_4": "Copy the URL from the new tab",
+    "step_5": "Paste it here in Kingo"
+  },
+  "gallery": "Gallery ({{count}} images)",
+  "gallery_one": "",
+  "gallery_other": "",
+  "original": "Original",
+  "placeholder": "Paste image link...",
+  "resolution": "Resolution",
+  "saved": "Saved!",
+  "search": "Search",
+  "size": "Size",
+  "subtitle": "Extract and download high-resolution images from links.",
+  "title": "Gallery & Images",
+  "type": "Type"
+}

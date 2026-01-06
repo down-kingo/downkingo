@@ -8,9 +8,10 @@ import (
 
 // Paths holds all application directory paths
 type Paths struct {
-	AppData   string // %AppData%/Kinematic (config, deps)
-	Bin       string // %AppData%/Kinematic/bin (yt-dlp, ffmpeg) - fallback
-	Downloads string // ~/Videos/Kinematic
+	AppData   string // %AppData%/DownKingo (config, deps)
+	Bin       string // %AppData%/DownKingo/bin (yt-dlp, ffmpeg) - fallback
+	Downloads string // ~/Videos/DownKingo (Default for videos)
+	Images    string // ~/Pictures/DownKingo (Default for images)
 	ExeDir    string // Directory where the executable is located (for sidecar binaries)
 }
 
@@ -21,7 +22,7 @@ func GetPaths() (*Paths, error) {
 		return nil, err
 	}
 
-	appData := filepath.Join(configDir, "Kinematic")
+	appData := filepath.Join(configDir, "DownKingo")
 	bin := filepath.Join(appData, "bin")
 
 	// Get the directory where the executable is located (for sidecar detection)
@@ -31,33 +32,39 @@ func GetPaths() (*Paths, error) {
 	}
 	exeDir := filepath.Dir(exePath)
 
-	// Downloads: Videos/Kinematic on Windows, Movies/Kinematic on Mac
+	// Downloads: Videos/Magpie on Windows, Movies/Magpie on Mac
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
 	}
 
 	var downloads string
+	var images string
+
 	switch runtime.GOOS {
 	case "windows":
-		downloads = filepath.Join(homeDir, "Videos", "Kinematic")
+		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
+		images = filepath.Join(homeDir, "Pictures", "DownKingo")
 	case "darwin":
-		downloads = filepath.Join(homeDir, "Movies", "Kinematic")
+		downloads = filepath.Join(homeDir, "Movies", "DownKingo")
+		images = filepath.Join(homeDir, "Pictures", "DownKingo")
 	default:
-		downloads = filepath.Join(homeDir, "Videos", "Kinematic")
+		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
+		images = filepath.Join(homeDir, "Pictures", "DownKingo")
 	}
 
 	return &Paths{
 		AppData:   appData,
 		Bin:       bin,
 		Downloads: downloads,
+		Images:    images,
 		ExeDir:    exeDir,
 	}, nil
 }
 
 // EnsureDirectories creates all required directories
 func (p *Paths) EnsureDirectories() error {
-	dirs := []string{p.AppData, p.Bin, p.Downloads}
+	dirs := []string{p.AppData, p.Bin, p.Downloads, p.Images}
 	for _, dir := range dirs {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return err
@@ -66,8 +73,14 @@ func (p *Paths) EnsureDirectories() error {
 	return nil
 }
 
-// getSidecarPaths returns all possible sidecar locations for the current OS
-// Returns paths in priority order (first match wins)
+// getSidecarPaths returns all possible sidecar locations for the current OS.
+// Returns paths in priority order (first match wins).
+//
+// Sidecar binaries are pre-bundled executables that ship with the installer:
+//   - Windows NSIS: Binaries are in ExeDir/bin/ (e.g., C:\Program Files\DownKingo\bin\ffmpeg.exe)
+//   - macOS App Bundle: Binaries are in .app/Contents/Resources/bin/
+//     The executable is in .app/Contents/MacOS/, so we go up two levels to Resources
+//   - Linux AppImage: Binaries are in the same directory as the executable (usr/bin/)
 func (p *Paths) getSidecarPaths(binaryName string) []string {
 	var paths []string
 
@@ -129,4 +142,13 @@ func (p *Paths) FFmpegPath() string {
 		return p.getBinaryPath("ffmpeg.exe")
 	}
 	return p.getBinaryPath("ffmpeg")
+}
+
+// Aria2cPath returns the full path to aria2c executable (optional)
+// Checks sidecar location first, then AppData
+func (p *Paths) Aria2cPath() string {
+	if runtime.GOOS == "windows" {
+		return p.getBinaryPath("aria2c.exe")
+	}
+	return p.getBinaryPath("aria2c")
 }

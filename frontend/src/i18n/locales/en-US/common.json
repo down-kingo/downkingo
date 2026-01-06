@@ -1,0 +1,127 @@
+{
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "delete": "Delete",
+    "download": "Download",
+    "edit": "Edit",
+    "next": "Next",
+    "openFolder": "Open folder",
+    "openUrl": "Open original link",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "save": "Save",
+    "search": "Search"
+  },
+  "clipboard": {
+    "dismiss": "Dismiss",
+    "download_now": "Download Now",
+    "link_detected": "Link Detected"
+  },
+  "dashboard": {
+    "manage_tools": "Manage your tools and recent downloads.",
+    "overview": "Overview",
+    "recent_activity": "Recent Activity",
+    "tools": {
+      "image_extractor": {
+        "desc": "Extract images from links and social networks.",
+        "title": "Image Extractor"
+      },
+      "video_downloader": {
+        "desc": "Download videos and audio from YouTube, TikTok, and more.",
+        "title": "Video Downloader"
+      }
+    },
+    "unknown": "Unknown",
+    "view_full_history": "View full history"
+  },
+  "disclaimer": {
+    "accept": "I Understand",
+    "dont_show_again": "Don't show this message again",
+    "text1": "Videos on YouTube and other sites may be subject to DMCA copyright protection.",
+    "text2": "The authors of <0>DownKingo</0> do not endorse or take responsibility for the use of this application in violation of these laws.",
+    "title": "Copyright Disclaimer"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "invalid_url": "Invalid URL.",
+    "network": "Connection error. Check your internet.",
+    "not_found": "Content not found.",
+    "unsupported": "Platform not supported."
+  },
+  "home": {
+    "active_downloads": "{{count}} downloads in progress",
+    "active_downloads_one": "",
+    "active_downloads_other": "",
+    "add_audio_queue": "Add Audio",
+    "add_queue": "Add to Queue",
+    "audio_mode": "Audio Only",
+    "check_progress": "Track progress in the dedicated tab.",
+    "empty_history_text": "Your downloads will appear here.",
+    "empty_history_title": "No history",
+    "empty_queue_text": "Paste a URL from YouTube, TikTok or Instagram.",
+    "empty_queue_title": "Queue empty",
+    "fetching": "Fetching info...",
+    "format": "Format",
+    "go_to_queue": "Go to Queue",
+    "history_title": "History",
+    "no_recent_downloads": "No recent downloads",
+    "placeholder": "Paste video URL here...",
+    "quality": "Quality",
+    "queue_title": "Download Queue",
+    "video_mode": "Video",
+    "views": "views"
+  },
+  "nav": {
+    "console": "Console",
+    "converter": "Convert",
+    "folder": "Downloads Folder",
+    "history": "History",
+    "home": "Home",
+    "images": "Images",
+    "queue": "Queue",
+    "roadmap": "Roadmap",
+    "settings": "Settings",
+    "videos": "Videos"
+  },
+  "setup": {
+    "installation_error": "Installation error",
+    "overall_progress": "Overall progress",
+    "ready_redirecting": "All set! Redirecting...",
+    "retry": "Retry",
+    "retrying": "Retrying...",
+    "status": {
+      "completed": "Completed",
+      "downloading": "Downloading... {{percent}}%",
+      "error": "Error",
+      "extracting": "Extracting...",
+      "installed": "Installed",
+      "verifying": "Verifying...",
+      "waiting": "Waiting..."
+    },
+    "title": "Setting up essential components..."
+  },
+  "status": {
+    "available": "Available",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "downloading": "Downloading...",
+    "empty": "Empty",
+    "error": "Error",
+    "failed": "Failed",
+    "in_queue": "In Queue",
+    "loading": "Loading...",
+    "pending": "Pending",
+    "processing": "Processing...",
+    "success": "Success"
+  },
+  "terminal": {
+    "clear": "Clear Console",
+    "maximize": "Maximize",
+    "minimize": "Minimize",
+    "ready": "Ready to capture output..."
+  }
+}

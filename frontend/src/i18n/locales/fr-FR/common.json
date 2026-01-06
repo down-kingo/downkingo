@@ -1,0 +1,128 @@
+{
+  "actions": {
+    "back": "Retour",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "copy": "Copier",
+    "delete": "Supprimer",
+    "download": "Télécharger",
+    "edit": "Modifier",
+    "next": "Suivant",
+    "openFolder": "Ouvrir le dossier",
+    "openUrl": "Ouvrir le lien original",
+    "refresh": "Actualiser",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "search": "Rechercher"
+  },
+  "clipboard": {
+    "dismiss": "Ignorer",
+    "download_now": "Télécharger Maintenant",
+    "link_detected": "Lien Détecté"
+  },
+  "dashboard": {
+    "manage_tools": "Gérez vos outils et téléchargements récents.",
+    "overview": "Vue d'ensemble",
+    "recent_activity": "Activité Récente",
+    "tools": {
+      "image_extractor": {
+        "desc": "Extrayez des images depuis des liens et réseaux sociaux.",
+        "title": "Extracteur d'Images"
+      },
+      "video_downloader": {
+        "desc": "Téléchargez des vidéos et audios de YouTube, TikTok et plus.",
+        "title": "Téléchargeur Vidéo"
+      }
+    },
+    "unknown": "Inconnu",
+    "view_full_history": "Voir l'historique complet"
+  },
+  "disclaimer": {
+    "accept": "Je comprends",
+    "dont_show_again": "Ne plus afficher ce message",
+    "text1": "Les vidéos sur YouTube et d'autres sites peuvent être soumises à la protection des droits d'auteur (DMCA).",
+    "text2": "Les auteurs de <0>DownKingo</0> ne cautionnent ni n'assument la responsabilité de l'utilisation de cette application en violation de ces lois.",
+    "title": "Avis de Droit d'Auteur"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "invalid_url": "URL invalide.",
+    "network": "Erreur de connexion. Vérifiez votre internet.",
+    "not_found": "Contenu introuvable.",
+    "unsupported": "Plateforme non supportée."
+  },
+  "home": {
+    "active_downloads_one": "téléchargement actif",
+    "active_downloads_many": "",
+    "active_downloads_other": "{{count}} téléchargements actifs",
+    "add_audio_queue": "Ajouter Audio",
+    "add_queue": "Ajouter à la File",
+    "audio_mode": "Audio Seulement",
+    "check_progress": "Vérifier la progression dans l'onglet dédié.",
+    "empty_history_text": "Vos téléchargements apparaîtront ici.",
+    "empty_history_title": "Aucun historique",
+    "empty_queue_text": "Collez une URL de YouTube, TikTok ou Instagram.",
+    "empty_queue_title": "File vide",
+    "fetching": "Recherche d'informations...",
+    "format": "Format",
+    "go_to_queue": "Aller à la file",
+    "history_title": "Historique",
+    "no_recent_downloads": "Aucun téléchargement récent",
+    "placeholder": "Collez l'URL de la vidéo ici...",
+    "quality": "Qualité",
+    "queue_title": "File d'attente",
+    "video_mode": "Vidéo",
+    "views": "vues",
+    "active_downloads": "{{count}} téléchargements en cours"
+  },
+  "nav": {
+    "console": "Console",
+    "converter": "Convertir",
+    "folder": "Dossier de Téléchargement",
+    "history": "Historique",
+    "home": "Accueil",
+    "images": "Images",
+    "queue": "File d'attente",
+    "roadmap": "Roadmap",
+    "settings": "Paramètres",
+    "videos": "Vidéos"
+  },
+  "setup": {
+    "installation_error": "Erreur d'installation",
+    "overall_progress": "Progression générale",
+    "ready_redirecting": "Tout est prêt ! Redirection...",
+    "retry": "Réessayer",
+    "retrying": "Nouvelle tentative...",
+    "status": {
+      "completed": "Terminé",
+      "downloading": "Téléchargement...",
+      "error": "Erreur",
+      "extracting": "Extraction...",
+      "installed": "Installé",
+      "verifying": "Vérification...",
+      "waiting": "En attente..."
+    },
+    "title": "Préparation des composants essentiels..."
+  },
+  "status": {
+    "available": "Disponible",
+    "cancelled": "Annulé",
+    "completed": "Terminé",
+    "downloading": "Téléchargement...",
+    "empty": "Vide",
+    "error": "Erreur",
+    "failed": "Échoué",
+    "in_queue": "Dans la file",
+    "loading": "Chargement...",
+    "pending": "En attente",
+    "processing": "Traitement...",
+    "success": "Succès"
+  },
+  "terminal": {
+    "clear": "Effacer la console",
+    "maximize": "Maximiser",
+    "minimize": "Minimiser",
+    "ready": "Prêt à capturer la sortie..."
+  }
+}

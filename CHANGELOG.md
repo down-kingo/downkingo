@@ -39,5 +39,5 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ---
 
-[Unreleased]: https://github.com/Capman002/kinematic/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/Capman002/kinematic/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Capman002/DownKingo/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Capman002/DownKingo/releases/tag/v1.0.0

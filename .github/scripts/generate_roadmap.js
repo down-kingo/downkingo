@@ -160,37 +160,18 @@ async function main() {
 
   // 1. Load Cache
   let titleCache = {};
-  // Try master cache first (contains all translations)
-  let cacheFile = "roadmap.cache.json";
-  if (!fs.existsSync(cacheFile)) cacheFile = "roadmap.json"; // Fallback to legacy
-
-  if (fs.existsSync(cacheFile)) {
+  if (fs.existsSync("roadmap.json")) {
     try {
-      const oldData = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
+      const oldData = JSON.parse(fs.readFileSync("roadmap.json", "utf8"));
       (oldData.items || []).forEach((item) => {
-        // Cache needs to store the I18N object
-        if (item.title_i18n) {
+        if (item.friendly_title && typeof item.friendly_title === "object") {
           titleCache[item.id] = {
-            original_title: item.title,
+            original_title: item.title, // store original to detect changes
             friendly_title: item.friendly_title,
-            title_i18n: item.title_i18n,
-          };
-        } else if (
-          item.friendly_title &&
-          typeof item.friendly_title === "object"
-        ) {
-          // Legacy format where friendly_title was the object
-          titleCache[item.id] = {
-            original_title: item.title,
-            title_i18n: item.friendly_title,
           };
         }
       });
-      console.log(
-        `📦 Loaded cache from ${cacheFile}: ${
-          Object.keys(titleCache).length
-        } items`
-      );
+      console.log(`📦 Loaded cache: ${Object.keys(titleCache).length} items`);
     } catch (e) {
       console.warn("Cache load failed or empty");
     }
@@ -216,27 +197,20 @@ async function main() {
     // Check Cache
     const cached = titleCache[c.number];
     let friendly_title = null;
-    let title_i18n = null;
     let needsAi = false;
 
     if (cached && cached.original_title === c.title) {
-      if (cached.title_i18n) {
-        title_i18n = cached.title_i18n;
-        friendly_title = cached.friendly_title; // Optional, might be string or undefined
-        process.stdout.write(".");
-      } else {
-        needsAi = true; // Have cache but no i18n? Re-process
-      }
+      friendly_title = cached.friendly_title;
+      process.stdout.write("."); // Dot progress for cache hit
     } else {
       needsAi = true;
-      process.stdout.write("!");
+      process.stdout.write("!"); // Exclamation for new/changed
     }
 
     items.push({
       id: c.number,
       title: c.title,
-      friendly_title,
-      title_i18n,
+      friendly_title, // null if needs AI
       description: c.body || "",
       status,
       votes: c.reactions.totalCount || 0,
@@ -263,6 +237,13 @@ async function main() {
     try {
       const translations = await callGemini(item.title);
       if (translations) {
+        // BACKWARD COMPATIBILITY:
+        // Old apps expect friendly_title to be a string. We keep it as pt-BR (or fallback to en-US).
+        // New apps will read 'title_i18n' for dynamic translation.
+        item.friendly_title =
+          translations["pt-BR"] ||
+          translations["en-US"] ||
+          Object.values(translations)[0];
         item.title_i18n = translations;
       } else {
         // Fallback
@@ -270,6 +251,7 @@ async function main() {
           /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
           ""
         );
+        item.friendly_title = fallback;
         item.title_i18n = { "en-US": fallback, "pt-BR": fallback };
       }
       // Rate limiting
@@ -295,27 +277,21 @@ async function main() {
   // Helper to create item for specific lang
   const createItemForLang = (item, lang) => {
     // Get translated title or fallback
-    let displayTitle = item.title;
+    let displayTitle = item.title; // default technical
 
-    // Safely access translation
-    if (item.title_i18n) {
-      // Try exact match
-      if (item.title_i18n[lang]) {
-        displayTitle = item.title_i18n[lang];
-      } else {
-        // Fallback to English or first available
-        displayTitle =
-          item.title_i18n["en-US"] ||
-          Object.values(item.title_i18n)[0] ||
-          item.title;
-      }
+    if (item.title_i18n && item.title_i18n[lang]) {
+      displayTitle = item.title_i18n[lang];
+    } else if (item.friendly_title && typeof item.friendly_title === "string") {
+      // Legacy cache/fallback
+      displayTitle = item.friendly_title;
     }
 
     return {
       ...item,
-      friendly_title: displayTitle, // Simple string in final output
-      // Remove internal/bulk fields
+      friendly_title: displayTitle, // Simple string, as requested
+      // Remove internal/bulk fields to keep payload clean
       title_i18n: undefined,
+      _needs_ai: undefined,
     };
   };
 
@@ -340,6 +316,7 @@ async function main() {
   }
 
   // Generate Default 'roadmap.json' (Copy of pt-BR for backward compatibility)
+  // This ensures v1/v2 apps don't break
   const defaultItems = items.map((i) => createItemForLang(i, "pt-BR"));
   const defaultOutput = {
     version: "2.1.0",
@@ -353,15 +330,6 @@ async function main() {
   };
   fs.writeFileSync("roadmap.json", JSON.stringify(defaultOutput, null, 2));
   console.log(`✅ Generated roadmap.json (Default/Legacy)`);
-
-  // 6. Generate Master Cache (Preserves all translations for next run)
-  const cacheOutput = {
-    version: "2.1.0-cache",
-    generated_at: now,
-    items: items, // Contains separate title_i18n object
-  };
-  fs.writeFileSync("roadmap.cache.json", JSON.stringify(cacheOutput, null, 2));
-  console.log(`✅ Generated roadmap.cache.json (Internal Cache)`);
 
   // Meta file
   const meta = {
