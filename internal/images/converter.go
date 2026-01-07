@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 // Convert transcodifica a imagem usando FFmpeg.
@@ -66,8 +65,8 @@ func Convert(inputPath string, format string, quality int, ffmpegPath string) (s
 
 	cmd := exec.Command(ffmpegPath, args...)
 
-	// Evitar abrir janela de console no Windows
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	// Configuração de processo específica da plataforma (Windows: esconde console)
+	cmd.SysProcAttr = getSysProcAttr()
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
