@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-07T10:53:08.394Z",
+  "generated_at": "2026-01-07T11:25:39.228Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "description": "## Context\nCurrently, after downloading a video or image on Kingo (PC), the user doesn't have a native and quick way to transfer this content to their phone. Relying on the cloud (Google Drive/WhatsApp) is slow and unnecessarily consumes internet bandwidth.\n\n## Motivation\nCreate a \"zero friction\" experience where the user just points their phone's camera at Kingo and the download starts instantly via local network (P2P), taking advantage of the maximum Wi-Fi speed.\n\n## Problem\nTransferring large files from PC to mobile devices is a tedious process that usually involves USB cables or uploads to external services, which kills the agility of a download app.\n\n## Technical Proposal\nImplement an **Ephemeral Transmission Server** in Go:\n\n1.  **Backend (Go):**\n    -   Use `net/http` to start a temporary web server on a random port.\n    -   Implement an **IP Discovery** system to identify the PC's address on the local network (e.g., 192.168.x.x).\n    -   Serve the file di",
+      "description": "## Context\nCurrently, after downloading a video or image on Kingo (PC), the user doesn't have a native and quick way to transfer this content to their phone. Relying on the cloud (Google Drive/WhatsApp) is slow and unnecessarily consumes internet bandwidth.\n## Motivation\nCreate a \"zero friction\" experience where the user just points their phone's camera at Kingo and the download starts instantly via local network (P2P), taking advantage of the maximum Wi-Fi speed.\n## Problem\nTransferring large files from PC to mobile devices is a tedious process that usually involves USB cables or uploads to external services, which kills the agility of a download app.\n## Technical Proposal\nImplement an **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Use `net/http` to start a temporary web server on a random port.\n   - Implement an **IP Discovery** system to identify the PC's address on the local network (e.g., 192.168.x.x).\n   - Serve the file di",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
