@@ -43,6 +43,12 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://downkingo.com">
+    <img src="https://img.shields.io/badge/🌐_Website-downkingo.com-E11D48?style=for-the-badge" alt="Website">
+  </a>
+</p>
+
 ---
 
 ## 🎯 About
@@ -78,11 +84,11 @@ DownKingo is a complete rewrite focused on performance, design, and user experie
 
 ## 📥 Installation
 
-| Platform    | Download                                                                                                                                                                |
-| :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Platform    | Download                                                                                                                                                                 |
+| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Windows** | [![Windows](https://img.shields.io/badge/Download-.exe-0078D4?style=flat-square&logo=windows)](https://github.com/down-kingo/downkingo/releases/latest)                  |
 | **Linux**   | [![Linux](https://img.shields.io/badge/Download-.AppImage-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/down-kingo/downkingo/releases/latest) |
-| **macOS**   | _Coming Soon_                                                                                                                                                           |
+| **macOS**   | _Coming Soon_                                                                                                                                                            |
 
 ---
 
