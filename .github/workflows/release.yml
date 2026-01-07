@@ -18,13 +18,13 @@ jobs:
         include:
           - os: windows-latest
             platform: windows/amd64
-            artifact: kinematic-windows-amd64-installer.exe
+            artifact: DownKingo-Windows-Installer.exe
           - os: macos-latest
             platform: darwin/universal
-            artifact: Kinematic.dmg
+            artifact: DownKingo-macOS.dmg
           - os: ubuntu-latest
             platform: linux/amd64
-            artifact: Kinematic-linux-amd64.AppImage
+            artifact: DownKingo-Linux-x86_64.AppImage
 
     runs-on: ${{ matrix.os }}
 
@@ -190,7 +190,7 @@ jobs:
           cp build/sidecar/darwin/ffmpeg "$APP_BUNDLE/Contents/Resources/bin/"
 
           # Create DMG
-          hdiutil create -volname "Kinematic" -srcfolder "$APP_BUNDLE" -ov -format UDZO "build/bin/${{ matrix.artifact }}"
+          hdiutil create -volname "DownKingo" -srcfolder "$APP_BUNDLE" -ov -format UDZO "build/bin/${{ matrix.artifact }}"
           echo "macOS DMG ready:"
           ls -la build/bin/
 
@@ -210,22 +210,22 @@ jobs:
           # Copy main binary (pode ser 'kinematic' ou 'baixar-midia')
           BINARY=$(find build/bin -type f -executable | head -1)
           echo "Found binary: $BINARY"
-          cp "$BINARY" AppDir/usr/bin/kinematic
-          chmod +x AppDir/usr/bin/kinematic
+          cp "$BINARY" AppDir/usr/bin/downkingo
+          chmod +x AppDir/usr/bin/downkingo
 
           # Copy sidecar binaries
           cp build/sidecar/linux/yt-dlp AppDir/usr/bin/
           cp build/sidecar/linux/ffmpeg AppDir/usr/bin/
 
           # Copy icon
-          cp build/appicon.png AppDir/usr/share/icons/hicolor/256x256/apps/kinematic.png
+          cp build/appicon.png AppDir/usr/share/icons/hicolor/256x256/apps/downkingo.png
 
           # Create .desktop file
-          cat > AppDir/usr/share/applications/kinematic.desktop << EOF
+          cat > AppDir/usr/share/applications/downkingo.desktop << EOF
           [Desktop Entry]
-          Name=Kinematic
-          Exec=kinematic
-          Icon=kinematic
+          Name=DownKingo
+          Exec=downkingo
+          Icon=downkingo
           Type=Application
           Categories=AudioVideo;Video;
           Comment=Download videos from YouTube and other platforms
@@ -237,17 +237,17 @@ jobs:
           SELF=$(readlink -f "$0")
           HERE=${SELF%/*}
           export PATH="${HERE}/usr/bin:${PATH}"
-          exec "${HERE}/usr/bin/kinematic" "$@"
+          exec "${HERE}/usr/bin/downkingo" "$@"
           EOF
           chmod +x AppDir/AppRun
 
           # Link desktop file and icon to root
-          ln -sf usr/share/applications/kinematic.desktop AppDir/kinematic.desktop
-          ln -sf usr/share/icons/hicolor/256x256/apps/kinematic.png AppDir/kinematic.png
+          ln -sf usr/share/applications/downkingo.desktop AppDir/downkingo.desktop
+          ln -sf usr/share/icons/hicolor/256x256/apps/downkingo.png AppDir/downkingo.png
 
           # Create AppImage
           linuxdeploy --appdir AppDir --output appimage
-          mv Kinematic*.AppImage build/bin/${{ matrix.artifact }}
+          mv DownKingo*.AppImage build/bin/${{ matrix.artifact }}
           echo "Linux AppImage ready:"
           ls -la build/bin/
 
