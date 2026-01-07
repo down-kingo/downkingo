@@ -22,10 +22,6 @@ export function CheckDependencies():Promise<Array<launcher.DependencyStatus>>;
 
 export function CheckForUpdate():Promise<updater.UpdateInfo>;
 
-export function CheckRembgAvailable():Promise<boolean>;
-
-export function CheckRembgStatus():Promise<launcher.RembgStatus>;
-
 export function ClearDownloadHistory():Promise<void>;
 
 export function CompressImage(arg1:string,arg2:number):Promise<handlers.ConversionResult>;
@@ -38,8 +34,6 @@ export function ConvertVideo(arg1:handlers.VideoConvertRequest):Promise<handlers
 
 export function DeleteAria2c():Promise<void>;
 
-export function DeleteRembg():Promise<void>;
-
 export function Download(arg1:youtube.DownloadOptions):Promise<void>;
 
 export function DownloadAndApplyUpdate(arg1:string):Promise<void>;
@@ -50,13 +44,9 @@ export function DownloadDependencies():Promise<void>;
 
 export function DownloadImage(arg1:string,arg2:string):Promise<string>;
 
-export function DownloadRembg():Promise<void>;
-
 export function ExtractAudio(arg1:handlers.AudioExtractRequest):Promise<handlers.ConversionResult>;
 
 export function GetAvailableAppVersions():Promise<Array<updater.Release>>;
-
-export function GetBackgroundRemovalModels():Promise<Array<handlers.BackgroundRemovalModel>>;
 
 export function GetDownloadHistory(arg1:number):Promise<Array<storage.Download>>;
 
@@ -93,8 +83,6 @@ export function OpenDownloadFolder(arg1:string):Promise<void>;
 export function OpenUrl(arg1:string):Promise<void>;
 
 export function PollGitHubAuth(arg1:string):Promise<string>;
-
-export function RemoveBackground(arg1:handlers.BackgroundRemovalRequest):Promise<handlers.ConversionResult>;
 
 export function RestartApp():Promise<void>;
 

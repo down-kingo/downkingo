@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   IconX,
   IconLoader2,
@@ -15,23 +16,6 @@ interface SuggestionModalProps {
 }
 
 type IssueType = "feat" | "fix" | "docs" | "refactor" | "perf";
-
-const ISSUE_TYPES: { value: IssueType; label: string; description: string }[] =
-  [
-    { value: "feat", label: "Feature", description: "Nova funcionalidade" },
-    { value: "fix", label: "Bug Fix", description: "Correção de bug" },
-    { value: "docs", label: "Docs", description: "Documentação" },
-    {
-      value: "refactor",
-      label: "Refactor",
-      description: "Refatoração de código",
-    },
-    {
-      value: "perf",
-      label: "Performance",
-      description: "Melhoria de performance",
-    },
-  ];
 
 const SCOPES = [
   "core",
@@ -49,6 +33,40 @@ export default function SuggestionModal({
   onClose,
   onSubmit,
 }: SuggestionModalProps) {
+  const { t } = useTranslation("roadmap");
+
+  // Build issue types with translations
+  const ISSUE_TYPES = useMemo(
+    () => [
+      {
+        value: "feat" as IssueType,
+        label: t("suggestion.type_feature"),
+        description: t("suggestion.type_feature_desc"),
+      },
+      {
+        value: "fix" as IssueType,
+        label: t("suggestion.type_fix"),
+        description: t("suggestion.type_fix_desc"),
+      },
+      {
+        value: "docs" as IssueType,
+        label: t("suggestion.type_docs"),
+        description: t("suggestion.type_docs_desc"),
+      },
+      {
+        value: "refactor" as IssueType,
+        label: t("suggestion.type_refactor"),
+        description: t("suggestion.type_refactor_desc"),
+      },
+      {
+        value: "perf" as IssueType,
+        label: t("suggestion.type_perf"),
+        description: t("suggestion.type_perf_desc"),
+      },
+    ],
+    [t]
+  );
+
   // Form state
   const [issueType, setIssueType] = useState<IssueType>("feat");
   const [scope, setScope] = useState("core");
@@ -162,7 +180,7 @@ export default function SuggestionModal({
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="w-full max-w-2xl bg-white dark:bg-surface-950 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-800 overflow-hidden relative max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-200 dark:border-white/10 overflow-hidden relative max-h-[90vh] flex flex-col"
       >
         {/* Gradient bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-amber-500 to-purple-500" />
@@ -173,18 +191,18 @@ export default function SuggestionModal({
               <IconCheck size={32} stroke={3} />
             </div>
             <h3 className="text-lg font-bold text-surface-900 dark:text-white">
-              Sugestão Enviada
+              {t("suggestion.success_title")}
             </h3>
             <p className="text-sm text-surface-500 mt-2">
-              Issue criada com sucesso no GitHub.
+              {t("suggestion.success_description")}
             </p>
           </div>
         ) : (
           <>
             {/* Header */}
-            <div className="px-6 py-5 flex justify-between items-center border-b border-surface-100 dark:border-surface-800 shrink-0">
+            <div className="px-6 py-5 flex justify-between items-center border-b border-surface-100 dark:border-white/10 shrink-0">
               <h3 className="font-bold text-surface-900 dark:text-white">
-                Nova Sugestão
+                {t("suggestion.modal_title")}
               </h3>
               <button
                 onClick={handleClose}
@@ -201,12 +219,12 @@ export default function SuggestionModal({
                 {/* Type */}
                 <div className="col-span-3 space-y-1.5">
                   <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                    Tipo
+                    {t("suggestion.label_type")}
                   </label>
                   <select
                     value={issueType}
                     onChange={(e) => setIssueType(e.target.value as IssueType)}
-                    className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-200"
                   >
                     {ISSUE_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>
@@ -219,12 +237,12 @@ export default function SuggestionModal({
                 {/* Scope */}
                 <div className="col-span-3 space-y-1.5">
                   <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                    Escopo
+                    {t("suggestion.label_scope")}
                   </label>
                   <select
                     value={scope}
                     onChange={(e) => setScope(e.target.value)}
-                    className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-200"
                   >
                     {SCOPES.map((s) => (
                       <option key={s} value={s}>
@@ -237,21 +255,21 @@ export default function SuggestionModal({
                 {/* Title */}
                 <div className="col-span-6 space-y-1.5">
                   <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                    Título
+                    {t("suggestion.label_title")}
                   </label>
                   <input
                     type="text"
-                    placeholder="Breve descrição da mudança"
+                    placeholder={t("suggestion.placeholder_title")}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-200"
                   />
                 </div>
               </div>
 
               {/* Preview do título */}
               {title && (
-                <div className="text-xs text-surface-400 font-mono bg-surface-50 dark:bg-surface-900 px-3 py-2 rounded-lg">
+                <div className="text-xs text-surface-400 font-mono bg-surface-50 dark:bg-black/20 px-3 py-2 rounded-lg">
                   {generateTitle()}
                 </div>
               )}
@@ -259,59 +277,61 @@ export default function SuggestionModal({
               {/* Contexto */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                  Contexto
+                  {t("suggestion.label_context")}
                 </label>
                 <textarea
-                  placeholder="Descreva o cenário atual e por que essa mudança é relevante..."
+                  placeholder={t("suggestion.placeholder_context")}
                   value={context}
                   onChange={(e) => setContext(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
                 />
               </div>
 
               {/* Problema / Motivação */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                  {issueType === "fix" ? "Problema Atual" : "Motivação"}
+                  {issueType === "fix"
+                    ? t("suggestion.label_problem")
+                    : t("suggestion.label_motivation")}
                 </label>
                 <textarea
                   placeholder={
                     issueType === "fix"
-                      ? "Descreva o bug ou comportamento incorreto..."
-                      : "Por que essa feature é importante? Qual problema resolve?"
+                      ? t("suggestion.placeholder_problem")
+                      : t("suggestion.placeholder_motivation")
                   }
                   value={problem}
                   onChange={(e) => setProblem(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
                 />
               </div>
 
               {/* Proposta Técnica */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                  Proposta Técnica
+                  {t("suggestion.label_proposal")}
                 </label>
                 <textarea
-                  placeholder="Como você sugere implementar? Quais componentes/arquivos serão afetados?"
+                  placeholder={t("suggestion.placeholder_proposal")}
                   value={proposal}
                   onChange={(e) => setProposal(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
                 />
               </div>
 
               {/* Tarefas */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                  Tarefas{" "}
+                  {t("suggestion.label_tasks")}{" "}
                   <span className="text-surface-400 font-normal">
-                    (uma por linha)
+                    {t("suggestion.label_tasks_hint")}
                   </span>
                 </label>
                 <textarea
-                  placeholder="Implementar X&#10;Testar Y&#10;Atualizar documentação"
+                  placeholder={t("suggestion.placeholder_tasks")}
                   value={tasks}
                   onChange={(e) => setTasks(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none font-mono text-xs"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none font-mono text-xs dark:text-surface-200"
                 />
               </div>
 
@@ -327,7 +347,7 @@ export default function SuggestionModal({
                     showAdvanced ? "rotate-180" : ""
                   }`}
                 />
-                Campos avançados
+                {t("suggestion.advanced_fields")}
               </button>
 
               {/* Advanced Fields */}
@@ -336,33 +356,33 @@ export default function SuggestionModal({
                   {/* Dependências */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                      Dependências{" "}
+                      {t("suggestion.label_dependencies")}{" "}
                       <span className="text-surface-400 font-normal">
-                        (opcional)
+                        {t("suggestion.label_optional")}
                       </span>
                     </label>
                     <input
                       type="text"
-                      placeholder="Ex: Requer migração para Wails v3"
+                      placeholder={t("suggestion.placeholder_dependencies")}
                       value={dependencies}
                       onChange={(e) => setDependencies(e.target.value)}
-                      className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none"
+                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-200"
                     />
                   </div>
 
                   {/* Referências */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-surface-500 uppercase tracking-wider">
-                      Referências{" "}
+                      {t("suggestion.label_references")}{" "}
                       <span className="text-surface-400 font-normal">
-                        (uma por linha)
+                        {t("suggestion.label_tasks_hint")}
                       </span>
                     </label>
                     <textarea
-                      placeholder="Link para documentação&#10;Arquivo relevante: app.go:150"
+                      placeholder={t("suggestion.placeholder_references")}
                       value={references}
                       onChange={(e) => setReferences(e.target.value)}
-                      className="w-full bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-16 resize-none font-mono text-xs"
+                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-16 resize-none font-mono text-xs dark:text-surface-200"
                     />
                   </div>
                 </div>
@@ -370,12 +390,12 @@ export default function SuggestionModal({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-surface-100 dark:border-surface-800 flex justify-end gap-3 shrink-0 bg-surface-50/50 dark:bg-surface-900/50">
+            <div className="px-6 py-4 border-t border-surface-100 dark:border-white/10 flex justify-end gap-3 shrink-0 bg-surface-50/50 dark:bg-black/20">
               <button
                 onClick={handleClose}
                 className="px-4 py-2 text-sm font-medium text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
               >
-                Cancelar
+                {t("suggestion.cancel")}
               </button>
               <button
                 onClick={handleSubmit}
@@ -387,7 +407,7 @@ export default function SuggestionModal({
                 ) : (
                   <IconArrowRight size={16} />
                 )}
-                Criar Issue
+                {t("suggestion.submit")}
               </button>
             </div>
           </>

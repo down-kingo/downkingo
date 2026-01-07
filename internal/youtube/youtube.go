@@ -15,6 +15,32 @@ import (
 	"unicode/utf8"
 )
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONSTANTES DE PERFORMANCE
+// Compiladas uma única vez no startup para evitar overhead em loops
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const (
+	// concurrentFragments controls how many video fragments download in parallel.
+	// 4 is a balanced default that works well for most network conditions.
+	concurrentFragments = "4"
+
+	// bufferSize for reading yt-dlp output. 16KB provides good throughput.
+	bufferSize = "16K"
+
+	// defaultAria2Connections is the number of connections for aria2c multi-thread.
+	defaultAria2Connections = 16
+)
+
+var (
+	// progressRegex captures percentage values from yt-dlp/aria2c output.
+	// Pre-compiled for performance (used hundreds of times per download).
+	progressRegex = regexp.MustCompile(`(\d+\.?\d*)%`)
+
+	// ansiRegex removes ANSI color codes from terminal output.
+	ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+)
+
 // sanitizeUTF8 converte bytes incorretos (ex: CP1252/Latin-1) para UTF-8 válido
 // Isso corrige o problema de acentos no Windows onde o output do yt-dlp pode vir em CP1252
 func sanitizeUTF8(s string) string {
@@ -383,9 +409,9 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 		"-o", fmt.Sprintf("%s/%%(title)s.%%(ext)s", c.outputDir),
 		"--no-playlist", // Single video only
 		// === PERFORMANCE FLAGS ===
-		"--no-check-certificate",      // Skip SSL verification
-		"--concurrent-fragments", "4", // Download 4 fragments simultaneously
-		"--buffer-size", "16K", // Larger buffer
+		"--no-check-certificate",                      // Skip SSL verification
+		"--concurrent-fragments", concurrentFragments, // Download N fragments simultaneously
+		"--buffer-size", bufferSize, // Larger buffer for throughput
 		"--no-warnings", // Suppress warnings (like mutagen fallbacks)
 	}
 
@@ -396,7 +422,7 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 	if opts.UseAria2c && c.aria2cPath != "" {
 		connections := opts.Aria2cConnections
 		if connections <= 0 {
-			connections = 16 // Default
+			connections = defaultAria2Connections
 		}
 		aria2Args := fmt.Sprintf("aria2c:-x %d -s %d -k 1M --file-allocation=none", connections, connections)
 		args = append(args,
@@ -542,11 +568,7 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 		return 0, nil, nil
 	})
 
-	// Scanner robusto: Captura qualquer número seguido de %
-	progressRegex := regexp.MustCompile(`(\d+\.?\d*)%`)
-
-	// Limpeza de ANSI codes
-	ansiRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+	// Regex patterns já compilados no nível do pacote para performance
 
 	for scanner.Scan() {
 		rawLine := scanner.Text()

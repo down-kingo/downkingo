@@ -141,7 +141,10 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
               </div>
 
               {/* Tabs with Groups */}
-              <nav className="flex-1 p-2 space-y-3 overflow-y-auto">
+              <nav
+                className="flex-1 p-2 space-y-3 overflow-y-auto"
+                data-lenis-prevent
+              >
                 {tabGroups.map((group, groupIndex) => (
                   <div key={groupIndex}>
                     {/* Group Label */}
@@ -237,7 +240,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-8">
+              <div className="flex-1 overflow-y-auto p-8" data-lenis-prevent>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

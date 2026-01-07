@@ -76,33 +76,60 @@ func (m *Monitor) Stop() {
 	logger.Log.Info().Msg("Clipboard monitor stopped")
 }
 
+// Adaptive backoff constants for CPU efficiency
+const (
+	minPollInterval = 500 * time.Millisecond // Fast polling when active
+	maxPollInterval = 3 * time.Second        // Slow polling when idle
+	backoffFactor   = 2                      // Exponential growth rate
+)
+
 func (m *Monitor) loop() {
-	ticker := time.NewTicker(1 * time.Second)
-	defer ticker.Stop()
+	currentInterval := minPollInterval
 
 	for {
 		select {
 		case <-m.ctx.Done():
 			return
-		case <-ticker.C:
+		case <-time.After(currentInterval):
 			text, err := runtime.ClipboardGetText(m.ctx)
 			if err != nil {
+				// On error, increase backoff to avoid hammering
+				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
 				continue
 			}
 
-			if text != m.lastText {
-				logger.Log.Info().Str("content_preview", limitString(text, 50)).Msg("Clipboard content changed")
+			m.mu.Lock()
+			changed := text != m.lastText
+			if changed {
 				m.lastText = text
+			}
+			m.mu.Unlock()
+
+			if changed {
+				// Reset to fast polling on clipboard change
+				currentInterval = minPollInterval
+				logger.Log.Info().Str("content_preview", limitString(text, 50)).Msg("Clipboard content changed")
 
 				if m.isValidURL(text) {
 					logger.Log.Info().Str("url", text).Msg("Clipboard link detected and valid")
 					runtime.EventsEmit(m.ctx, "clipboard:link-detected", text)
 				} else {
-					logger.Log.Info().Msg("Clipboard ignored (invalid URL or unsupported domain)")
+					logger.Log.Debug().Msg("Clipboard ignored (invalid URL or unsupported domain)")
 				}
+			} else {
+				// Increase backoff when idle
+				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
 			}
 		}
 	}
+}
+
+// minDuration returns the smaller of two durations
+func minDuration(a, b time.Duration) time.Duration {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // limitString é um helper para logs

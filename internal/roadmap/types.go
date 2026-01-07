@@ -10,6 +10,7 @@ import (
 type CDNRoadmap struct {
 	Version     string    `json:"version"`
 	GeneratedAt time.Time `json:"generated_at"`
+	Lang        string    `json:"lang"`
 	Source      CDNSource `json:"source"`
 	Items       []CDNItem `json:"items"`
 }
@@ -92,17 +93,18 @@ func DefaultConfig() Config {
 // ToRoadmapItem converts CDNItem to frontend-compatible RoadmapItem
 func (c *CDNItem) ToRoadmapItem() RoadmapItem {
 	item := RoadmapItem{
-		ID:           c.ID,
-		Title:        c.Title,
-		Description:  c.Description,
-		Status:       c.Status,
-		Votes:        c.VotesUp, // Maintain backwards compatibility
-		Comments:     c.Comments,
-		URL:          c.URL,
-		Labels:       c.Labels,
-		Author:       c.Author,
-		AuthorAvatar: c.AuthorAvatar,
-		CreatedAt:    c.CreatedAt,
+		ID:            c.ID,
+		Title:         c.Title,
+		FriendlyTitle: c.FriendlyTitle,
+		Description:   c.Description,
+		Status:        c.Status,
+		Votes:         c.VotesUp, // Maintain backwards compatibility
+		Comments:      c.Comments,
+		URL:           c.URL,
+		Labels:        c.Labels,
+		Author:        c.Author,
+		AuthorAvatar:  c.AuthorAvatar,
+		CreatedAt:     c.CreatedAt,
 	}
 	if c.ShippedAt != nil {
 		item.ShippedAt = *c.ShippedAt

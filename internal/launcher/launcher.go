@@ -11,11 +11,9 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	goruntime "runtime"
 	"strings"
-	"syscall"
 	"time"
 
 	"kingo/internal/events"
@@ -24,9 +22,14 @@ import (
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// HTTP client with timeout to prevent hangs
+// HTTP client with optimized transport for large downloads
 var httpClient = &http.Client{
-	Timeout: 5 * time.Minute, // 5 min for large downloads
+	Timeout: 5 * time.Minute,
+	Transport: &http.Transport{
+		MaxIdleConns:        10,
+		MaxIdleConnsPerHost: 5,
+		IdleConnTimeout:     90 * time.Second,
+	},
 }
 
 // Dependency represents a required binary
@@ -260,181 +263,6 @@ func (l *Launcher) DownloadAria2c() error {
 	}
 
 	return l.downloadDependency(dep)
-}
-
-// RembgStatus represents the installation status of rembg
-type RembgStatus struct {
-	Installed   bool   `json:"installed"`
-	Path        string `json:"path"`
-	Version     string `json:"version"`
-	Downloading bool   `json:"downloading"`
-}
-
-// CheckRembgStatus verifica se o rembg está instalado
-func (l *Launcher) CheckRembgStatus() RembgStatus {
-	// Tentar encontrar rembg no PATH ou na pasta bin
-	locations := []string{
-		filepath.Join(l.binDir, "rembg.exe"),
-		"rembg",
-	}
-
-	for _, loc := range locations {
-		cmd := exec.Command(loc, "--version")
-		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-		output, err := cmd.Output()
-		if err == nil {
-			version := strings.TrimSpace(string(output))
-			return RembgStatus{
-				Installed: true,
-				Path:      loc,
-				Version:   version,
-			}
-		}
-	}
-
-	// Tentar como módulo Python
-	cmd := exec.Command("python", "-m", "rembg.cli", "--version")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	output, err := cmd.Output()
-	if err == nil {
-		version := strings.TrimSpace(string(output))
-		return RembgStatus{
-			Installed: true,
-			Path:      "python -m rembg.cli",
-			Version:   version,
-		}
-	}
-
-	return RembgStatus{Installed: false}
-}
-
-// DownloadRembg baixa e instala o rembg (ferramenta de remoção de fundo via IA)
-func (l *Launcher) DownloadRembg() error {
-	// Verificar se já está instalado
-	status := l.CheckRembgStatus()
-	if status.Installed {
-		l.emitProgress("rembg", 100, 100, 100, "complete")
-		return nil
-	}
-
-	switch goruntime.GOOS {
-	case "windows":
-		return l.downloadRembgWindows()
-	default:
-		return fmt.Errorf("instalação automática do rembg não suportada neste OS. Instale manualmente: pip install rembg[cli]")
-	}
-}
-
-// downloadRembgWindows baixa e instala o rembg no Windows
-func (l *Launcher) downloadRembgWindows() error {
-	// URL do instalador standalone do rembg
-	installerURL := "https://github.com/danielgatis/rembg/releases/latest/download/rembg-cli-installer.exe"
-	installerPath := filepath.Join(l.binDir, "rembg-installer.exe")
-
-	l.emitProgress("rembg", 0, 0, 0, "downloading")
-	logger.Log.Info().Str("url", installerURL).Msg("baixando instalador do rembg")
-
-	// Download do instalador
-	req, err := http.NewRequestWithContext(l.ctx, "GET", installerURL, nil)
-	if err != nil {
-		return fmt.Errorf("erro ao criar request: %w", err)
-	}
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("erro de rede: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, resp.Status)
-	}
-
-	total := resp.ContentLength
-	out, err := os.Create(installerPath)
-	if err != nil {
-		return fmt.Errorf("erro ao criar arquivo: %w", err)
-	}
-
-	var downloaded int64
-	buf := make([]byte, 32*1024)
-
-	for {
-		n, err := resp.Body.Read(buf)
-		if n > 0 {
-			_, writeErr := out.Write(buf[:n])
-			if writeErr != nil {
-				out.Close()
-				os.Remove(installerPath)
-				return writeErr
-			}
-			downloaded += int64(n)
-			percent := float64(downloaded) / float64(total) * 100
-			l.emitProgress("rembg", downloaded, total, percent, "downloading")
-		}
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			out.Close()
-			os.Remove(installerPath)
-			return err
-		}
-	}
-	out.Close()
-
-	// Executar instalador em modo silencioso
-	l.emitProgress("rembg", downloaded, total, 100, "installing")
-	logger.Log.Info().Msg("executando instalador do rembg em modo silencioso")
-
-	// O instalador NSIS aceita /S para instalação silenciosa
-	// e /D=<path> para definir o diretório de instalação
-	installDir := filepath.Join(l.binDir, "rembg")
-	cmd := exec.Command(installerPath, "/S", "/D="+installDir)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-
-	if err := cmd.Run(); err != nil {
-		// Tentar sem o /D (instalação padrão)
-		logger.Log.Warn().Err(err).Msg("instalação com path customizado falhou, tentando instalação padrão")
-		cmd = exec.Command(installerPath, "/S")
-		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-		if err := cmd.Run(); err != nil {
-			return fmt.Errorf("erro ao executar instalador: %w", err)
-		}
-	}
-
-	// Limpar instalador
-	os.Remove(installerPath)
-
-	// Verificar se a instalação foi bem-sucedida
-	// Aguardar um pouco para o instalador finalizar
-	time.Sleep(2 * time.Second)
-
-	status := l.CheckRembgStatus()
-	if !status.Installed {
-		// Tentar encontrar na pasta de instalação
-		rembgExe := filepath.Join(installDir, "rembg.exe")
-		if _, err := os.Stat(rembgExe); err == nil {
-			logger.Log.Info().Str("path", rembgExe).Msg("rembg instalado em pasta customizada")
-			l.emitProgress("rembg", 100, 100, 100, "complete")
-			return nil
-		}
-
-		return fmt.Errorf("instalação do rembg falhou - não foi possível encontrar o executável")
-	}
-
-	l.emitProgress("rembg", 100, 100, 100, "complete")
-	logger.Log.Info().Str("version", status.Version).Msg("rembg instalado com sucesso")
-	return nil
-}
-
-// DeleteRembg remove a instalação do rembg
-func (l *Launcher) DeleteRembg() error {
-	installDir := filepath.Join(l.binDir, "rembg")
-	if err := os.RemoveAll(installDir); err != nil {
-		return fmt.Errorf("erro ao remover rembg: %w", err)
-	}
-	return nil
 }
 
 func (l *Launcher) downloadDependency(dep Dependency) error {

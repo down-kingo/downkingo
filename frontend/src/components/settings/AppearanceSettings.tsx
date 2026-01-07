@@ -67,7 +67,7 @@ const ColorSwatch = ({
 }) => {
   // Mapeamento de cores para classes Tailwind (exemplo visual)
   const colorMap: Record<string, string> = {
-    rose: "bg-rose-500",
+    red: "bg-[#FF1F1F]",
     blue: "bg-blue-500",
     green: "bg-emerald-500",
     orange: "bg-amber-500",
@@ -146,16 +146,16 @@ export default function AppearanceSettings() {
             desc={t("appearance_settings.accent_desc")}
           >
             <div className="flex gap-3">
-              {(
-                ["rose", "blue", "green", "orange", "purple"] as AppColor[]
-              ).map((color) => (
-                <ColorSwatch
-                  key={color}
-                  color={color}
-                  selected={primaryColor === color}
-                  onClick={() => setPrimaryColor(color)}
-                />
-              ))}
+              {(["red", "blue", "green", "orange", "purple"] as AppColor[]).map(
+                (color) => (
+                  <ColorSwatch
+                    key={color}
+                    color={color}
+                    selected={primaryColor === color}
+                    onClick={() => setPrimaryColor(color)}
+                  />
+                )
+              )}
             </div>
           </SettingItem>
         </div>

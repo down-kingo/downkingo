@@ -26,6 +26,7 @@
   },
   "before": "Before",
   "better_quality": "Better quality",
+  "change": "Change",
   "compression": {
     "balanced": "Balanced",
     "light": "Light",
@@ -49,9 +50,9 @@
     "no_file": "Select an input file",
     "unsupported": "Conversion type not supported"
   },
-  "error_select_input": "",
-  "error_unknown": "",
-  "error_unsupported_type": "",
+  "error_select_input": "Select an input file",
+  "error_unknown": "Unknown error",
+  "error_unsupported_type": "Conversion type not supported",
   "format_desc": {
     "high_quality": "High Quality",
     "lossless": "Lossless",
@@ -104,7 +105,14 @@
     "veryslow": "Very Slow"
   },
   "processing": "Processing...",
-  "quality": "Quality",
+  "quality": {
+    "high": "High",
+    "lossless": "Lossless",
+    "low": "Low",
+    "max": "Best",
+    "medium": "Medium",
+    "tiny": "Tiny"
+  },
   "quality_bitrate": "Quality (Bitrate)",
   "quality_crf": "Quality (CRF)",
   "quality_levels": {
@@ -139,18 +147,18 @@
   "success": "Success!",
   "summary_action": "Summary",
   "tabs": {
-    "audio_extractor": "",
-    "audio_short": "",
-    "bg_short": "",
-    "image_comp_short": "",
-    "image_compressor": "",
-    "image_converter": "",
-    "image_short": "",
-    "remove_bg": "",
-    "video_comp_short": "",
-    "video_compressor": "",
-    "video_converter": "",
-    "video_short": ""
+    "audio_extractor": "Extract Audio",
+    "audio_short": "Audio",
+    "bg_short": "BG",
+    "image_comp_short": "Img Comp",
+    "image_compressor": "Image Compressor",
+    "image_converter": "Image Converter",
+    "image_short": "Image",
+    "remove_bg": "Remove Background",
+    "video_comp_short": "Vid Comp",
+    "video_compressor": "Video Compressor",
+    "video_converter": "Video Converter",
+    "video_short": "Video"
   },
   "title": "Converter",
   "video": "Video",

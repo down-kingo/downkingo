@@ -5,6 +5,8 @@ import {
   IconTransform,
   IconList,
   IconSettings,
+  IconMap2,
+  IconHistory,
 } from "@tabler/icons-react";
 import { TabType } from "./Sidebar";
 import { useTranslation } from "react-i18next";
@@ -24,7 +26,7 @@ export default function Topbar({
 }: TopbarProps) {
   const { t } = useTranslation("common");
   return (
-    <header className="flex items-center justify-between px-6 py-3 bg-surface-50 dark:bg-surface-50 border-b border-surface-200 dark:border-surface-800">
+    <header className="flex items-center justify-between px-6 py-3 bg-surface-50 dark:bg-surface-50 border-b border-surface-200 dark:border-white/10">
       {/* Brand Logo (Simplified) */}
       <div className="flex items-center gap-3 select-none">
         <div className="w-8 h-8 rounded-lg bg-surface-900 dark:bg-white flex items-center justify-center text-white dark:text-black">
@@ -108,6 +110,28 @@ export default function Topbar({
               {queueCount}
             </span>
           )}
+        </button>
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+            activeTab === "history"
+              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              : "text-surface-600 hover:text-surface-900"
+          }`}
+        >
+          <IconHistory size={16} />
+          <span>{t("nav.history")}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("roadmap")}
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+            activeTab === "roadmap"
+              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              : "text-surface-600 hover:text-surface-900"
+          }`}
+        >
+          <IconMap2 size={16} />
+          <span>{t("nav.roadmap")}</span>
         </button>
       </nav>
 

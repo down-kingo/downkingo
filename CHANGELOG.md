@@ -5,15 +5,29 @@ Todas as mudanças notáveis neste projeto serão documentadas aqui.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
-## [Unreleased]
+## [2.0.0-beta] - 2025-01-07
 
-### Planejado
+### 🚀 Principais Novidades
 
-- Suporte a download de playlists
-- Seletor de qualidade de vídeo
-- Histórico de downloads persistente
-- Tema Escuro (Dark Mode)
-- Internacionalização (i18n)
+- **Reescrita Completa**: Arquitetura refinada para maior performance e manutenibilidade.
+- **SQLite Database**: Persistência robusta para histórico e fila de downloads.
+- **Roadmap Build-in-Public**: Visualize e vote em features futuras direto pelo app.
+- **Autenticação GitHub**: Login via Device Flow para interagir com o roadmap.
+
+### ✨ Adicionado
+
+- **Clipboard Monitor V2**: Detecção inteligente de links com "Adaptive Backoff" para economizar CPU.
+- **Internacionalização (i18n)**: Suporte completo a Português (Brasil) e English (US).
+- **Tema Escuro/Claro**: Alternância automática baseada no sistema ou manual.
+- **Histórico Persistente**: Downloads concluídos agora são salvos no banco de dados.
+- **Configurações Avançadas**: Painel de configurações para personalizar diretórios e qualidade.
+- **Deep Linking**: Suporte para abrir o app via links `downkingo://`.
+
+### 🛠️ Técnico
+
+- Migração de armazenamento JSON simples para SQLite (`modernc.org/sqlite`).
+- Arquitetura híbrida para o Roadmap (CDN para leitura, API direta para escrita).
+- Refatoração do sistema de tratamento de erros (`appError`).
 
 ---
 
@@ -21,23 +35,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 
-- 🎬 Download de vídeos do YouTube e outras plataformas
-- 🎵 Conversão para MP3 com alta qualidade
-- 📦 Instaladores nativos para Windows (NSIS), macOS (DMG) e Linux (AppImage)
-- 🚀 Binários sidecar (ffmpeg + yt-dlp) empacotados - zero configuração
-- 📊 Interface com fila de downloads e progresso em tempo real
-- 🔄 Sistema de auto-update via GitHub Releases
-- 📝 Logging estruturado com zerolog
-- 🛡️ Context propagation para cancelamento correto de operações
-
-### Técnico
-
-- Backend em Go com Wails v2
-- Frontend em React + TypeScript + Tailwind CSS
-- Pipeline CI/CD com GitHub Actions
-- Detecção inteligente de binários sidecar por plataforma
+- 🎬 Download de vídeos do YouTube e outras plataformas.
+- 🎵 Conversão para MP3 com alta qualidade.
+- 📦 Instaladores nativos para Windows (NSIS), macOS (DMG) e Linux (AppImage).
+- 🚀 Binários sidecar (ffmpeg + yt-dlp) empacotados.
+- 📊 Interface básica com fila de downloads.
+- 🔄 Sistema de auto-update via GitHub Releases.
 
 ---
 
-[Unreleased]: https://github.com/Capman002/DownKingo/compare/v1.0.0...HEAD
+[2.0.0-beta]: https://github.com/Capman002/DownKingo/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/Capman002/DownKingo/releases/tag/v1.0.0

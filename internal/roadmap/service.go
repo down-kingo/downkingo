@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"kingo/internal/config"
 	"kingo/internal/logger"
@@ -227,7 +228,7 @@ func (s *Service) EnableCDN(enabled bool) {
 // 3. Emits "roadmap:update" event when new data arrives
 func (s *Service) FetchRoadmap(lang string) ([]RoadmapItem, error) {
 	// Step 1: Try to return cached data immediately
-	cachedItems := s.loadFromMemoryCache()
+	cachedItems := s.loadFromMemoryCache(lang)
 	if len(cachedItems) > 0 {
 		// Trigger background sync (non-blocking)
 		go s.syncInBackground("startup", lang)
@@ -236,9 +237,9 @@ func (s *Service) FetchRoadmap(lang string) ([]RoadmapItem, error) {
 
 	// Step 2: Try SQLite cache if memory is empty
 	if s.cacheRepo != nil {
-		dbItems, err := s.loadFromDatabaseCache()
+		dbItems, err := s.loadFromDatabaseCache(lang)
 		if err == nil && len(dbItems) > 0 {
-			s.updateMemoryCache(dbItems)
+			s.updateMemoryCache(dbItems, lang)
 			go s.syncInBackground("startup", lang)
 			return dbItems, nil
 		}
@@ -259,41 +260,55 @@ func (s *Service) FetchRoadmap(lang string) ([]RoadmapItem, error) {
 	return s.fetchFromGitHubDirect()
 }
 
-// loadFromMemoryCache returns in-memory cached items if fresh
-func (s *Service) loadFromMemoryCache() []RoadmapItem {
+// loadFromMemoryCache returns in-memory cached items if fresh and matching language
+func (s *Service) loadFromMemoryCache(lang string) []RoadmapItem {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	// Memory cache valid for 2 minutes
-	if time.Since(s.lastFetch) < 2*time.Minute && len(s.cache) > 0 {
+	// Memory cache valid for 2 minutes AND language match
+	if s.cacheLang == lang && time.Since(s.lastFetch) < 2*time.Minute && len(s.cache) > 0 {
 		return s.cache
 	}
 	return nil
 }
 
-// loadFromDatabaseCache loads items from SQLite
-func (s *Service) loadFromDatabaseCache() ([]RoadmapItem, error) {
+// loadFromDatabaseCache loads items from SQLite and verifies language
+func (s *Service) loadFromDatabaseCache(lang string) ([]RoadmapItem, error) {
 	if s.cacheRepo == nil {
-		return nil, fmt.Errorf("no cache repository")
+		return nil, errors.New("cache repo not initialized")
 	}
 
+	// Load raw JSON blob
 	cache, err := s.cacheRepo.Load()
-	if err != nil || cache == nil {
+	if err != nil {
 		return nil, err
 	}
 
+	// Parse JSON
 	roadmap, err := s.cacheRepo.ParseCachedData(cache)
-	if err != nil || roadmap == nil {
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("failed to parse cached roadmap")
 		return nil, err
+	}
+
+	// Validate language
+	if roadmap.Lang != lang {
+		// Cache mismatch - ignore it (will trigger re-fetch)
+		logger.Log.Debug().
+			Str("want", lang).
+			Str("got", roadmap.Lang).
+			Msg("roadmap cache language mismatch, ignoring")
+		return nil, nil
 	}
 
 	return ToRoadmapItems(roadmap.Items), nil
 }
 
 // updateMemoryCache updates the in-memory cache
-func (s *Service) updateMemoryCache(items []RoadmapItem) {
+func (s *Service) updateMemoryCache(items []RoadmapItem, lang string) {
 	s.mu.Lock()
 	s.cache = items
+	s.cacheLang = lang
 	s.lastFetch = time.Now()
 	s.mu.Unlock()
 }
@@ -350,7 +365,7 @@ func (s *Service) syncInBackground(reason string, lang string) {
 	s.mu.RUnlock()
 
 	if hasChanges {
-		s.updateMemoryCache(freshItems)
+		s.updateMemoryCache(freshItems, lang)
 
 		// Log successful sync with reason
 		logger.Log.Debug().
@@ -363,34 +378,6 @@ func (s *Service) syncInBackground(reason string, lang string) {
 			s.eventEmitter("roadmap:update", freshItems)
 		}
 	}
-}
-
-// fetchFromCDNWithCache fetches from CDN using ETag for efficiency
-func (s *Service) fetchFromCDNWithCache() ([]RoadmapItem, error) {
-	// Get stored ETag for conditional request
-	var etag string
-	if s.cacheRepo != nil {
-		etag, _ = s.cacheRepo.GetETag()
-	}
-
-	result, err := s.cdnFetcher.FetchRoadmap(etag, "") // Keep original behavior for now, lang not passed here
-	if err != nil {
-		return nil, fmt.Errorf("CDN fetch failed: %w", err)
-	}
-
-	// 304 Not Modified - use existing cache
-	if result.NotModified {
-		return s.loadFromDatabaseCache()
-	}
-
-	// New data - save to SQLite cache
-	if s.cacheRepo != nil && result.Roadmap != nil {
-		if err := s.cacheRepo.Save(result.Roadmap, result.ContentHash, result.ETag); err != nil {
-			logger.Log.Warn().Err(err).Msg("failed to save roadmap cache")
-		}
-	}
-
-	return ToRoadmapItems(result.Roadmap.Items), nil
 }
 
 // fetchFromCDNSync handles the logic of calling cdnFetcher and checking ETag
@@ -421,7 +408,7 @@ func (s *Service) fetchFromCDNSync(lang string) ([]RoadmapItem, error) {
 		}
 	}
 
-	s.updateMemoryCache(items)
+	s.updateMemoryCache(items, lang)
 	return items, nil
 }
 
@@ -497,7 +484,7 @@ func (s *Service) fetchFromGitHubDirect() ([]RoadmapItem, error) {
 		return nil, err
 	}
 
-	s.updateMemoryCache(items)
+	s.updateMemoryCache(items, "") // GitHub direct has no language context
 	return items, nil
 }
 

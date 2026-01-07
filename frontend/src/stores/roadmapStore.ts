@@ -5,6 +5,7 @@
  * real-time updates via Wails events.
  */
 
+import React from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
@@ -23,6 +24,7 @@ interface RoadmapState {
   isLoading: boolean;
   error: string | null;
   lastUpdated: number | null;
+  currentLang: string; // Current language for roadmap data
 
   // Actions
   fetchRoadmap: (lang?: string) => Promise<void>;
@@ -45,14 +47,16 @@ export const useRoadmapStore = create<RoadmapState>()(
       isLoading: false,
       error: null,
       lastUpdated: null,
+      currentLang: "pt-BR", // Track current language
 
       // Fetch roadmap from backend
       fetchRoadmap: async (lang: string = "pt-BR") => {
-        const { items } = get();
+        const { items, currentLang } = get();
+        const isLangChange = lang !== currentLang;
 
-        // Only show loading if we have no cached data
-        if (items.length === 0) {
-          set({ isLoading: true });
+        // Show loading for first load OR language change
+        if (items.length === 0 || isLangChange) {
+          set({ isLoading: true, currentLang: lang });
         }
 
         try {
@@ -64,6 +68,7 @@ export const useRoadmapStore = create<RoadmapState>()(
               isLoading: false,
               error: null,
               lastUpdated: Date.now(),
+              currentLang: lang,
             });
           }
         } catch (err) {
@@ -190,11 +195,15 @@ export const useRoadmapStore = create<RoadmapState>()(
  * Use in a top-level component (e.g., Roadmap page)
  */
 export function useRoadmapInit() {
-  const { fetchRoadmap, subscribeToUpdates } = useRoadmapStore();
+  const fetchRoadmap = useRoadmapStore((state) => state.fetchRoadmap);
+  const subscribeToUpdates = useRoadmapStore(
+    (state) => state.subscribeToUpdates
+  );
+  const currentLang = useRoadmapStore((state) => state.currentLang);
 
-  return {
-    initialize: (lang: string = "pt-BR") => {
-      // Fetch initial data
+  const initialize = React.useCallback(
+    (lang: string = "pt-BR") => {
+      // Fetch data for the specified language
       fetchRoadmap(lang);
 
       // Subscribe to live updates
@@ -202,5 +211,13 @@ export function useRoadmapInit() {
 
       return unsubscribe;
     },
+    [fetchRoadmap, subscribeToUpdates]
+  );
+
+  return {
+    initialize,
+    currentLang,
+    // Helper to refetch when language changes
+    refetch: (lang: string) => fetchRoadmap(lang),
   };
 }

@@ -9,6 +9,7 @@ import {
   IconVideo,
   IconPhoto,
   IconClipboard,
+  IconTerminal2,
 } from "@tabler/icons-react";
 import { useSettingsStore, Language } from "../../stores/settingsStore";
 import { supportedLanguages } from "../../i18n";
@@ -97,6 +98,7 @@ export default function GeneralSettings() {
     anonymousMode,
     startWithWindows,
     clipboardMonitorEnabled,
+    consoleEnabled,
     setLanguage,
     setSetting,
   } = useSettingsStore();
@@ -245,6 +247,18 @@ export default function GeneralSettings() {
                 setSetting("clipboardMonitorEnabled", v);
                 SetClipboardMonitor(v);
               }}
+            />
+          </SettingItem>
+
+          <SettingItem
+            icon={IconTerminal2}
+            label={t("system.console")}
+            desc={t("system.console_desc")}
+            active={consoleEnabled}
+          >
+            <Switch
+              checked={consoleEnabled}
+              onChange={(v) => setSetting("consoleEnabled", v)}
             />
           </SettingItem>
         </div>

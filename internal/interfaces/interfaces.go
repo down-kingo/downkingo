@@ -71,8 +71,6 @@ type ConverterService interface {
 	ExtractAudio(req interface{}) (interface{}, error)
 	ConvertImage(req interface{}) (interface{}, error)
 	CompressImage(inputPath string, quality int) (interface{}, error)
-	RemoveBackground(req interface{}) (interface{}, error)
-	CheckRembgAvailable() bool
 }
 
 // DownloadManager defines the contract for download queue management.

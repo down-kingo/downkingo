@@ -2,6 +2,7 @@ package roadmap
 
 import (
 	"testing"
+	"time"
 )
 
 // =============================================================================
@@ -290,7 +291,7 @@ func TestService_LoadFromMemoryCache(t *testing.T) {
 
 	t.Run("returns nil when cache is empty", func(t *testing.T) {
 		s := NewService("owner", "repo")
-		got := s.loadFromMemoryCache()
+		got := s.loadFromMemoryCache("en-US")
 		if got != nil {
 			t.Error("expected nil for empty cache")
 		}
@@ -299,9 +300,11 @@ func TestService_LoadFromMemoryCache(t *testing.T) {
 	t.Run("returns nil when cache is expired", func(t *testing.T) {
 		s := NewService("owner", "repo")
 		s.cache = []RoadmapItem{{ID: 1}}
-		s.lastFetch = s.lastFetch.Add(-5 * 60 * 1000000000) // 5 minutes ago
+		s.cacheLang = "en-US"
+		// Simulate cache set 5 minutes ago
+		s.lastFetch = time.Now().Add(-5 * time.Minute)
 
-		got := s.loadFromMemoryCache()
+		got := s.loadFromMemoryCache("en-US")
 		if got != nil {
 			t.Error("expected nil for expired cache")
 		}

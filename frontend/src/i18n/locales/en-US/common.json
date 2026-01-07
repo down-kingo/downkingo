@@ -122,6 +122,13 @@
     "clear": "Clear Console",
     "maximize": "Maximize",
     "minimize": "Minimize",
-    "ready": "Ready to capture output..."
+    "ready": "Ready to capture output...",
+    "empty_hint": "Logs will appear here",
+    "downloading": "Downloading...",
+    "merging": "Merging audio and video...",
+    "processing_thumb": "Processing thumbnail...",
+    "cleaning": "Cleaning temporary files...",
+    "complete": "Download complete!",
+    "saving": "Saving: {{filename}}"
   }
 }

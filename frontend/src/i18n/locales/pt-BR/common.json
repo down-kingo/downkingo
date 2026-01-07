@@ -123,6 +123,13 @@
     "clear": "Limpar Console",
     "maximize": "Maximizar",
     "minimize": "Minimizar",
-    "ready": "Pronto para capturar saída..."
+    "ready": "Pronto para capturar saída...",
+    "empty_hint": "Os logs aparecerão aqui",
+    "downloading": "Baixando...",
+    "merging": "Mesclando áudio e vídeo...",
+    "processing_thumb": "Processando thumbnail...",
+    "cleaning": "Limpando arquivos temporários...",
+    "complete": "Download concluído!",
+    "saving": "Salvando: {{filename}}"
   }
 }

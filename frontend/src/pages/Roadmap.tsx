@@ -21,8 +21,11 @@ import SuggestionModal from "../components/SuggestionModal";
 
 // Store & Utils
 import { useRoadmapStore, useRoadmapInit } from "../stores/roadmapStore";
+import { shallow } from "zustand/shallow";
 import { getDisplayTitle, getDisplayDescription } from "../utils/textUtils";
 import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
+import { RoadmapCard } from "../components/roadmap/RoadmapCard";
+import type { ColumnConfig } from "../components/roadmap/types";
 
 // Backend functions
 import {
@@ -35,17 +38,6 @@ import {
 } from "../../wailsjs/go/main/App";
 
 // Tipo para configuração de coluna
-interface ColumnConfig {
-  id: RoadmapStatus;
-  label: string;
-  sub: string;
-  icon: typeof IconBulb;
-  accent: string;
-  glow: string;
-  text: string;
-  bg: string;
-  glass: string;
-}
 
 const getColumns = (t: (key: string) => string): ColumnConfig[] => [
   {
@@ -110,9 +102,19 @@ export default function Roadmap() {
     voteForItem,
     voteDownForItem,
     getItemsByStatus,
-  } = useRoadmapStore();
+  } = useRoadmapStore(
+    (state) => ({
+      items: state.items,
+      isLoading: state.isLoading,
+      fetchRoadmap: state.fetchRoadmap,
+      voteForItem: state.voteForItem,
+      voteDownForItem: state.voteDownForItem,
+      getItemsByStatus: state.getItemsByStatus,
+    }),
+    shallow
+  );
 
-  const { initialize } = useRoadmapInit();
+  const { initialize, refetch } = useRoadmapInit();
 
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -133,12 +135,16 @@ export default function Roadmap() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Initialize store and subscribe to live updates
+    // Initial setup with subscription
     const cleanup = initialize(i18n.language);
     checkAuth();
-
     return cleanup;
-  }, [initialize, i18n.language]);
+  }, [initialize]); // Run once on mount (or if initialize fn changes)
+
+  // React to language changes specifically
+  useEffect(() => {
+    refetch(i18n.language);
+  }, [i18n.language, refetch]);
 
   const checkAuth = async () => {
     const token = await GetGitHubToken();
@@ -235,9 +241,9 @@ export default function Roadmap() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-surface-50 dark:bg-surface-950 font-sans overflow-hidden">
+    <div className="flex flex-col h-full bg-surface-50 dark:bg-surface-50 font-sans overflow-hidden">
       {/* Header */}
-      <header className="px-8 py-6 flex items-end justify-between border-b border-surface-200/50 dark:border-white/5 bg-white/50 dark:bg-surface-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-0">
+      <header className="px-8 py-6 flex items-end justify-between border-b border-surface-200 dark:border-white/10 bg-white dark:bg-surface-50 shrink-0 z-10 sticky top-0">
         <div>
           <motion.div
             initial={{ opacity: 0, x: -10 }}
@@ -277,7 +283,7 @@ export default function Roadmap() {
 
           <button
             onClick={handleSuggestionClick}
-            className="group relative overflow-hidden px-5 py-2 rounded-lg bg-surface-900 dark:bg-white text-white dark:text-black shadow-lg shadow-surface-900/20 hover:shadow-surface-900/30 transition-all active:scale-95"
+            className="group relative overflow-hidden px-5 py-2 rounded-lg bg-surface-900 dark:bg-primary-600 text-white dark:text-white shadow-lg shadow-surface-900/20 dark:shadow-primary-500/20 hover:shadow-surface-900/30 transition-all active:scale-95"
           >
             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
             <div className="flex items-center gap-2 relative z-10 text-xs font-bold">
@@ -298,7 +304,7 @@ export default function Roadmap() {
             return (
               <div
                 key={col.id}
-                className="flex flex-col h-full min-w-0 group/col relative bg-surface-50/50 dark:bg-surface-900/20 rounded-2xl border border-surface-200/50 dark:border-white/5 p-2"
+                className="flex flex-col h-full min-w-0 group/col relative bg-surface-50/50 dark:bg-white/5 rounded-2xl border border-surface-200/50 dark:border-white/5 p-2"
               >
                 <div className="flex items-center justify-between mb-4 px-3 pt-3">
                   <div className="flex items-center gap-3">
@@ -308,10 +314,10 @@ export default function Roadmap() {
                       <Icon size={18} stroke={2} />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-surface-700 dark:text-surface-200 leading-none">
+                      <h3 className="text-sm font-bold text-surface-700 dark:text-white leading-none">
                         {col.label}
                       </h3>
-                      <span className="text-[10px] font-medium text-surface-400">
+                      <span className="text-[10px] font-medium text-surface-400 dark:text-surface-300">
                         {col.sub}
                       </span>
                     </div>
@@ -321,7 +327,10 @@ export default function Roadmap() {
                   </span>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-1 space-y-3 relative pb-2">
+                <div
+                  className="flex-1 overflow-y-auto custom-scrollbar px-1 space-y-3 relative pb-2"
+                  data-lenis-prevent
+                >
                   {isLoading && items.length === 0 ? (
                     [1, 2, 3].map((i) => (
                       <div
@@ -398,196 +407,6 @@ export default function Roadmap() {
 }
 
 // --- Sub-Components ---
-
-interface RoadmapCardProps {
-  item: RoadmapItem;
-  column: ColumnConfig;
-  index: number;
-  isAuthenticated: boolean;
-  onVote: (id: number) => void;
-  onVoteDown: (id: number) => void;
-  onClick: () => void;
-}
-
-function RoadmapCard({
-  item,
-  column,
-  index,
-  isAuthenticated,
-  onVote,
-  onVoteDown,
-  onClick,
-}: RoadmapCardProps) {
-  const { t, i18n } = useTranslation("roadmap");
-  // Limpeza de fallback caso friendly_title não exista
-  const cleanTitle = (text: string) =>
-    text.replace(
-      /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
-      ""
-    );
-
-  // Resolve localized title
-  const displayTitle =
-    item.title_i18n?.[i18n.language] ||
-    item.title_i18n?.["en-US"] ||
-    item.friendly_title || // String fallback
-    cleanTitle(item.title);
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{
-        duration: 0.4,
-        type: "spring",
-        bounce: 0,
-        delay: index * 0.05,
-      }}
-      className={`group relative 
-        ${column.glass}
-        backdrop-blur-md 
-        p-0 rounded-xl 
-        shadow-sm hover:shadow-lg
-        transition-all duration-300 
-        overflow-hidden
-        cursor-pointer active:scale-[0.99]
-      `}
-      onClick={onClick}
-    >
-      {/* Glow Effect (Opcional, removido para focar no glassmorphism puro) */}
-
-      {/* Status indicator lateral colorido */}
-      <div
-        className={`absolute top-0 left-0 w-[4px] h-full bg-current ${column.text} opacity-40`}
-      />
-
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Topo: ID */}
-        <div className="px-4 pt-4">
-          <span className="text-[10px] font-mono font-medium text-surface-400">
-            ID: #{item.id}
-          </span>
-        </div>
-
-        {/* Corpo: Título + Labels */}
-        <div className="px-4 pt-1 pb-4 flex-1">
-          <h4
-            className="text-base font-bold text-surface-900 dark:text-surface-100 leading-tight mb-3"
-            title={item.title}
-          >
-            {displayTitle}
-          </h4>
-
-          <div className="flex flex-wrap gap-1.5">
-            {(item.labels || []).slice(0, 3).map((l, i) => {
-              // Cores alternadas para labels (simulação pastel)
-              const colors = [
-                "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300",
-                "bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300",
-                "bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300",
-              ];
-              const style = colors[i % colors.length];
-
-              return (
-                <span
-                  key={l}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${style}`}
-                >
-                  {l}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Divisor */}
-        <div className="h-[1px] bg-surface-100 dark:bg-white/5 w-full" />
-
-        {/* Footer: Link e Votos */}
-        <div className="px-4 py-2.5 flex items-center justify-between">
-          {/* Esquerda: Link GitHub */}
-          {item.url ? (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-colors group/link"
-            >
-              <IconBrandGithub size={16} stroke={1.5} />
-              <span className="text-xs font-bold uppercase tracking-wider group-hover/link:underline">
-                {t("card.url")}
-              </span>
-            </a>
-          ) : (
-            <span />
-          )}
-
-          {/* Direita: Votação */}
-          <div className="flex items-center gap-3">
-            {/* Upvote */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onVote(item.id);
-              }}
-              className="flex items-center gap-1 group/up focus:outline-none"
-              title={t("card.like")}
-            >
-              <IconThumbUp
-                size={16}
-                stroke={2}
-                className={`transition-colors ${
-                  isAuthenticated && (item.votes_up || 0) > 0
-                    ? "text-green-600 fill-green-100 dark:fill-green-900/30"
-                    : "text-surface-400 group-hover/up:text-green-600"
-                }`}
-              />
-              <span
-                className={`text-xs font-bold ${
-                  isAuthenticated && (item.votes_up || 0) > 0
-                    ? "text-green-700 dark:text-green-400"
-                    : "text-surface-500"
-                }`}
-              >
-                {item.votes_up || 0}
-              </span>
-            </button>
-
-            {/* Downvote */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onVoteDown(item.id);
-              }}
-              className="flex items-center gap-1 group/down focus:outline-none"
-              title={t("card.dislike")}
-            >
-              <IconThumbDown
-                size={16}
-                stroke={2}
-                className={`transition-colors ${
-                  isAuthenticated && (item.votes_down || 0) > 0
-                    ? "text-red-600"
-                    : "text-surface-400 group-hover/down:text-red-600"
-                }`}
-              />
-              <span
-                className={`text-xs font-bold ${
-                  isAuthenticated && (item.votes_down || 0) > 0
-                    ? "text-red-700 dark:text-red-400"
-                    : "text-surface-500"
-                }`}
-              >
-                {item.votes_down || 0}
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 interface AuthModalProps {
   authData: {
@@ -761,7 +580,7 @@ function RoadmapDetail({
       animate={{ x: 0 }}
       exit={{ x: "100%" }}
       transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-      className="absolute inset-0 z-50 bg-white dark:bg-surface-950/95 backdrop-blur-xl overflow-hidden"
+      className="absolute inset-0 z-50 bg-surface-50 dark:bg-surface-50 overflow-hidden text-surface-900 dark:text-surface-100"
     >
       {/* Botão Voltar - Lateral Esquerda Fixa */}
       <button
@@ -776,7 +595,10 @@ function RoadmapDetail({
       </button>
 
       {/* Área Scrollable - Ocupa tudo, scroll na borda direita */}
-      <div className="h-full w-full overflow-y-auto custom-scrollbar">
+      <div
+        className="h-full w-full overflow-y-auto custom-scrollbar"
+        data-lenis-prevent
+      >
         {/* Container Central */}
         <div className="max-w-3xl mx-auto px-6 md:px-12 pb-12 pt-20 md:pt-24 flex flex-col items-center text-center">
           {/* Header */}
@@ -838,19 +660,19 @@ function RoadmapDetail({
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-xl font-bold text-surface-800 dark:text-surface-100 mt-8 mb-3 flex items-center gap-3">
+                  <h2 className="text-xl font-bold text-surface-800 dark:text-white/90 mt-8 mb-3 flex items-center gap-3">
                     <span className="w-1 h-6 bg-primary-500 rounded-full" />
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-lg font-semibold text-surface-700 dark:text-surface-200 mt-6 mb-2">
+                  <h3 className="text-lg font-semibold text-surface-700 dark:text-white/90 mt-6 mb-2">
                     {children}
                   </h3>
                 ),
                 // Parágrafos com espaçamento elegante
                 p: ({ children }) => (
-                  <p className="text-surface-600 dark:text-surface-300 leading-relaxed mb-4">
+                  <p className="text-surface-600 dark:text-surface-200 leading-relaxed mb-4">
                     {children}
                   </p>
                 ),
@@ -864,7 +686,7 @@ function RoadmapDetail({
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="flex items-start gap-3 text-surface-600 dark:text-surface-300">
+                  <li className="flex items-start gap-3 text-surface-600 dark:text-surface-200">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
                     <span className="flex-1">{children}</span>
                   </li>
@@ -913,7 +735,7 @@ function RoadmapDetail({
           </div>
 
           {/* Ações e Votação */}
-          <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-3xl mx-auto mt-12 mb-8 p-6 bg-surface-50 dark:bg-surface-900/50 rounded-2xl border border-surface-200 dark:border-white/5 gap-6">
+          <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-3xl mx-auto mt-12 mb-8 p-6 bg-surface-50 dark:bg-surface-100 rounded-2xl border border-surface-200 dark:border-white/10 gap-6">
             {/* Votação */}
             <div className="flex items-center gap-6">
               <button
@@ -948,7 +770,7 @@ function RoadmapDetail({
             {/* Link Externo */}
             <button
               onClick={() => OpenUrl(item.url)}
-              className="flex items-center gap-3 px-6 py-3 bg-surface-900 dark:bg-white text-white dark:text-surface-950 font-bold rounded-xl hover:opacity-90 transition-opacity"
+              className="flex items-center gap-3 px-6 py-3 bg-surface-900 dark:bg-primary-600 text-white dark:text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-surface-900/10 dark:shadow-primary-600/20"
             >
               <IconBrandGithub size={20} />
               <span>Ver discussão e comentar</span>

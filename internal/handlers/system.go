@@ -144,31 +144,6 @@ func (h *SystemHandler) DeleteAria2c() error {
 	return nil
 }
 
-// === Rembg Management (IA Background Removal) ===
-
-// CheckRembgStatus verifica se o rembg está instalado.
-func (h *SystemHandler) CheckRembgStatus() launcher.RembgStatus {
-	return h.launcher.CheckRembgStatus()
-}
-
-// DownloadRembg baixa e instala o rembg (ferramenta de IA para remoção de fundo).
-func (h *SystemHandler) DownloadRembg() error {
-	h.consoleLog("[Sistema] Baixando e instalando rembg (IA para remoção de fundo)...")
-	err := h.launcher.DownloadRembg()
-	if err == nil {
-		h.consoleLog("[Sistema] Rembg instalado com sucesso!")
-	} else {
-		h.consoleLog("[Sistema] Erro ao instalar rembg: " + err.Error())
-	}
-	return err
-}
-
-// DeleteRembg remove a instalação do rembg.
-func (h *SystemHandler) DeleteRembg() error {
-	h.consoleLog("[Sistema] Removendo rembg...")
-	return h.launcher.DeleteRembg()
-}
-
 // === Updater ===
 
 // CheckForUpdate checks GitHub for a newer release.

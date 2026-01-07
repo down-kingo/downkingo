@@ -153,6 +153,8 @@
     "channel": "Canal de Atualização",
     "clipboard_monitor": "Monitorar Área de Transferência",
     "clipboard_monitor_desc": "Detectar links copiados e sugerir download",
+    "console": "Console de Logs",
+    "console_desc": "Exibir terminal com saída de comandos",
     "start_windows": "Iniciar com o Windows",
     "start_windows_desc": "Abrir automaticamente ao ligar o PC",
     "title": "Sistema",

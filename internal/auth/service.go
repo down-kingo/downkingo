@@ -3,7 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"kingo/internal/logger"
 	"net/http"
 	"net/url"
 	"os"
@@ -40,7 +41,9 @@ type TokenResponse struct {
 
 func NewAuthService(configDir string) *AuthService {
 	authDir := filepath.Join(configDir, "auth")
-	os.MkdirAll(authDir, 0755)
+	if err := os.MkdirAll(authDir, 0755); err != nil {
+		logger.Log.Warn().Err(err).Str("dir", authDir).Msg("failed to create auth directory")
+	}
 
 	s := &AuthService{
 		configDir: authDir,
@@ -68,7 +71,10 @@ func (s *AuthService) StartDeviceFlow() (*DeviceCodeResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
 
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("github api error (%d): %s", resp.StatusCode, string(bodyBytes))
@@ -153,26 +159,36 @@ func (s *AuthService) checkToken(deviceCode string) (string, error) {
 	}
 
 	// Log scopes for debugging (GitHub Apps often return empty scopes, which is normal)
-	fmt.Printf("[Auth] Token recebido. Scopes: '%s'\n", result.Scope)
+	logger.Log.Debug().
+		Str("scopes", result.Scope).
+		Msg("GitHub token received")
 
 	return result.AccessToken, nil
 }
 
-// Persistência
+// SaveToken persists the token to disk
 func (s *AuthService) SaveToken(token string) {
 	s.Token = token
 	data := map[string]string{"access_token": token}
-	file, _ := json.MarshalIndent(data, "", "  ")
-	ioutil.WriteFile(filepath.Join(s.configDir, "session.json"), file, 0600)
+	file, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("failed to marshal auth token")
+		return
+	}
+	if err := os.WriteFile(filepath.Join(s.configDir, "session.json"), file, 0600); err != nil {
+		logger.Log.Error().Err(err).Msg("failed to save auth token")
+	}
 }
 
+// LoadToken loads persisted token from disk
 func (s *AuthService) LoadToken() {
-	file, err := ioutil.ReadFile(filepath.Join(s.configDir, "session.json"))
-	if err == nil {
-		var data map[string]string
-		if json.Unmarshal(file, &data) == nil {
-			s.Token = data["access_token"]
-		}
+	file, err := os.ReadFile(filepath.Join(s.configDir, "session.json"))
+	if err != nil {
+		return // File doesn't exist or can't be read
+	}
+	var data map[string]string
+	if json.Unmarshal(file, &data) == nil {
+		s.Token = data["access_token"]
 	}
 }
 

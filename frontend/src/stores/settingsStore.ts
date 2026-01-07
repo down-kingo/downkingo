@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export type Theme = "light" | "dark";
 export type AppLayout = "sidebar" | "topbar";
-export type AppColor = "rose" | "blue" | "green" | "orange" | "purple";
+export type AppColor = "red" | "blue" | "green" | "orange" | "purple";
 
 export type Language = "pt-BR" | "en-US" | "es-ES" | "fr-FR" | "de-DE";
 export type YtDlpChannel = "stable" | "nightly" | "master";
@@ -56,6 +56,7 @@ interface SettingsState {
   autoUpdateApp: boolean;
   startWithWindows: boolean;
   clipboardMonitorEnabled: boolean;
+  consoleEnabled: boolean; // Mostrar/ocultar console de logs
 
   // Actions
   toggleTheme: () => void;
@@ -72,7 +73,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       theme: "light",
       layout: "sidebar",
-      primaryColor: "rose",
+      primaryColor: "blue",
       language: "pt-BR",
 
       shortcuts: {
@@ -102,6 +103,7 @@ export const useSettingsStore = create<SettingsState>()(
       autoUpdateApp: true,
       startWithWindows: false,
       clipboardMonitorEnabled: true,
+      consoleEnabled: false, // Desativado por padrão
 
       toggleTheme: () =>
         set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),

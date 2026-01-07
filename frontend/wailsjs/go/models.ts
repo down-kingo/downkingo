@@ -158,38 +158,6 @@ export namespace handlers {
 	        this.customBitrate = source["customBitrate"];
 	    }
 	}
-	export class BackgroundRemovalModel {
-	    id: string;
-	    name: string;
-	    description: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new BackgroundRemovalModel(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.name = source["name"];
-	        this.description = source["description"];
-	    }
-	}
-	export class BackgroundRemovalRequest {
-	    inputPath: string;
-	    outputDir: string;
-	    model: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new BackgroundRemovalRequest(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.inputPath = source["inputPath"];
-	        this.outputDir = source["outputDir"];
-	        this.model = source["model"];
-	    }
-	}
 	export class ConversionResult {
 	    outputPath: string;
 	    inputSize: number;
@@ -357,24 +325,6 @@ export namespace launcher {
 	        this.name = source["name"];
 	        this.installed = source["installed"];
 	        this.size = source["size"];
-	    }
-	}
-	export class RembgStatus {
-	    installed: boolean;
-	    path: string;
-	    version: string;
-	    downloading: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new RembgStatus(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.installed = source["installed"];
-	        this.path = source["path"];
-	        this.version = source["version"];
-	        this.downloading = source["downloading"];
 	    }
 	}
 

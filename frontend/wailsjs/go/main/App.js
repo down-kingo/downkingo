@@ -26,14 +26,6 @@ export function CheckForUpdate() {
   return window['go']['main']['App']['CheckForUpdate']();
 }
 
-export function CheckRembgAvailable() {
-  return window['go']['main']['App']['CheckRembgAvailable']();
-}
-
-export function CheckRembgStatus() {
-  return window['go']['main']['App']['CheckRembgStatus']();
-}
-
 export function ClearDownloadHistory() {
   return window['go']['main']['App']['ClearDownloadHistory']();
 }
@@ -58,10 +50,6 @@ export function DeleteAria2c() {
   return window['go']['main']['App']['DeleteAria2c']();
 }
 
-export function DeleteRembg() {
-  return window['go']['main']['App']['DeleteRembg']();
-}
-
 export function Download(arg1) {
   return window['go']['main']['App']['Download'](arg1);
 }
@@ -82,20 +70,12 @@ export function DownloadImage(arg1, arg2) {
   return window['go']['main']['App']['DownloadImage'](arg1, arg2);
 }
 
-export function DownloadRembg() {
-  return window['go']['main']['App']['DownloadRembg']();
-}
-
 export function ExtractAudio(arg1) {
   return window['go']['main']['App']['ExtractAudio'](arg1);
 }
 
 export function GetAvailableAppVersions() {
   return window['go']['main']['App']['GetAvailableAppVersions']();
-}
-
-export function GetBackgroundRemovalModels() {
-  return window['go']['main']['App']['GetBackgroundRemovalModels']();
 }
 
 export function GetDownloadHistory(arg1) {
@@ -168,10 +148,6 @@ export function OpenUrl(arg1) {
 
 export function PollGitHubAuth(arg1) {
   return window['go']['main']['App']['PollGitHubAuth'](arg1);
-}
-
-export function RemoveBackground(arg1) {
-  return window['go']['main']['App']['RemoveBackground'](arg1);
 }
 
 export function RestartApp() {

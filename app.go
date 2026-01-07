@@ -348,18 +348,6 @@ func (a *App) DeleteAria2c() error {
 	return a.systemHandler.DeleteAria2c()
 }
 
-func (a *App) CheckRembgStatus() launcher.RembgStatus {
-	return a.systemHandler.CheckRembgStatus()
-}
-
-func (a *App) DownloadRembg() error {
-	return a.systemHandler.DownloadRembg()
-}
-
-func (a *App) DeleteRembg() error {
-	return a.systemHandler.DeleteRembg()
-}
-
 func (a *App) CheckForUpdate() (*updater.UpdateInfo, error) {
 	return a.systemHandler.CheckForUpdate()
 }
@@ -410,18 +398,6 @@ func (a *App) ConvertImage(req handlers.ImageConvertRequest) (*handlers.Conversi
 
 func (a *App) CompressImage(inputPath string, quality int) (*handlers.ConversionResult, error) {
 	return a.converterHandler.CompressImage(inputPath, quality)
-}
-
-func (a *App) RemoveBackground(req handlers.BackgroundRemovalRequest) (*handlers.ConversionResult, error) {
-	return a.converterHandler.RemoveBackground(req)
-}
-
-func (a *App) CheckRembgAvailable() bool {
-	return a.converterHandler.CheckRembgAvailable()
-}
-
-func (a *App) GetBackgroundRemovalModels() []handlers.BackgroundRemovalModel {
-	return a.converterHandler.GetBackgroundRemovalModels()
 }
 
 func (a *App) GetVersion() string {

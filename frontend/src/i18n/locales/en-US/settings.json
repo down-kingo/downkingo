@@ -153,6 +153,8 @@
     "channel": "Update Channel",
     "clipboard_monitor": "Monitor Clipboard",
     "clipboard_monitor_desc": "Detect copied links and suggest download",
+    "console": "Log Console",
+    "console_desc": "Show terminal with command output",
     "start_windows": "Start with Windows",
     "start_windows_desc": "Open automatically on startup",
     "title": "System",

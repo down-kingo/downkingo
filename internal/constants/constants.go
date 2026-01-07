@@ -8,6 +8,7 @@ import "time"
 const (
 	AppName    = "DownKingo"
 	AppID      = "com.downkingo.app"
+	AppVersion = "2.0.0-beta"
 	ConfigFile = "settings.json"
 	DBFile     = "downkingo.db"
 )
