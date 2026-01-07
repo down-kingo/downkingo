@@ -44,7 +44,7 @@
     "name": "Ari2c",
     "not_installed": "Nécessite une installation",
     "path_label": "Emplacement",
-    "status_active": "Actif : téléchargements accélérés",
+    "status_active": "Actif\u00a0:\u00a0téléchargements accélérés",
     "status_inactive": "Accélère les téléchargements avec des connexions parallèles",
     "status_label": "Statut",
     "title": "Téléchargements accélérés"
@@ -84,7 +84,7 @@
     "quality_low": "Faible qualité (plus petite taille)",
     "quality_medium": "Qualité moyenne",
     "quality_title": "Qualité",
-    "tips_content": "<strong>JPEG :</strong> La plus petite taille, compatible avec tout.<br /><strong>PNG :</strong> Sans perte, idéal pour les impressions et l'art.<br /><strong>WebP :</strong> Moderne, excellent équilibre taille/qualité.<br /><strong>AVIF :</strong> Meilleure compression, prise en charge limitée.",
+    "tips_content": "<strong>JPEG\u00a0:</strong> La plus petite taille, compatible avec tout.<br /><strong>PNG\u00a0:</strong> Sans perte, idéal pour les impressions et l'art.<br /><strong>WebP\u00a0:</strong> Moderne, excellent équilibre taille/qualité.<br /><strong>AVIF\u00a0:</strong> Meilleure compression, prise en charge limitée.",
     "tips_title": "Astuce de formatage"
   },
   "language": {
@@ -153,6 +153,8 @@
     "channel": "Canal de Mise à jour",
     "clipboard_monitor": "Surveiller le Presse-papiers",
     "clipboard_monitor_desc": "Détecter les liens copiés et suggérer téléchargement",
+    "console": "",
+    "console_desc": "",
     "start_windows": "Démarrer avec Windows",
     "start_windows_desc": "Ouvrir automatiquement au démarrage",
     "title": "Système",

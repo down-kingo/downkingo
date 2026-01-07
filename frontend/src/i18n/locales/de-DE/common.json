@@ -16,11 +16,26 @@
     "save": "Speichern",
     "search": "Suchen"
   },
+  "after": "",
+  "audio_format": "",
+  "before": "",
+  "better_quality": "",
+  "change": "",
   "clipboard": {
     "dismiss": "Verwerfen",
     "download_now": "Jetzt Herunterladen",
     "link_detected": "Link Erkannt"
   },
+  "compression": {
+    "balanced": "",
+    "light": "",
+    "max": "",
+    "medium": "",
+    "much_smaller": "",
+    "smaller_file": "",
+    "strong": ""
+  },
+  "compression_level": "",
   "dashboard": {
     "manage_tools": "Verwalten Sie Tools und aktuelle Downloads.",
     "overview": "Übersicht",
@@ -38,6 +53,8 @@
     "unknown": "Unbekannt",
     "view_full_history": "Vollständigen Verlauf anzeigen"
   },
+  "destination": "",
+  "destination_desc": "",
   "disclaimer": {
     "accept": "Ich verstehe",
     "dont_show_again": "Diese Nachricht nicht mehr anzeigen",
@@ -45,6 +62,8 @@
     "text2": "Die Autoren von <0>DownKingo</0> sind nicht verantwortlich für die Nutzung dieser Anwendung unter Verletzung dieser Gesetze.",
     "title": "Urheberrechtshinweis"
   },
+  "encoding_preset": "",
+  "encoding_speed": "",
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
     "invalid_url": "Ungültige URL.",
@@ -52,11 +71,23 @@
     "not_found": "Inhalt nicht gefunden.",
     "unsupported": "Plattform nicht unterstützt."
   },
+  "format_desc": {
+    "high_quality": "",
+    "lossless": "",
+    "modern": "",
+    "modern_smaller": "",
+    "much_smaller": "",
+    "opensource": "",
+    "uncompressed": "",
+    "universal": ""
+  },
   "home": {
+    "active_downloads": "{{count}} Downloads laufen",
     "active_downloads_one": "aktiver Download",
     "active_downloads_other": "{{count}} aktive Downloads",
     "add_audio_queue": "Audio hinzufügen",
     "add_queue": "Zur Warteschlange",
+    "audio": "",
     "audio_mode": "Nur Audio",
     "check_progress": "Fortschritt im dedizierten Tab prüfen.",
     "empty_history_text": "Ihre Downloads erscheinen hier.",
@@ -68,13 +99,21 @@
     "go_to_queue": "Zur Warteschlange",
     "history_title": "Verlauf",
     "no_recent_downloads": "Keine aktuellen Downloads",
+    "paste": "",
+    "paste_url": "",
     "placeholder": "Video-URL hier einfügen...",
     "quality": "Qualität",
     "queue_title": "Warteschlange",
+    "video": "",
     "video_mode": "Video",
-    "views": "Aufrufe",
-    "active_downloads": "{{count}} Downloads laufen"
+    "views": "Aufrufe"
   },
+  "image": "",
+  "increase_of": "",
+  "keep_audio_track": "",
+  "max_compression": "",
+  "max_quality": "",
+  "more_options": "",
   "nav": {
     "console": "Konsole",
     "converter": "Konvertieren",
@@ -87,6 +126,28 @@
     "settings": "Einstellungen",
     "videos": "Videos"
   },
+  "original_folder": "",
+  "output_format": "",
+  "preset": {
+    "fast": "",
+    "medium": "",
+    "slow": "",
+    "ultrafast": "",
+    "veryslow": ""
+  },
+  "processing": "",
+  "quality": {
+    "high": "",
+    "lossless": "",
+    "low": "",
+    "max": "",
+    "medium": "",
+    "tiny": ""
+  },
+  "quality_bitrate": "",
+  "quality_crf": "",
+  "savings_of": "",
+  "select_file_prefix": "",
   "setup": {
     "installation_error": "Installationsfehler",
     "overall_progress": "Gesamtfortschritt",
@@ -104,6 +165,8 @@
     },
     "title": "Wichtige Komponenten werden vorbereitet..."
   },
+  "smaller_file": "",
+  "start": "",
   "status": {
     "available": "Verfügbar",
     "cancelled": "Abgebrochen",
@@ -118,10 +181,14 @@
     "processing": "Wird verarbeitet...",
     "success": "Erfolg"
   },
+  "success": "",
+  "summary_action": "",
   "terminal": {
     "clear": "Konsole leeren",
     "maximize": "Maximieren",
     "minimize": "Minimieren",
     "ready": "Bereit für Ausgabeaufnahme..."
-  }
+  },
+  "video": "",
+  "wait": ""
 }

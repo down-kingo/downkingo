@@ -153,6 +153,8 @@
     "channel": "Update-Kanal",
     "clipboard_monitor": "Zwischenablage überwachen",
     "clipboard_monitor_desc": "Kopierte Links erkennen und Download vorschlagen",
+    "console": "",
+    "console_desc": "",
     "start_windows": "Mit Windows starten",
     "start_windows_desc": "Automatisch beim Start öffnen",
     "title": "System",

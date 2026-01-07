@@ -16,11 +16,26 @@
     "save": "Salvar",
     "search": "Buscar"
   },
+  "after": "",
+  "audio_format": "",
+  "before": "",
+  "better_quality": "",
+  "change": "",
   "clipboard": {
     "dismiss": "Dispensar",
     "download_now": "Baixar Agora",
     "link_detected": "Link Detectado"
   },
+  "compression": {
+    "balanced": "",
+    "light": "",
+    "max": "",
+    "medium": "",
+    "much_smaller": "",
+    "smaller_file": "",
+    "strong": ""
+  },
+  "compression_level": "",
   "dashboard": {
     "manage_tools": "Gerencie suas ferramentas e downloads recentes.",
     "overview": "Visão Geral",
@@ -38,6 +53,8 @@
     "unknown": "Desconhecido",
     "view_full_history": "Ver histórico completo"
   },
+  "destination": "",
+  "destination_desc": "",
   "disclaimer": {
     "accept": "Eu entendo",
     "dont_show_again": "Não mostrar esta mensagem novamente",
@@ -45,12 +62,24 @@
     "text2": "Os autores do <0>DownKingo</0> não endossam nem se responsabilizam pelo uso deste aplicativo de forma que viole essas leis.",
     "title": "Aviso legal de direitos autorais"
   },
+  "encoding_preset": "",
+  "encoding_speed": "",
   "errors": {
     "generic": "Ocorreu um erro. Tente novamente.",
     "invalid_url": "URL inválida.",
     "network": "Erro de conexão. Verifique sua internet.",
     "not_found": "Conteúdo não encontrado.",
     "unsupported": "Plataforma não suportada."
+  },
+  "format_desc": {
+    "high_quality": "",
+    "lossless": "",
+    "modern": "",
+    "modern_smaller": "",
+    "much_smaller": "",
+    "opensource": "",
+    "uncompressed": "",
+    "universal": ""
   },
   "home": {
     "active_downloads": "{{count}} downloads em andamento",
@@ -59,6 +88,7 @@
     "active_downloads_other": "",
     "add_audio_queue": "Adicionar Áudio",
     "add_queue": "Adicionar à Fila",
+    "audio": "",
     "audio_mode": "Apenas Áudio",
     "check_progress": "Acompanhe o progresso na aba dedicada.",
     "empty_history_text": "Seus downloads aparecerão aqui.",
@@ -70,12 +100,21 @@
     "go_to_queue": "Ir para a Fila",
     "history_title": "Histórico",
     "no_recent_downloads": "Nenhum download recente",
+    "paste": "",
+    "paste_url": "",
     "placeholder": "Cole a URL do vídeo aqui...",
     "quality": "Qualidade",
     "queue_title": "Fila de Downloads",
+    "video": "",
     "video_mode": "Vídeo",
     "views": "visualizações"
   },
+  "image": "",
+  "increase_of": "",
+  "keep_audio_track": "",
+  "max_compression": "",
+  "max_quality": "",
+  "more_options": "",
   "nav": {
     "console": "Console",
     "converter": "Converter",
@@ -88,6 +127,28 @@
     "settings": "Configurações",
     "videos": "Vídeos"
   },
+  "original_folder": "",
+  "output_format": "",
+  "preset": {
+    "fast": "",
+    "medium": "",
+    "slow": "",
+    "ultrafast": "",
+    "veryslow": ""
+  },
+  "processing": "",
+  "quality": {
+    "high": "",
+    "lossless": "",
+    "low": "",
+    "max": "",
+    "medium": "",
+    "tiny": ""
+  },
+  "quality_bitrate": "",
+  "quality_crf": "",
+  "savings_of": "",
+  "select_file_prefix": "",
   "setup": {
     "installation_error": "Erro na instalação",
     "overall_progress": "Progresso geral",
@@ -105,6 +166,8 @@
     },
     "title": "Preparando componentes essenciais..."
   },
+  "smaller_file": "",
+  "start": "",
   "status": {
     "available": "Disponível",
     "cancelled": "Cancelado",
@@ -119,17 +182,21 @@
     "processing": "Processando...",
     "success": "Sucesso"
   },
+  "success": "",
+  "summary_action": "",
   "terminal": {
-    "clear": "Limpar Console",
-    "maximize": "Maximizar",
-    "minimize": "Minimizar",
-    "ready": "Pronto para capturar saída...",
-    "empty_hint": "Os logs aparecerão aqui",
-    "downloading": "Baixando...",
-    "merging": "Mesclando áudio e vídeo...",
-    "processing_thumb": "Processando thumbnail...",
     "cleaning": "Limpando arquivos temporários...",
+    "clear": "Limpar Console",
     "complete": "Download concluído!",
+    "downloading": "Baixando...",
+    "empty_hint": "Os logs aparecerão aqui",
+    "maximize": "Maximizar",
+    "merging": "Mesclando áudio e vídeo...",
+    "minimize": "Minimizar",
+    "processing_thumb": "Processando thumbnail...",
+    "ready": "Pronto para capturar saída...",
     "saving": "Salvando: {{filename}}"
-  }
+  },
+  "video": "",
+  "wait": ""
 }

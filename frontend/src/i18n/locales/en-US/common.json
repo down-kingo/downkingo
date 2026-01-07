@@ -16,11 +16,26 @@
     "save": "Save",
     "search": "Search"
   },
+  "after": "",
+  "audio_format": "",
+  "before": "",
+  "better_quality": "",
+  "change": "",
   "clipboard": {
     "dismiss": "Dismiss",
     "download_now": "Download Now",
     "link_detected": "Link Detected"
   },
+  "compression": {
+    "balanced": "",
+    "light": "",
+    "max": "",
+    "medium": "",
+    "much_smaller": "",
+    "smaller_file": "",
+    "strong": ""
+  },
+  "compression_level": "",
   "dashboard": {
     "manage_tools": "Manage your tools and recent downloads.",
     "overview": "Overview",
@@ -38,6 +53,8 @@
     "unknown": "Unknown",
     "view_full_history": "View full history"
   },
+  "destination": "",
+  "destination_desc": "",
   "disclaimer": {
     "accept": "I Understand",
     "dont_show_again": "Don't show this message again",
@@ -45,6 +62,8 @@
     "text2": "The authors of <0>DownKingo</0> do not endorse or take responsibility for the use of this application in violation of these laws.",
     "title": "Copyright Disclaimer"
   },
+  "encoding_preset": "",
+  "encoding_speed": "",
   "errors": {
     "generic": "An error occurred. Please try again.",
     "invalid_url": "Invalid URL.",
@@ -52,12 +71,23 @@
     "not_found": "Content not found.",
     "unsupported": "Platform not supported."
   },
+  "format_desc": {
+    "high_quality": "",
+    "lossless": "",
+    "modern": "",
+    "modern_smaller": "",
+    "much_smaller": "",
+    "opensource": "",
+    "uncompressed": "",
+    "universal": ""
+  },
   "home": {
     "active_downloads": "{{count}} downloads in progress",
     "active_downloads_one": "",
     "active_downloads_other": "",
     "add_audio_queue": "Add Audio",
     "add_queue": "Add to Queue",
+    "audio": "",
     "audio_mode": "Audio Only",
     "check_progress": "Track progress in the dedicated tab.",
     "empty_history_text": "Your downloads will appear here.",
@@ -69,12 +99,21 @@
     "go_to_queue": "Go to Queue",
     "history_title": "History",
     "no_recent_downloads": "No recent downloads",
+    "paste": "",
+    "paste_url": "",
     "placeholder": "Paste video URL here...",
     "quality": "Quality",
     "queue_title": "Download Queue",
+    "video": "",
     "video_mode": "Video",
     "views": "views"
   },
+  "image": "",
+  "increase_of": "",
+  "keep_audio_track": "",
+  "max_compression": "",
+  "max_quality": "",
+  "more_options": "",
   "nav": {
     "console": "Console",
     "converter": "Convert",
@@ -87,6 +126,28 @@
     "settings": "Settings",
     "videos": "Videos"
   },
+  "original_folder": "",
+  "output_format": "",
+  "preset": {
+    "fast": "",
+    "medium": "",
+    "slow": "",
+    "ultrafast": "",
+    "veryslow": ""
+  },
+  "processing": "",
+  "quality": {
+    "high": "",
+    "lossless": "",
+    "low": "",
+    "max": "",
+    "medium": "",
+    "tiny": ""
+  },
+  "quality_bitrate": "",
+  "quality_crf": "",
+  "savings_of": "",
+  "select_file_prefix": "",
   "setup": {
     "installation_error": "Installation error",
     "overall_progress": "Overall progress",
@@ -104,6 +165,8 @@
     },
     "title": "Setting up essential components..."
   },
+  "smaller_file": "",
+  "start": "",
   "status": {
     "available": "Available",
     "cancelled": "Cancelled",
@@ -118,17 +181,21 @@
     "processing": "Processing...",
     "success": "Success"
   },
+  "success": "",
+  "summary_action": "",
   "terminal": {
-    "clear": "Clear Console",
-    "maximize": "Maximize",
-    "minimize": "Minimize",
-    "ready": "Ready to capture output...",
-    "empty_hint": "Logs will appear here",
-    "downloading": "Downloading...",
-    "merging": "Merging audio and video...",
-    "processing_thumb": "Processing thumbnail...",
     "cleaning": "Cleaning temporary files...",
+    "clear": "Clear Console",
     "complete": "Download complete!",
+    "downloading": "Downloading...",
+    "empty_hint": "Logs will appear here",
+    "maximize": "Maximize",
+    "merging": "Merging audio and video...",
+    "minimize": "Minimize",
+    "processing_thumb": "Processing thumbnail...",
+    "ready": "Ready to capture output...",
     "saving": "Saving: {{filename}}"
-  }
+  },
+  "video": "",
+  "wait": ""
 }

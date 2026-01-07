@@ -153,6 +153,8 @@
     "channel": "Canal de Actualización",
     "clipboard_monitor": "Monitorear Portapapeles",
     "clipboard_monitor_desc": "Detectar enlaces copiados y sugerir descarga",
+    "console": "",
+    "console_desc": "",
     "start_windows": "Iniciar con Windows",
     "start_windows_desc": "Abrir automáticamente al encender",
     "title": "Sistema",
