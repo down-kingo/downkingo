@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-07T13:44:26.799Z",
+  "generated_at": "2026-01-07T14:29:27.680Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "description": "## Contexte\nActuellement, après avoir t��léchargé une vidéo ou une image sur Kingo (PC), l'utilisateur n'a pas de moyen natif et rapide de transférer ce contenu sur son téléphone. Dépendre du cloud (Google Drive/WhatsApp) est lent et consomme inutilement de la bande passante.\n## Motivation\nCréer une expérience \"zéro friction\" où l'utilisateur pointe simplement l'appareil photo de son téléphone vers Kingo et le téléchargement démarre instantanément via le réseau local (P2P), en tirant parti de la vitesse maximale du Wi-Fi.\n## Problème\nTransférer des fichiers volumineux d'un PC vers des appareils mobiles est un processus fastidieux qui implique généralement des câbles USB ou des téléchargements vers des services externes, ce qui tue l'agilité d'une application de téléchargement.\n## Proposition Technique\nImplémenter un **Serveur de Transmission Éphémère** en Go :\n1. **Backend (Go):** \n   - Utiliser `net/http` pour lancer un serveur web temporaire sur un port aléatoire.\n   - Implémenter un système de **IP Discovery** pour identifier l'adresse du PC sur le réseau local (ex: 192.168.x.x).\n   - Servir le fichier di",
+      "description": "## Contexte\nActuellement, après avoir téléchargé une vidéo ou une image sur Kingo (PC), l'utilisateur n'a pas de moyen natif et rapide de transférer ce contenu sur son téléphone. Dépendre du cloud (Google Drive/WhatsApp) est lent et consomme inutilement de la bande passante internet.\n## Motivation\nCréer une expérience \"zéro friction\" où l'utilisateur pointe simplement l'appareil photo de son téléphone vers Kingo et le téléchargement démarre instantanément via le réseau local (P2P), en tirant parti de la vitesse maximale du Wi-Fi.\n## Problème\nTransférer des fichiers volumineux d'un PC vers des appareils mobiles est un processus fastidieux qui implique généralement des câbles USB ou des téléchargements vers des services externes, ce qui nuit à l'agilité d'une application de téléchargement.\n## Proposition Technique\nImplémenter un **Serveur de Transmission Éphémère** en Go :\n1. **Backend (Go):** \n   - Utiliser `net/http` pour lancer un serveur web temporaire sur un port aléatoire.\n   - Implémenter un système de **IP Discovery** pour identifier l'adresse du PC sur le réseau local (ex : 192.168.x.x).\n   - Servir le fichier di",
       "status": "idea",
       "votes": 0,
       "votes_up": 0,
@@ -23,7 +23,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:34:40Z",
       "shipped_at": null,
-      "friendly_title": "Partage local via QR Code (Magic Share)"
+      "friendly_title": "Partage Local via QR Code (Magic Share)"
     },
     {
       "id": 6,
