@@ -1,26 +1,30 @@
 <p align="center">
+  <strong>🇺🇸 English</strong> | <a href="README-pt.md">🇧🇷 Português</a>
+</p>
+
+<p align="center">
   <img src="build/appicon.png" width="128" height="128" alt="DownKingo Logo">
 </p>
 
-<h1 align="center">DownKingo v2</h1>
+<h1 align="center">DownKingo</h1>
 
 <p align="center">
-  <strong>O downloader de mídia definitivo para Windows, macOS e Linux.</strong>
+  <strong>A modern, cross-platform media companion for Windows, macOS, and Linux.</strong>
 </p>
 
 <p align="center">
-  Simples. Rápido. Poderoso.
+  Built with Go. Designed for speed.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Capman002/DownKingo/releases/latest">
-    <img src="https://img.shields.io/github/v/release/Capman002/DownKingo?style=for-the-badge&color=E11D48&logo=github" alt="Latest Release">
+  <a href="https://github.com/down-kingo/downkingo/releases/latest">
+    <img src="https://img.shields.io/github/v/release/down-kingo/downkingo?style=for-the-badge&color=E11D48&logo=github" alt="Latest Release">
   </a>
-  <a href="https://github.com/Capman002/DownKingo/actions/workflows/release.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Capman002/DownKingo/release.yml?style=for-the-badge&label=Build&logo=github-actions" alt="Build Status">
+  <a href="https://github.com/down-kingo/downkingo/actions/workflows/release.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/down-kingo/downkingo/release.yml?style=for-the-badge&label=Build&logo=github-actions" alt="Build Status">
   </a>
-  <a href="https://github.com/Capman002/DownKingo/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Capman002/DownKingo?style=for-the-badge&color=E11D48" alt="License">
+  <a href="https://github.com/down-kingo/downkingo/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/down-kingo/downkingo?style=for-the-badge&color=E11D48" alt="License">
   </a>
 </p>
 
@@ -41,16 +45,16 @@
 
 ---
 
-## 🎯 Sobre o Projeto
+## 🎯 About
 
-DownKingo v2 é uma reescrita completa da versão original, focada em performance, design e experiência do usuário. Ele combina a robustez do **Go** no backend com a flexibilidade do **React** no frontend.
+DownKingo is a complete rewrite focused on performance, design, and user experience. It combines the robustness of **Go** on the backend with the flexibility of **React** on the frontend.
 
-### Por que v2?
+### Why DownKingo?
 
-- **Zero Config**: FFmpeg e yt-dlp embutidos.
-- **CDN-First**: Roadmap e metadados carregados via CDN para performance instantânea.
-- **SQLite**: Persistência robusta para histórico e fila.
-- **Ecosistema**: Integração nativa com GitHub para autenticação, updates e feedback (Build in Public).
+- **Zero Config**: FFmpeg and yt-dlp come pre-bundled.
+- **CDN-First**: Roadmap and metadata loaded via CDN for instant performance.
+- **SQLite**: Robust persistence for history and queue.
+- **Ecosystem**: Native GitHub integration for authentication, updates, and feedback.
 
 ---
 
@@ -58,76 +62,85 @@ DownKingo v2 é uma reescrita completa da versão original, focada em performanc
 
 ### Core
 
-- 🎬 **Download Universal**: YouTube, Instagram, TikTok, Twitter e centenas de outros.
-- 🎵 **Conversão Inteligente**: Extração de áudio (MP3/M4A) com metadados automáticos.
-- 📋 **Monitor de Clipboard**: Detecta links copiados automaticamente.
-- 🚀 **Fila Concorrente**: Múltiplos downloads simultâneos acelerados.
+- 🎬 **Universal Download** — YouTube, Instagram, TikTok, Twitter, and 1000+ sites.
+- 🎵 **Smart Conversion** — Audio extraction (MP3/M4A) with automatic metadata.
+- 📋 **Clipboard Monitor** — Automatically detects copied links.
+- 🚀 **Concurrent Queue** — Multiple simultaneous downloads with high speed.
 
-### Experiência
+### Experience
 
-- 🌓 **Tema Escuro/Claro**: Design moderno interface fluida.
-- 🌐 **Internacionalização**: Suporte nativo a PT-BR e EN-US.
-- 🗺️ **Roadmap Interativo**: Vote em features e acompanhe o desenvolvimento dentro do app.
-- ⚡ **Auto-Update**: Atualizações silenciosas e seguras.
+- 🌓 **Dark/Light Theme** — Modern fluid interface with smooth transitions.
+- 🌐 **Internationalization** — Native support for English and Portuguese.
+- 🗺️ **Interactive Roadmap** — Vote on features and track development within the app.
+- ⚡ **Auto-Update** — Silent and secure background updates.
 
 ---
 
-## 📥 Instalação
+## 📥 Installation
 
-| Sistema     | Download                                                                                                                                                                |
+| Platform    | Download                                                                                                                                                                |
 | :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Windows** | [![Windows](https://img.shields.io/badge/Download-.exe-0078D4?style=flat-square&logo=windows)](https://github.com/Capman002/DownKingo/releases/latest)                  |
-| **Linux**   | [![Linux](https://img.shields.io/badge/Download-.AppImage-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/Capman002/DownKingo/releases/latest) |
-| **macOS**   | _Em breve_                                                                                                                                                              |
+| **Windows** | [![Windows](https://img.shields.io/badge/Download-.exe-0078D4?style=flat-square&logo=windows)](https://github.com/down-kingo/downkingo/releases/latest)                  |
+| **Linux**   | [![Linux](https://img.shields.io/badge/Download-.AppImage-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/down-kingo/downkingo/releases/latest) |
+| **macOS**   | _Coming Soon_                                                                                                                                                           |
 
 ---
 
-## 🛠️ Desenvolvimento
+## 🛠️ Development
 
-### Pré-requisitos
+### Prerequisites
 
 - **Go 1.21+**
-- **Bun** (Runtime JS rápido)
+- **Bun** (Fast JS Runtime)
 - **Wails v2** (`go install github.com/wailsapp/wails/v2/cmd/wails@latest`)
 
-### Setup
+### Quick Start
 
 ```bash
-# Clone
-git clone https://github.com/Capman002/DownKingo.git
-cd DownKingo
+# Clone the repository
+git clone https://github.com/down-kingo/downkingo.git
+cd downkingo
 
-# Dependências Frontend
+# Install frontend dependencies
 cd frontend && bun install && cd ..
 
-# Rodar em modo Dev
+# Run in development mode
 wails dev
 ```
 
-### Estrutura
+### Project Structure
 
-- `internal/`: Lógica Backend (Go)
-  - `auth/`: OAuth2 Device Flow
-  - `downloader/`: Gerenciador de fila e yt-dlp
-  - `roadmap/`: Integração "Build in Public"
-  - `storage/`: Camada SQLite
-- `frontend/`: UI (React + Tailwind)
-
----
-
-## 🗺️ Roadmap Atual
-
-- [x] Arquitetura v2 (Wails + React)
-- [x] Persistência SQLite
-- [x] Monitor de Clipboard Inteligente
-- [x] Internacionalização (i18n)
-- [x] Sistema de Auto-Update
-- [ ] Download de Playlists
-- [ ] Extensão para Navegador
-- [ ] Suporte a Plugins
+```
+├── internal/           # Backend logic (Go)
+│   ├── auth/           # OAuth2 Device Flow
+│   ├── downloader/     # Queue manager and yt-dlp wrapper
+│   ├── roadmap/        # "Build in Public" integration
+│   └── storage/        # SQLite layer
+├── frontend/           # UI (React + Tailwind)
+└── build/              # Build resources
+```
 
 ---
 
-## 📄 Licença
+## 🗺️ Roadmap
 
-Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
+- [x] v2 Architecture (Wails + React)
+- [x] SQLite Persistence
+- [x] Smart Clipboard Monitor
+- [x] Internationalization (i18n)
+- [x] Auto-Update System
+- [ ] Playlist Downloads
+- [ ] Browser Extension
+- [ ] Plugin Support
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a Pull Request.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
