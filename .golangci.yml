@@ -1,0 +1,43 @@
+# golangci-lint configuration for DownKingo
+# See: https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  # Only lint for Linux in CI (match the runner OS)
+  # Windows-specific files will be excluded
+  build-tags:
+    - webkit2_41
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+  disable:
+    - typecheck # Handled by go build
+
+issues:
+  # Exclude some linters from running on tests files
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - unused
+    # Exclude Windows-specific files when running on Linux
+    - path: _windows\.go
+      linters:
+        - typecheck
+    # Exclude Unix-specific files when running on Windows
+    - path: _unix\.go
+      linters:
+        - typecheck
+
+linters-settings:
+  errcheck:
+    # Don't check for errors on Close() calls
+    exclude-functions:
+      - (*os.File).Close
+      - (io.Closer).Close

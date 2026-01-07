@@ -10,6 +10,37 @@ afterEach(() => {
   cleanup();
 });
 
+// Mock i18next for components using useTranslation
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      // Return common translation values for testing
+      const translations: Record<string, string> = {
+        "nav.console": "Console",
+        "terminal.ready": "Ready to capture output...",
+        "terminal.clear": "Clear",
+        "terminal.maximize": "Maximize",
+        "terminal.minimize": "Minimize",
+      };
+      return translations[key] || key;
+    },
+    i18n: {
+      language: "en",
+      changeLanguage: vi.fn(),
+    },
+  }),
+  Trans: ({ children }: { children: React.ReactNode }) => children,
+  initReactI18next: { type: "3rdParty", init: vi.fn() },
+}));
+
+// Mock settings store for components using useSettingsStore
+vi.mock("../stores/settingsStore", () => ({
+  useSettingsStore: () => ({
+    consoleEnabled: true,
+    theme: "dark",
+  }),
+}));
+
 // Mock Wails runtime for tests
 // This prevents errors when components try to call Wails functions
 const mockWailsRuntime = {
