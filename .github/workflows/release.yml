@@ -19,9 +19,6 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             artifact: DownKingo-Windows-Installer.exe
-          - os: macos-latest
-            platform: darwin/universal
-            artifact: DownKingo-macOS.dmg
           - os: ubuntu-latest
             platform: linux/amd64
             artifact: DownKingo-Linux-x86_64.AppImage
@@ -99,22 +96,6 @@ jobs:
           echo "Sidecar binaries ready:"
           ls -la build/sidecar/windows/
 
-      # macOS Sidecar
-      - name: Download Sidecar Binaries (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          mkdir -p build/sidecar/darwin
-          echo "Downloading yt-dlp..."
-          curl -L -o build/sidecar/darwin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos
-          chmod +x build/sidecar/darwin/yt-dlp
-          echo "Downloading FFmpeg..."
-          curl -L -o ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/zip
-          unzip -q ffmpeg.zip -d build/sidecar/darwin/
-          chmod +x build/sidecar/darwin/ffmpeg
-          rm ffmpeg.zip
-          echo "Sidecar binaries ready:"
-          ls -la build/sidecar/darwin/
-
       # Linux Sidecar
       - name: Download Sidecar Binaries (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -142,12 +123,6 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           wails build -clean -platform ${{ matrix.platform }} --nsis -ldflags "-s -w -X main.Version=${VERSION}"
 
-      - name: Build Application (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          wails build -clean -platform ${{ matrix.platform }} -ldflags "-s -w -X main.Version=${VERSION}"
-
       - name: Build Application (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -171,27 +146,6 @@ jobs:
           echo "Found installer: $INSTALLER"
           mv "$INSTALLER" build/bin/${{ matrix.artifact }}
           echo "Windows installer ready:"
-          ls -la build/bin/
-
-      # macOS: Create DMG with app bundle
-      - name: Package (macOS - DMG)
-        if: matrix.os == 'macos-latest'
-        run: |
-          echo "Contents of build/bin:"
-          ls -la build/bin/
-
-          # Find the app bundle (can be 'baixar-midia.app' or similar)
-          APP_BUNDLE=$(find build/bin -name "*.app" -type d | head -1)
-          echo "Found app bundle: $APP_BUNDLE"
-
-          # Move sidecar binaries into the app bundle
-          mkdir -p "$APP_BUNDLE/Contents/Resources/bin"
-          cp build/sidecar/darwin/yt-dlp "$APP_BUNDLE/Contents/Resources/bin/"
-          cp build/sidecar/darwin/ffmpeg "$APP_BUNDLE/Contents/Resources/bin/"
-
-          # Create DMG
-          hdiutil create -volname "DownKingo" -srcfolder "$APP_BUNDLE" -ov -format UDZO "build/bin/${{ matrix.artifact }}"
-          echo "macOS DMG ready:"
           ls -la build/bin/
 
       # Linux: Create AppImage
