@@ -1,6 +1,3 @@
-//go:build windows
-// +build windows
-
 package converter
 
 import (
@@ -9,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 // ImageFormat represents supported output image formats
@@ -148,7 +144,7 @@ func ConvertImage(opts ImageConvertOptions) (*ImageConvertResult, error) {
 
 	// Execute FFmpeg
 	cmd := exec.Command(opts.FFmpegPath, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	setSysProcAttr(cmd)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {

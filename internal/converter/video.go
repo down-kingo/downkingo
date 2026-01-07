@@ -1,6 +1,3 @@
-//go:build windows
-// +build windows
-
 // Package converter provides video, audio and image conversion using FFmpeg.
 package converter
 
@@ -10,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 // VideoFormat represents supported output video formats
@@ -149,7 +145,7 @@ func ConvertVideo(opts VideoConvertOptions) (*VideoConvertResult, error) {
 
 	// Execute FFmpeg
 	cmd := exec.Command(opts.FFmpegPath, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	setSysProcAttr(cmd)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {

@@ -1,6 +1,3 @@
-//go:build windows
-// +build windows
-
 package converter
 
 import (
@@ -9,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 // AudioFormat represents supported output audio formats
@@ -113,7 +109,7 @@ func ExtractAudio(opts AudioExtractOptions) (*AudioExtractResult, error) {
 
 	// Execute FFmpeg
 	cmd := exec.Command(opts.FFmpegPath, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	setSysProcAttr(cmd)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
