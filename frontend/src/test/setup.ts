@@ -38,6 +38,7 @@ vi.mock("../stores/settingsStore", () => ({
   useSettingsStore: () => ({
     consoleEnabled: true,
     theme: "dark",
+    hasCompletedOnboarding: true,
   }),
 }));
 

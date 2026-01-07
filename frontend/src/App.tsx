@@ -6,6 +6,7 @@ import Setup from "./pages/Setup";
 import Home from "./pages/Home";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import OnboardingModal from "./components/OnboardingModal";
 
 // Payload enviado pelo backend no evento app:ready
 interface AppReadyPayload {
@@ -161,19 +162,22 @@ function App() {
   }
 
   return (
-    <BrowserRouter
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
-      <Routes>
-        <Route path="/setup" element={<Setup />} />
-        <Route path="/home" element={<Home />} />
+    <>
+      <OnboardingModal />
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <Routes>
+          <Route path="/setup" element={<Setup />} />
+          <Route path="/home" element={<Home />} />
 
-        <Route
-          path="/"
-          element={<Navigate to={needsSetup ? "/setup" : "/home"} replace />}
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/"
+            element={<Navigate to={needsSetup ? "/setup" : "/home"} replace />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

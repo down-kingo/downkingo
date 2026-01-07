@@ -57,6 +57,7 @@ interface SettingsState {
   startWithWindows: boolean;
   clipboardMonitorEnabled: boolean;
   consoleEnabled: boolean; // Mostrar/ocultar console de logs
+  hasCompletedOnboarding: boolean; // First-run setup completed
 
   // Actions
   toggleTheme: () => void;
@@ -66,15 +67,16 @@ interface SettingsState {
   setAnonymousMode: (enabled: boolean) => void;
   setShortcuts: (shortcuts: ShortcutsConfig) => void;
   setSetting: (key: keyof SettingsState, value: any) => void;
+  completeOnboarding: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      theme: "light",
+      theme: "dark",
       layout: "sidebar",
       primaryColor: "blue",
-      language: "pt-BR",
+      language: "en-US", // English as default
 
       shortcuts: {
         focusInput: "Ctrl+L",
@@ -104,6 +106,7 @@ export const useSettingsStore = create<SettingsState>()(
       startWithWindows: false,
       clipboardMonitorEnabled: true,
       consoleEnabled: false, // Desativado por padrão
+      hasCompletedOnboarding: false, // Show onboarding on first launch
 
       toggleTheme: () =>
         set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
@@ -124,6 +127,7 @@ export const useSettingsStore = create<SettingsState>()(
       setShortcuts: (shortcuts) => set({ shortcuts }),
 
       setSetting: (key, value) => set((state) => ({ ...state, [key]: value })),
+      completeOnboarding: () => set({ hasCompletedOnboarding: true }),
     }),
     {
       name: "kingo-settings-v2", // Incrementar versão para garantir novos defaults

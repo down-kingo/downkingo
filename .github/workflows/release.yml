@@ -18,10 +18,10 @@ jobs:
         include:
           - os: windows-latest
             platform: windows/amd64
-            artifact: DownKingo-Windows-Installer.exe
+            artifact: DownKingo.exe
           - os: ubuntu-latest
             platform: linux/amd64
-            artifact: DownKingo-Linux-x86_64.AppImage
+            artifact: DownKingo.AppImage
 
     runs-on: ${{ matrix.os }}
 
