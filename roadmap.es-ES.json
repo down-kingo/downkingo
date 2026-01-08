@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-08T15:32:05.883Z",
+  "generated_at": "2026-01-08T16:37:17.024Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -8,6 +8,111 @@
     "project_number": 2
   },
   "items": [
+    {
+      "id": 20,
+      "title": "feat(roadmap): Build-in-Public com Votação",
+      "description": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/20",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:18Z",
+      "shipped_at": "2026-01-08T15:03:30Z",
+      "friendly_title": "Build-in-Public com Votação"
+    },
+    {
+      "id": 14,
+      "title": "feat(download): Download de Imagens",
+      "description": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/14",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:41Z",
+      "shipped_at": "2026-01-08T15:02:56Z",
+      "friendly_title": "Descargar Imágenes"
+    },
+    {
+      "id": 17,
+      "title": "feat(converter): Conversor de Áudio",
+      "description": "### Descripción\nHerramienta para extraer audio de videos o convertir archivos de audio.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Calidad:** Opciones de bitrate (128k, 192k, 320k) y sample rate.\n- **Procesamiento:** Conversión rápida sin re-encoding innecesario cuando sea posible.\n- **Metadatos:** Preservación o edición de etiquetas ID3 básicas.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/17",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:59Z",
+      "shipped_at": "2026-01-08T15:03:13Z",
+      "friendly_title": "Convertidor de Audio"
+    },
+    {
+      "id": 13,
+      "title": "feat(ui): Terminal Integrado",
+      "description": "### Descripción\nAdición de un emulador de terminal en la interfaz para la visualización en tiempo real del proceso de descarga.\n\n### Detalles Técnicos\n- **UI:** Implementación del componente `Terminal` usando React, simulando la estética clásica.\n- **Logs:** Streaming de logs del backend (stdout/stderr de los procesos) vía WebSocket/Runtime Events para el frontend.\n- **Interactividad:** Colores para diferentes niveles de log (INFO, WARN, ERROR) y barras de progreso ASCII-like.\n- **UX:** Feedback visual inmediato sobre lo que está sucediendo \"bajo el capó\".\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/13",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:40Z",
+      "shipped_at": "2026-01-08T15:02:54Z",
+      "friendly_title": "Terminal Integrado"
+    },
+    {
+      "id": 12,
+      "title": "feat(download): Melhorias no Downloader de Vídeo",
+      "description": "### Descripción\nMejoras significativas en la estabilidad y el rendimiento del descargador de vídeos (basado en yt-dlp).\n\n### Detalles Técnicos\n- **Actualización:** Mecanismo para mantener yt-dlp siempre actualizado.\n- **Formatos:** Lógica mejorada para la selección automática del mejor formato de vídeo/audio.\n- **Metadatos:** Mejor extracción y tratamiento de metadatos (título, miniatura, duración).\n- **Manejo de Errores:** Resolución de problemas comunes (throttling, cookies, restricciones regionales).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/12",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:39Z",
+      "shipped_at": "2026-01-08T15:02:52Z",
+      "friendly_title": "Mejoras en el Descargador de Vídeos"
+    },
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
@@ -60,15 +165,15 @@
       "friendly_title": "Migración Arquitectónica a Wails v3"
     },
     {
-      "id": 33,
-      "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URLs.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n Entregado en v2.0.0",
+      "id": 9,
+      "title": "feat(storage): Migração para SQLite",
+      "description": "### Descripción\nMigración del sistema de almacenamiento de archivos JSON planos a una base de datos relacional embebida (SQLite).\n\n### Detalles Técnicos\n- **Engine:** Implementación usando `modernc.org/sqlite` (versión pure Go, sin dependencia de CGO).\n- **Schema:** Creación de tablas normalizadas para `history`, `queue` y `settings`.\n- **Concurrencia:** Soporte seguro para acceso concurrente (thread-safe).\n- **Migración:** Lógica para garantizar la integridad de los datos al actualizar desde la versión 1.x.\n\n### Estado\n✅ Entregado en v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
       "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/33",
+      "url": "https://github.com/down-kingo/downkingo/issues/9",
       "labels": [
         "enhancement",
         "v2.0.0",
@@ -76,9 +181,303 @@
       ],
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:04:03Z",
-      "shipped_at": "2026-01-08T15:04:22Z",
-      "friendly_title": "Monitor de Portapapeles V2 con Adaptive Backoff"
+      "created_at": "2026-01-08T15:02:20Z",
+      "shipped_at": "2026-01-08T15:02:35Z",
+      "friendly_title": "Migración a SQLite"
+    },
+    {
+      "id": 10,
+      "title": "feat(core): Sistema de Erros Tipados",
+      "description": "### Descripción\nImplementación de un nuevo sistema de manejo de errores robusto y tipado.\n\n### Detalles Técnicos\n- **Estructura:** Introducción de la struct `appError` que encapsula código, mensaje y causa original.\n- **Categorización:** Definición de tipos de error claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeo automático de errores del backend a mensajes amigables (i18n) en el frontend.\n- **Logs:** Stack traces detallados y contexto adicional en los logs para facilitar la depuración.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/10",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:22Z",
+      "shipped_at": "2026-01-08T15:02:36Z",
+      "friendly_title": "Sistema de Errores Tipados"
+    },
+    {
+      "id": 11,
+      "title": "feat(download): Suporte a Aria2c",
+      "description": "### Descripción\nIntegración con el motor de descarga Aria2c para ofrecer descargas más rápidas y estables.\n\n### Detalles Técnicos\n- **Binario:** Inclusión y orquestación del binario `aria2c` (sidecar).\n- **Segmentación:** Soporte para descargas segmentadas (múltiples conexiones por archivo) para maximizar el ancho de banda.\n- **Reanudación:** Capacidad mejorada para pausar y reanudar descargas.\n- **Fallback:** Sistema inteligente que vuelve al descargador nativo si Aria2c falla o no es compatible.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/11",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:23Z",
+      "shipped_at": "2026-01-08T15:02:38Z",
+      "friendly_title": "Soporte de descarga Aria2c"
+    },
+    {
+      "id": 15,
+      "title": "feat(history): Histórico Persistente",
+      "description": "### Descrição\nSistema de histórico persistente para que o usuário nunca perca o controle do que baixou.\n\n### Detalhes Técnicos\n- **Persistência:** Gravação de cada download concluído no banco de dados SQLite.\n- **Dados:** Armazena URL original, título, caminho do arquivo local, data, tamanho e thumbnail.\n- **UI:** Tela dedicada \"Histórico\" com opções de busca, filtro e limpeza.\n- **Ações:** Botões para abrir o arquivo, abrir a pasta ou baixar novamente.\n\n### Status\n✅ Entregue na v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/15",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:41Z",
+      "shipped_at": "2026-01-08T15:02:57Z",
+      "friendly_title": "Histórico Persistente"
+    },
+    {
+      "id": 16,
+      "title": "feat(converter): Conversor de Vídeo",
+      "description": "### Descripción\nHerramienta integrada para convertir vídeos entre diferentes formatos.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Utiliza FFmpeg para procesamiento de alta calidad.\n- **Opciones:** Control de calidad (CRF), selección de códec (H.264, VP9) y preservación de metadatos.\n- **UX:** Interfaz drag-and-drop para una fácil conversión de archivos locales.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/16",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:58Z",
+      "shipped_at": "2026-01-08T15:03:12Z",
+      "friendly_title": "Convertidor de Vídeo"
+    },
+    {
+      "id": 18,
+      "title": "feat(converter): Conversor de Imagens",
+      "description": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto.\n- **Batch:** Soporte para convertir múltiples archivos en cola.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/18",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:00Z",
+      "shipped_at": "2026-01-08T15:03:15Z",
+      "friendly_title": "Convertidor de Imágenes"
+    },
+    {
+      "id": 19,
+      "title": "feat(i18n): Suporte a 5 Idiomas",
+      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/19",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:01Z",
+      "shipped_at": "2026-01-08T15:03:17Z",
+      "friendly_title": "Suporte a 5 Idiomas"
+    },
+    {
+      "id": 22,
+      "title": "feat(roadmap): Modal de Sugestões",
+      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/22",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:20Z",
+      "shipped_at": "2026-01-08T15:03:34Z",
+      "friendly_title": "Modal de Sugestões"
+    },
+    {
+      "id": 23,
+      "title": "feat(ui): Tema Claro/Escuro",
+      "description": "### Descripción\nSoporte completo para temas visuales (Claro y Oscuro).\n\n### Detalles Técnicos\n- **Modos:**\n  - **Auto:** Sigue la preferencia del sistema operativo.\n  - **Light/Dark:** Definición manual por el usuario.\n- **Consistencia:** Aplicación de tokens de color en todos los componentes para garantizar un contraste adecuado en ambos modos.\n- **Transiciones:** Transiciones suaves entre cambios de tema.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/23",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:20Z",
+      "shipped_at": "2026-01-08T15:03:35Z",
+      "friendly_title": "Tema Claro/Oscuro"
+    },
+    {
+      "id": 26,
+      "title": "feat(ui): Toast de Clipboard",
+      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/26",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:37Z",
+      "shipped_at": "2026-01-08T15:03:55Z",
+      "friendly_title": "Toast de Clipboard"
+    },
+    {
+      "id": 21,
+      "title": "feat(auth): Login via GitHub Device Flow",
+      "description": "### Descripción\nImplementación de inicio de sesión seguro con GitHub para permitir interacciones sociales (votos, comentarios) en la hoja de ruta.\n\n### Detalles Técnicos\n- **Protocolo:** Utilización del OAuth 2.0 Device Authorization Flow (Device Flow), ideal para aplicaciones de escritorio.\n- **Seguridad:** Sin almacenamiento de contraseñas, solo tokens de acceso con alcance limitado (`public_repo` o solo lectura cuando sea posible).\n- **UX:** Flujo simple donde el usuario autoriza la aplicación a través de un código en el navegador.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/21",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:18Z",
+      "shipped_at": "2026-01-08T15:03:32Z",
+      "friendly_title": "Inicio de sesión con GitHub Device Flow"
+    },
+    {
+      "id": 28,
+      "title": "feat(settings): Configurações de Vídeo",
+      "description": "### Descripción\nControl granular sobre la calidad y el formato de las descargas de vídeo.\n\n### Detalles Técnicos\n- **Calidad:** Definición de la calidad máxima preferida (4K, 1080p, 720p).\n- **Subtítulos:** Opción para descargar subtítulos automáticamente, generar subtítulos automáticos o incrustarlos en el vídeo.\n- **Códecs:** Preferencia por códecs (H264, VP9, AV1).\n- **Audio:** Calidad de audio preferida en las descargas de vídeo.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/28",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:58Z",
+      "shipped_at": "2026-01-08T15:04:14Z",
+      "friendly_title": "Configuración de Vídeo"
+    },
+    {
+      "id": 8,
+      "title": "feat(core): Reescrita Completa da Arquitetura",
+      "description": "### Descripción\nReescritura completa de la arquitectura de la aplicación para la versión 2.0.0, con el objetivo de resolver la deuda técnica y preparar el terreno para nuevas funcionalidades.\n\n### Detalles Técnicos\n- **Capas:** Adopción de una arquitectura en capas (Service-Repository-Handler) para una mejor separación de responsabilidades.\n- **Desacoplamiento:** Separación clara entre la lógica de negocio (Go) y la interfaz (React/TypeScript).\n- **Inyección de Dependencias:** Mejora en la gestión de dependencias internas.\n- **Rendimiento:** Optimización del uso de memoria y CPU a través de profiling y refactorización.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/8",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:02:18Z",
+      "shipped_at": "2026-01-08T15:02:33Z",
+      "friendly_title": "Reescritura de la Arquitectura para v2.0.0"
+    },
+    {
+      "id": 24,
+      "title": "feat(ui): Customização de Aparência",
+      "description": "### Descripción\nOpciones avanzadas para personalizar la apariencia de la aplicación más allá de los temas básicos.\n\n### Detalles Técnicos\n- **Accent Color:** Elección del color de acento principal (Primary Color).\n- **Densidad:** Ajuste del espaciado de la interfaz (Compacto, Cómodo).\n- **Transparencia:** Habilitar/deshabilitar efectos de desenfoque/Mica (Windows 11).\n- **Bordes:** Control del redondeo (Border Radius) de los elementos.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/24",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:36Z",
+      "shipped_at": "2026-01-08T15:03:52Z",
+      "friendly_title": "Personalización de Apariencia"
+    },
+    {
+      "id": 25,
+      "title": "feat(ux): Onboarding Interativo",
+      "description": "### Descripción\nExperiencia de bienvenida para que los nuevos usuarios configuren la aplicación rápidamente.\n\n### Detalles Técnicos\n- **Flujo:** Secuencia de pasos en la primera inicialización.\n- **Configuración:** Definición inicial de idioma y tema.\n- **Legal:** Presentación y aceptación de los términos de responsabilidad (descargo de responsabilidad).\n- **Estado:** Persistencia del estado \"Onboarding Completed\" para no volver a mostrarlo.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/25",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:03:37Z",
+      "shipped_at": "2026-01-08T15:03:53Z",
+      "friendly_title": "Onboarding Interactivo"
     },
     {
       "id": 32,
@@ -100,6 +499,27 @@
       "created_at": "2026-01-08T15:04:03Z",
       "shipped_at": "2026-01-08T15:04:21Z",
       "friendly_title": "Soporte para enlaces kingo://"
+    },
+    {
+      "id": 33,
+      "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
+      "description": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/33",
+      "labels": [
+        "enhancement",
+        "v2.0.0",
+        "shipped"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-08T15:04:03Z",
+      "shipped_at": "2026-01-08T15:04:22Z",
+      "friendly_title": "Monitor de portapapeles V2 con Adaptive Backoff"
     },
     {
       "id": 31,
@@ -144,48 +564,6 @@
       "friendly_title": "Configuración de Apariencia"
     },
     {
-      "id": 29,
-      "title": "feat(settings): Configurações de Imagem",
-      "description": "### Descripción\nConfiguraciones específicas para el procesamiento de imágenes.\n\n### Detalles Técnicos\n- **Formato de Salida:** Convertir automáticamente descargas a (PNG, JPG, WEBP).\n- **Calidad:** Nivel de compresión para formatos con pérdida (JPG, WEBP).\n- **Redimensionamiento:** Opciones para redimensionar imágenes grandes automáticamente.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/29",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:58Z",
-      "shipped_at": "2026-01-08T15:04:15Z",
-      "friendly_title": "Configuración de Imagen"
-    },
-    {
-      "id": 28,
-      "title": "feat(settings): Configurações de Vídeo",
-      "description": "### Descripción\nControl granular sobre la calidad y el formato de las descargas de vídeo.\n\n### Detalles Técnicos\n- **Calidad:** Definición de la calidad máxima preferida (4K, 1080p, 720p).\n- **Subtítulos:** Opción para descargar subtítulos automáticamente, generar subtítulos automáticos o incrustarlos en el vídeo.\n- **Códecs:** Preferencia por códecs (H264, VP9, AV1).\n- **Audio:** Calidad de audio preferida en las descargas de vídeo.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/28",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:58Z",
-      "shipped_at": "2026-01-08T15:04:14Z",
-      "friendly_title": "Configuración de Vídeo"
-    },
-    {
       "id": 27,
       "title": "feat(settings): Configurações Gerais",
       "description": "### Descripción\nPanel centralizado para controlar el comportamiento de la aplicación.\n\n### Detalles Técnicos\n- **Directorios:** Definición de la carpeta predeterminada de descargas y temp.\n- **Idioma:** Selector manual de idioma de la interfaz.\n- **Comportamiento:** Opciones como \"Iniciar con el sistema\", \"Minimizar a la bandeja\".\n- **Actualizaciones:** Verificación manual de actualizaciones.\n\n### Estado\n✅ Entregado en la v2.0.0",
@@ -207,15 +585,15 @@
       "friendly_title": "Configuración General"
     },
     {
-      "id": 26,
-      "title": "feat(ui): Toast de Clipboard",
-      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "id": 29,
+      "title": "feat(settings): Configurações de Imagem",
+      "description": "### Descripción\nConfiguraciones específicas para el procesamiento de imágenes.\n\n### Detalles Técnicos\n- **Formato de Salida:** Convertir automáticamente descargas a (PNG, JPG, WEBP).\n- **Calidad:** Nivel de compresión para formatos con pérdida (JPG, WEBP).\n- **Redimensionamiento:** Opciones para redimensionar imágenes grandes automáticamente.\n\n### Estado\n✅ Entregado en v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
       "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/26",
+      "url": "https://github.com/down-kingo/downkingo/issues/29",
       "labels": [
         "enhancement",
         "v2.0.0",
@@ -223,387 +601,9 @@
       ],
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:37Z",
-      "shipped_at": "2026-01-08T15:03:55Z",
-      "friendly_title": "Toast de Clipboard"
-    },
-    {
-      "id": 25,
-      "title": "feat(ux): Onboarding Interativo",
-      "description": "### Descripción\nExperiencia de bienvenida para que los nuevos usuarios configuren la aplicación rápidamente.\n\n### Detalles Técnicos\n- **Flujo:** Secuencia de pasos en la primera inicialización.\n- **Configuración:** Definición inicial de idioma y tema.\n- **Legal:** Presentación y aceptación de los términos de responsabilidad (descargo de responsabilidad).\n- **Estado:** Persistencia del estado \"Onboarding Completed\" para no volver a mostrarlo.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/25",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:37Z",
-      "shipped_at": "2026-01-08T15:03:53Z",
-      "friendly_title": "Onboarding Interactivo"
-    },
-    {
-      "id": 24,
-      "title": "feat(ui): Customização de Aparência",
-      "description": "### Descripción\nOpciones avanzadas para personalizar la apariencia de la aplicación más allá de los temas básicos.\n\n### Detalles Técnicos\n- **Accent Color:** Elección del color de acento principal (Primary Color).\n- **Densidad:** Ajuste del espaciado de la interfaz (Compacto, Cómodo).\n- **Transparencia:** Habilitar/deshabilitar efectos de desenfoque/Mica (Windows 11).\n- **Bordes:** Control del redondeo (Border Radius) de los elementos.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/24",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:36Z",
-      "shipped_at": "2026-01-08T15:03:52Z",
-      "friendly_title": "Personalización de Apariencia"
-    },
-    {
-      "id": 23,
-      "title": "feat(ui): Tema Claro/Escuro",
-      "description": "### Descripción\nSoporte completo para temas visuales (Claro y Oscuro).\n\n### Detalles Técnicos\n- **Modos:**\n  - **Auto:** Sigue la preferencia del sistema operativo.\n  - **Light/Dark:** Definición manual por el usuario.\n- **Consistencia:** Aplicación de tokens de color en todos los componentes para garantizar un contraste adecuado en ambos modos.\n- **Transiciones:** Transiciones suaves entre cambios de tema.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/23",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:20Z",
-      "shipped_at": "2026-01-08T15:03:35Z",
-      "friendly_title": "Tema Claro/Oscuro"
-    },
-    {
-      "id": 22,
-      "title": "feat(roadmap): Modal de Sugestões",
-      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/22",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:20Z",
-      "shipped_at": "2026-01-08T15:03:34Z",
-      "friendly_title": "Modal de Sugestões"
-    },
-    {
-      "id": 21,
-      "title": "feat(auth): Login via GitHub Device Flow",
-      "description": "### Descripción\nImplementación de inicio de sesión seguro con GitHub para permitir interacciones sociales (votos, comentarios) en la hoja de ruta.\n\n### Detalles Técnicos\n- **Protocolo:** Utilización del OAuth 2.0 Device Authorization Flow (Device Flow), ideal para aplicaciones de escritorio.\n- **Seguridad:** Sin almacenamiento de contraseñas, solo tokens de acceso con alcance limitado (`public_repo` o solo lectura cuando sea posible).\n- **UX:** Flujo simple donde el usuario autoriza la aplicación a través de un código en el navegador.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/21",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:18Z",
-      "shipped_at": "2026-01-08T15:03:32Z",
-      "friendly_title": "Inicio de sesión con GitHub Device Flow"
-    },
-    {
-      "id": 20,
-      "title": "feat(roadmap): Build-in-Public com Votação",
-      "description": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/20",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:18Z",
-      "shipped_at": "2026-01-08T15:03:30Z",
-      "friendly_title": "Build-in-Public com Votação"
-    },
-    {
-      "id": 19,
-      "title": "feat(i18n): Suporte a 5 Idiomas",
-      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/19",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:01Z",
-      "shipped_at": "2026-01-08T15:03:17Z",
-      "friendly_title": "Suporte a 5 Idiomas"
-    },
-    {
-      "id": 18,
-      "title": "feat(converter): Conversor de Imagens",
-      "description": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto.\n- **Batch:** Soporte para convertir múltiples archivos en cola.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/18",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:03:00Z",
-      "shipped_at": "2026-01-08T15:03:15Z",
-      "friendly_title": "Convertidor de Imágenes"
-    },
-    {
-      "id": 17,
-      "title": "feat(converter): Conversor de Áudio",
-      "description": "### Descripción\nHerramienta para extraer audio de videos o convertir archivos de audio.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Calidad:** Opciones de bitrate (128k, 192k, 320k) y sample rate.\n- **Procesamiento:** Conversión rápida sin re-encoding innecesario cuando sea posible.\n- **Metadatos:** Preservación o edición de etiquetas ID3 básicas.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/17",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:59Z",
-      "shipped_at": "2026-01-08T15:03:13Z",
-      "friendly_title": "Convertidor de Audio"
-    },
-    {
-      "id": 16,
-      "title": "feat(converter): Conversor de Vídeo",
-      "description": "### Descripción\nHerramienta integrada para convertir vídeos entre diferentes formatos.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Utiliza FFmpeg para procesamiento de alta calidad.\n- **Opciones:** Control de calidad (CRF), selección de códec (H.264, VP9) y preservación de metadatos.\n- **UX:** Interfaz drag-and-drop para una fácil conversión de archivos locales.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/16",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:58Z",
-      "shipped_at": "2026-01-08T15:03:12Z",
-      "friendly_title": "Convertidor de Vídeo"
-    },
-    {
-      "id": 15,
-      "title": "feat(history): Histórico Persistente",
-      "description": "### Descrição\nSistema de histórico persistente para que o usuário nunca perca o controle do que baixou.\n\n### Detalhes Técnicos\n- **Persistência:** Gravação de cada download concluído no banco de dados SQLite.\n- **Dados:** Armazena URL original, título, caminho do arquivo local, data, tamanho e thumbnail.\n- **UI:** Tela dedicada \"Histórico\" com opções de busca, filtro e limpeza.\n- **Ações:** Botões para abrir o arquivo, abrir a pasta ou baixar novamente.\n\n### Status\n✅ Entregue na v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/15",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:41Z",
-      "shipped_at": "2026-01-08T15:02:57Z",
-      "friendly_title": "Histórico Persistente"
-    },
-    {
-      "id": 14,
-      "title": "feat(download): Download de Imagens",
-      "description": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/14",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:41Z",
-      "shipped_at": "2026-01-08T15:02:56Z",
-      "friendly_title": "Descargar Imágenes"
-    },
-    {
-      "id": 13,
-      "title": "feat(ui): Terminal Integrado",
-      "description": "### Descripción\nAdición de un emulador de terminal en la interfaz para la visualización en tiempo real del proceso de descarga.\n\n### Detalles Técnicos\n- **UI:** Implementación del componente `Terminal` usando React, simulando la estética clásica.\n- **Logs:** Streaming de logs del backend (stdout/stderr de los procesos) vía WebSocket/Runtime Events para el frontend.\n- **Interactividad:** Colores para diferentes niveles de log (INFO, WARN, ERROR) y barras de progreso ASCII-like.\n- **UX:** Feedback visual inmediato sobre lo que está sucediendo \"bajo el capó\".\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/13",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:40Z",
-      "shipped_at": "2026-01-08T15:02:54Z",
-      "friendly_title": "Terminal Integrado"
-    },
-    {
-      "id": 12,
-      "title": "feat(download): Melhorias no Downloader de Vídeo",
-      "description": "### Descripción\nMejoras significativas en la estabilidad y el rendimiento del descargador de vídeos (basado en yt-dlp).\n\n### Detalles Técnicos\n- **Actualización:** Mecanismo para mantener yt-dlp siempre actualizado.\n- **Formatos:** Lógica mejorada para la selección automática del mejor formato de vídeo/audio.\n- **Metadatos:** Mejor extracción y tratamiento de metadatos (título, miniatura, duración).\n- **Manejo de Errores:** Resolución de problemas comunes (throttling, cookies, restricciones regionales).\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/12",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:39Z",
-      "shipped_at": "2026-01-08T15:02:52Z",
-      "friendly_title": "Mejoras en el Descargador de Vídeos"
-    },
-    {
-      "id": 11,
-      "title": "feat(download): Suporte a Aria2c",
-      "description": "### Descripción\nIntegración con el motor de descarga Aria2c para ofrecer descargas más rápidas y estables.\n\n### Detalles Técnicos\n- **Binario:** Inclusión y orquestación del binario `aria2c` (sidecar).\n- **Segmentación:** Soporte para descargas segmentadas (múltiples conexiones por archivo) para maximizar el ancho de banda.\n- **Reanudación:** Capacidad mejorada para pausar y reanudar descargas.\n- **Fallback:** Sistema inteligente que vuelve al descargador nativo si Aria2c falla o no es compatible.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/11",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:23Z",
-      "shipped_at": "2026-01-08T15:02:38Z",
-      "friendly_title": "Soporte de descarga Aria2c"
-    },
-    {
-      "id": 10,
-      "title": "feat(core): Sistema de Erros Tipados",
-      "description": "### Descripción\nImplementación de un nuevo sistema de manejo de errores robusto y tipado.\n\n### Detalles Técnicos\n- **Estructura:** Introducción de la struct `appError` que encapsula código, mensaje y causa original.\n- **Categorización:** Definición de tipos de error claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeo automático de errores del backend a mensajes amigables (i18n) en el frontend.\n- **Logs:** Stack traces detallados y contexto adicional en los logs para facilitar la depuración.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/10",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:22Z",
-      "shipped_at": "2026-01-08T15:02:36Z",
-      "friendly_title": "Sistema de Errores Tipados"
-    },
-    {
-      "id": 9,
-      "title": "feat(storage): Migração para SQLite",
-      "description": "### Descripción\nMigración del sistema de almacenamiento de archivos JSON planos a una base de datos relacional embebida (SQLite).\n\n### Detalles Técnicos\n- **Engine:** Implementación usando `modernc.org/sqlite` (versión pure Go, sin dependencia de CGO).\n- **Schema:** Creación de tablas normalizadas para `history`, `queue` y `settings`.\n- **Concurrencia:** Soporte seguro para acceso concurrente (thread-safe).\n- **Migración:** Lógica para garantizar la integridad de los datos al actualizar desde la versión 1.x.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/9",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:20Z",
-      "shipped_at": "2026-01-08T15:02:35Z",
-      "friendly_title": "Migración a SQLite"
-    },
-    {
-      "id": 8,
-      "title": "feat(core): Reescrita Completa da Arquitetura",
-      "description": "### Descripción\nReescritura completa de la arquitectura de la aplicación para la versión 2.0.0, con el objetivo de resolver la deuda técnica y preparar el terreno para nuevas funcionalidades.\n\n### Detalles Técnicos\n- **Capas:** Adopción de una arquitectura en capas (Service-Repository-Handler) para una mejor separación de responsabilidades.\n- **Desacoplamiento:** Separación clara entre la lógica de negocio (Go) y la interfaz (React/TypeScript).\n- **Inyección de Dependencias:** Mejora en la gestión de dependencias internas.\n- **Rendimiento:** Optimización del uso de memoria y CPU a través de profiling y refactorización.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/8",
-      "labels": [
-        "enhancement",
-        "v2.0.0",
-        "shipped"
-      ],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-08T15:02:18Z",
-      "shipped_at": "2026-01-08T15:02:33Z",
-      "friendly_title": "Reescritura de la Arquitectura para v2.0.0"
+      "created_at": "2026-01-08T15:03:58Z",
+      "shipped_at": "2026-01-08T15:04:15Z",
+      "friendly_title": "Configuración de Imagen"
     }
   ]
 }
