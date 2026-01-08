@@ -14,7 +14,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import SettingsPanel from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
 import ClipboardToast from "../components/ClipboardToast";
-import DisclaimerModal from "../components/DisclaimerModal";
+import OnboardingModal from "../components/OnboardingModal";
 import QueueList from "../components/QueueList";
 import { Sidebar, Topbar, TabType } from "../components/navigation";
 import {
@@ -363,7 +363,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-surface-50 dark:bg-surface-50 text-surface-900 transition-colors duration-300">
       <ClipboardToast />
-      <DisclaimerModal onAccept={() => {}} />
+      <OnboardingModal />
 
       <div
         className={`flex-1 flex overflow-hidden ${

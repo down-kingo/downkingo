@@ -34,8 +34,8 @@ func main() {
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
-			WindowIsTranslucent:  true,
-			BackdropType:         windows.Mica,
+			WindowIsTranslucent:  false,
+			// BackdropType:         windows.Mica, // Disabled: Requires Windows 11 or specific W10 builds
 		},
 	})
 

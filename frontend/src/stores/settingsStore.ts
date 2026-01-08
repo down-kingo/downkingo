@@ -73,7 +73,7 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      theme: "dark",
+      theme: "light",
       layout: "sidebar",
       primaryColor: "blue",
       language: "en-US", // English as default
@@ -130,7 +130,7 @@ export const useSettingsStore = create<SettingsState>()(
       completeOnboarding: () => set({ hasCompletedOnboarding: true }),
     }),
     {
-      name: "kingo-settings-v2", // Incrementar versão para garantir novos defaults
+      name: "kingo-settings-v3", // v3: Light theme default + unified onboarding
     }
   )
 );

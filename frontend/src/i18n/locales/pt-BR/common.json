@@ -127,6 +127,13 @@
     "settings": "Configurações",
     "videos": "Vídeos"
   },
+  "onboarding": {
+    "title": "Bem-vindo ao DownKingo",
+    "subtitle": "Vamos configurar sua experiência",
+    "language": "Idioma",
+    "theme": "Tema",
+    "get_started": "Começar"
+  },
   "original_folder": "",
   "output_format": "",
   "preset": {
