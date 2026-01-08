@@ -628,7 +628,8 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 		})
 	}
 
-	sortItems(items)
+	// Preservation of natural order (from CDN or GitHub Project View)
+	// sortItems(items)
 	return items, nil
 }
 

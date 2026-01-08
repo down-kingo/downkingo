@@ -295,8 +295,8 @@ export default function Roadmap() {
       </header>
 
       {/* Kanban Grid & Details View Container */}
-      <div className="flex-1 p-6 overflow-hidden relative">
-        <div className="grid grid-cols-4 gap-6 h-full w-full max-w-[1920px] mx-auto">
+      <div className="flex-1 p-6 overflow-hidden relative min-h-0">
+        <div className="grid grid-cols-4 gap-6 h-full w-full max-w-[1920px] mx-auto min-h-0">
           {COLUMNS.map((col) => {
             const colItems = getItemsByStatus(col.id);
             const Icon = col.icon;
@@ -304,9 +304,9 @@ export default function Roadmap() {
             return (
               <div
                 key={col.id}
-                className="flex flex-col h-full min-w-0 group/col relative bg-surface-50/50 dark:bg-white/5 rounded-2xl border border-surface-200/50 dark:border-white/5 p-2"
+                className="flex flex-col h-full min-h-0 min-w-0 group/col relative bg-surface-50/50 dark:bg-white/5 rounded-2xl border border-surface-200/50 dark:border-white/5 p-2"
               >
-                <div className="flex items-center justify-between mb-4 px-3 pt-3">
+                <div className="flex items-center justify-between mb-4 px-3 pt-3 shrink-0">
                   <div className="flex items-center gap-3">
                     <div
                       className={`p-2 rounded-lg bg-surface-100 dark:bg-black/20 ${col.text} ${col.bg} border border-transparent dark:border-white/5`}
@@ -328,8 +328,9 @@ export default function Roadmap() {
                 </div>
 
                 <div
-                  className="flex-1 overflow-y-auto custom-scrollbar px-1 space-y-3 relative pb-2"
+                  className="flex-1 overflow-y-auto custom-scrollbar px-1 space-y-3 relative pb-2 min-h-0"
                   data-lenis-prevent
+                  onWheel={(e) => e.stopPropagation()}
                 >
                   {isLoading && items.length === 0 ? (
                     [1, 2, 3].map((i) => (
@@ -598,6 +599,7 @@ function RoadmapDetail({
       <div
         className="h-full w-full overflow-y-auto custom-scrollbar"
         data-lenis-prevent
+        onWheel={(e) => e.stopPropagation()}
       >
         {/* Container Central */}
         <div className="max-w-3xl mx-auto px-6 md:px-12 pb-12 pt-20 md:pt-24 flex flex-col items-center text-center">

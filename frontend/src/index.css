@@ -139,25 +139,37 @@
     font-family: "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    overflow: hidden;
   }
 
   body {
     @apply bg-surface-50 text-surface-900 transition-colors duration-300;
     --wails-draggable: no-drag;
+    height: 100%;
+    overflow: hidden;
   }
 
+  #root {
+    height: 100%;
+  }
+
+  /* Global Scrollbar (Webkit) */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-surface-200 dark:bg-surface-700 rounded-full;
+    @apply bg-surface-300 dark:bg-surface-700 rounded-full border-[2px] border-transparent bg-clip-content;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-surface-300 dark:bg-surface-600;
+    @apply bg-surface-400 dark:bg-surface-600;
+  }
+  ::-webkit-scrollbar-corner {
+    @apply bg-transparent;
   }
 }
 
@@ -348,5 +360,35 @@
   /* === Tooltip === */
   .tooltip {
     @apply absolute z-50 px-2 py-1 text-xs font-medium text-white bg-black rounded shadow-sm opacity-0 invisible transition-all;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.surface.300") transparent;
+  }
+  .dark .custom-scrollbar {
+    scrollbar-color: theme("colors.surface.700") transparent;
+  }
+
+  /* Webkit override for custom-scrollbar class just in case global isn't enough */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-surface-300 dark:bg-surface-600 rounded-full;
+  }
+
+  /* Utility to hide scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

@@ -24,7 +24,7 @@ import (
 )
 
 // Version is set at build time via ldflags
-var Version = "0.1.0"
+var Version = "2.0.0"
 
 // App struct is the Facade that exposes methods to the Frontend.
 type App struct {

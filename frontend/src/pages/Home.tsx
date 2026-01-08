@@ -389,7 +389,7 @@ export default function Home() {
         )}
 
         {/* Main Content Wrapper */}
-        <main className="flex-1 flex flex-col overflow-hidden relative w-full">
+        <main className="flex-1 flex flex-col overflow-hidden relative w-full min-h-0">
           <AnimatePresence mode="wait">
             {activeTab === "home" && (
               <TabContent key="home">

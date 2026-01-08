@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	GitHubOwner = "Capman002"
-	GitHubRepo  = "magpie"
+	GitHubOwner = "down-kingo"
+	GitHubRepo  = "downkingo"
 )
 
 // HTTP client with timeout for API calls
@@ -177,7 +177,7 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	}
 	defer resp.Body.Close()
 
-	tempPath := filepath.Join(os.TempDir(), "magpie-update.exe")
+	tempPath := filepath.Join(os.TempDir(), "downkingo-update.exe")
 	out, err := os.Create(tempPath)
 	if err != nil {
 		return err

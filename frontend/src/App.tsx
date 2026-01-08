@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import OnboardingModal from "./components/OnboardingModal";
+import UpdateModal from "./components/UpdateModal";
 
 // Payload enviado pelo backend no evento app:ready
 interface AppReadyPayload {
@@ -164,6 +165,7 @@ function App() {
   return (
     <>
       <OnboardingModal />
+      <UpdateModal />
       <BrowserRouter
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >

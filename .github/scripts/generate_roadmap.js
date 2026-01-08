@@ -342,13 +342,8 @@ async function main() {
   fs.writeFileSync("roadmap.cache.json", JSON.stringify(newCache, null, 2));
   console.log(`💾 Saved MASTER CACHE: ${Object.keys(newCache).length} items`);
 
-  // 4. Sort
-  items.sort((a, b) => {
-    if (a.status === "shipped" && b.status === "shipped") return b.id - a.id;
-    if (a.status === "shipped") return 1;
-    if (b.status === "shipped") return -1;
-    return b.votes - a.votes;
-  });
+  // 4. Use GitHub natural order (preserves project view order)
+  // No manual sort here to keep GitHub sequence
 
   // 5. Generate Output Files (One per language)
   const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
