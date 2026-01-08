@@ -234,7 +234,7 @@ Detecção inteligente de links com algoritmo de Adaptive Backoff para economiza
 
 ## 📋 Resumo Rápido (Copiar & Colar)
 
-```
+```text
 feat(core): Reescrita Completa da Arquitetura
 feat(storage): Migração para SQLite
 feat(core): Sistema de Erros Tipados

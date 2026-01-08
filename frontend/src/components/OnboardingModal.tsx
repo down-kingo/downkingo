@@ -16,6 +16,7 @@ import {
   AppColor,
 } from "../stores/settingsStore";
 import { useTranslation, Trans } from "react-i18next";
+import { Logo } from "./Logo";
 
 // Language options with country codes for flags
 const LANGUAGES: { code: Language; name: string; country: string }[] = [
@@ -89,9 +90,7 @@ export default function OnboardingModal() {
           <div className="p-8">
             {/* Header */}
             <div className="flex flex-col items-center text-center mb-8">
-              <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/20 rounded-full flex items-center justify-center mb-3 ring-1 ring-primary-100 dark:ring-primary-900/30">
-                <IconDownload className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-              </div>
+              <Logo size={56} className="mb-3 shadow-xl shadow-black/20" />
               <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-display">
                 {t("onboarding.title", "Welcome to DownKingo")}
               </h2>

@@ -15,6 +15,7 @@ import {
 } from "../../wailsjs/go/main/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import type { updater } from "../../wailsjs/go/models";
+import { Logo } from "./Logo";
 
 export default function UpdateModal() {
   const [updateInfo, setUpdateInfo] = useState<updater.UpdateInfo | null>(null);
@@ -102,9 +103,7 @@ export default function UpdateModal() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
             <div className="flex items-start gap-4 relative z-10">
-              <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600 dark:text-primary-400">
-                <IconRocket size={24} stroke={1.5} />
-              </div>
+              <Logo size={48} className="shadow-lg shadow-black/20" />
               <div>
                 <h2 className="text-xl font-bold text-surface-900 dark:text-white">
                   Nova Versão Disponível

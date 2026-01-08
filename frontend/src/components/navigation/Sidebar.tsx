@@ -9,6 +9,7 @@ import {
   IconMap2,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+import { Logo } from "../Logo";
 
 export type TabType =
   | "home"
@@ -42,23 +43,7 @@ export default function Sidebar({
       <div className="p-6 pb-2">
         <div className="flex items-center gap-3 select-none">
           {/* Ícone K customizado - Marca Proprietária */}
-          <div className="w-10 h-10 rounded-xl bg-surface-900 dark:bg-white flex items-center justify-center shadow-lg shadow-surface-900/20 dark:shadow-white/10 text-white dark:text-black relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="relative z-10 transform group-hover:scale-105 transition-transform duration-300 group-hover:text-white"
-            >
-              <path d="M6 3v18" />
-              <path d="M20 4L8 12l12 8" />
-            </svg>
-          </div>
+          <Logo size={40} className="shadow-lg shadow-black/20" />
 
           {/* Logotipo Tipográfico */}
           <div className="flex flex-col -space-y-0.5">
