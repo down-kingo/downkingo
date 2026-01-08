@@ -1,20 +1,14 @@
 {
   "5": {
     "original_title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-    "original_desc_hash": "##ContextoAtualmente,apósbaixarumvídeoouimagemnoKingo(PC),ousuárionãotemumaformana_2065",
+    "original_desc_hash": "##ContextoAtualmente,apósbaixarumvídeoouimagemnoKingo(PC),ousuárion��otemumaforman_2066",
     "title_i18n": {
-      "pt-BR": "Compartilhamento Local via QR Code (Magic Share)",
-      "en-US": "Local Sharing via QR Code (Magic Share)",
-      "es-ES": "Compartir Local vía Código QR (Magic Share)",
-      "fr-FR": "Partage Local via QR Code (Magic Share)",
-      "de-DE": "Lokales Teilen via QR-Code (Magic Share)"
+      "en-US": "Compartilhamento Local via QR Code (Magic Share)",
+      "pt-BR": "Compartilhamento Local via QR Code (Magic Share)"
     },
     "description_i18n": {
-      "pt-BR": "## Contexto\nAtualmente, após baixar um vídeo ou imagem no Kingo (PC), o usuário não tem uma forma nativa e rápida de passar esse conteúdo para o celular. Depender de nuvem (Google Drive/WhatsApp) é lento e consome banda de internet desnecessariamente.\n## Motivação\nCriar uma experiência de \"fricção zero\" onde o usuário apenas aponta a câmera do celular para o Kingo e o download começa instantaneamente via rede local (P2P), aproveitando a velocidade máxima do Wi-Fi.\n## Problema\nTransferir arquivos grandes do PC para dispositivos móveis é um processo chato que geralmente envolve cabos USB ou uploads para serviços externos, o que mata a agilidade de um app de download.\n## Proposta Técnica\nImplementar um **Servidor de Transmissão Efêmero** no Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir um servidor web temporário em uma porta aleatória.\n   - Implementar um sistema de **IP Discovery** para identificar o endereço do PC na rede local (ex: 192.168.x.x).\n   - Servir o arquivo di",
-      "en-US": "## Context\nCurrently, after downloading a video or image on Kingo (PC), the user doesn't have a native and quick way to transfer this content to their phone. Relying on the cloud (Google Drive/WhatsApp) is slow and unnecessarily consumes internet bandwidth.\n## Motivation\nCreate a \"zero friction\" experience where the user just points their phone's camera at Kingo and the download starts instantly via local network (P2P), taking advantage of the maximum Wi-Fi speed.\n## Problem\nTransferring large files from PC to mobile devices is a tedious process that usually involves USB cables or uploads to external services, which kills the agility of a download app.\n## Technical Proposal\nImplement an **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Use `net/http` to start a temporary web server on a random port.\n   - Implement an **IP Discovery** system to identify the PC's address on the local network (e.g., 192.168.x.x).\n   - Serve the file di",
-      "es-ES": "## Contexto\nActualmente, después de descargar un video o imagen en Kingo (PC), el usuario no tiene una forma nativa y rápida de pasar este contenido al celular. Depender de la nube (Google Drive/WhatsApp) es lento y consume banda ancha innecesariamente.\n## Motivación\nCrear una experiencia de \"fricción cero\" donde el usuario solo apunta la cámara del celular a Kingo y la descarga comienza instantáneamente vía red local (P2P), aprovechando la velocidad máxima del Wi-Fi.\n## Problema\nTransferir archivos grandes de la PC a dispositivos móviles es un proceso tedioso que generalmente involucra cables USB o subidas a servicios externos, lo que mata la agilidad de una app de descarga.\n## Propuesta Técnica\nImplementar un **Servidor de Transmisión Efímero** en Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir un servidor web temporal en un puerto aleatorio.\n   - Implementar un sistema de **IP Discovery** para identificar la dirección de la PC en la red local (ej: 192.168.x.x).\n   - Servir el archivo di",
-      "fr-FR": "## Contexte\nActuellement, après avoir téléchargé une vidéo ou une image sur Kingo (PC), l'utilisateur n'a pas de moyen natif et rapide de transférer ce contenu sur son téléphone. Dépendre du cloud (Google Drive/WhatsApp) est lent et consomme inutilement de la bande passante internet.\n## Motivation\nCréer une expérience \"zéro friction\" où l'utilisateur pointe simplement l'appareil photo de son téléphone vers Kingo et le téléchargement commence instantanément via le réseau local (P2P), en tirant parti de la vitesse maximale du Wi-Fi.\n## Problème\nTransférer des fichiers volumineux d'un PC vers des appareils mobiles est un processus fastidieux qui implique généralement des câbles USB ou des téléchargements vers des services externes, ce qui tue l'agilité d'une application de téléchargement.\n## Proposition Technique\nImplémenter un **Serveur de Transmission Éphémère** en Go :\n1. **Backend (Go):** \n   - Utiliser `net/http` pour lancer un serveur web temporaire sur un port aléatoire.\n   - Implémenter un système de **IP Discovery** pour identifier l'adresse du PC sur le réseau local (ex : 192.168.x.x).\n   - Servir le fichier di",
-      "de-DE": "## Kontext\nDerzeit hat der Benutzer nach dem Herunterladen eines Videos oder Bildes auf Kingo (PC) keine native und schnelle Möglichkeit, diesen Inhalt auf sein Telefon zu übertragen. Die Nutzung der Cloud (Google Drive/WhatsApp) ist langsam und verbraucht unnötig Internetbandbreite.\n## Motivation\nErstellen Sie eine \"reibungslose\" Erfahrung, bei der der Benutzer einfach die Kamera seines Telefons auf Kingo richtet und der Download sofort über das lokale Netzwerk (P2P) beginnt, wobei die maximale Wi-Fi-Geschwindigkeit genutzt wird.\n## Problem\nDas Übertragen großer Dateien vom PC auf mobile Geräte ist ein mühsamer Prozess, der normalerweise USB-Kabel oder Uploads zu externen Diensten beinhaltet, was die Agilität einer Download-App beeinträchtigt.\n## Technischer Vorschlag\nImplementieren Sie einen **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Verwenden Sie `net/http`, um einen temporären Webserver auf einem zufälligen Port zu starten.\n   - Implementieren Sie ein **IP Discovery** System, um die Adresse des PCs im lokalen Netzwerk zu identifizieren (z. B. 192.168.x.x).\n   - Servieren Sie die Datei di"
+      "en-US": "## Contexto\nAtualmente, após baixar um vídeo ou imagem no Kingo (PC), o usuário n��o tem uma forma nativa e rápida de passar esse conteúdo para o celular. Depender de nuvem (Google Drive/WhatsApp) é lento e consome banda de internet desnecessariamente.\n## Motivação\nCriar uma experiência de \"fricção zero\" onde o usuário apenas aponta a câmera do celular para o Kingo e o download começa instantaneamente via rede local (P2P), aproveitando a velocidade máxima do Wi-Fi.\n## Problema\nTransferir arquivos grandes do PC para dispositivos móveis é um processo chato que geralmente envolve cabos USB ou uploads para serviços externos, o que mata a agilidade de um app de download.\n## Proposta Técnica\nImplementar um **Servidor de Transmissão Efêmero** no Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir um servidor web temporário em uma porta aleatória.\n   - Implementar um sistema de **IP Discovery** para identificar o endereço do PC na rede local (ex: 192.168.x.x).\n   - Servir o arquivo diretamente do disco via Streaming (Chunked Transfer Encoding).\n2. **Segurança:**\n   - Gerar URLs únicas com tokens de uso único (Single-use tokens) que expiram em X minutos ou após o download.\n3. **Frontend (React):**\n   - Exibir um modal elegante com o QR Code gerado dinamicamente usando a URL assinada.\n## Dependências\n- Biblioteca de geração de QR Code no frontend (ex: `qrcode.react`).\n- Nenhuma dependência pesada no backend (pure Go standard library).\n## Tarefas\n- [ ] Criar serviço de rede para descoberta de IP local (ignorar VirtualBox/Docker IPs).\n- [ ] Implementar Handler HTTP para servir arquivos com suporte a resumo (Range Requests).\n- [ ] Implementar sistema de tokens de segurança para acesso temporário.\n- [ ] Adicionar botão \"Compartilhar com Celular\" no histórico de downloads.\n- [ ] Criar interface Visual com animações (Framer Motion) para exibição do QR Code.\n## Referências\n- Go `net` package documentation.\n- MDN: [Using HTTP Range Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) (essencial para vídeos grandes).",
+      "pt-BR": "## Contexto\nAtualmente, após baixar um vídeo ou imagem no Kingo (PC), o usuário n��o tem uma forma nativa e rápida de passar esse conteúdo para o celular. Depender de nuvem (Google Drive/WhatsApp) é lento e consome banda de internet desnecessariamente.\n## Motivação\nCriar uma experiência de \"fricção zero\" onde o usuário apenas aponta a câmera do celular para o Kingo e o download começa instantaneamente via rede local (P2P), aproveitando a velocidade máxima do Wi-Fi.\n## Problema\nTransferir arquivos grandes do PC para dispositivos móveis é um processo chato que geralmente envolve cabos USB ou uploads para serviços externos, o que mata a agilidade de um app de download.\n## Proposta Técnica\nImplementar um **Servidor de Transmissão Efêmero** no Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir um servidor web temporário em uma porta aleatória.\n   - Implementar um sistema de **IP Discovery** para identificar o endereço do PC na rede local (ex: 192.168.x.x).\n   - Servir o arquivo diretamente do disco via Streaming (Chunked Transfer Encoding).\n2. **Segurança:**\n   - Gerar URLs únicas com tokens de uso único (Single-use tokens) que expiram em X minutos ou após o download.\n3. **Frontend (React):**\n   - Exibir um modal elegante com o QR Code gerado dinamicamente usando a URL assinada.\n## Dependências\n- Biblioteca de geração de QR Code no frontend (ex: `qrcode.react`).\n- Nenhuma dependência pesada no backend (pure Go standard library).\n## Tarefas\n- [ ] Criar serviço de rede para descoberta de IP local (ignorar VirtualBox/Docker IPs).\n- [ ] Implementar Handler HTTP para servir arquivos com suporte a resumo (Range Requests).\n- [ ] Implementar sistema de tokens de segurança para acesso temporário.\n- [ ] Adicionar botão \"Compartilhar com Celular\" no histórico de downloads.\n- [ ] Criar interface Visual com animações (Framer Motion) para exibição do QR Code.\n## Referências\n- Go `net` package documentation.\n- MDN: [Using HTTP Range Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) (essencial para vídeos grandes)."
     }
   },
   "6": {
@@ -51,6 +45,444 @@
       "es-ES": "## Contexto\nKingo ha madurado y su arquitectura actual en Wails v2 está empezando a limitar la experiencia de \"App Nativo\". La migración a la v3 Alpha/Beta es el paso necesario para transformar Kingo en una utilidad de sistema robusta y multiplataforma.\n## Motivación\nv3 trae soporte primario para **Multi-window**, lo cual es crucial para nuestro sistema de notificaciones y overlays. Además, la nueva API de Wails v3 está mucho más cerca de las capacidades nativas del SO (Windows/Mac/Linux), permitiendo una integración profunda con el sistema que v2 no logra sin \"hacks\".\n## Problema Actual (Limitaciones de v2)\n1. **Notificaciones Limitadas:** Actualmente nuestros Toasts (como el de Clipboard) viven \"dentro\" de la ventana principal. Si la app está minimizada, el usuario no ve nada.\n2. **Ciclo de Vida:** El control de Single Instance y eventos del sistema (como suspensión/reanudación) son menos elegantes en v2.\n3. **Tray y Menús:** v3 ofrece un control mucho superior sobre la bandeja del sistema (System Tray) y menús de",
       "fr-FR": "## Contexte\nKingo a mûri et son architecture actuelle dans Wails v2 commence à limiter l'expérience \"App Natif\". La migration vers la v3 Alpha/Beta est l'étape nécessaire pour transformer Kingo en un utilitaire système robuste et multiplateforme.\n## Motivation\nv3 apporte un support principal pour **Multi-window**, ce qui est crucial pour notre système de notifications et d'overlays. De plus, la nouvelle API de Wails v3 est beaucoup plus proche des capacités natives du système d'exploitation (Windows/Mac/Linux), permettant une intégration profonde avec le système que v2 n'atteint pas sans \"hacks\".\n## Problème actuel (Limitations de la v2)\n1. **Notifications Limitées:** Actuellement, nos Toasts (comme celui du presse-papiers) vivent \"à l'intérieur\" de la fenêtre principale. Si l'application est minimisée, l'utilisateur ne voit rien.\n2. **Cycle de vie:** Le contrôle de Single Instance et des événements système (comme la suspension/reprise) est moins élégant dans v2.\n3. **Tray et Menus:** v3 offre un contrôle bien supérieur sur le plateau système (System Tray) et les menus de",
       "de-DE": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, die \"Native App\"-Erfahrung einzuschränken. Die Migration zu v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes und plattformübergreifendes Systemdienstprogramm zu verwandeln.\n## Motivation\nv3 bringt primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus ist die neue Wails v3 API viel näher an den nativen Fähigkeiten des Betriebssystems (Windows/Mac/Linux), was eine tiefgreifende Integration mit dem System ermöglicht, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (v2-Einschränkungen)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit leben unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Steuerung von Single Instance und Systemereignissen (wie Anhalten/Fortsetzen) ist in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine viel bessere Kontrolle über das System-Tray und Menüs von"
+    }
+  },
+  "8": {
+    "original_title": "feat(core): Reescrita Completa da Arquitetura",
+    "original_desc_hash": "###DescriçãoReescritacompletadaarquiteturadoaplicativoparaaversão2.0.0,visandoresolver_618",
+    "title_i18n": {
+      "pt-BR": "Reescrita da Arquitetura para v2.0.0",
+      "en-US": "Rewrite of Architecture for v2.0.0",
+      "es-ES": "Reescritura de la Arquitectura para v2.0.0",
+      "fr-FR": "Réécriture de l'Architecture pour v2.0.0",
+      "de-DE": "Neuschreibung der Architektur für v2.0.0"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nReescrita completa da arquitetura do aplicativo para a versão 2.0.0, visando resolver dívidas técnicas e preparar o terreno para novas funcionalidades.\n\n### Detalhes Técnicos\n- **Camadas:** Adoção de arquitetura em camadas (Service-Repository-Handler) para melhor separação de responsabilidades.\n- **Desacoplamento:** Separação clara entre a lógica de negócio (Go) e a interface (React/TypeScript).\n- **Injeção de Dependências:** Melhoria no gerenciamento de dependências internas.\n- **Performance:** Otimização de uso de memória e CPU através de profiling e refatoração.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nComplete rewrite of the application architecture for version 2.0.0, aiming to resolve technical debt and prepare the ground for new features.\n\n### Technical Details\n- **Layers:** Adoption of a layered architecture (Service-Repository-Handler) for better separation of responsibilities.\n- **Decoupling:** Clear separation between business logic (Go) and the interface (React/TypeScript).\n- **Dependency Injection:** Improved management of internal dependencies.\n- **Performance:** Optimization of memory and CPU usage through profiling and refactoring.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nReescritura completa de la arquitectura de la aplicación para la versión 2.0.0, con el objetivo de resolver la deuda técnica y preparar el terreno para nuevas funcionalidades.\n\n### Detalles Técnicos\n- **Capas:** Adopción de una arquitectura en capas (Service-Repository-Handler) para una mejor separación de responsabilidades.\n- **Desacoplamiento:** Separación clara entre la lógica de negocio (Go) y la interfaz (React/TypeScript).\n- **Inyección de Dependencias:** Mejora en la gestión de dependencias internas.\n- **Rendimiento:** Optimización del uso de memoria y CPU a través de profiling y refactorización.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nRéécriture complète de l'architecture de l'application pour la version 2.0.0, visant à résoudre la dette technique et à préparer le terrain pour de nouvelles fonctionnalités.\n\n### Détails Techniques\n- **Couches:** Adoption d'une architecture en couches (Service-Repository-Handler) pour une meilleure séparation des responsabilités.\n- **Découplage:** Séparation claire entre la logique métier (Go) et l'interface (React/TypeScript).\n- **Injection de Dépendances:** Amélioration de la gestion des dépendances internes.\n- **Performance:** Optimisation de l'utilisation de la mémoire et du CPU grâce au profiling et à la refactorisation.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nVollständige Neuschreibung der Anwendungsarchitektur für Version 2.0.0, mit dem Ziel, technische Schulden zu begleichen und die Grundlage für neue Funktionen zu schaffen.\n\n### Technische Details\n- **Schichten:** Einführung einer geschichteten Architektur (Service-Repository-Handler) für eine bessere Trennung der Verantwortlichkeiten.\n- **Entkopplung:** Klare Trennung zwischen Geschäftslogik (Go) und der Benutzeroberfläche (React/TypeScript).\n- **Dependency Injection:** Verbesserte Verwaltung interner Abhängigkeiten.\n- **Performance:** Optimierung der Speicher- und CPU-Auslastung durch Profiling und Refactoring.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "9": {
+    "original_title": "feat(storage): Migração para SQLite",
+    "original_desc_hash": "###DescriçãoMigraçãodosistemadearmazenamentodearquivosJSONplanosparaumbancodedadosre_526",
+    "title_i18n": {
+      "pt-BR": "Migração para SQLite",
+      "en-US": "Migration to SQLite",
+      "es-ES": "Migración a SQLite",
+      "fr-FR": "Migration vers SQLite",
+      "de-DE": "Migration zu SQLite"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nMigração do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nMigration from flat JSON file storage to an embedded relational database (SQLite).\n\n### Technical Details\n- **Engine:** Implementation using `modernc.org/sqlite` (pure Go version, no CGO dependency).\n- **Schema:** Creation of normalized tables for `history`, `queue`, and `settings`.\n- **Concurrency:** Safe support for concurrent access (thread-safe).\n- **Migration:** Logic to ensure data integrity when updating from version 1.x.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nMigración del sistema de almacenamiento de archivos JSON planos a una base de datos relacional embebida (SQLite).\n\n### Detalles Técnicos\n- **Engine:** Implementación usando `modernc.org/sqlite` (versión pure Go, sin dependencia de CGO).\n- **Schema:** Creación de tablas normalizadas para `history`, `queue` y `settings`.\n- **Concurrencia:** Soporte seguro para acceso concurrente (thread-safe).\n- **Migración:** Lógica para garantizar la integridad de los datos al actualizar desde la versión 1.x.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nMigration du système de stockage de fichiers JSON plats vers une base de données relationnelle embarquée (SQLite).\n\n### Détails Techniques\n- **Engine:** Implémentation utilisant `modernc.org/sqlite` (version pure Go, sans dépendance CGO).\n- **Schema:** Création de tables normalisées pour `history`, `queue` et `settings`.\n- **Concurrence:** Support sûr pour l'accès concurrent (thread-safe).\n- **Migration:** Logique pour assurer l'intégrité des données lors de la mise à jour depuis la version 1.x.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nMigration vom flachen JSON-Dateispeicher zu einer eingebetteten relationalen Datenbank (SQLite).\n\n### Technische Details\n- **Engine:** Implementierung mit `modernc.org/sqlite` (reine Go-Version, keine CGO-Abhängigkeit).\n- **Schema:** Erstellung normalisierter Tabellen für `history`, `queue` und `settings`.\n- **Concurrency:** Sichere Unterstützung für gleichzeitigen Zugriff (thread-safe).\n- **Migration:** Logik zur Gewährleistung der Datenintegrität beim Aktualisieren von Version 1.x.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "10": {
+    "original_title": "feat(core): Sistema de Erros Tipados",
+    "original_desc_hash": "###DescriçãoImplementaçãodeumnovosistemadetratamentodeerrosrobustoetipado.###Detalhe_560",
+    "title_i18n": {
+      "pt-BR": "Sistema de Erros Tipados",
+      "en-US": "Typed Error System",
+      "es-ES": "Sistema de Errores Tipados",
+      "fr-FR": "Système d'Erreurs Typées",
+      "de-DE": "Typisiertes Fehlersystem"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nImplementação de um novo sistema de tratamento de erros robusto e tipado.\n\n### Detalhes Técnicos\n- **Estrutura:** Introdução da struct `appError` que encapsula código, mensagem e causa original.\n- **Categorização:** Definição de tipos de erro claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeamento automático de erros do backend para mensagens amigáveis (i18n) no frontend.\n- **Logs:** Stack traces detalhados e contexto adicional nos logs para facilitar debugging.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nImplementation of a new robust and typed error handling system.\n\n### Technical Details\n- **Structure:** Introduction of the `appError` struct that encapsulates code, message, and original cause.\n- **Categorization:** Definition of clear error types (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Automatic mapping of backend errors to user-friendly messages (i18n) in the frontend.\n- **Logs:** Detailed stack traces and additional context in the logs for easier debugging.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nImplementación de un nuevo sistema de manejo de errores robusto y tipado.\n\n### Detalles Técnicos\n- **Estructura:** Introducción de la struct `appError` que encapsula código, mensaje y causa original.\n- **Categorización:** Definición de tipos de error claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeo automático de errores del backend a mensajes amigables (i18n) en el frontend.\n- **Logs:** Stack traces detallados y contexto adicional en los logs para facilitar la depuración.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nImplémentation d'un nouveau système de gestion des erreurs robuste et typé.\n\n### Détails Techniques\n- **Structure:** Introduction de la struct `appError` qui encapsule le code, le message et la cause d'origine.\n- **Catégorisation:** Définition de types d'erreurs clairs (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mappage automatique des erreurs du backend vers des messages conviviaux (i18n) dans le frontend.\n- **Logs:** Stack traces détaillées et contexte supplémentaire dans les logs pour faciliter le débogage.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nImplementierung eines neuen, robusten und typisierten Fehlerbehandlungssystems.\n\n### Technische Details\n- **Struktur:** Einführung der `appError`-Struktur, die Code, Nachricht und ursprüngliche Ursache kapselt.\n- **Kategorisierung:** Definition klarer Fehlertypen (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Automatische Zuordnung von Backend-Fehlern zu benutzerfreundlichen Nachrichten (i18n) im Frontend.\n- **Logs:** Detaillierte Stack Traces und zusätzlicher Kontext in den Logs zur Erleichterung des Debuggings.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "11": {
+    "original_title": "feat(download): Suporte a Aria2c",
+    "original_desc_hash": "###DescriçãoIntegraçãocomomotordedownloadAria2cparaoferecerdownloadsmaisrápidoseestáv_528",
+    "title_i18n": {
+      "pt-BR": "Suporte a Aria2c para downloads",
+      "en-US": "Aria2c download support",
+      "es-ES": "Soporte de descarga Aria2c",
+      "fr-FR": "Support de téléchargement Aria2c",
+      "de-DE": "Aria2c Download-Unterstützung"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nIntegração com o motor de download Aria2c para oferecer downloads mais rápidos e estáveis.\n\n### Detalhes Técnicos\n- **Binário:** Inclusão e orquestração do binário `aria2c` (sidecar).\n- **Segmentação:** Suporte a downloads segmentados (múltiplas conexões por arquivo) para maximizar largura de banda.\n- **Resumo:** Capacidade aprimorada de pausar e retomar downloads.\n- **Fallback:** Sistema inteligente que reverte para o downloader nativo se o Aria2c falhar ou não for suportado.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nIntegration with the Aria2c download engine to offer faster and more stable downloads.\n\n### Technical Details\n- **Binary:** Inclusion and orchestration of the `aria2c` binary (sidecar).\n- **Segmentation:** Support for segmented downloads (multiple connections per file) to maximize bandwidth.\n- **Resume:** Enhanced ability to pause and resume downloads.\n- **Fallback:** Intelligent system that reverts to the native downloader if Aria2c fails or is not supported.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nIntegración con el motor de descarga Aria2c para ofrecer descargas más rápidas y estables.\n\n### Detalles Técnicos\n- **Binario:** Inclusión y orquestación del binario `aria2c` (sidecar).\n- **Segmentación:** Soporte para descargas segmentadas (múltiples conexiones por archivo) para maximizar el ancho de banda.\n- **Reanudación:** Capacidad mejorada para pausar y reanudar descargas.\n- **Fallback:** Sistema inteligente que vuelve al descargador nativo si Aria2c falla o no es compatible.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nIntégration avec le moteur de téléchargement Aria2c pour offrir des téléchargements plus rapides et plus stables.\n\n### Détails techniques\n- **Binaire :** Inclusion et orchestration du binaire `aria2c` (sidecar).\n- **Segmentation :** Prise en charge des téléchargements segmentés (plusieurs connexions par fichier) pour maximiser la bande passante.\n- **Reprise :** Capacité améliorée à mettre en pause et à reprendre les téléchargements.\n- **Repli :** Système intelligent qui revient au téléchargeur natif si Aria2c échoue ou n'est pas pris en charge.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nIntegration mit der Aria2c-Download-Engine, um schnellere und stabilere Downloads anzubieten.\n\n### Technische Details\n- **Binärdatei:** Einbindung und Orchestrierung der `aria2c`-Binärdatei (Sidecar).\n- **Segmentierung:** Unterstützung für segmentierte Downloads (mehrere Verbindungen pro Datei) zur Maximierung der Bandbreite.\n- **Fortsetzen:** Verbesserte Möglichkeit, Downloads anzuhalten und fortzusetzen.\n- **Fallback:** Intelligentes System, das auf den nativen Downloader zurückgreift, wenn Aria2c fehlschlägt oder nicht unterstützt wird.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "12": {
+    "original_title": "feat(download): Melhorias no Downloader de Vídeo",
+    "original_desc_hash": "###DescriçãoMelhoriassignificativasnaestabilidadeeperformancedodownloaderdevídeos(basead_520",
+    "title_i18n": {
+      "pt-BR": "Downloader de Vídeo: Melhorias",
+      "en-US": "Video Downloader Improvements",
+      "es-ES": "Mejoras en el Descargador de Vídeos",
+      "fr-FR": "Améliorations du Téléchargeur de Vidéos",
+      "de-DE": "Verbesserungen am Video-Downloader"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nSignificant improvements to the stability and performance of the video downloader (based on yt-dlp).\n\n### Technical Details\n- **Update:** Mechanism to keep yt-dlp always updated.\n- **Formats:** Improved logic for automatic selection of the best video/audio format.\n- **Metadata:** Better extraction and handling of metadata (title, thumbnail, duration).\n- **Error Handling:** Resolution of common problems (throttling, cookies, regional restrictions).\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nMejoras significativas en la estabilidad y el rendimiento del descargador de vídeos (basado en yt-dlp).\n\n### Detalles Técnicos\n- **Actualización:** Mecanismo para mantener yt-dlp siempre actualizado.\n- **Formatos:** Lógica mejorada para la selección automática del mejor formato de vídeo/audio.\n- **Metadatos:** Mejor extracción y tratamiento de metadatos (título, miniatura, duración).\n- **Manejo de Errores:** Resolución de problemas comunes (throttling, cookies, restricciones regionales).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nAméliorations significatives de la stabilité et des performances du téléchargeur de vidéos (basé sur yt-dlp).\n\n### Détails Techniques\n- **Mise à jour:** Mécanisme pour maintenir yt-dlp toujours à jour.\n- **Formats:** Logique améliorée pour la sélection automatique du meilleur format vidéo/audio.\n- **Métadonnées:** Meilleure extraction et traitement des métadonnées (titre, miniature, durée).\n- **Gestion des erreurs:** Résolution des problèmes courants (throttling, cookies, restrictions régionales).\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nErhebliche Verbesserungen der Stabilität und Leistung des Video-Downloaders (basierend auf yt-dlp).\n\n### Technische Details\n- **Aktualisierung:** Mechanismus, um yt-dlp immer auf dem neuesten Stand zu halten.\n- **Formate:** Verbesserte Logik für die automatische Auswahl des besten Video-/Audioformats.\n- **Metadaten:** Bessere Extraktion und Verarbeitung von Metadaten (Titel, Miniaturansicht, Dauer).\n- **Fehlerbehandlung:** Lösung häufiger Probleme (Throttling, Cookies, regionale Einschränkungen).\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "13": {
+    "original_title": "feat(ui): Terminal Integrado",
+    "original_desc_hash": "###DescriçãoAdiçãodeumemuladordeterminalnainterfaceparavisualizaçãoemtemporealdoproc_583",
+    "title_i18n": {
+      "pt-BR": "Terminal Integrado",
+      "en-US": "Integrated Terminal",
+      "es-ES": "Terminal Integrado",
+      "fr-FR": "Terminal Intégré",
+      "de-DE": "Integrierter Terminal"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nAdição de um emulador de terminal na interface para visualização em tempo real do processo de download.\n\n### Detalhes Técnicos\n- **UI:** Implementação de componente `Terminal` usando React, simulando a estética clássica.\n- **Logs:** Streaming de logs do backend (stdout/stderr dos processos) via WebSocket/Runtime Events para o frontend.\n- **Interatividade:** Cores para diferentes níveis de log (INFO, WARN, ERROR) e barras de progresso ASCII-like.\n- **UX:** Feedback visual imediato sobre o que está acontecendo \"por baixo dos panos\".\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nAdding a terminal emulator to the interface for real-time visualization of the download process.\n\n### Technical Details\n- **UI:** Implementation of `Terminal` component using React, simulating the classic aesthetic.\n- **Logs:** Streaming logs from the backend (stdout/stderr of the processes) via WebSocket/Runtime Events to the frontend.\n- **Interactivity:** Colors for different log levels (INFO, WARN, ERROR) and ASCII-like progress bars.\n- **UX:** Immediate visual feedback on what's happening \"under the hood\".\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nAdición de un emulador de terminal en la interfaz para la visualización en tiempo real del proceso de descarga.\n\n### Detalles Técnicos\n- **UI:** Implementación del componente `Terminal` usando React, simulando la estética clásica.\n- **Logs:** Streaming de logs del backend (stdout/stderr de los procesos) vía WebSocket/Runtime Events para el frontend.\n- **Interactividad:** Colores para diferentes niveles de log (INFO, WARN, ERROR) y barras de progreso ASCII-like.\n- **UX:** Feedback visual inmediato sobre lo que está sucediendo \"bajo el capó\".\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nAjout d'un émulateur de terminal dans l'interface pour une visualisation en temps réel du processus de téléchargement.\n\n### Détails Techniques\n- **UI:** Implémentation du composant `Terminal` en utilisant React, simulant l'esthétique classique.\n- **Logs:** Streaming des logs du backend (stdout/stderr des processus) via WebSocket/Runtime Events vers le frontend.\n- **Interactivité:** Couleurs pour différents niveaux de log (INFO, WARN, ERROR) et barres de progression de type ASCII.\n- **UX:** Feedback visuel immédiat sur ce qui se passe \"sous le capot\".\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nHinzufügen eines Terminal-Emulators zur Benutzeroberfläche für die Echtzeitvisualisierung des Download-Prozesses.\n\n### Technische Details\n- **UI:** Implementierung der `Terminal`-Komponente mit React, die die klassische Ästhetik simuliert.\n- **Logs:** Streaming von Logs vom Backend (stdout/stderr der Prozesse) über WebSocket/Runtime Events zum Frontend.\n- **Interaktivität:** Farben für verschiedene Log-Level (INFO, WARN, ERROR) und ASCII-ähnliche Fortschrittsbalken.\n- **UX:** Sofortiges visuelles Feedback darüber, was \"unter der Haube\" passiert.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "14": {
+    "original_title": "feat(download): Download de Imagens",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
+    "title_i18n": {
+      "pt-BR": "Download de Imagens",
+      "en-US": "Download Images",
+      "es-ES": "Descargar Imágenes",
+      "fr-FR": "Télécharger des Images",
+      "de-DE": "Bilder herunterladen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nNative support for downloading images from various platforms and direct URLs.\n\n### Technical Details\n- **Detection:** Automatic identification of URLs that point to images.\n- **Processing:** Ability to process image galleries (depending on the source).\n- **Output:** Correct saving with the appropriate extension.\n- **Integration:** Works integrated with the clipboard monitor.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails Techniques\n- **Détection:** Identification automatique des URL qui pointent vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "15": {
+    "original_title": "feat(history): Histórico Persistente",
+    "original_desc_hash": "###DescriçãoSistemadehistóricopersistenteparaqueousuárionuncapercaocontroledoquebaix_490",
+    "title_i18n": {
+      "en-US": "Histórico Persistente",
+      "pt-BR": "Histórico Persistente"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nSistema de histórico persistente para que o usuário nunca perca o controle do que baixou.\n\n### Detalhes Técnicos\n- **Persistência:** Gravação de cada download concluído no banco de dados SQLite.\n- **Dados:** Armazena URL original, título, caminho do arquivo local, data, tamanho e thumbnail.\n- **UI:** Tela dedicada \"Histórico\" com opções de busca, filtro e limpeza.\n- **Ações:** Botões para abrir o arquivo, abrir a pasta ou baixar novamente.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSistema de histórico persistente para que o usuário nunca perca o controle do que baixou.\n\n### Detalhes Técnicos\n- **Persistência:** Gravação de cada download concluído no banco de dados SQLite.\n- **Dados:** Armazena URL original, título, caminho do arquivo local, data, tamanho e thumbnail.\n- **UI:** Tela dedicada \"Histórico\" com opções de busca, filtro e limpeza.\n- **Ações:** Botões para abrir o arquivo, abrir a pasta ou baixar novamente.\n\n### Status\n✅ Entregue na v2.0.0"
+    }
+  },
+  "16": {
+    "original_title": "feat(converter): Conversor de Vídeo",
+    "original_desc_hash": "###DescriçãoFerramentaintegradaparaconvertervídeosentrediferentesformatos.###DetalhesTé_436",
+    "title_i18n": {
+      "pt-BR": "Conversor de Vídeo",
+      "en-US": "Video Converter",
+      "es-ES": "Conversor de Vídeo",
+      "fr-FR": "Convertisseur Vidéo",
+      "de-DE": "Video Konverter"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nFerramenta integrada para converter vídeos entre diferentes formatos.\n\n### Detalhes Técnicos\n- **Formatos Suportados:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Utiliza FFmpeg para processamento de alta qualidade.\n- **Opções:** Controle de qualidade (CRF), seleção de codec (H.264, VP9) e preservação de metadados.\n- **UX:** Interface drag-and-drop para fácil conversão de arquivos locais.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nIntegrated tool to convert videos between different formats.\n\n### Technical Details\n- **Supported Formats:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Uses FFmpeg for high-quality processing.\n- **Options:** Quality control (CRF), codec selection (H.264, VP9), and metadata preservation.\n- **UX:** Drag-and-drop interface for easy conversion of local files.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nHerramienta integrada para convertir vídeos entre diferentes formatos.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Utiliza FFmpeg para procesamiento de alta calidad.\n- **Opciones:** Control de calidad (CRF), selección de códec (H.264, VP9) y preservación de metadatos.\n- **UX:** Interfaz drag-and-drop para una fácil conversión de archivos locales.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nOutil intégré pour convertir des vidéos entre différents formats.\n\n### Détails Techniques\n- **Formats Pris en Charge:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Utilise FFmpeg pour un traitement de haute qualité.\n- **Options:** Contrôle de la qualité (CRF), sélection du codec (H.264, VP9) et préservation des métadonnées.\n- **UX:** Interface glisser-déposer pour une conversion facile des fichiers locaux.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nIntegriertes Tool zum Konvertieren von Videos zwischen verschiedenen Formaten.\n\n### Technische Details\n- **Unterstützte Formate:** MP4, MKV, WEBM, AVI, MOV.\n- **Engine:** Verwendet FFmpeg für hochwertige Verarbeitung.\n- **Optionen:** Qualitätskontrolle (CRF), Codec-Auswahl (H.264, VP9) und Erhaltung von Metadaten.\n- **UX:** Drag-and-Drop-Oberfläche für die einfache Konvertierung lokaler Dateien.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "17": {
+    "original_title": "feat(converter): Conversor de Áudio",
+    "original_desc_hash": "###DescriçãoFerramentaparaextrairáudiodevídeosouconverterarquivosdeáudio.###Detalhes_412",
+    "title_i18n": {
+      "pt-BR": "Conversor de Áudio",
+      "en-US": "Audio Converter",
+      "es-ES": "Convertidor de Audio",
+      "fr-FR": "Convertisseur Audio",
+      "de-DE": "Audio Konverter"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nFerramenta para extrair áudio de vídeos ou converter arquivos de áudio.\n\n### Detalhes Técnicos\n- **Formatos Suportados:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Qualidade:** Opções de bitrate (128k, 192k, 320k) e sample rate.\n- **Processamento:** Conversão rápida sem re-encoding desnecessário quando possível.\n- **Metadata:** Preservação ou edição de tags ID3 básicas.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nTool to extract audio from videos or convert audio files.\n\n### Technical Details\n- **Supported Formats:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Quality:** Bitrate options (128k, 192k, 320k) and sample rate.\n- **Processing:** Fast conversion without unnecessary re-encoding when possible.\n- **Metadata:** Preservation or editing of basic ID3 tags.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nHerramienta para extraer audio de videos o convertir archivos de audio.\n\n### Detalles Técnicos\n- **Formatos Soportados:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Calidad:** Opciones de bitrate (128k, 192k, 320k) y sample rate.\n- **Procesamiento:** Conversión rápida sin re-encoding innecesario cuando sea posible.\n- **Metadatos:** Preservación o edición de etiquetas ID3 básicas.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nOutil pour extraire l'audio de vidéos ou convertir des fichiers audio.\n\n### Détails Techniques\n- **Formats Pris en Charge:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Qualité:** Options de bitrate (128k, 192k, 320k) et sample rate.\n- **Traitement:** Conversion rapide sans re-encodage inutile lorsque possible.\n- **Métadonnées:** Préservation ou édition des tags ID3 de base.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nWerkzeug zum Extrahieren von Audio aus Videos oder zum Konvertieren von Audiodateien.\n\n### Technische Details\n- **Unterstützte Formate:** MP3, AAC, FLAC, WAV, OGG, M4A.\n- **Qualität:** Bitrate-Optionen (128k, 192k, 320k) und Sample Rate.\n- **Verarbeitung:** Schnelle Konvertierung ohne unnötiges Re-Encoding, wenn möglich.\n- **Metadaten:** Erhaltung oder Bearbeitung von grundlegenden ID3-Tags.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "18": {
+    "original_title": "feat(converter): Conversor de Imagens",
+    "original_desc_hash": "###DescriçãoUtilitárioparaconvertereotimizarimagens.###DetalhesTécnicos-**Formatos:**P_412",
+    "title_i18n": {
+      "pt-BR": "Conversor de Imagens",
+      "en-US": "Image Converter",
+      "es-ES": "Convertidor de Imágenes",
+      "fr-FR": "Convertisseur d'Images",
+      "de-DE": "Bildkonverter"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nUtilitário para converter e otimizar imagens.\n\n### Detalhes Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Otimização:** Ajuste de qualidade de compressão para reduzir tamanho sem perder muita qualidade visual.\n- **Redimensionamento:** Opções para redimensionar (resize) mantendo aspect ratio.\n- **Batch:** Suporte a conversão de múltiplos arquivos em fila.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nUtility to convert and optimize images.\n\n### Technical Details\n- **Formats:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimization:** Adjust compression quality to reduce size without losing much visual quality.\n- **Resizing:** Options to resize while maintaining aspect ratio.\n- **Batch:** Support for converting multiple files in a queue.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto.\n- **Batch:** Soporte para convertir múltiples archivos en cola.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nUtilitaire pour convertir et optimiser des images.\n\n### Détails Techniques\n- **Formats:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimisation:** Ajustement de la qualité de compression pour réduire la taille sans perdre beaucoup de qualité visuelle.\n- **Redimensionnement:** Options pour redimensionner (resize) en conservant le ratio.\n- **Batch:** Prise en charge de la conversion de plusieurs fichiers en file d'attente.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nDienstprogramm zum Konvertieren und Optimieren von Bildern.\n\n### Technische Details\n- **Formate:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimierung:** Anpassung der Kompressionsqualität, um die Größe zu reduzieren, ohne viel visuelle Qualität zu verlieren.\n- **Größenänderung:** Optionen zum Ändern der Größe (resize) unter Beibehaltung des Seitenverhältnisses.\n- **Batch:** Unterstützung für die Konvertierung mehrerer Dateien in einer Warteschlange.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "19": {
+    "original_title": "feat(i18n): Suporte a 5 Idiomas",
+    "original_desc_hash": "###DescriçãoInternacionalizaçãocompletadainterfacedousuário.###DetalhesTécnicos-**Idiom_483",
+    "title_i18n": {
+      "en-US": "Suporte a 5 Idiomas",
+      "pt-BR": "Suporte a 5 Idiomas"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0"
+    }
+  },
+  "20": {
+    "original_title": "feat(roadmap): Build-in-Public com Votação",
+    "original_desc_hash": "###DescriçãoIntegraçãodoRoadmapdoprodutodiretamentenoaplicativo.###DetalhesTécnicos-*_483",
+    "title_i18n": {
+      "en-US": "Build-in-Public com Votação",
+      "pt-BR": "Build-in-Public com Votação"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0"
+    }
+  },
+  "21": {
+    "original_title": "feat(auth): Login via GitHub Device Flow",
+    "original_desc_hash": "###DescriçãoImplementaçãodeloginsegurocomGitHubparapermitirinteraçõessociais(votos,come_517",
+    "title_i18n": {
+      "pt-BR": "Login com GitHub Device Flow",
+      "en-US": "Login with GitHub Device Flow",
+      "es-ES": "Inicio de sesión con GitHub Device Flow",
+      "fr-FR": "Connexion avec GitHub Device Flow",
+      "de-DE": "Anmeldung mit GitHub Device Flow"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nImplementação de login seguro com GitHub para permitir interações sociais (votos, comentários) no roadmap.\n\n### Detalhes Técnicos\n- **Protocolo:** Utilização do OAuth 2.0 Device Authorization Flow (Device Flow), ideal para aplicações desktop.\n- **Segurança:** Sem armazenamento de senhas, apenas tokens de acesso com escopo limitado (`public_repo` ou apenas leitura onde possível).\n- **UX:** Fluxo simples onde o usuário autoriza o app através de um código no navegador.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nImplementation of secure login with GitHub to allow social interactions (votes, comments) on the roadmap.\n\n### Technical Details\n- **Protocol:** Using the OAuth 2.0 Device Authorization Flow (Device Flow), ideal for desktop applications.\n- **Security:** No password storage, only access tokens with limited scope (`public_repo` or read-only where possible).\n- **UX:** Simple flow where the user authorizes the app through a code in the browser.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nImplementación de inicio de sesión seguro con GitHub para permitir interacciones sociales (votos, comentarios) en la hoja de ruta.\n\n### Detalles Técnicos\n- **Protocolo:** Utilización del OAuth 2.0 Device Authorization Flow (Device Flow), ideal para aplicaciones de escritorio.\n- **Seguridad:** Sin almacenamiento de contraseñas, solo tokens de acceso con alcance limitado (`public_repo` o solo lectura cuando sea posible).\n- **UX:** Flujo simple donde el usuario autoriza la aplicación a través de un código en el navegador.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nImplémentation d'une connexion sécurisée avec GitHub pour permettre les interactions sociales (votes, commentaires) sur la feuille de route.\n\n### Détails techniques\n- **Protocole :** Utilisation de l'OAuth 2.0 Device Authorization Flow (Device Flow), idéal pour les applications de bureau.\n- **Sécurité :** Pas de stockage de mot de passe, uniquement des jetons d'accès avec une portée limitée (`public_repo` ou en lecture seule lorsque possible).\n- **UX :** Flux simple où l'utilisateur autorise l'application via un code dans le navigateur.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nImplementierung einer sicheren Anmeldung mit GitHub, um soziale Interaktionen (Abstimmungen, Kommentare) auf der Roadmap zu ermöglichen.\n\n### Technische Details\n- **Protokoll:** Verwendung des OAuth 2.0 Device Authorization Flow (Device Flow), ideal für Desktop-Anwendungen.\n- **Sicherheit:** Keine Passwortspeicherung, nur Zugriffstoken mit begrenztem Umfang (`public_repo` oder nur Lesezugriff, wo möglich).\n- **UX:** Einfacher Ablauf, bei dem der Benutzer die App über einen Code im Browser autorisiert.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "22": {
+    "original_title": "feat(roadmap): Modal de Sugestões",
+    "original_desc_hash": "###DescriçãoCanaldiretoparausuáriosenviaremsugestõesdenovasfuncionalidadesoureportaremb_415",
+    "title_i18n": {
+      "en-US": "Modal de Sugestões",
+      "pt-BR": "Modal de Sugestões"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0"
+    }
+  },
+  "23": {
+    "original_title": "feat(ui): Tema Claro/Escuro",
+    "original_desc_hash": "###DescriçãoSuportecompletoatemasvisuais(ClaroeEscuro).###DetalhesTécnicos-**Modos:**_422",
+    "title_i18n": {
+      "pt-BR": "Tema Claro/Escuro",
+      "en-US": "Light/Dark Theme",
+      "es-ES": "Tema Claro/Oscuro",
+      "fr-FR": "Thème Clair/Sombre",
+      "de-DE": "Hell/Dunkel-Theme"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nSuporte completo a temas visuais (Claro e Escuro).\n\n### Detalhes Técnicos\n- **Modos:**\n  - **Auto:** Segue a preferência do sistema operacional.\n  - **Light/Dark:** Definição manual pelo usuário.\n- **Consistência:** Aplicação de tokens de cor em todos os compoentes para garantir contraste adequado em ambos os modos.\n- **Transições:** Transições suaves entre trocas de tema.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nFull support for visual themes (Light and Dark).\n\n### Technical Details\n- **Modes:**\n  - **Auto:** Follows the operating system preference.\n  - **Light/Dark:** Manual definition by the user.\n- **Consistency:** Application of color tokens in all components to ensure adequate contrast in both modes.\n- **Transitions:** Smooth transitions between theme changes.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nSoporte completo para temas visuales (Claro y Oscuro).\n\n### Detalles Técnicos\n- **Modos:**\n  - **Auto:** Sigue la preferencia del sistema operativo.\n  - **Light/Dark:** Definición manual por el usuario.\n- **Consistencia:** Aplicación de tokens de color en todos los componentes para garantizar un contraste adecuado en ambos modos.\n- **Transiciones:** Transiciones suaves entre cambios de tema.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nPrise en charge complète des thèmes visuels (Clair et Sombre).\n\n### Détails Techniques\n- **Modes :**\n  - **Auto :** Suit la préférence du système d'exploitation.\n  - **Light/Dark :** Définition manuelle par l'utilisateur.\n- **Cohérence :** Application de jetons de couleur dans tous les composants pour garantir un contraste adéquat dans les deux modes.\n- **Transitions :** Transitions fluides entre les changements de thème.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nVolle Unterstützung für visuelle Themes (Hell und Dunkel).\n\n### Technische Details\n- **Modi:**\n  - **Auto:** Folgt der Betriebssystemeinstellung.\n  - **Hell/Dunkel:** Manuelle Definition durch den Benutzer.\n- **Konsistenz:** Anwendung von Farb-Tokens in allen Komponenten, um einen ausreichenden Kontrast in beiden Modi zu gewährleisten.\n- **Übergänge:** Sanfte Übergänge zwischen Themenwechseln.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "24": {
+    "original_title": "feat(ui): Customização de Aparência",
+    "original_desc_hash": "###DescriçãoOpçõesavançadasparapersonalizaraaparênciadoaplicativoalémdostemasbásicos._455",
+    "title_i18n": {
+      "pt-BR": "Customização de Aparência",
+      "en-US": "Appearance Customization",
+      "es-ES": "Personalización de Apariencia",
+      "fr-FR": "Personnalisation de l'Apparence",
+      "de-DE": "Anpassung des Aussehens"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nOpções avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nAdvanced options to customize the application's appearance beyond basic themes.\n\n### Technical Details\n- **Accent Color:** Choice of the main accent color (Primary Color).\n- **Density:** Interface spacing adjustment (Compact, Comfortable).\n- **Transparency:** Enable/disable blur/Mica effects (Windows 11).\n- **Borders:** Control of element rounding (Border Radius).\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nOpciones avanzadas para personalizar la apariencia de la aplicación más allá de los temas básicos.\n\n### Detalles Técnicos\n- **Accent Color:** Elección del color de acento principal (Primary Color).\n- **Densidad:** Ajuste del espaciado de la interfaz (Compacto, Cómodo).\n- **Transparencia:** Habilitar/deshabilitar efectos de desenfoque/Mica (Windows 11).\n- **Bordes:** Control del redondeo (Border Radius) de los elementos.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nOptions avancées pour personnaliser l'apparence de l'application au-delà des thèmes de base.\n\n### Détails Techniques\n- **Accent Color:** Choix de la couleur d'accentuation principale (Primary Color).\n- **Densité:** Ajustement de l'espacement de l'interface (Compact, Confortable).\n- **Transparence:** Activer/désactiver les effets de flou/Mica (Windows 11).\n- **Bordures:** Contrôle de l'arrondissement (Border Radius) des éléments.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nErweiterte Optionen zur Anpassung des Aussehens der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung des Abstands der Benutzeroberfläche (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Unschärfe-/Mica-Effekten (Windows 11).\n- **Rahmen:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "25": {
+    "original_title": "feat(ux): Onboarding Interativo",
+    "original_desc_hash": "###DescriçãoExperiênciadeboas-vindasparanovosusuáriosconfiguraremoapprapidamente.###De_431",
+    "title_i18n": {
+      "pt-BR": "Onboarding Interativo",
+      "en-US": "Interactive Onboarding",
+      "es-ES": "Onboarding Interactivo",
+      "fr-FR": "Onboarding Interactif",
+      "de-DE": "Interaktives Onboarding"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nExperiência de boas-vindas para novos usuários configurarem o app rapidamente.\n\n### Detalhes Técnicos\n- **Fluxo:** Sequência de passos na primeira inicialização.\n- **Configurações:** Definição inicial de idioma e tema.\n- **Legal:** Apresentação e aceite dos termos de responsabilidade (disclaimer).\n- **State:** Persistência do estado \"Onboarding Completed\" para não exibir novamente.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nWelcome experience for new users to quickly configure the app.\n\n### Technical Details\n- **Flow:** Sequence of steps on first startup.\n- **Settings:** Initial definition of language and theme.\n- **Legal:** Presentation and acceptance of terms of responsibility (disclaimer).\n- **State:** Persistence of the \"Onboarding Completed\" state to not display again.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nExperiencia de bienvenida para que los nuevos usuarios configuren la aplicación rápidamente.\n\n### Detalles Técnicos\n- **Flujo:** Secuencia de pasos en la primera inicialización.\n- **Configuración:** Definición inicial de idioma y tema.\n- **Legal:** Presentación y aceptación de los términos de responsabilidad (descargo de responsabilidad).\n- **Estado:** Persistencia del estado \"Onboarding Completed\" para no volver a mostrarlo.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nExpérience de bienvenue pour que les nouveaux utilisateurs configurent l'application rapidement.\n\n### Détails Techniques\n- **Flux:** Séquence d'étapes lors du premier démarrage.\n- **Paramètres:** Définition initiale de la langue et du thème.\n- **Juridique:** Présentation et acceptation des conditions de responsabilité (clause de non-responsabilité).\n- **État:** Persistance de l'état \"Onboarding Completed\" pour ne pas l'afficher à nouveau.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nWillkommens-Erlebnis für neue Benutzer, um die App schnell zu konfigurieren.\n\n### Technische Details\n- **Ablauf:** Abfolge von Schritten beim ersten Start.\n- **Einstellungen:** Anfangsdefinition von Sprache und Thema.\n- **Rechtliches:** Präsentation und Akzeptanz der Verantwortungsbedingungen (Haftungsausschluss).\n- **Status:** Persistenz des Status \"Onboarding Completed\", um ihn nicht erneut anzuzeigen.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "26": {
+    "original_title": "feat(ui): Toast de Clipboard",
+    "original_desc_hash": "###DescriçãoNotificaçãodiscretaeinterativaaodetectarlinkssuportadosnaáreadetransferênci_426",
+    "title_i18n": {
+      "en-US": "Toast de Clipboard",
+      "pt-BR": "Toast de Clipboard"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0"
+    }
+  },
+  "27": {
+    "original_title": "feat(settings): Configurações Gerais",
+    "original_desc_hash": "###DescriçãoPainelcentralizadoparacontroledocomportamentodoaplicativo.###DetalhesTécnic_390",
+    "title_i18n": {
+      "pt-BR": "Configurações Gerais",
+      "en-US": "General Settings",
+      "es-ES": "Configuración General",
+      "fr-FR": "Paramètres Généraux",
+      "de-DE": "Allgemeine Einstellungen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nPainel centralizado para controle do comportamento do aplicativo.\n\n### Detalhes Técnicos\n- **Diretórios:** Definição da pasta padrão de downloads e temp.\n- **Idioma:** Seletor manual de idioma da interface.\n- **Comportamento:** Opções como \"Iniciar com o sistema\", \"Minimizar para a bandeja\".\n- **Updates:** Verificação manual de atualizações.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nCentralized panel for controlling the application's behavior.\n\n### Technical Details\n- **Directories:** Definition of the default download and temp folders.\n- **Language:** Manual language selector for the interface.\n- **Behavior:** Options like \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual update check.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nPanel centralizado para controlar el comportamiento de la aplicación.\n\n### Detalles Técnicos\n- **Directorios:** Definición de la carpeta predeterminada de descargas y temp.\n- **Idioma:** Selector manual de idioma de la interfaz.\n- **Comportamiento:** Opciones como \"Iniciar con el sistema\", \"Minimizar a la bandeja\".\n- **Actualizaciones:** Verificación manual de actualizaciones.\n\n### Estado\n✅ Entregado en la v2.0.0",
+      "fr-FR": "### Description\nPanneau centralisé pour contrôler le comportement de l'application.\n\n### Détails Techniques\n- **Répertoires:** Définition du dossier par défaut pour les téléchargements et les fichiers temporaires.\n- **Langue:** Sélecteur de langue manuel pour l'interface.\n- **Comportement:** Options telles que \"Démarrer avec le système\", \"Réduire dans la barre d'état système\".\n- **Mises à jour:** Vérification manuelle des mises à jour.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nZentrales Bedienfeld zur Steuerung des Verhaltens der Anwendung.\n\n### Technische Details\n- **Verzeichnisse:** Definition des Standardordners für Downloads und temporäre Dateien.\n- **Sprache:** Manuelle Sprachauswahl für die Benutzeroberfläche.\n- **Verhalten:** Optionen wie \"Mit dem System starten\", \"In den Infobereich minimieren\".\n- **Updates:** Manuelle Überprüfung auf Updates.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "28": {
+    "original_title": "feat(settings): Configurações de Vídeo",
+    "original_desc_hash": "###DescriçãoControlegranularsobreaqualidadeeformatodosdownloadsdevídeo.###DetalhesTé_449",
+    "title_i18n": {
+      "pt-BR": "Configurações de Vídeo",
+      "en-US": "Video Settings",
+      "es-ES": "Configuración de Vídeo",
+      "fr-FR": "Paramètres Vidéo",
+      "de-DE": "Videoeinstellungen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nControle granular sobre a qualidade e formato dos downloads de vídeo.\n\n### Detalhes Técnicos\n- **Qualidade:** Definição de qualidade máxima preferida (4K, 1080p, 720p).\n- **Legendas:** Opção para baixar legendas automaticamente, gerar legendas automáticas ou incorporá-las no vídeo.\n- **Codecs:** Preferência por codecs (H264, VP9, AV1).\n- **Áudio:** Qualidade de áudio preferida em downloads de vídeo.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nGranular control over video download quality and format.\n\n### Technical Details\n- **Quality:** Preferred maximum quality setting (4K, 1080p, 720p).\n- **Subtitles:** Option to automatically download subtitles, generate automatic subtitles, or embed them in the video.\n- **Codecs:** Preference for codecs (H264, VP9, AV1).\n- **Audio:** Preferred audio quality in video downloads.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nControl granular sobre la calidad y el formato de las descargas de vídeo.\n\n### Detalles Técnicos\n- **Calidad:** Definición de la calidad máxima preferida (4K, 1080p, 720p).\n- **Subtítulos:** Opción para descargar subtítulos automáticamente, generar subtítulos automáticos o incrustarlos en el vídeo.\n- **Códecs:** Preferencia por códecs (H264, VP9, AV1).\n- **Audio:** Calidad de audio preferida en las descargas de vídeo.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nContrôle granulaire de la qualité et du format des téléchargements vidéo.\n\n### Détails techniques\n- **Qualité:** Définition de la qualité maximale préférée (4K, 1080p, 720p).\n- **Sous-titres:** Option pour télécharger automatiquement les sous-titres, générer des sous-titres automatiques ou les intégrer dans la vidéo.\n- **Codecs:** Préférence pour les codecs (H264, VP9, AV1).\n- **Audio:** Qualité audio préférée dans les téléchargements vidéo.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nFeingranulare Kontrolle über die Qualität und das Format von Video-Downloads.\n\n### Technische Details\n- **Qualität:** Einstellung der bevorzugten maximalen Qualität (4K, 1080p, 720p).\n- **Untertitel:** Option zum automatischen Herunterladen von Untertiteln, zum Generieren automatischer Untertitel oder zum Einbetten in das Video.\n- **Codecs:** Präferenz für Codecs (H264, VP9, AV1).\n- **Audio:** Bevorzugte Audioqualität bei Video-Downloads.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "29": {
+    "original_title": "feat(settings): Configurações de Imagem",
+    "original_desc_hash": "###DescriçãoConfiguraçõesespecíficasparaoprocessamentodeimagens.###DetalhesTécnicos-**_370",
+    "title_i18n": {
+      "pt-BR": "Configurações de Imagem",
+      "en-US": "Image Settings",
+      "es-ES": "Configuración de Imagen",
+      "fr-FR": "Paramètres d'image",
+      "de-DE": "Bildeinstellungen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nConfigurações específicas para o processamento de imagens.\n\n### Detalhes Técnicos\n- **Formato de Saída:** Converter automaticamente downloads para (PNG, JPG, WEBP).\n- **Qualidade:** Nível de compressão para formatos com perdas (JPG, WEBP).\n- **Redimensionamento:** Opções para redimensionar imagens grandes automaticamente.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nSpecific settings for image processing.\n\n### Technical Details\n- **Output Format:** Automatically convert downloads to (PNG, JPG, WEBP).\n- **Quality:** Compression level for lossy formats (JPG, WEBP).\n- **Resizing:** Options to automatically resize large images.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nConfiguraciones específicas para el procesamiento de imágenes.\n\n### Detalles Técnicos\n- **Formato de Salida:** Convertir automáticamente descargas a (PNG, JPG, WEBP).\n- **Calidad:** Nivel de compresión para formatos con pérdida (JPG, WEBP).\n- **Redimensionamiento:** Opciones para redimensionar imágenes grandes automáticamente.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nParamètres spécifiques pour le traitement des images.\n\n### Détails techniques\n- **Format de sortie :** Convertir automatiquement les téléchargements en (PNG, JPG, WEBP).\n- **Qualité :** Niveau de compression pour les formats avec perte (JPG, WEBP).\n- **Redimensionnement :** Options pour redimensionner automatiquement les grandes images.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nSpezifische Einstellungen für die Bildverarbeitung.\n\n### Technische Details\n- **Ausgabeformat:** Downloads automatisch in (PNG, JPG, WEBP) konvertieren.\n- **Qualität:** Komprimierungsstufe für verlustbehaftete Formate (JPG, WEBP).\n- **Größenänderung:** Optionen zum automatischen Ändern der Größe großer Bilder.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "30": {
+    "original_title": "feat(settings): Configurações de Aparência",
+    "original_desc_hash": "###DescriçãoAjustesfinosdainterfacedousuárioacessíveispelopaineldeconfigurações.###De_407",
+    "title_i18n": {
+      "pt-BR": "Configurações de Aparência",
+      "en-US": "Appearance Settings",
+      "es-ES": "Configuración de Apariencia",
+      "fr-FR": "Paramètres d'Apparence",
+      "de-DE": "Erscheinungsbild-Einstellungen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nAjustes finos da interface do usuário acessíveis pelo painel de configurações.\n\n### Detalhes Técnicos\n- **Tema:** Seleção explícita de tema (Claro/Escuro/Auto).\n- **Cores:** Seletor de cor de destaque (Accent Color).\n- **Densidade:** Ajuste global de espaçamento (padding/margin) dos componentes.\n- **Animações:** Opção para reduzir movimento (Reduced Motion).\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nFine-tuning of the user interface accessible through the settings panel.\n\n### Technical Details\n- **Theme:** Explicit theme selection (Light/Dark/Auto).\n- **Colors:** Accent color selector.\n- **Density:** Global adjustment of component spacing (padding/margin).\n- **Animations:** Option to reduce motion (Reduced Motion).\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nAjustes finos de la interfaz de usuario accesibles a través del panel de configuración.\n\n### Detalles Técnicos\n- **Tema:** Selección explícita de tema (Claro/Oscuro/Automático).\n- **Colores:** Selector de color de acento (Accent Color).\n- **Densidad:** Ajuste global del espaciado (padding/margin) de los componentes.\n- **Animaciones:** Opción para reducir el movimiento (Reduced Motion).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nRéglages fins de l'interface utilisateur accessibles via le panneau des paramètres.\n\n### Détails Techniques\n- **Thème:** Sélection explicite du thème (Clair/Sombre/Auto).\n- **Couleurs:** Sélecteur de couleur d'accentuation (Accent Color).\n- **Densité:** Ajustement global de l'espacement (padding/margin) des composants.\n- **Animations:** Option pour réduire le mouvement (Reduced Motion).\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nFeinabstimmung der Benutzeroberfläche, zugänglich über das Einstellungsfeld.\n\n### Technische Details\n- **Thema:** Explizite Themenauswahl (Hell/Dunkel/Auto).\n- **Farben:** Akzentfarben-Auswahl.\n- **Dichte:** Globale Anpassung des Komponentenabstands (padding/margin).\n- **Animationen:** Option zur Reduzierung von Bewegung (Reduced Motion).\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "31": {
+    "original_title": "feat(settings): Atalhos de Teclado",
+    "original_desc_hash": "###DescriçãoGerenciadordeatalhosdetecladoparaprodutividade.###DetalhesTécnicos-**Mapa:_370",
+    "title_i18n": {
+      "pt-BR": "Atalhos de Teclado",
+      "en-US": "Keyboard Shortcuts",
+      "es-ES": "Atajos de Teclado",
+      "fr-FR": "Raccourcis Clavier",
+      "de-DE": "Tastenkombinationen"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nGerenciador de atalhos de teclado para produtividade.\n\n### Detalhes Técnicos\n- **Mapa:** Visualização de todos os atalhos disponíveis no aplicativo.\n- **Customização:** (Planejado) Capacidade de remapear teclas.\n- **Ações:** Atalhos para colar link, iniciar download, pausar/retomar, limpar concluídos, abrir configurações.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nKeyboard shortcut manager for productivity.\n\n### Technical Details\n- **Map:** View of all available shortcuts in the application.\n- **Customization:** (Planned) Ability to remap keys.\n- **Actions:** Shortcuts to paste link, start download, pause/resume, clear completed, open settings.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nGestor de atajos de teclado para productividad.\n\n### Detalles Técnicos\n- **Mapa:** Visualización de todos los atajos disponibles en la aplicación.\n- **Personalización:** (Planeado) Capacidad de reasignar teclas.\n- **Acciones:** Atajos para pegar enlace, iniciar descarga, pausar/reanudar, limpiar completados, abrir configuración.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nGestionnaire de raccourcis clavier pour la productivité.\n\n### Détails Techniques\n- **Carte:** Visualisation de tous les raccourcis disponibles dans l'application.\n- **Personnalisation:** (Prévu) Possibilité de remapper les touches.\n- **Actions:** Raccourcis pour coller un lien, démarrer le téléchargement, mettre en pause/reprendre, effacer les éléments terminés, ouvrir les paramètres.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nTastenkombinationsmanager für Produktivität.\n\n### Technische Details\n- **Karte:** Anzeige aller verfügbaren Tastenkombinationen in der Anwendung.\n- **Anpassung:** (Geplant) Möglichkeit, Tasten neu zuzuordnen.\n- **Aktionen:** Tastenkombinationen zum Einfügen von Links, Starten des Downloads, Pausieren/Fortsetzen, Löschen von abgeschlossenen Elementen, Öffnen der Einstellungen.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "32": {
+    "original_title": "feat(deep-link): Suporte a Links kingo://",
+    "original_desc_hash": "###DescriçãoIntegraçãoprofundacomosistemaoperacionalviaprotocolocustomizadoURLScheme.#_448",
+    "title_i18n": {
+      "pt-BR": "Suporte a Links kingo://",
+      "en-US": "Support for kingo:// Links",
+      "es-ES": "Soporte para enlaces kingo://",
+      "fr-FR": "Support des liens kingo://",
+      "de-DE": "Unterstützung für kingo:// Links"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nIntegração profunda com o sistema operacional via protocolo customizado URL Scheme.\n\n### Detalhes Técnicos\n- **Protocolos:** Registro dos protocolos `kingo://` e `downkingo://` no registro do Windows/Linux/macOS.\n- **Parsing:** Capacidade de interpretar e limpar links passados via argumento na inicialização.\n- **Browser:** Permite criar bookmarklets ou extensões que enviam o link direto para o app.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nDeep integration with the operating system via custom protocol URL Scheme.\n\n### Technical Details\n- **Protocols:** Registration of `kingo://` and `downkingo://` protocols in the Windows/Linux/macOS registry.\n- **Parsing:** Ability to interpret and clean links passed via argument on startup.\n- **Browser:** Allows creating bookmarklets or extensions that send the link directly to the app.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nIntegración profunda con el sistema operativo a través del protocolo personalizado URL Scheme.\n\n### Detalles Técnicos\n- **Protocolos:** Registro de los protocolos `kingo://` y `downkingo://` en el registro de Windows/Linux/macOS.\n- **Parsing:** Capacidad para interpretar y limpiar enlaces pasados ​​a través de argumentos al inicio.\n- **Browser:** Permite crear bookmarklets o extensiones que envían el enlace directamente a la app.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nIntégration profonde avec le système d'exploitation via le protocole personnalisé URL Scheme.\n\n### Détails Techniques\n- **Protocoles:** Enregistrement des protocoles `kingo://` et `downkingo://` dans le registre Windows/Linux/macOS.\n- **Parsing:** Capacité à interpréter et nettoyer les liens passés via l'argument au démarrage.\n- **Browser:** Permet de créer des bookmarklets ou des extensions qui envoient le lien directement à l'application.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nTiefe Integration mit dem Betriebssystem über das benutzerdefinierte Protokoll URL Scheme.\n\n### Technische Details\n- **Protokolle:** Registrierung der Protokolle `kingo://` und `downkingo://` in der Windows/Linux/macOS-Registrierung.\n- **Parsing:** Fähigkeit, Links zu interpretieren und zu bereinigen, die beim Start über ein Argument übergeben werden.\n- **Browser:** Ermöglicht das Erstellen von Bookmarklets oder Erweiterungen, die den Link direkt an die App senden.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "33": {
+    "original_title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
+    "original_desc_hash": "###DescriçãoSegundaversãodomonitordeáreadetransferência,otimizadoparaeficiência.###De_468",
+    "title_i18n": {
+      "pt-BR": "Monitor de área de transferência V2 com Adaptive Backoff",
+      "en-US": "Clipboard Monitor V2 with Adaptive Backoff",
+      "es-ES": "Monitor de portapapeles V2 con Adaptive Backoff",
+      "fr-FR": "Moniteur presse-papiers V2 avec Adaptive Backoff",
+      "de-DE": "Zwischenablage-Monitor V2 mit Adaptive Backoff"
+    },
+    "description_i18n": {
+      "pt-BR": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nSecond version of the clipboard monitor, optimized for efficiency.\n\n### Technical Details\n- **Adaptive Backoff:** Algorithm that adjusts the polling frequency based on user activity (increases the interval when idle).\n- **Regex:** Optimized compilation of regular expressions for URL detection.\n- **Filters:** Automatically ignores irrelevant content types (plain text without URLs, files).\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nSeconde version du moniteur presse-papiers, optimisée pour l'efficacité.\n\n### Détails techniques\n- **Adaptive Backoff:** Algorithme qui ajuste la fréquence d'interrogation en fonction de l'activité de l'utilisateur (augmente l'intervalle lorsqu'il est inactif).\n- **Regex:** Compilation optimisée d'expressions régulières pour la détection d'URL.\n- **Filters:** Ignore automatiquement les types de contenu non pertinents (texte brut sans URL, fichiers).\n\n### Statut\n✅ Livré en v2.0.0",
+      "de-DE": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n✅ Ausgeliefert in v2.0.0"
     }
   }
 }
