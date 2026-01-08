@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-08T22:26:52.976Z",
+  "generated_at": "2026-01-08T22:48:51.395Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -503,7 +503,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

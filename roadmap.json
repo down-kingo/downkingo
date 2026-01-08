@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-08T22:26:52.976Z",
+  "generated_at": "2026-01-08T22:48:51.395Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -502,7 +502,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
