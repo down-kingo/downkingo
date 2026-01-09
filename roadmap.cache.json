@@ -163,20 +163,14 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
     "title_i18n": {
-      "pt-BR": "Download de Imagens",
-      "en-US": "Download Images",
-      "es-ES": "Descargar Imágenes",
-      "fr-FR": "Télécharger des Images",
-      "de-DE": "Bilder herunterladen"
+      "en-US": "Download de Imagens",
+      "pt-BR": "Download de Imagens"
     },
     "description_i18n": {
-      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nNative support for downloading images from various platforms and direct URLs.\n\n### Technical Details\n- **Detection:** Automatic identification of URLs that point to images.\n- **Processing:** Ability to process image galleries (depending on the source).\n- **Output:** Correct saving with the appropriate extension.\n- **Integration:** Works integrated with the clipboard monitor.\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "fr-FR": "### Description\nPrise en charge native du téléchargement d'images à partir de diverses plateformes et d'URL directes.\n\n### Détails Techniques\n- **Détection:** Identification automatique des URL qui pointent vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré en v2.0.0",
-      "de-DE": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "15": {
