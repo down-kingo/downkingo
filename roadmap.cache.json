@@ -163,12 +163,12 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
     "title_i18n": {
       "pt-BR": "Download de Imagens",
       "en-US": "Download Images",
       "es-ES": "Descargar Imágenes",
-      "fr-FR": "Télécharger des images",
+      "fr-FR": "Télécharger des Images",
       "de-DE": "Bilder herunterladen"
     },
     "description_i18n": {
