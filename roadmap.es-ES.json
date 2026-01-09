@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-09T18:39:21.552Z",
+  "generated_at": "2026-01-09T19:28:56.909Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -503,7 +503,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n�� Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -519,7 +519,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:04:03Z",
       "shipped_at": "2026-01-08T15:04:22Z",
-      "friendly_title": "Monitor de portapapeles V2 con Adaptive Backoff"
+      "friendly_title": "feat(clipboard): Monitor V2 com Adaptive Backoff"
     },
     {
       "id": 31,
