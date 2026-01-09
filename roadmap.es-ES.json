@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-09T17:49:46.347Z",
+  "generated_at": "2026-01-09T18:39:21.552Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transfer��ncia.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

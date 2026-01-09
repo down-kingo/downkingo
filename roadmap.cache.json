@@ -163,14 +163,14 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
     "title_i18n": {
       "en-US": "Download de Imagens",
       "pt-BR": "Download de Imagens"
     },
     "description_i18n": {
-      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
-      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0"
+      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transfer��ncia.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transfer��ncia.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "15": {
