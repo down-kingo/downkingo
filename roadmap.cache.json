@@ -163,14 +163,14 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
     "title_i18n": {
       "en-US": "Download de Imagens",
       "pt-BR": "Download de Imagens"
     },
     "description_i18n": {
-      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transfer��ncia.\n\n### Status\n✅ Entregue na v2.0.0",
-      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transfer��ncia.\n\n### Status\n✅ Entregue na v2.0.0"
+      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "15": {
@@ -465,6 +465,18 @@
       "es-ES": "### Descripción\nIntegración profunda con el sistema operativo a través del protocolo personalizado URL Scheme.\n\n### Detalles Técnicos\n- **Protocolos:** Registro de los protocolos `kingo://` y `downkingo://` en el registro de Windows/Linux/macOS.\n- **Parsing:** Capacidad para interpretar y limpiar enlaces pasados ​​a través de argumentos al inicio.\n- **Browser:** Permite crear bookmarklets o extensiones que envían el enlace directamente a la app.\n\n### Estado\n✅ Entregado en v2.0.0",
       "fr-FR": "### Description\nIntégration profonde avec le système d'exploitation via le protocole personnalisé URL Scheme.\n\n### Détails Techniques\n- **Protocoles:** Enregistrement des protocoles `kingo://` et `downkingo://` dans le registre Windows/Linux/macOS.\n- **Parsing:** Capacité à interpréter et nettoyer les liens passés via l'argument au démarrage.\n- **Browser:** Permet de créer des bookmarklets ou des extensions qui envoient le lien directement à l'application.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "de-DE": "### Beschreibung\nTiefe Integration mit dem Betriebssystem über das benutzerdefinierte Protokoll URL Scheme.\n\n### Technische Details\n- **Protokolle:** Registrierung der Protokolle `kingo://` und `downkingo://` in der Windows/Linux/macOS-Registrierung.\n- **Parsing:** Fähigkeit, Links zu interpretieren und zu bereinigen, die beim Start über ein Argument übergeben werden.\n- **Browser:** Ermöglicht das Erstellen von Bookmarklets oder Erweiterungen, die den Link direkt an die App senden.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+    }
+  },
+  "33": {
+    "original_title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
+    "original_desc_hash": "###DescriçãoSegundaversãodomonitordeáreadetransferência,otimizadoparaeficiência.###De_468",
+    "title_i18n": {
+      "en-US": "Monitor V2 com Adaptive Backoff",
+      "pt-BR": "Monitor V2 com Adaptive Backoff"
+    },
+    "description_i18n": {
+      "en-US": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0"
     }
   }
 }
