@@ -98,6 +98,8 @@
   "privacy": {
     "anonymous": "Modo Anônimo",
     "anonymous_desc": "Não salvar histórico de downloads",
+    "telemetry": "Compartilhar estatísticas anônimas",
+    "telemetry_desc": "Ajude a melhorar o app enviando dados de uso anônimos (Aptabase)",
     "title": "Privacidade"
   },
   "rembg_settings": {

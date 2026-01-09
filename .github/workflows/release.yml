@@ -119,16 +119,20 @@ jobs:
       - name: Build Application (Windows - NSIS Installer)
         if: matrix.os == 'windows-latest'
         shell: bash
+        env:
+          APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          wails build -clean -platform ${{ matrix.platform }} --nsis -ldflags "-s -w -X main.Version=${VERSION}"
+          wails build -clean -platform ${{ matrix.platform }} --nsis -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'"
 
       - name: Build Application (Linux)
         if: matrix.os == 'ubuntu-latest'
+        env:
+          APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           # Ubuntu 24.04 requer webkit2gtk-4.1, usar flag especial do Wails
-          wails build -clean -platform ${{ matrix.platform }} -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION}"
+          wails build -clean -platform ${{ matrix.platform }} -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'"
 
       # ============================================================
       # PACKAGE: Create professional installers

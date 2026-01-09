@@ -36,6 +36,7 @@ interface SettingsState {
 
   // Privacy
   anonymousMode: boolean; // Não salvar histórico
+  telemetryEnabled: boolean; // Enviar estatísticas anônimas (Aptabase)
 
   // Download Options
   remuxVideo: boolean;
@@ -88,6 +89,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
 
       anonymousMode: false,
+      telemetryEnabled: false,
 
       remuxVideo: true,
       remuxFormat: "mp4",

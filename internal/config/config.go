@@ -33,6 +33,7 @@ type Config struct {
 	Image                   ImageConfig     `json:"image"`
 	Shortcuts               ShortcutsConfig `json:"shortcuts"`
 	ClipboardMonitorEnabled bool            `json:"clipboardMonitorEnabled"`
+	TelemetryEnabled        bool            `json:"telemetryEnabled"`
 	Roadmap                 RoadmapConfig   `json:"roadmap"`
 
 	mu       sync.RWMutex
@@ -163,6 +164,7 @@ func (c *Config) Get() Config {
 		Image:                   c.Image,
 		Shortcuts:               c.Shortcuts,
 		ClipboardMonitorEnabled: c.ClipboardMonitorEnabled,
+		TelemetryEnabled:        c.TelemetryEnabled,
 		Roadmap:                 c.Roadmap,
 	}
 }

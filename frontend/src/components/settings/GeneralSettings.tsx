@@ -10,6 +10,7 @@ import {
   IconPhoto,
   IconClipboard,
   IconTerminal2,
+  IconChartDots,
 } from "@tabler/icons-react";
 import { useSettingsStore, Language } from "../../stores/settingsStore";
 import { supportedLanguages } from "../../i18n";
@@ -96,6 +97,7 @@ export default function GeneralSettings() {
   const {
     language,
     anonymousMode,
+    telemetryEnabled,
     startWithWindows,
     clipboardMonitorEnabled,
     consoleEnabled,
@@ -211,6 +213,18 @@ export default function GeneralSettings() {
             <Switch
               checked={anonymousMode}
               onChange={(v) => setSetting("anonymousMode", v)}
+            />
+          </SettingItem>
+
+          <SettingItem
+            icon={IconChartDots}
+            label={t("privacy.telemetry")}
+            desc={t("privacy.telemetry_desc")}
+            active={telemetryEnabled}
+          >
+            <Switch
+              checked={telemetryEnabled}
+              onChange={(v) => setSetting("telemetryEnabled", v)}
             />
           </SettingItem>
         </div>

@@ -15,6 +15,7 @@ import (
 	"kingo/internal/logger"
 	"kingo/internal/roadmap"
 	"kingo/internal/storage"
+	"kingo/internal/telemetry"
 	"kingo/internal/updater"
 	"kingo/internal/youtube"
 	"os"
@@ -40,6 +41,7 @@ type App struct {
 	updater          *updater.Updater
 	imageClient      *images.Client
 	clipboardMonitor *clipboard.Monitor
+	telemetry        *telemetry.Service
 	roadmap          *roadmap.Service
 	auth             *auth.AuthService
 
@@ -145,6 +147,9 @@ func (a *App) OnStartup(ctx context.Context) {
 
 	a.updater = updater.NewUpdater(Version)
 	a.updater.SetContext(ctx)
+
+	a.telemetry = telemetry.NewService(cfg, Version)
+	a.telemetry.TrackAppStart()
 
 	a.imageClient = images.NewClient()
 
