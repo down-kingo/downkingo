@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-09T07:29:58.465Z",
+  "generated_at": "2026-01-09T07:48:30.491Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit zur Verarbeitung von Bildergalerien (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
