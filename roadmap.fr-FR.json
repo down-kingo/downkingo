@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T05:46:31.951Z",
+  "generated_at": "2026-01-10T06:37:27.413Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails Techniques\n- **Détection:** Identification automatique des URL pointant vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "description": "### Description\nPrise en charge native du téléchargement d'images à partir de diverses plateformes et d'URL directes.\n\n### Détails techniques\n- **Détection:** Identification automatique des URL pointant vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Sortie:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -48,7 +48,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:41Z",
       "shipped_at": "2026-01-08T15:02:56Z",
-      "friendly_title": "Télécharger des Images"
+      "friendly_title": "Télécharger des images"
     },
     {
       "id": 17,
@@ -545,7 +545,7 @@
     {
       "id": 30,
       "title": "feat(settings): Configurações de Aparência",
-      "description": "### Description\nRéglages fins de l'interface utilisateur accessibles via le panneau des paramètres.\n\n### Détails Techniques\n- **Thème:** Sélection explicite du thème (Clair/Sombre/Auto).\n- **Couleurs:** Sélecteur de couleur d'accentuation (Accent Color).\n- **Densité:** Ajustement global de l'espacement (padding/margin) des composants.\n- **Animations:** Option pour réduire le mouvement (Reduced Motion).\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "description": "### Description\nRéglages fins de l'interface utilisateur accessibles via le panneau des paramètres.\n\n### Détails Techniques\n- **Thème:** Sélection explicite du thème (Clair/Sombre/Automatique).\n- **Couleurs:** Sélecteur de couleur d'accentuation (Accent Color).\n- **Densité:** Ajustement global de l'espacement (padding/margin) des composants.\n- **Animations:** Option pour réduire le mouvement (Reduced Motion).\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

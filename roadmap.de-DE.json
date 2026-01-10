@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T05:46:31.951Z",
+  "generated_at": "2026-01-10T06:37:27.413Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Ausgabe:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -545,7 +545,7 @@
     {
       "id": 30,
       "title": "feat(settings): Configurações de Aparência",
-      "description": "### Beschreibung\nFeinabstimmung der Benutzeroberfläche, zugänglich über das Einstellungsfeld.\n\n### Technische Details\n- **Thema:** Explizite Themenauswahl (Hell/Dunkel/Auto).\n- **Farben:** Akzentfarben-Auswahl.\n- **Dichte:** Globale Anpassung des Komponentenabstands (padding/margin).\n- **Animationen:** Option zur Reduzierung von Bewegung (Reduced Motion).\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nFeinabstimmung der Benutzeroberfläche, zugänglich über das Einstellungsfeld.\n\n### Technische Details\n- **Thema:** Explizite Themenauswahl (Hell/Dunkel/Automatisch).\n- **Farben:** Akzentfarbenauswahl.\n- **Dichte:** Globale Anpassung des Komponentenabstands (padding/margin).\n- **Animationen:** Option zur Reduzierung von Bewegung (Reduced Motion).\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
