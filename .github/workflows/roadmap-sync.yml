@@ -8,9 +8,15 @@ on:
   schedule:
     - cron: "*/30 * * * *"
 
-  # Trigger on issue/project changes
+  # Fix Race Condition: Wait for issue to be added to project first
+  workflow_run:
+    workflows: ["Add Suggestions to Project"]
+    types:
+      - completed
+
+  # Trigger on updates (opened/labeled handled by workflow_run above)
   issues:
-    types: [opened, edited, closed, labeled, unlabeled]
+    types: [edited, closed, reopened, unlabeled]
 
   project:
     types: [closed, edited, reopened]
