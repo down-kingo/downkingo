@@ -4,10 +4,6 @@ on:
   # Manual trigger
   workflow_dispatch:
 
-  # Scheduled sync (every 30 minutes)
-  schedule:
-    - cron: "*/30 * * * *"
-
   # Fix Race Condition: Wait for issue to be added to project first
   workflow_run:
     workflows: ["Add Suggestions to Project"]
