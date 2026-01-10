@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T06:37:27.413Z",
+  "generated_at": "2026-01-10T07:24:07.304Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -503,7 +503,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n Entregado en v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -545,7 +545,7 @@
     {
       "id": 30,
       "title": "feat(settings): Configurações de Aparência",
-      "description": "### Descripción\nAjustes finos de la interfaz de usuario accesibles desde el panel de configuración.\n\n### Detalles Técnicos\n- **Tema:** Selección explícita de tema (Claro/Oscuro/Automático).\n- **Colores:** Selector de color de acento (Accent Color).\n- **Densidad:** Ajuste global del espaciado (padding/margin) de los componentes.\n- **Animaciones:** Opción para reducir el movimiento (Reduced Motion).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descripción\nAjustes finos de la interfaz de usuario accesibles desde el panel de configuración.\n\n### Detalles Técnicos\n- **Tema:** Selección explícita de tema (Claro/Oscuro/Auto).\n- **Colores:** Selector de color de acento (Accent Color).\n- **Densidad:** Ajuste global del espaciado (padding/margin) de los componentes.\n- **Animaciones:** Opción para reducir el movimiento (Reduced Motion).\n\n### Estado\n✅ Entregado en v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
