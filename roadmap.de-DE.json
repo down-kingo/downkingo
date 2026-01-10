@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T17:42:27.216Z",
+  "generated_at": "2026-01-10T18:32:24.350Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -604,6 +604,25 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Bildeinstellungen"
+    },
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Typ\n\nfeat: Neue Funktionalität\n\n### Bereich\n\nDownload\n\n### Kurzbeschreibung\n\nFügen Sie DownKingo native Unterstützung für den Download von Spotify-Titeln (und optional Playlists/Alben) hinzu, damit Benutzer Audiodateien mit vollständigen Metadaten direkt von Spotify-URLs abrufen können.\n\n### Kontext\n\nDownKingo unterstützt derzeit das Herunterladen von Medien von YouTube, aber noch nicht Spotify als Quelle. Die Bereitstellung von Unterstützung für Spotify-URLs würde den Nutzen der App über Video-Downloads hinaus erweitern und Streaming-Audio-Downloads von einem der am weitesten verbreiteten Musikdienste umfassen.\n\n### Problem / Motivation\n\nViele Benutzer würden davon profitieren, Spotify-Titel, Playlists und Alben zusätzlich zu YouTube-Inhalten herunterladen zu können. Im Moment müssen sich Benutzer auf separate Tools verlassen, um Audio von Spotify zu extrahieren, was den Workflow fragmentiert. Die Integration der Spotify-Unterstützung direkt in DownKingo würde das Herunterladen von Medien in einem einzigen, benutzerfreundlichen Tool vereinheitlichen und die Reibung für Benutzer verringern, die regelmäßig mit YouTube und Spo arbeiten",
+      "status": "in-progress",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-01-10T18:31:56Z",
+      "friendly_title": "Spotify-Download-Unterstützung"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T17:42:27.216Z",
+  "generated_at": "2026-01-10T18:32:24.350Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -604,6 +604,25 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Image Settings"
+    },
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Type\n\nfeat: New functionality\n\n### Scope\n\ndownload\n\n### Short Description\n\nAdd native Spotify track (and optionally playlist/album) download support to DownKingo, enabling users to fetch audio files with full metadata directly from Spotify URLs.\n\n### Context\n\nDownKingo currently supports downloading media from YouTube, but it does not yet support Spotify as a source. Providing support for Spotify URLs would expand the utility of the app beyond video downloads to include streaming audio downloads from one of the most widely used music services.\n\n### Problem / Motivation\n\nMany users would benefit from being able to download Spotify tracks, playlists, and albums in addition to YouTube content. Right now, users must rely on separate tools to extract audio from Spotify, which fragments the workflow. Integrating Spotify support directly into DownKingo would unify media downloading into a single, user-friendly tool and reduce friction for users who regularly work with both YouTube and Spo",
+      "status": "in-progress",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-01-10T18:31:56Z",
+      "friendly_title": "Spotify Download Support"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T17:42:27.216Z",
+  "generated_at": "2026-01-10T18:32:24.350Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -603,6 +603,25 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Configurações de Imagem"
+    },
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Tipo\n\nfeat: Nova funcionalidade\n\n### Escopo\n\ndownload\n\n### Descrição Curta\n\nAdicionar suporte nativo para download de faixas do Spotify (e opcionalmente playlists/álbuns) ao DownKingo, permitindo que os usuários obtenham arquivos de áudio com metadados completos diretamente de URLs do Spotify.\n\n### Contexto\n\nDownKingo atualmente suporta o download de mídia do YouTube, mas ainda não suporta o Spotify como fonte. Fornecer suporte para URLs do Spotify expandiria a utilidade do aplicativo além de downloads de vídeo para incluir downloads de áudio de streaming de um dos serviços de música mais amplamente utilizados.\n\n### Problema / Motivação\n\nMuitos usuários se beneficiariam da capacidade de baixar faixas, playlists e álbuns do Spotify, além do conteúdo do YouTube. No momento, os usuários devem confiar em ferramentas separadas para extrair áudio do Spotify, o que fragmenta o fluxo de trabalho. A integração do suporte ao Spotify diretamente no DownKingo unificaria o download de mídia em uma única ferramenta amigável e reduziria o atrito para usuários que trabalham regularmente com YouTube e Spo",
+      "status": "in-progress",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-01-10T18:31:56Z",
+      "friendly_title": "Suporte para Download do Spotify"
     }
   ]
 }
