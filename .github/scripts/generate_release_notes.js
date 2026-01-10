@@ -80,32 +80,47 @@ function getCommits(from, to) {
 }
 
 async function askGemini(commits, version) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+  // Using the requested model (assuming availability provided by user's environment/key)
+  const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
 
   const prompt = `
-    You are a Technical Writer for the DownKingo project (a video downloader app based on Wails/Go + React).
-    
-    Create engaging and well-structured release notes for version ${version} based on these commits:
-    
+    Persona: You are a Visionary Product Manager and Elite Tech Marketer for DownKingo (a premium video downloader app).
+    Goal: Create engaging, high-impact release notes in a multilingual JSON format suitable for parsing by the application.
+
+    Context:
+    Version: ${version}
+    Commits:
     ${commits}
-    
-    **Guidelines:**
-    1. **Structure:**
-       - 🚀 **Highlights** (New features, big changes)
-       - 🐛 **Bug Fixes** (Corrections)
-       - 🛠️ **Under the Hood** (Refactoring, deps, docs)
-    2. **Tone:** Professional yet excited. Use emojis.
-    3. **Language:** Brazilian Portuguese (pt-BR).
-    4. **Formatting:** Markdown. Use bullets.
-    5. **Exclusions:** Ignore chore commits like "bump version", "merge branch", or "CI" unless critical.
-    6. **Summary:** Start with a 1-sentence catchy summary of this release.
-    
-    Output ONLY the markdown content, no extra talk.
+
+    Style Guidelines:
+    1. **Vibe**: Enthusiastic, professional, concise, and modern. Use emojis effectively but professionally.
+    2. **Language**: Avoid dry technical jargon (e.g., instead of "refactored backend", use "Engine Optimization"). Focus on user value.
+    3. **Structure**: 
+       - 🚀 Highlight (The main star of this release)
+       - ✨ Features (New capabilities)
+       - 🛡️ Stability & Polish (Bug fixes / Internal improvements)
+
+    Output Format (Critical):
+    Return ONLY a valid, raw JSON object (no markdown fencing like \`\`\`json). 
+    Matches this schema:
+    {
+      "pt-BR": "Markdown string containing the formatted release notes...",
+      "en-US": "Markdown string containing the formatted release notes...",
+      "es-ES": "Markdown string containing the formatted release notes..."
+    }
   `;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
-  return response.text();
+  let text = response.text();
+
+  // Cleanup markdown fencing if the model adds it despite instructions
+  text = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+
+  return text;
 }
 
 generateNotes();

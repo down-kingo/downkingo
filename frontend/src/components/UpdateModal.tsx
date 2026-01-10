@@ -16,8 +16,10 @@ import {
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import type { updater } from "../../wailsjs/go/models";
 import { Logo } from "./Logo";
+import { useTranslation } from "react-i18next";
 
 export default function UpdateModal() {
+  const { i18n } = useTranslation();
   const [updateInfo, setUpdateInfo] = useState<updater.UpdateInfo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<
@@ -150,8 +152,37 @@ export default function UpdateModal() {
                 </h3>
                 <div className="bg-surface-50 dark:bg-white/5 rounded-xl p-4 text-sm border border-surface-100 dark:border-white/5">
                   <ReactMarkdown>
-                    {updateInfo.changelog ||
-                      "Correções de bugs e melhorias de desempenho."}
+                    {(() => {
+                      const raw =
+                        updateInfo.changelog ||
+                        "Correções de bugs e melhorias de desempenho.";
+                      try {
+                        // Tentar fazer parse se parecer JSON
+                        if (raw.trim().startsWith("{")) {
+                          const json = JSON.parse(raw);
+                          // Tenta pegar o idioma atual (ex: 'pt-BR' ou apenas 'pt')
+                          // O i18n.language pode ser 'pt-BR', 'en-US', etc.
+                          // O JSON tem chaves exatas 'pt-BR', 'en-US', 'es-ES'.
+
+                          // Mapeamento simples ou busca direta
+                          const lang = i18n.language; // 'pt-BR'
+
+                          if (json[lang]) return json[lang];
+
+                          // Fallback parcial (ex: 'pt' -> 'pt-BR')
+                          const key = Object.keys(json).find((k) =>
+                            k.startsWith(lang.split("-")[0])
+                          );
+                          if (key && json[key]) return json[key];
+
+                          // Fallback total (en-US ou primeira chave)
+                          return json["en-US"] || Object.values(json)[0] || raw;
+                        }
+                      } catch (e) {
+                        // Não é JSON, segue a vida
+                      }
+                      return raw;
+                    })()}
                   </ReactMarkdown>
                 </div>
               </div>
