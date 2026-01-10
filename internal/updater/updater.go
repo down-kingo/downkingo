@@ -130,9 +130,9 @@ func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 
 	info := &UpdateInfo{
 		Available:  latestVer != currentVer && latestVer > currentVer,
-		CurrentVer: u.currentVersion,
-		LatestVer:  release.TagName,
-		Changelog:  release.Body,
+		CurrentVer: strings.TrimPrefix(u.currentVersion, "v"),
+		LatestVer:  latestVer, // Remove 'v' prefix - frontend will add it
+		Changelog:  cleanChangelog(release.Body),
 	}
 
 	// Find appropriate asset for current OS
@@ -158,6 +158,40 @@ func (u *Updater) getAssetName() string {
 	default:
 		return "linux"
 	}
+}
+
+// cleanChangelog removes unnecessary GitHub compare links and cleans up the changelog
+func cleanChangelog(body string) string {
+	lines := strings.Split(body, "\n")
+	var cleaned []string
+
+	for _, line := range lines {
+		// Skip "Full Changelog" lines with compare links
+		if strings.Contains(line, "**Full Changelog**:") ||
+			strings.Contains(line, "Full Changelog:") ||
+			strings.Contains(line, "/compare/") {
+			continue
+		}
+		// Skip empty lines at the start
+		if len(cleaned) == 0 && strings.TrimSpace(line) == "" {
+			continue
+		}
+		cleaned = append(cleaned, line)
+	}
+
+	// Trim trailing empty lines
+	for len(cleaned) > 0 && strings.TrimSpace(cleaned[len(cleaned)-1]) == "" {
+		cleaned = cleaned[:len(cleaned)-1]
+	}
+
+	result := strings.Join(cleaned, "\n")
+
+	// If empty, return a default message
+	if strings.TrimSpace(result) == "" {
+		return "Correções de bugs e melhorias de desempenho."
+	}
+
+	return result
 }
 
 // DownloadAndApply downloads and installs the update
