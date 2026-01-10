@@ -127,7 +127,7 @@ export default function UpdateModal() {
                   </span>
                   <span className="text-surface-300">→</span>
                   <span className="px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold ring-1 ring-green-500/20">
-                    v{updateInfo.latestVersion}
+                    v{updateInfo.latestVersion.replace(/^v+/, "")}
                   </span>
                 </div>
               </div>
@@ -156,32 +156,40 @@ export default function UpdateModal() {
                       const raw =
                         updateInfo.changelog ||
                         "Correções de bugs e melhorias de desempenho.";
+
                       try {
-                        // Tentar fazer parse se parecer JSON
-                        if (raw.trim().startsWith("{")) {
-                          const json = JSON.parse(raw);
-                          // Tenta pegar o idioma atual (ex: 'pt-BR' ou apenas 'pt')
-                          // O i18n.language pode ser 'pt-BR', 'en-US', etc.
-                          // O JSON tem chaves exatas 'pt-BR', 'en-US', 'es-ES'.
+                        let json = null;
 
-                          // Mapeamento simples ou busca direta
-                          const lang = i18n.language; // 'pt-BR'
+                        // 1. Tentar extrair do comentário oculto (Novo Padrão)
+                        const i18nMatch = raw.match(
+                          /<!-- JSON_I18N: (.*?) -->/s
+                        );
+                        if (i18nMatch && i18nMatch[1]) {
+                          json = JSON.parse(i18nMatch[1]);
+                        }
+                        // 2. Tentar JSON direto (Legado do commit anterior)
+                        else if (raw.trim().startsWith("{")) {
+                          json = JSON.parse(raw);
+                        }
 
+                        if (json) {
+                          const lang = i18n.language;
+                          // Match exato
                           if (json[lang]) return json[lang];
-
-                          // Fallback parcial (ex: 'pt' -> 'pt-BR')
+                          // Match parcial (pt-BR -> pt)
                           const key = Object.keys(json).find((k) =>
                             k.startsWith(lang.split("-")[0])
                           );
                           if (key && json[key]) return json[key];
-
-                          // Fallback total (en-US ou primeira chave)
+                          // Fallback default
                           return json["en-US"] || Object.values(json)[0] || raw;
                         }
                       } catch (e) {
-                        // Não é JSON, segue a vida
+                        // Falha silenciosa, mostra raw
                       }
-                      return raw;
+
+                      // 3. Limpar comentários HTML se existirem no raw para não poluir (opcional, mas bom pra garantir)
+                      return raw.replace(/<!--.*?-->/gs, "");
                     })()}
                   </ReactMarkdown>
                 </div>

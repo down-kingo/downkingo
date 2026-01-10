@@ -93,34 +93,59 @@ async function askGemini(commits, version) {
     ${commits}
 
     Style Guidelines:
-    1. **Vibe**: Enthusiastic, professional, concise, and modern. Use emojis effectively but professionally.
-    2. **Language**: Avoid dry technical jargon (e.g., instead of "refactored backend", use "Engine Optimization"). Focus on user value.
-    3. **Structure**: 
-       - 🚀 Highlight (The main star of this release)
-       - ✨ Features (New capabilities)
-       - 🛡️ Stability & Polish (Bug fixes / Internal improvements)
+    1. **Vibe**: Clean, Minimalist, and Professional. Focus on readability and structure.
+    2. **Language**: Clear and direct. Use active voice.
+    3. **Formatting**: Use bullet points for easy scanning. Add empty lines between sections.
+    4. **Structure**: 
+       ### ⚡ Highlights
+       (Top 1-2 major features)
+
+       ### 🛠️ Improvements
+       (Refinements and optimizations)
+
+       ### 🛡️ Fixes
+       (Bug fixes and stability)
 
     Output Format (Critical):
     Return ONLY a valid, raw JSON object (no markdown fencing like \`\`\`json). 
     Matches this schema:
     {
-      "pt-BR": "Markdown string containing the formatted release notes...",
-      "en-US": "Markdown string containing the formatted release notes...",
-      "es-ES": "Markdown string containing the formatted release notes..."
+      "pt-BR": "Markdown string...",
+      "en-US": "Markdown string...",
+      "es-ES": "Markdown string..."
     }
   `;
+
+  /* 
+     Gemini returns a JSON string. We want to output:
+     1. The Visible Fallback (pt-BR)
+     2. The Hidden JSON payload for smart clients
+  */
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
   let text = response.text();
 
-  // Cleanup markdown fencing if the model adds it despite instructions
+  // Cleanup
   text = text
     .replace(/```json/g, "")
     .replace(/```/g, "")
     .trim();
 
-  return text;
+  try {
+    const json = JSON.parse(text);
+
+    // Fallback content (pt-BR)
+    const visibleContent = json["pt-BR"] || Object.values(json)[0];
+
+    // Hidden Payload
+    const hiddenPayload = `<!-- JSON_I18N: ${JSON.stringify(json)} -->`;
+
+    return `${visibleContent}\n\n${hiddenPayload}`;
+  } catch (e) {
+    console.error("Failed to parse Gemini JSON output, returning raw text", e);
+    return text; // Fail safe
+  }
 }
 
 generateNotes();
