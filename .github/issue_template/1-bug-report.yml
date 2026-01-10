@@ -1,0 +1,103 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in DownKingo
+labels:
+  - bug
+  - needs triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a bug report! It helps make DownKingo better.
+
+        **Before submitting, please:**
+        - Make sure you are running the [latest version](https://github.com/down-kingo/downkingo/releases/latest) of DownKingo.
+        - Search [existing issues](https://github.com/down-kingo/downkingo/issues) to avoid duplicates.
+        - Check the [documentation](https://github.com/down-kingo/downkingo#readme) for troubleshooting.
+
+  - type: input
+    id: version
+    attributes:
+      label: DownKingo Version
+      description: Which version of DownKingo are you using? (Check in Settings > About)
+      placeholder: "v2.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Windows 11
+        - Windows 10
+        - Linux (Ubuntu/Debian)
+        - Linux (Fedora/RHEL)
+        - Linux (Arch)
+        - Linux (Other)
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which part of the application is affected?
+      multiple: true
+      options:
+        - Download (from URL)
+        - Conversion (video/audio)
+        - Clipboard Monitor
+        - Queue Management
+        - Auto-Update
+        - UI/Interface
+        - Settings
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Provide clear steps to reproduce the bug.
+      placeholder: |
+        1. Open DownKingo
+        2. Paste this URL: https://...
+        3. Click download
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include any error messages.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (if applicable)
+      description: |
+        Include relevant logs from the application.
+        Logs are located in: `%APPDATA%\downkingo\logs` (Windows) or `~/.config/downkingo/logs` (Linux)
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or information that might help.

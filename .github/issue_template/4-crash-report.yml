@@ -1,0 +1,89 @@
+name: 💥 Crash Report
+description: Report a crash or application freeze in DownKingo
+labels:
+  - crash
+  - bug
+  - needs triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for submitting a crash report!** You're helping us make DownKingo more reliable for everyone.
+
+        ⚠️ **Important:** If the crash involves a security vulnerability, please report it privately following our [Security Policy](https://github.com/down-kingo/downkingo/blob/main/SECURITY.md).
+
+  - type: input
+    id: version
+    attributes:
+      label: DownKingo Version
+      description: Which version were you using when the crash occurred?
+      placeholder: "v2.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows 11
+        - Windows 10
+        - Linux (Ubuntu/Debian)
+        - Linux (Fedora/RHEL)
+        - Linux (Arch)
+        - Linux (Other)
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crash_type
+    attributes:
+      label: Type of Crash
+      options:
+        - Application closes unexpectedly
+        - Application freezes (unresponsive)
+        - White/black screen
+        - Error dialog appears then closes
+        - System crash (BSOD, kernel panic)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does this happen?
+      options:
+        - Every time
+        - Frequently (more than 50% of the time)
+        - Sometimes (less than 50% of the time)
+        - Once
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: What were you doing when the crash occurred?
+      placeholder: |
+        1. Opened DownKingo
+        2. Pasted URL: https://...
+        3. Clicked download
+        4. Application crashed
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log Output
+      description: |
+        Please copy and paste any relevant log output.
+        Logs are located in: `%APPDATA%\downkingo\logs` (Windows) or `~/.config/downkingo/logs` (Linux)
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might help (screenshots, recent system changes, etc.)

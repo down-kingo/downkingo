@@ -1,0 +1,118 @@
+name: 💡 Suggestion / Feature Request
+description: Suggest a new feature, improvement, or report a problem
+labels:
+  - enhancement
+  - suggestion
+  - needs triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing to DownKingo! 🎉
+
+        This form follows the same structure used in the app's built-in suggestion system.
+        Please fill in the fields below to help us understand your request.
+
+        **Tip:** Use the [Conventional Commits](https://www.conventionalcommits.org/) format for the title.
+
+  # Type + Scope + Title (matching SuggestionModal)
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What type of change is this?
+      options:
+        - "feat: New functionality"
+        - "fix: Bug fix"
+        - "docs: Documentation"
+        - "refactor: Code refactoring"
+        - "perf: Performance improvement"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which part of the application is affected?
+      options:
+        - core
+        - ui
+        - system
+        - download
+        - converter
+        - settings
+        - auth
+        - roadmap
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Short Description
+      description: A brief description of the change (this will be used to format the issue title)
+      placeholder: "add playlist download support"
+    validations:
+      required: true
+
+  # Context
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Describe the current scenario and why this change is relevant.
+      placeholder: "Currently, users need to download videos one by one..."
+
+  # Problem / Motivation
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Problem / Motivation
+      description: |
+        For **feat**: Why is this feature important? What problem does it solve?
+        For **fix**: Describe the bug or incorrect behavior.
+      placeholder: "Users have requested this feature multiple times because..."
+    validations:
+      required: true
+
+  # Technical Proposal
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Technical Proposal
+      description: How do you suggest implementing this? Which components/files would be affected?
+      placeholder: |
+        - Modify `internal/downloader/queue.go` to support batch processing
+        - Add new UI component for playlist selection
+        - Update i18n files with new strings
+
+  # Tasks
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks (one per line)
+      description: Break down the implementation into specific tasks.
+      placeholder: |
+        Implement playlist URL detection
+        Create batch download manager
+        Add progress tracking for multiple items
+        Update documentation
+
+  # Dependencies (optional)
+  - type: input
+    id: dependencies
+    attributes:
+      label: Dependencies (optional)
+      description: Does this depend on other issues or external changes?
+      placeholder: "Requires #123 to be completed first"
+
+  # References (optional)
+  - type: textarea
+    id: references
+    attributes:
+      label: References (optional)
+      description: Links to documentation, related issues, or relevant code.
+      placeholder: |
+        https://github.com/yt-dlp/yt-dlp#playlist-options
+        Related: #45, #67

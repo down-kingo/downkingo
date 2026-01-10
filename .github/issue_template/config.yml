@@ -1,0 +1,13 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/down-kingo/downkingo/blob/main/SECURITY.md
+    about: Report security vulnerabilities privately following our security policy.
+
+  - name: 📖 Documentation
+    url: https://github.com/down-kingo/downkingo#readme
+    about: Read the documentation before opening an issue.
+
+  - name: 🌐 Official Website
+    url: https://downkingo.com
+    about: Visit our official website for downloads and more information.

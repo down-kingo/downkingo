@@ -1,0 +1,64 @@
+name: 📖 Documentation Issue
+description: Report missing, incorrect, or confusing documentation
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation!
+
+        DownKingo documentation includes:
+        - [README (English)](https://github.com/down-kingo/downkingo#readme)
+        - [README (Português)](https://github.com/down-kingo/downkingo/blob/main/README-pt.md)
+        - [Contributing Guide](https://github.com/down-kingo/downkingo/blob/main/CONTRIBUTING.md)
+        - [Security Policy](https://github.com/down-kingo/downkingo/blob/main/SECURITY.md)
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of Issue
+      description: What kind of documentation issue is this?
+      multiple: true
+      options:
+        - Documentation is missing
+        - Documentation is incorrect/outdated
+        - Documentation is confusing
+        - Example code is not working
+        - Translation issue
+        - Something else
+    validations:
+      required: true
+
+  - type: dropdown
+    id: document
+    attributes:
+      label: Affected Document
+      description: Which documentation is affected?
+      options:
+        - README.md
+        - README-pt.md
+        - CONTRIBUTING.md
+        - SECURITY.md
+        - Internal code documentation
+        - Other
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Description
+      description: Describe the documentation issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where did you find this issue? Provide a link or section name.
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve this documentation?

@@ -2,10 +2,11 @@
 
 ## Versões Suportadas
 
-| Versão | Suportada |
-| ------ | --------- |
-| 1.x.x  | ✅ Sim    |
-| < 1.0  | ❌ Não    |
+| Versão | Suportada                    |
+| ------ | ---------------------------- |
+| 2.x.x  | ✅ Sim                       |
+| 1.x.x  | ⚠️ Apenas correções críticas |
+| < 1.0  | ❌ Não                       |
 
 ## Reportando Vulnerabilidades
 
@@ -14,7 +15,7 @@ Se você descobrir uma vulnerabilidade de segurança, por favor **NÃO** abra um
 ### Como Reportar
 
 1. Envie um email para: **emanuelsoares02@gmail.com**
-2. Ou use o [GitHub Security Advisories](https://github.com/Capman002/DownKingo/security/advisories/new)
+2. Ou use o [GitHub Security Advisories](https://github.com/down-kingo/downkingo/security/advisories/new)
 
 ### O que incluir no reporte
 
