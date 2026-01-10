@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-09T23:43:26.006Z",
+  "generated_at": "2026-01-10T02:01:55.662Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Description\nNative support for downloading images from various platforms and direct URLs.\n\n### Technical Details\n- **Detection:** Automatic identification of URLs that point to images.\n- **Processing:** Ability to process image galleries (depending on the source).\n- **Output:** Correct saving with the appropriate extension.\n- **Integration:** Works integrated with the clipboard monitor.\n\n### Status\n✅ Delivered in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -48,7 +48,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:41Z",
       "shipped_at": "2026-01-08T15:02:56Z",
-      "friendly_title": "Download de Imagens"
+      "friendly_title": "Download Images"
     },
     {
       "id": 17,
