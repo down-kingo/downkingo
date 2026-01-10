@@ -64,24 +64,24 @@ function App() {
 
     registerListener();
 
-    // Fallback: se o evento não chegar em 2 segundos, chamar diretamente
-    const timeout = setTimeout(async () => {
-      if (mountedRef.current && !eventReceivedRef.current) {
-        console.log("[App] Timeout - calling NeedsDependencies directly");
-        eventReceivedRef.current = true;
-        try {
-          const needs = await NeedsDependencies();
-          if (mountedRef.current) {
-            setNeedsSetup(needs);
-          }
-        } catch (err) {
-          console.error("[App] Error calling NeedsDependencies:", err);
-          if (mountedRef.current) {
-            setNeedsSetup(false); // Assume ready on error
-          }
+    // Verificação imediata: não esperar pelo evento se o backend já estiver pronto
+    // Isso evita o delay de 2s caso o evento já tenha sido emitido antes do frontend carregar
+    NeedsDependencies()
+      .then((needs) => {
+        if (mountedRef.current && !eventReceivedRef.current) {
+          console.log("[App] Initial check: needsSetup =", needs);
+          setNeedsSetup(needs);
+          eventReceivedRef.current = true;
         }
-      }
-    }, 2000);
+      })
+      .catch((err) => {
+        console.warn("[App] Failed to get initial dependency status:", err);
+        // Em caso de erro, assumir que não precisa de setup para não travar na tela de loading
+        if (mountedRef.current && !eventReceivedRef.current) {
+          setNeedsSetup(false);
+          eventReceivedRef.current = true;
+        }
+      });
 
     // Cleanup ao desmontar
     return () => {
@@ -92,7 +92,6 @@ function App() {
       } else {
         tryEventsOff("app:ready");
       }
-      clearTimeout(timeout);
     };
   }, []);
 
