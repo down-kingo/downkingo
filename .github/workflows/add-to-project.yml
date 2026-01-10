@@ -1,0 +1,22 @@
+name: Add Suggestions to Project
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  add-to-project:
+    name: Add to Roadmap Project
+    runs-on: ubuntu-latest
+
+    # Only run for issues with 'suggestion' or 'enhancement' labels
+    if: |
+      contains(github.event.issue.labels.*.name, 'suggestion') ||
+      contains(github.event.issue.labels.*.name, 'enhancement')
+
+    steps:
+      - name: Add Issue to Project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/down-kingo/projects/2
+          github-token: ${{ secrets.ROADMAP_PAT }}
