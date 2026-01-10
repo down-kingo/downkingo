@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T07:24:07.304Z",
+  "generated_at": "2026-01-10T07:41:30.483Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Ausgabe:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -503,7 +503,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n✅ Ausgeliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

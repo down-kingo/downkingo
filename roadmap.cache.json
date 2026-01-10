@@ -163,20 +163,20 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
     "title_i18n": {
       "pt-BR": "Download de Imagens",
       "en-US": "Download Images",
       "es-ES": "Descargar Imágenes",
-      "fr-FR": "Télécharger des images",
+      "fr-FR": "Télécharger des Images",
       "de-DE": "Bilder herunterladen"
     },
     "description_i18n": {
       "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
       "en-US": "### Description\nNative support for downloading images from various platforms and direct URLs.\n\n### Technical Details\n- **Detection:** Automatic identification of URLs pointing to images.\n- **Processing:** Ability to process image galleries (depending on the source).\n- **Output:** Correct saving with the appropriate extension.\n- **Integration:** Works integrated with the clipboard monitor.\n\n### Status\n✅ Delivered in v2.0.0",
       "es-ES": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "fr-FR": "### Description\nPrise en charge native du téléchargement d'images à partir de diverses plateformes et d'URL directes.\n\n### Détails techniques\n- **Détection:** Identification automatique des URL pointant vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Sortie:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nNative Unterstützung für das Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Ausgabe:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+      "fr-FR": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails techniques\n- **Détection:** Identification automatique des URL pointant vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
     }
   },
   "15": {
@@ -475,7 +475,7 @@
   },
   "33": {
     "original_title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-    "original_desc_hash": "###DescriçãoSegundaversãodomonitordeáreadetransferência,otimizadoparaeficiência.###De_469",
+    "original_desc_hash": "###DescriçãoSegundaversãodomonitordeáreadetransferência,otimizadoparaeficiência.###De_468",
     "title_i18n": {
       "pt-BR": "Monitor de área de transferência V2 com Adaptive Backoff",
       "en-US": "Clipboard Monitor V2 with Adaptive Backoff",
@@ -484,11 +484,11 @@
       "de-DE": "Zwischenablage-Monitor V2 mit Adaptive Backoff"
     },
     "description_i18n": {
-      "pt-BR": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n Entregue na v2.0.0",
-      "en-US": "### Description\nSecond version of the clipboard monitor, optimized for efficiency.\n\n### Technical Details\n- **Adaptive Backoff:** Algorithm that adjusts the polling frequency based on user activity (increases the interval when idle).\n- **Regex:** Optimized compilation of regular expressions for URL detection.\n- **Filters:** Automatically ignores irrelevant content types (plain text without URLs, files).\n\n### Status\n Delivered in v2.0.0",
-      "es-ES": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n Entregado en v2.0.0",
-      "fr-FR": "### Description\nSeconde version du moniteur presse-papiers, optimisée pour l'efficacité.\n\n### Détails techniques\n- **Adaptive Backoff:** Algorithme qui ajuste la fréquence d'interrogation en fonction de l'activité de l'utilisateur (augmente l'intervalle lorsqu'il est inactif).\n- **Regex:** Compilation optimisée d'expressions régulières pour la détection d'URL.\n- **Filters:** Ignore automatiquement les types de contenu non pertinents (texte brut sans URL, fichiers).\n\n### Statut\n Livré en v2.0.0",
-      "de-DE": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n Ausgeliefert in v2.0.0"
+      "pt-BR": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nSecond version of the clipboard monitor, optimized for efficiency.\n\n### Technical Details\n- **Adaptive Backoff:** Algorithm that adjusts the polling frequency based on user activity (increases the interval when idle).\n- **Regex:** Optimized compilation of regular expressions for URL detection.\n- **Filters:** Automatically ignores irrelevant content types (plain text without URLs, files).\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nSegunda versión del monitor del portapapeles, optimizada para la eficiencia.\n\n### Detalles Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta la frecuencia de sondeo basado en la actividad del usuario (aumenta el intervalo cuando está inactivo).\n- **Regex:** Compilación optimizada de expresiones regulares para la detección de URL.\n- **Filters:** Ignora automáticamente los tipos de contenido irrelevantes (texto plano sin URL, archivos).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nSeconde version du moniteur presse-papiers, optimisée pour l'efficacité.\n\n### Détails techniques\n- **Adaptive Backoff:** Algorithme qui ajuste la fréquence d'interrogation en fonction de l'activité de l'utilisateur (augmente l'intervalle lorsqu'il est inactif).\n- **Regex:** Compilation optimisée d'expressions régulières pour la détection d'URL.\n- **Filters:** Ignore automatiquement les types de contenu non pertinents (texte brut sans URL, fichiers).\n\n### Statut\n✅ Livré en v2.0.0",
+      "de-DE": "### Beschreibung\nZweite Version des Zwischenablage-Monitors, optimiert für Effizienz.\n\n### Technische Details\n- **Adaptive Backoff:** Algorithmus, der die Abfragefrequenz basierend auf der Benutzeraktivität anpasst (erhöht das Intervall bei Inaktivität).\n- **Regex:** Optimierte Kompilierung regulärer Ausdrücke zur URL-Erkennung.\n- **Filters:** Ignoriert automatisch irrelevante Inhaltstypen (reiner Text ohne URLs, Dateien).\n\n### Status\n✅ Ausgeliefert in v2.0.0"
     }
   }
 }
