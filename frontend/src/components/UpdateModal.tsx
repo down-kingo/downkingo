@@ -64,14 +64,23 @@ export default function UpdateModal() {
   };
 
   const handleUpdate = async () => {
-    if (!updateInfo?.downloadUrl) return;
+    console.log("[UpdateModal] Start update clicked", updateInfo);
+    if (!updateInfo?.downloadUrl) {
+      console.error("[UpdateModal] No download URL available");
+      return;
+    }
     setStatus("downloading");
     setError(null);
     try {
+      console.log(
+        "[UpdateModal] Calling DownloadAndApplyUpdate",
+        updateInfo.downloadUrl
+      );
       await DownloadAndApplyUpdate(updateInfo.downloadUrl);
+      console.log("[UpdateModal] DownloadAndApplyUpdate returned success");
       // Status will be updated via events, but final success usually triggers restart or complete
     } catch (err) {
-      console.error("Update failed:", err);
+      console.error("[UpdateModal] Update failed:", err);
       setStatus("error");
       setError(
         err instanceof Error ? err.message : "Erro desconhecido ao atualizar."
@@ -80,10 +89,12 @@ export default function UpdateModal() {
   };
 
   const handleRestart = () => {
+    console.log("[UpdateModal] Restart clicked");
     RestartApp();
   };
 
   const handleClose = () => {
+    console.log("[UpdateModal] Close clicked");
     setIsOpen(false);
   };
 
