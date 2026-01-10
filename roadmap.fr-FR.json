@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T18:38:53.468Z",
+  "generated_at": "2026-01-10T20:27:43.097Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -32,7 +32,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails techniques\n- **Détection:** Identification automatique des URL pointant vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "description": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails Techniques\n- **Détection:** Identification automatique des URL qui pointent vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
