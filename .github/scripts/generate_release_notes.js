@@ -81,7 +81,7 @@ function getCommits(from, to) {
 
 async function askGemini(commits, version) {
   // Using the requested model (assuming availability provided by user's environment/key)
-  const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
   const prompt = `
     Persona: You are a Visionary Product Manager and Elite Tech Marketer for DownKingo (a premium video downloader app).
