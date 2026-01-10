@@ -80,7 +80,7 @@ function getCommits(from, to) {
 }
 
 async function askGemini(commits, version) {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
   const prompt = `
     You are a Technical Writer for the DownKingo project (a video downloader app based on Wails/Go + React).
