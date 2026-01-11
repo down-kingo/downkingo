@@ -16,16 +16,16 @@
 /**
  * Modelo para geração de Release Notes
  * Requer: Alta qualidade de escrita, criatividade
- * Recomendado: gemini-3.0-flash-preview
+ * Recomendado: gemini-3-flash-preview
  */
-const GEMINI_MODEL_RELEASE_NOTES = "gemini-3.0-flash-preview";
+const GEMINI_MODEL_RELEASE_NOTES = "gemini-3-flash-preview";
 
 /**
  * Modelo para tradução de Roadmap
  * Requer: Rápido, eficiente, bom custo-benefício
- * Recomendado: gemini-3.0-flash-preview
+ * Recomendado: gemini-3-flash-preview
  */
-const GEMINI_MODEL_ROADMAP = "gemini-3.0-flash-preview";
+const GEMINI_MODEL_ROADMAP = "gemini-3-flash-preview";
 
 // ═══════════════════════════════════════════════════════════════════
 // ⚙️ CONFIGURAÇÕES DE GERAÇÃO
