@@ -51,6 +51,7 @@ const getColumns = (t: (key: string) => string): ColumnConfig[] => [
     bg: "bg-yellow-500/5",
     glass:
       "bg-yellow-500/5 dark:bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/50 hover:bg-yellow-500/10 shadow-yellow-500/5",
+    barColor: "bg-yellow-500",
   },
   {
     id: "planned" as RoadmapStatus,
@@ -63,6 +64,7 @@ const getColumns = (t: (key: string) => string): ColumnConfig[] => [
     bg: "bg-blue-500/5",
     glass:
       "bg-blue-500/5 dark:bg-blue-500/5 border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-500/10 shadow-blue-500/5",
+    barColor: "bg-blue-500",
   },
   {
     id: "in-progress" as RoadmapStatus,
@@ -75,6 +77,7 @@ const getColumns = (t: (key: string) => string): ColumnConfig[] => [
     bg: "bg-purple-500/5",
     glass:
       "bg-purple-500/5 dark:bg-purple-500/5 border-purple-500/20 hover:border-purple-500/50 hover:bg-purple-500/10 shadow-purple-500/5",
+    barColor: "bg-purple-500",
   },
   {
     id: "shipped" as RoadmapStatus,
@@ -87,6 +90,7 @@ const getColumns = (t: (key: string) => string): ColumnConfig[] => [
     bg: "bg-green-500/5",
     glass:
       "bg-green-500/5 dark:bg-green-500/5 border-green-500/20 hover:border-green-500/50 hover:bg-green-500/10 shadow-green-500/5",
+    barColor: "bg-green-500",
   },
 ];
 
@@ -655,7 +659,7 @@ function RoadmapDetail({
               disallowedElements={["img", "iframe", "script", "style", "html"]}
               unwrapDisallowed
               components={{
-                // Headings com visual premium
+                // Headings com visual premium - cores da coluna
                 h1: ({ children }) => (
                   <h1 className="text-2xl font-bold text-surface-900 dark:text-white mt-8 mb-4 pb-3 border-b border-surface-200 dark:border-white/10">
                     {children}
@@ -663,12 +667,17 @@ function RoadmapDetail({
                 ),
                 h2: ({ children }) => (
                   <h2 className="text-xl font-bold text-surface-800 dark:text-white/90 mt-8 mb-3 flex items-center gap-3">
-                    <span className="w-1 h-6 bg-primary-500 rounded-full" />
+                    <span
+                      className={`w-1 h-6 ${column.barColor} rounded-full`}
+                    />
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-lg font-semibold text-surface-700 dark:text-white/90 mt-6 mb-2">
+                  <h3 className="text-lg font-semibold text-surface-700 dark:text-white/90 mt-6 mb-2 flex items-center gap-2">
+                    <span
+                      className={`w-1 h-5 ${column.barColor} rounded-full opacity-80`}
+                    />
                     {children}
                   </h3>
                 ),

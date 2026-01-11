@@ -99,6 +99,14 @@ func Load(configDir string) (*Config, error) {
 		}
 	}
 
+	// Migration: Ensure CDNEnabled is true for legacy configs that don't have roadmap section
+	// If CDNBaseURL is empty, it means the roadmap config was never set (legacy JSON)
+	// In this case, apply default values
+	if cfg.Roadmap.CDNBaseURL == "" {
+		defaultCfg := Default()
+		cfg.Roadmap = defaultCfg.Roadmap
+	}
+
 	// Environment variable overrides (useful for dev/CI/staging)
 	// DOWNKINGO_ROADMAP_CDN=1 or DOWNKINGO_ROADMAP_CDN=true
 	if envCDN := os.Getenv("DOWNKINGO_ROADMAP_CDN"); envCDN != "" {

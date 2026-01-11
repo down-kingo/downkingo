@@ -1,5 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { execSync } = require("child_process");
+const { GEMINI_MODEL_RELEASE_NOTES } = require("./ai-config");
 
 // Config
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -80,8 +81,8 @@ function getCommits(from, to) {
 }
 
 async function askGemini(commits, version) {
-  // Using the requested model (assuming availability provided by user's environment/key)
-  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  // Using the model from centralized config
+  const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_RELEASE_NOTES });
 
   const prompt = `
     Persona: You are a Visionary Product Manager and Elite Tech Marketer for DownKingo (a premium video downloader app).

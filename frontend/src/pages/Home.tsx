@@ -11,7 +11,7 @@ import { useSettingsStore } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useDebounce } from "../hooks/useDebounce";
-import SettingsPanel from "../components/SettingsPanel";
+import SettingsPanel, { SettingsTab } from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
 import ClipboardToast from "../components/ClipboardToast";
 import OnboardingModal from "../components/OnboardingModal";
@@ -40,6 +40,8 @@ import {
   RestartApp,
   OpenDownloadFolder,
   OpenUrl,
+  CheckAria2cStatus,
+  DownloadAria2c,
 } from "../../wailsjs/go/main/App";
 import {
   IconDownload,
@@ -66,6 +68,9 @@ import {
   IconExternalLink,
   IconList,
   IconTransform,
+  IconRocket,
+  IconBolt,
+  IconArrowRight,
 } from "@tabler/icons-react";
 
 export default function Home() {
@@ -109,7 +114,6 @@ export default function Home() {
   } = settings;
   const { t } = useTranslation("common");
 
-  // Gerar formatos baseados na compatibilidade selecionada
   const VIDEO_QUALITIES = getVideoQualities(videoCompatibility);
 
   const [url, setUrl] = useState("");
@@ -124,11 +128,24 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>("home");
 
   // Settings panel state
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsState, setSettingsState] = useState<{
+    isOpen: boolean;
+    tab?: SettingsTab;
+    targetId?: string;
+  }>({ isOpen: false });
+
+  const openSettings = (tab: SettingsTab = "general", targetId?: string) => {
+    setSettingsState({ isOpen: true, tab, targetId });
+  };
+
+  const closeSettings = () => {
+    setSettingsState((prev) => ({ ...prev, isOpen: false }));
+  };
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useKeyboardShortcuts({
-    onOpenSettings: () => setIsSettingsOpen(true),
+    onOpenSettings: () => openSettings(),
     onFocusInput: () => {
       setActiveTab("video");
       setTimeout(() => inputRef.current?.focus(), 50);
@@ -377,14 +394,14 @@ export default function Home() {
             setActiveTab={setActiveTab}
             queueCount={queue.length}
             version={version}
-            onOpenSettings={() => setIsSettingsOpen(true)}
+            onOpenSettings={() => openSettings()}
           />
         ) : (
           <Topbar
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             queueCount={queue.length}
-            onOpenSettings={() => setIsSettingsOpen(true)}
+            onOpenSettings={() => openSettings()}
           />
         )}
 
@@ -450,7 +467,7 @@ export default function Home() {
                                 <span className="hidden sm:inline">
                                   {t("home.paste")}
                                 </span>
-                                <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-[10px] font-mono text-surface-500">
+                                <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-surface-200 dark:border-surface-600 bg-surface-50 dark:bg-surface-200/50 text-[10px] font-mono text-surface-500 dark:text-surface-400">
                                   <span className="text-xs">⌘</span>V
                                 </kbd>
                               </button>
@@ -468,6 +485,65 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Aria2c Active Warning - Minimalist Pill */}
+                    <AnimatePresence>
+                      {useAria2c && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          className="flex justify-center mt-6"
+                        >
+                          <div className="inline-flex items-center gap-2 bg-surface-100/80 dark:bg-surface-800/50 backdrop-blur-sm border border-surface-200 dark:border-surface-200/30 rounded-full px-4 py-1.5 shadow-sm">
+                            <IconRocket
+                              size={14}
+                              className="text-orange-500 dark:text-orange-400"
+                            />
+                            <span className="text-xs font-bold text-surface-600 dark:text-surface-500 uppercase tracking-widest">
+                              {t("home.aria2c_active")}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Turbo Mode Promotion - Show if NOT active */}
+                    <AnimatePresence>
+                      {!useAria2c && !url && !videoInfo && !isFetching && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="mt-6 max-w-sm mx-auto"
+                        >
+                          <div className="inline-flex flex-col sm:flex-row items-center gap-3 bg-surface-100/80 dark:bg-surface-800/50 backdrop-blur-sm border border-surface-200 dark:border-surface-200/30 rounded-full py-2 pl-4 pr-3 shadow-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="text-orange-500 dark:text-orange-400 animate-pulse">
+                                <IconBolt size={16} fill="currentColor" />
+                              </div>
+                              <span className="text-sm font-medium text-surface-600 dark:text-surface-500">
+                                {t("home.turbo_tip_title")}
+                              </span>
+                            </div>
+
+                            <div className="hidden sm:block w-px h-4 bg-surface-300 dark:bg-surface-200" />
+                            <button
+                              onClick={() =>
+                                openSettings("video", "aria2c-settings")
+                              }
+                              className="group flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-surface-200 hover:bg-surface-50 dark:hover:bg-surface-300 text-surface-900 dark:text-surface-600 text-xs font-bold rounded-full shadow-sm border border-surface-200 dark:border-surface-200/50 transition-all"
+                            >
+                              <span>{t("home.turbo_activate")}</span>
+                              <IconArrowRight
+                                size={12}
+                                className="group-hover:translate-x-0.5 transition-transform"
+                              />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Fetching indicator */}
                     {isFetching && (
@@ -555,8 +631,8 @@ export default function Home() {
                               onClick={() => setDownloadMode("video")}
                               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                                 downloadMode === "video"
-                                  ? "bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm"
-                                  : "text-surface-500 hover:text-surface-900 dark:hover:text-surface-300"
+                                  ? "bg-white dark:bg-surface-200 text-surface-900 dark:text-surface-800 shadow-sm"
+                                  : "text-surface-500 hover:text-surface-900 dark:hover:text-surface-400"
                               }`}
                             >
                               <IconVideo size={16} />
@@ -566,8 +642,8 @@ export default function Home() {
                               onClick={() => setDownloadMode("audio")}
                               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                                 downloadMode === "audio"
-                                  ? "bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm"
-                                  : "text-surface-500 hover:text-surface-900 dark:hover:text-surface-300"
+                                  ? "bg-white dark:bg-surface-200 text-surface-900 dark:text-surface-800 shadow-sm"
+                                  : "text-surface-500 hover:text-surface-900 dark:hover:text-surface-400"
                               }`}
                             >
                               <IconMusic size={16} />
@@ -582,7 +658,7 @@ export default function Home() {
                               animate={{ opacity: 1 }}
                               className="mb-5"
                             >
-                              <label className="block text-sm font-medium text-surface-700 mb-2">
+                              <label className="block text-sm font-medium text-surface-700 dark:text-surface-400 mb-2">
                                 {t("home.quality")}
                               </label>
                               <div className="flex flex-wrap gap-2">
@@ -606,7 +682,7 @@ export default function Home() {
                                       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all ${
                                         selectedQuality === q.value
                                           ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-100"
-                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-300"
+                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-400"
                                       }`}
                                     >
                                       <Icon size={18} />
@@ -636,7 +712,7 @@ export default function Home() {
                               animate={{ opacity: 1 }}
                               className="mb-5"
                             >
-                              <label className="block text-sm font-medium text-surface-700 mb-2">
+                              <label className="block text-sm font-medium text-surface-700 dark:text-surface-400 mb-2">
                                 {t("home.format")}
                               </label>
                               <div className="flex flex-wrap gap-2">
@@ -651,7 +727,7 @@ export default function Home() {
                                       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all ${
                                         selectedAudioFormat === f.value
                                           ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-100"
-                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-300"
+                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-400"
                                       }`}
                                     >
                                       <Icon size={18} />
@@ -782,8 +858,10 @@ export default function Home() {
       {activeTab !== "roadmap" && <Terminal layout={layout} />}
       {/* Settings Panel Overlay */}
       <SettingsPanel
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        isOpen={settingsState.isOpen}
+        onClose={closeSettings}
+        defaultTab={settingsState.tab}
+        scrollToId={settingsState.targetId}
       />
     </div>
   );

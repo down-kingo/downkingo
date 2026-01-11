@@ -1,5 +1,12 @@
 const fs = require("fs");
 const https = require("https");
+const {
+  GEMINI_MODEL_ROADMAP,
+  GENERATION_CONFIG_ROADMAP,
+  getGeminiRestUrl,
+  delay,
+  RATE_LIMIT_DELAY_MS,
+} = require("./ai-config");
 
 // --- Configuration ---
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -124,12 +131,12 @@ async function callGemini(technicalTitle, description) {
 
   const body = JSON.stringify({
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.3, maxOutputTokens: 4000 },
+    generationConfig: GENERATION_CONFIG_ROADMAP,
   });
 
   return new Promise((resolve, reject) => {
     const req = https.request(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
+      getGeminiRestUrl(GEMINI_MODEL_ROADMAP, GEMINI_API_KEY),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -307,8 +314,8 @@ async function main() {
           "pt-BR": item.description,
         };
       }
-      // Rate limiting - increased due to larger payload
-      await new Promise((r) => setTimeout(r, 2000));
+      // Rate limiting - using centralized config
+      await delay();
     } catch (err) {
       console.error(`   ❌ Failed #${item.id}:`, err.message);
     }

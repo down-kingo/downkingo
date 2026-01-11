@@ -106,7 +106,12 @@
     "queue_title": "Download Queue",
     "video": "",
     "video_mode": "Video",
-    "views": "views"
+    "views": "views",
+    "aria2c_active": "Turbo Mode Active",
+    "turbo_tip_title": "Slow Downloads?",
+    "turbo_tip_desc": "Enable Turbo Mode for up to 10x faster speeds.",
+    "turbo_activate": "Enable Turbo Mode",
+    "turbo_installing": "Installing Turbo..."
   },
   "image": "",
   "increase_of": "",

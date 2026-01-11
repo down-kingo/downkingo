@@ -80,6 +80,7 @@ export namespace config {
 	    image: ImageConfig;
 	    shortcuts: ShortcutsConfig;
 	    clipboardMonitorEnabled: boolean;
+	    telemetryEnabled: boolean;
 	    roadmap: RoadmapConfig;
 	
 	    static createFrom(source: any = {}) {
@@ -94,6 +95,7 @@ export namespace config {
 	        this.image = this.convertValues(source["image"], ImageConfig);
 	        this.shortcuts = this.convertValues(source["shortcuts"], ShortcutsConfig);
 	        this.clipboardMonitorEnabled = source["clipboardMonitorEnabled"];
+	        this.telemetryEnabled = source["telemetryEnabled"];
 	        this.roadmap = this.convertValues(source["roadmap"], RoadmapConfig);
 	    }
 	

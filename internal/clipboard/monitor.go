@@ -108,7 +108,7 @@ func (m *Monitor) loop() {
 			if changed {
 				// Reset to fast polling on clipboard change
 				currentInterval = minPollInterval
-				logger.Log.Info().Str("content_preview", limitString(text, 50)).Msg("Clipboard content changed")
+				logger.Log.Debug().Str("content_preview", limitString(text, 50)).Msg("Clipboard content changed")
 
 				if m.isValidURL(text) {
 					logger.Log.Info().Str("url", text).Msg("Clipboard link detected and valid")

@@ -35,6 +35,16 @@ func Init(appDataDir string) error {
 	// Configurar formato de tempo legível
 	zerolog.TimeFieldFormat = time.RFC3339
 
+	// Definir nível global de log
+	// defaultLevel é definido via build tags (debug/dev vs prod)
+	logLevel := defaultLevel
+
+	// Permite override via variável de ambiente, mesmo em prod
+	if os.Getenv("KINGO_DEBUG") == "true" || os.Getenv("KINGO_DEBUG") == "1" {
+		logLevel = zerolog.DebugLevel
+	}
+	zerolog.SetGlobalLevel(logLevel)
+
 	// Multi-writer: apenas arquivo em produção
 	writers := []io.Writer{logFile}
 

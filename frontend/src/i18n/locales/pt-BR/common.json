@@ -107,7 +107,12 @@
     "queue_title": "Fila de Downloads",
     "video": "",
     "video_mode": "Vídeo",
-    "views": "visualizações"
+    "views": "visualizações",
+    "aria2c_active": "Modo Turbo Ativo",
+    "turbo_tip_title": "Downloads Lentos?",
+    "turbo_tip_desc": "Ative o Modo Turbo para baixar até 10x mais rápido.",
+    "turbo_activate": "Ativar Modo Turbo",
+    "turbo_installing": "Instalando Turbo..."
   },
   "image": "",
   "increase_of": "",

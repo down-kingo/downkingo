@@ -107,7 +107,12 @@
     "queue_title": "Cola de Descargas",
     "video": "",
     "video_mode": "Video",
-    "views": "vistas"
+    "views": "vistas",
+    "aria2c_active": "Modo Turbo Activo",
+    "turbo_tip_title": "¿Descargas Lentas?",
+    "turbo_tip_desc": "Active el Modo Turbo para descargar hasta 10 veces más rápido.",
+    "turbo_activate": "Activar Modo Turbo",
+    "turbo_installing": "Instalando Turbo..."
   },
   "image": "",
   "increase_of": "",

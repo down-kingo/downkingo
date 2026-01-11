@@ -253,7 +253,7 @@ export default function VideoSettings() {
       </section>
 
       {/* Aria2c - Downloads Acelerados */}
-      <section>
+      <section id="aria2c-settings">
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
           <IconRocket size={14} />
           {t("aria2c_settings.title")}

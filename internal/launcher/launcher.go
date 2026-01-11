@@ -24,11 +24,12 @@ import (
 
 // HTTP client with optimized transport for large downloads
 var httpClient = &http.Client{
-	Timeout: 5 * time.Minute,
+	Timeout: 60 * time.Minute, // Increased to support slow connections (e.g., < 4Mbps)
 	Transport: &http.Transport{
 		MaxIdleConns:        10,
 		MaxIdleConnsPerHost: 5,
 		IdleConnTimeout:     90 * time.Second,
+		DisableKeepAlives:   false,
 	},
 }
 
@@ -275,6 +276,11 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 		logger.Log.Error().Err(err).Str("dependency", dep.Name).Msg("failed to create request")
 		return fmt.Errorf("request error: %w", err)
 	}
+
+	// Set headers to mimic a browser and avoid rate limiting/drops
+	req.Header.Set("User-Agent", "DownKingo-Launcher/2.0")
+	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Connection", "keep-alive")
 
 	resp, err := httpClient.Do(req)
 	if err != nil {

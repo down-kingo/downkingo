@@ -54,7 +54,7 @@ const SettingItem = ({
 export default function AboutSettings() {
   const { t } = useTranslation("settings");
 
-  const appVersion = "2.0.0"; // Idealmente viria do backend/config
+  const appVersion = "2.0.2"; // Idealmente viria do backend/config
 
   const handleOpenLink = (url: string) => {
     safeBrowserOpenURL(url);
@@ -97,7 +97,7 @@ export default function AboutSettings() {
             icon={IconBook}
             label={t("about.documentation")}
             desc={t("about.documentation_desc")}
-            onClick={() => handleOpenLink("https://downkingo.app/docs")} // Substituir URL real
+            onClick={() => handleOpenLink("https://downkingo.com/docs")}
           >
             <IconExternalLink size={18} className="text-surface-400" />
           </SettingItem>
@@ -108,8 +108,8 @@ export default function AboutSettings() {
             label={t("about.github")}
             desc={t("about.github_desc")}
             onClick={() =>
-              handleOpenLink("https://github.com/Capman002/downkingo")
-            } // Substituir URL real
+              handleOpenLink("https://github.com/down-kingo/downkingo")
+            }
           >
             <IconExternalLink size={18} className="text-surface-400" />
           </SettingItem>
@@ -120,7 +120,9 @@ export default function AboutSettings() {
               icon={IconHeart}
               label={t("about.support")}
               desc={t("about.support_desc")}
-              onClick={() => handleOpenLink("https://ko-fi.com/seulink")} // Substituir URL real
+              onClick={() =>
+                handleOpenLink("https://github.com/sponsors/Capman002/")
+              }
             >
               <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-lg text-xs font-bold uppercase tracking-wide">
                 {t("about.donate")}

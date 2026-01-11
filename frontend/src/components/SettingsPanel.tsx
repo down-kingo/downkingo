@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -21,7 +21,7 @@ import AppearanceSettings from "./settings/AppearanceSettings";
 import AboutSettings from "./settings/AboutSettings";
 import ConverterSettings from "./settings/ConverterSettings";
 
-type SettingsTab =
+export type SettingsTab =
   | "general"
   | "appearance"
   | "video"
@@ -33,6 +33,8 @@ type SettingsTab =
 interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultTab?: SettingsTab;
+  scrollToId?: string;
 }
 
 // Tab groups for better organization
@@ -47,9 +49,49 @@ interface TabGroup {
   }[];
 }
 
-export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
+export default function SettingsPanel({
+  isOpen,
+  onClose,
+  defaultTab = "general",
+  scrollToId,
+}: SettingsPanelProps) {
   const { t } = useTranslation("settings");
-  const [activeTab, setActiveTab] = useState<SettingsTab>("general");
+  const [activeTab, setActiveTab] = useState<SettingsTab>(defaultTab);
+
+  // Reset/Set tab when opening
+  useEffect(() => {
+    if (isOpen) {
+      if (defaultTab) {
+        setActiveTab(defaultTab);
+      }
+
+      // Handle scrolling if target ID is provided
+      if (scrollToId) {
+        // Delay slightly to ensure content is mounted
+        setTimeout(() => {
+          const element = document.getElementById(scrollToId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Highlight effect
+            element.classList.add(
+              "ring-2",
+              "ring-primary-500",
+              "rounded-xl",
+              "transition-all",
+              "duration-1000"
+            );
+            setTimeout(() => {
+              element.classList.remove(
+                "ring-2",
+                "ring-primary-500",
+                "rounded-xl"
+              );
+            }, 2000);
+          }
+        }, 300); // 300ms matches the enter animation roughly
+      }
+    }
+  }, [isOpen, defaultTab, scrollToId]);
 
   const tabGroups = useMemo<TabGroup[]>(
     () => [

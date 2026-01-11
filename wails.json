@@ -6,6 +6,7 @@
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
+  "devBuildFlags": "-ldflags \"-X 'kingo/internal/app.DevMode=true'\"",
   "author": {
     "name": "Emanuel Nunes",
     "email": "emanuelsoares02@gmail.com"

@@ -6,6 +6,19 @@ import (
 	"runtime"
 )
 
+// DevMode is set at build time via ldflags to isolate dev environment from production.
+// When true, uses "DownKingo-dev" directory instead of "DownKingo".
+// Example: -ldflags "-X 'kingo/internal/app.DevMode=true'"
+var DevMode string = "false"
+
+// getAppDirName returns the app directory name based on build mode
+func getAppDirName() string {
+	if DevMode == "true" {
+		return "DownKingo-dev"
+	}
+	return "DownKingo"
+}
+
 // Paths holds all application directory paths
 type Paths struct {
 	AppData   string // %AppData%/DownKingo (config, deps)
@@ -22,7 +35,7 @@ func GetPaths() (*Paths, error) {
 		return nil, err
 	}
 
-	appData := filepath.Join(configDir, "DownKingo")
+	appData := filepath.Join(configDir, getAppDirName())
 	bin := filepath.Join(appData, "bin")
 
 	// Get the directory where the executable is located (for sidecar detection)
@@ -32,7 +45,7 @@ func GetPaths() (*Paths, error) {
 	}
 	exeDir := filepath.Dir(exePath)
 
-	// Downloads: Videos/Magpie on Windows, Movies/Magpie on Mac
+	// Downloads: Videos/DownKingo on Windows, Movies/DownKingo on Mac
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err

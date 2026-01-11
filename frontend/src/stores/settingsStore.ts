@@ -76,7 +76,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       theme: "light",
       layout: "sidebar",
-      primaryColor: "blue",
+      primaryColor: "red",
       language: "en-US", // English as default
 
       shortcuts: {

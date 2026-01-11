@@ -291,6 +291,11 @@ func (s *Service) loadFromDatabaseCache(lang string) ([]RoadmapItem, error) {
 		return nil, err
 	}
 
+	// Check if cache was empty or invalid
+	if roadmap == nil {
+		return nil, nil // No cached data available
+	}
+
 	// Validate language
 	if roadmap.Lang != lang {
 		// Cache mismatch - ignore it (will trigger re-fetch)

@@ -11,4 +11,5 @@ export interface ColumnConfig {
   text: string;
   bg: string;
   glass: string;
+  barColor: string; // Cor sólida para barras laterais (ex: "bg-yellow-500")
 }
