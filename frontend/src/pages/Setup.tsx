@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
 import { useTranslation } from "react-i18next";
 import {
   CheckDependencies,
   DownloadDependencies,
+  DownloadAndApplyUpdate,
+  RestartApp,
 } from "../../wailsjs/go/main/App";
 import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
 import {
@@ -18,15 +20,26 @@ import {
 
 export default function Setup() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
+
+  // Update Mode State
+  const isUpdateMode = location.state?.isUpdate || false;
+  const updateUrl = location.state?.downloadUrl || "";
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateStatus, setUpdateStatus] = useState<
+    "downloading" | "applying" | "complete" | "error" | "idle"
+  >("idle");
+  const [updateError, setUpdateError] = useState("");
+
   const {
     dependencies,
     progress,
     isComplete,
     error,
     setDependencies,
-    updateProgress,
+    updateProgress: updateLauncherProgress,
     setComplete,
     setError,
     reset,
@@ -34,20 +47,35 @@ export default function Setup() {
 
   const startSetup = async () => {
     try {
-      reset();
-      setIsRetrying(false);
+      if (isUpdateMode) {
+        if (!updateUrl) {
+          setUpdateError("URL de atualização inválida.");
+          return;
+        }
+        setUpdateStatus("downloading");
+        await DownloadAndApplyUpdate(updateUrl);
+        // O restante é via eventos
+      } else {
+        reset();
+        setIsRetrying(false);
 
-      const deps = await CheckDependencies();
-      setDependencies(deps);
+        const deps = await CheckDependencies();
+        setDependencies(deps);
 
-      if (deps.every((d: { installed: boolean }) => d.installed)) {
-        navigate("/home");
-        return;
+        if (deps.every((d: { installed: boolean }) => d.installed)) {
+          navigate("/home");
+          return;
+        }
+
+        await DownloadDependencies();
       }
-
-      await DownloadDependencies();
     } catch (err) {
-      setError(String(err));
+      if (isUpdateMode) {
+        setUpdateStatus("error");
+        setUpdateError(String(err));
+      } else {
+        setError(String(err));
+      }
     }
   };
 
@@ -62,28 +90,53 @@ export default function Setup() {
 
     const registerListeners = async () => {
       try {
-        const unsubProgress = await safeEventsOn<any>(
-          "launcher:progress",
-          (data) => {
-            if (mountedRef.current) updateProgress(data);
-          }
-        );
-        if (mountedRef.current) unsubscribeRef.current.progress = unsubProgress;
-        else unsubProgress();
-
-        const unsubComplete = await safeEventsOn<void>(
-          "launcher:complete",
-          () => {
-            if (mountedRef.current) {
-              setComplete();
-              setTimeout(() => {
-                if (mountedRef.current) navigate("/home");
-              }, 1000);
+        if (isUpdateMode) {
+          // Listeners for Application Update
+          const unsubUpdate = await safeEventsOn<any>(
+            "updater:progress",
+            (data) => {
+              if (!mountedRef.current) return;
+              if (data.status === "downloading") {
+                setUpdateStatus("downloading");
+                setUpdateProgress(data.percent);
+              } else if (data.status === "applying") {
+                setUpdateStatus("applying");
+                setUpdateProgress(100);
+              } else if (data.status === "complete") {
+                setUpdateStatus("complete");
+                // Auto restart after delay
+                setTimeout(() => RestartApp(), 2000);
+              }
             }
-          }
-        );
-        if (mountedRef.current) unsubscribeRef.current.complete = unsubComplete;
-        else unsubComplete();
+          );
+          unsubscribeRef.current.progress = unsubUpdate;
+        } else {
+          // Listeners for Dependency Setup
+          const unsubProgress = await safeEventsOn<any>(
+            "launcher:progress",
+            (data) => {
+              if (mountedRef.current) updateLauncherProgress(data);
+            }
+          );
+          if (mountedRef.current)
+            unsubscribeRef.current.progress = unsubProgress;
+          else unsubProgress();
+
+          const unsubComplete = await safeEventsOn<void>(
+            "launcher:complete",
+            () => {
+              if (mountedRef.current) {
+                setComplete();
+                setTimeout(() => {
+                  if (mountedRef.current) navigate("/home");
+                }, 1000);
+              }
+            }
+          );
+          if (mountedRef.current)
+            unsubscribeRef.current.complete = unsubComplete;
+          else unsubComplete();
+        }
       } catch (e) {
         console.warn("[Setup] Failed to register event listeners:", e);
       }
@@ -95,11 +148,15 @@ export default function Setup() {
     return () => {
       mountedRef.current = false;
       if (unsubscribeRef.current.progress) unsubscribeRef.current.progress();
-      else tryEventsOff("launcher:progress");
+      else {
+        if (isUpdateMode) tryEventsOff("updater:progress");
+        else tryEventsOff("launcher:progress");
+      }
+
       if (unsubscribeRef.current.complete) unsubscribeRef.current.complete();
-      else tryEventsOff("launcher:complete");
+      else if (!isUpdateMode) tryEventsOff("launcher:complete");
     };
-  }, []);
+  }, [isUpdateMode]);
 
   const handleRetry = () => {
     setIsRetrying(true);
@@ -177,7 +234,58 @@ export default function Setup() {
     }
   };
 
-  const overallProgress = getOverallProgress();
+  const overallProgress = isUpdateMode ? updateProgress : getOverallProgress();
+
+  // Adapter para renderizar UI unificada
+  const displayItems = isUpdateMode
+    ? [{ name: "Application Update", status: updateStatus }]
+    : dependencies;
+
+  const getStatusInfoUpdateWrapper = (item: any) => {
+    if (isUpdateMode) {
+      // Logic for generic update item
+      switch (item.status) {
+        case "downloading":
+          return {
+            text: `${updateProgress.toFixed(0)}%`,
+            icon: IconDownload,
+            style: "text-surface-900 bg-white border-surface-200 shadow-sm",
+            iconStyle: "text-surface-900",
+            animate: true,
+          };
+        case "applying":
+          return {
+            text: "Instalando...",
+            icon: IconLoader2,
+            style: "text-surface-900 bg-white border-surface-200 shadow-sm",
+            iconStyle: "text-surface-900 animate-spin",
+            spin: true,
+          };
+        case "complete":
+          return {
+            text: "Reiniciando...",
+            icon: IconCheck,
+            style: "text-green-900 bg-green-100 border-green-200",
+            iconStyle: "text-green-700",
+          };
+        case "error":
+          return {
+            text: "Erro",
+            icon: IconX,
+            style: "text-red-900 bg-red-100 border-red-200",
+            iconStyle: "text-red-700",
+          };
+        default:
+          return {
+            text: "Aguardando",
+            icon: IconPackage,
+            style: "text-surface-400 opacity-50",
+            iconStyle: "text-surface-400",
+          };
+      }
+    }
+    return getStatusInfo(item);
+  };
 
   return (
     <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
@@ -242,9 +350,13 @@ export default function Setup() {
           {/* Steps List */}
           <div className="grid gap-3">
             <AnimatePresence mode="popLayout">
-              {dependencies.map((dep, index) => {
-                const status = getStatusInfo(dep);
+              {displayItems.map((dep, index) => {
+                const status = getStatusInfoUpdateWrapper(dep);
                 const Icon = status.icon;
+
+                const percent = isUpdateMode
+                  ? updateProgress
+                  : progress[dep.name]?.percent || 0;
 
                 return (
                   <motion.div
@@ -259,12 +371,11 @@ export default function Setup() {
                                     ${status.style}
                                 `}
                   >
-                    {/* Background Progress Bar */}
                     <motion.div
                       className="absolute inset-y-0 left-0 bg-neutral-200"
                       initial={{ width: 0 }}
                       animate={{
-                        width: `${progress[dep.name]?.percent || 0}%`,
+                        width: `${percent}%`,
                       }}
                       transition={{ ease: "linear", duration: 0.2 }}
                       style={{ zIndex: 0 }}
@@ -298,7 +409,7 @@ export default function Setup() {
 
           {/* Error Message */}
           <AnimatePresence>
-            {error && (
+            {(error || updateError) && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
@@ -309,7 +420,7 @@ export default function Setup() {
                   <p className="font-bold mb-1">
                     {t("setup.installation_error")}
                   </p>
-                  <p className="opacity-80">{error}</p>
+                  <p className="opacity-80">{error || updateError}</p>
 
                   <button
                     onClick={handleRetry}

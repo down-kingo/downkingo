@@ -163,11 +163,11 @@ function App() {
 
   return (
     <>
-      <OnboardingModal />
-      <UpdateModal />
       <BrowserRouter
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >
+        <OnboardingModal />
+        <UpdateModal />
         <Routes>
           <Route path="/setup" element={<Setup />} />
           <Route path="/home" element={<Home />} />
