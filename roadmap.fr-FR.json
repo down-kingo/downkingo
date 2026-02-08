@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-02-08T02:26:59.682Z",
+  "generated_at": "2026-02-08T06:13:48.678Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -8,6 +8,25 @@
     "project_number": 2
   },
   "items": [
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Type\n\nfeat : Nouvelle fonctionnalité\n\n### Scope\n\ntéléchargement\n\n### Brève description\n\nAjouter la prise en charge native du téléchargement de titres Spotify (et éventuellement de playlists/albums) à DownKingo, permettant aux utilisateurs d'extraire des fichiers audio avec des métadonnées complètes directement à partir d'URL Spotify.\n\n### Contexte\n\nDownKingo prend actuellement en charge le téléchargement de médias depuis YouTube, mais ne prend pas encore en charge Spotify comme source. Fournir une prise en charge des URL Spotify élargirait l'utilité de l'application au-delà des téléchargements de vidéos pour inclure les téléchargements audio en streaming de l'un des services de musique les plus utilisés.\n\n### Problème / Motivation\n\nDe nombreux utilisateurs bénéficieraient de la possibilité de télécharger des titres, des playlists et des albums Spotify en plus du contenu YouTube. Pour le moment, les utilisateurs doivent s'appuyer sur des outils séparés pour extraire l'audio de Spotify, ce qui fragmente le flux de travail. L'intégration de la prise en charge de Spotify directement dans DownKingo unifierait le téléchargement de médias en un seul outil convivial et réduirait les frictions pour les utilisateurs qui travaillent régulièrement avec YouTube et Spo",
+      "status": "planned",
+      "votes": 1,
+      "votes_up": 1,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": null,
+      "friendly_title": "Support de Téléchargement Spotify"
+    },
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
@@ -272,7 +291,7 @@
     {
       "id": 18,
       "title": "feat(converter): Conversor de Imagens",
-      "description": "### Description\nUtilitaire pour convertir et optimiser des images.\n\n### Détails Techniques\n- **Formats :** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimisation :** Ajustement de la qualité de compression pour réduire la taille sans perdre trop de qualité visuelle.\n- **Redimensionnement :** Options pour redimensionner (resize) en conservant le rapport d'aspect (aspect ratio).\n- **Batch :** Prise en charge de la conversion de plusieurs fichiers en file d'attente.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "description": "### Description\nUtilitaire pour convertir et optimiser des images.\n\n### Détails Techniques\n- **Formats :** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimisation :** Ajustement de la qualité de compression pour réduire la taille sans trop perdre de qualité visuelle.\n- **Redimensionnement :** Options de redimensionnement en conservant le ratio d'aspect (aspect ratio).\n- **Batch :** Prise en charge de la conversion de plusieurs fichiers en file d'attente.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -293,7 +312,7 @@
     {
       "id": 19,
       "title": "feat(i18n): Suporte a 5 Idiomas",
-      "description": "### Description\nInternationalisation complète de l'interface utilisateur.\n\n### Détails Techniques\n- **Langues :** \n  - 🇧🇷 Portugais (Brésil) - Natif\n  - 🇺🇸 Anglais (US) - Natif\n  - 🇪🇸 Espagnol (basique/communauté)\n  - 🇫🇷 Français (basique/communauté)\n  - 🇩🇪 Allemand (basique/communauté)\n- **Technologie :** Utilisation de `i18next` dans React et structure correspondante dans Go.\n- **Détection :** Détection automatique de la langue du système d'exploitation lors de la première utilisation.\n\n### Statut\n✅ Livré en v2.0.0",
+      "description": "### Description\nInternationalisation complète de l'interface utilisateur.\n\n### Détails Techniques\n- **Langues :** \n  - 🇧🇷 Portugais (Brésil) - Natif\n  - 🇺🇸 Anglais (US) - Natif\n  - 🇪🇸 Espagnol (basique/communauté)\n  - 🇫🇷 Français (basique/communauté)\n  - 🇩🇪 Allemand (basique/communauté)\n- **Technologie :** Utilisation de `i18next` dans React et structure correspondante dans Go.\n- **Détection :** Détection automatique de la langue du système d'exploitation lors de la première utilisation.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -309,7 +328,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:01Z",
       "shipped_at": "2026-01-08T15:03:17Z",
-      "friendly_title": "Support pour 5 Langues"
+      "friendly_title": "Support de 5 Langues"
     },
     {
       "id": 22,
@@ -604,25 +623,6 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Paramètres d'image"
-    },
-    {
-      "id": 34,
-      "title": "Spotify Download Support",
-      "description": "### Type\n\nfeat : Nouvelle fonctionnalité\n\n### Scope\n\ntéléchargement\n\n### Brève description\n\nAjouter la prise en charge native du téléchargement de titres Spotify (et éventuellement de playlists/albums) à DownKingo, permettant aux utilisateurs d'extraire des fichiers audio avec des métadonnées complètes directement à partir d'URL Spotify.\n\n### Contexte\n\nDownKingo prend actuellement en charge le téléchargement de médias depuis YouTube, mais ne prend pas encore en charge Spotify comme source. Fournir une prise en charge des URL Spotify élargirait l'utilité de l'application au-delà des téléchargements de vidéos pour inclure les téléchargements audio en streaming de l'un des services de musique les plus utilisés.\n\n### Problème / Motivation\n\nDe nombreux utilisateurs bénéficieraient de la possibilité de télécharger des titres, des playlists et des albums Spotify en plus du contenu YouTube. Pour le moment, les utilisateurs doivent s'appuyer sur des outils séparés pour extraire l'audio de Spotify, ce qui fragmente le flux de travail. L'intégration de la prise en charge de Spotify directement dans DownKingo unifierait le téléchargement de médias en un seul outil convivial et réduirait les frictions pour les utilisateurs qui travaillent régulièrement avec YouTube et Spo",
-      "status": "in-progress",
-      "votes": 1,
-      "votes_up": 1,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/34",
-      "labels": [
-        "enhancement"
-      ],
-      "author": "ehsanpo2",
-      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
-      "created_at": "2026-01-10T10:52:42Z",
-      "shipped_at": null,
-      "friendly_title": "Support de Téléchargement Spotify"
     }
   ]
 }
