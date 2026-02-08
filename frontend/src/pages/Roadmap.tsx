@@ -213,7 +213,12 @@ export default function Roadmap() {
 
     try {
       await voteForItem(id);
-    } catch (err) {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("session expired") || msg.includes("authentication required")) {
+        setIsAuthenticated(false);
+        startLogin();
+      }
       console.error("Vote failed", err);
     }
   };
@@ -226,7 +231,12 @@ export default function Roadmap() {
 
     try {
       await voteDownForItem(id);
-    } catch (err) {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("session expired") || msg.includes("authentication required")) {
+        setIsAuthenticated(false);
+        startLogin();
+      }
       console.error("Vote down failed", err);
     }
   };

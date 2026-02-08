@@ -21,7 +21,7 @@ tasks:
       - wails3 generate syso -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
       - go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
     vars:
-      BUILD_FLAGS: '{{if eq .DEV "true"}}-tags dev{{end}}'
+      BUILD_FLAGS: '{{if eq .DEV "true"}}-tags dev -ldflags "-X kingo/internal/app.DevMode=true"{{end}}'
 
   build:production:
     desc: Full production build (frontend + Go)

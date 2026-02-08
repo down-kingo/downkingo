@@ -19,8 +19,9 @@ import (
 const ClientID = "Iv23liJjoBb3O4FatgRC"
 
 type AuthService struct {
-	configDir string
-	Token     string
+	configDir    string
+	Token        string
+	RefreshToken string
 }
 
 type DeviceCodeResponse struct {
@@ -32,11 +33,13 @@ type DeviceCodeResponse struct {
 }
 
 type TokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	Scope       string `json:"scope"`
-	Error       string `json:"error"`
-	ErrorDesc   string `json:"error_description"`
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	Scope        string `json:"scope"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    int    `json:"expires_in"`
+	Error        string `json:"error"`
+	ErrorDesc    string `json:"error_description"`
 }
 
 func NewAuthService(configDir string) *AuthService {
@@ -161,7 +164,13 @@ func (s *AuthService) checkToken(deviceCode string) (string, error) {
 	// Log scopes for debugging (GitHub Apps often return empty scopes, which is normal)
 	logger.Log.Debug().
 		Str("scopes", result.Scope).
+		Int("expires_in", result.ExpiresIn).
 		Msg("GitHub token received")
+
+	// Store refresh token for later use (GitHub App tokens expire after ~8h)
+	if result.RefreshToken != "" {
+		s.RefreshToken = result.RefreshToken
+	}
 
 	return result.AccessToken, nil
 }
@@ -170,6 +179,9 @@ func (s *AuthService) checkToken(deviceCode string) (string, error) {
 func (s *AuthService) SaveToken(token string) {
 	s.Token = token
 	data := map[string]string{"access_token": token}
+	if s.RefreshToken != "" {
+		data["refresh_token"] = s.RefreshToken
+	}
 	file, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to marshal auth token")
@@ -189,10 +201,59 @@ func (s *AuthService) LoadToken() {
 	var data map[string]string
 	if json.Unmarshal(file, &data) == nil {
 		s.Token = data["access_token"]
+		s.RefreshToken = data["refresh_token"]
 	}
+}
+
+// RefreshAccessToken uses the refresh token to obtain a new access token
+func (s *AuthService) RefreshAccessToken() (string, error) {
+	if s.RefreshToken == "" {
+		return "", fmt.Errorf("no refresh token available")
+	}
+
+	data := url.Values{}
+	data.Set("client_id", ClientID)
+	data.Set("grant_type", "refresh_token")
+	data.Set("refresh_token", s.RefreshToken)
+
+	req, err := http.NewRequest("POST", "https://github.com/login/oauth/access_token", strings.NewReader(data.Encode()))
+	if err != nil {
+		return "", fmt.Errorf("failed to create refresh request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("network error during refresh: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var result TokenResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to parse refresh response: %w", err)
+	}
+
+	if result.Error != "" {
+		logger.Log.Warn().
+			Str("error", result.Error).
+			Str("description", result.ErrorDesc).
+			Msg("token refresh failed")
+		return "", fmt.Errorf("refresh failed: %s", result.Error)
+	}
+
+	// Update tokens
+	if result.RefreshToken != "" {
+		s.RefreshToken = result.RefreshToken
+	}
+	s.SaveToken(result.AccessToken)
+
+	logger.Log.Info().Msg("GitHub token refreshed successfully")
+	return result.AccessToken, nil
 }
 
 func (s *AuthService) Logout() {
 	s.Token = ""
+	s.RefreshToken = ""
 	os.Remove(filepath.Join(s.configDir, "session.json"))
 }

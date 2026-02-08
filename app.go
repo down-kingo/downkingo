@@ -463,19 +463,48 @@ func (a *App) VoteFeature(issueID int) error {
 	if a.auth.Token == "" {
 		return fmt.Errorf("authentication required")
 	}
-	return a.roadmap.VoteOnIssue(a.auth.Token, issueID)
+	err := a.roadmap.VoteOnIssue(a.auth.Token, issueID)
+	if err != nil && isUnauthorized(err) {
+		if newToken, refreshErr := a.auth.RefreshAccessToken(); refreshErr == nil {
+			return a.roadmap.VoteOnIssue(newToken, issueID)
+		}
+		a.auth.Logout()
+		return fmt.Errorf("session expired, please login again")
+	}
+	return err
 }
 
 func (a *App) VoteDownFeature(issueID int) error {
 	if a.auth.Token == "" {
 		return fmt.Errorf("authentication required")
 	}
-	return a.roadmap.VoteDownOnIssue(a.auth.Token, issueID)
+	err := a.roadmap.VoteDownOnIssue(a.auth.Token, issueID)
+	if err != nil && isUnauthorized(err) {
+		if newToken, refreshErr := a.auth.RefreshAccessToken(); refreshErr == nil {
+			return a.roadmap.VoteDownOnIssue(newToken, issueID)
+		}
+		a.auth.Logout()
+		return fmt.Errorf("session expired, please login again")
+	}
+	return err
 }
 
 func (a *App) SuggestFeature(title, desc string) error {
 	if a.auth.Token == "" {
 		return fmt.Errorf("authentication required")
 	}
-	return a.roadmap.CreateIssue(a.auth.Token, title, desc)
+	err := a.roadmap.CreateIssue(a.auth.Token, title, desc)
+	if err != nil && isUnauthorized(err) {
+		if newToken, refreshErr := a.auth.RefreshAccessToken(); refreshErr == nil {
+			return a.roadmap.CreateIssue(newToken, title, desc)
+		}
+		a.auth.Logout()
+		return fmt.Errorf("session expired, please login again")
+	}
+	return err
+}
+
+// isUnauthorized checks if an error indicates an expired/invalid token (HTTP 401)
+func isUnauthorized(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "status 401")
 }

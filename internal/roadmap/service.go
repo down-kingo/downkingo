@@ -656,7 +656,7 @@ func (s *Service) addReaction(token string, issueID int, reaction string) error 
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
 	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Accept", "application/vnd.github.squirrel-girl-preview+json")
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
