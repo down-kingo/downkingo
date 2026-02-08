@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.34.0
-	github.com/wailsapp/wails/v3 v3.0.0-alpha.68
+	github.com/wailsapp/wails/v3 v3.0.0-alpha.69
 	modernc.org/sqlite v1.44.3
 )
 

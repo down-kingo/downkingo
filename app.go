@@ -489,6 +489,51 @@ func (a *App) VoteDownFeature(issueID int) error {
 	return err
 }
 
+// GetUserReaction returns the user's current reaction on a specific issue
+// Returns "+1" for thumbs up, "-1" for thumbs down, or "" for no reaction
+func (a *App) GetUserReaction(issueID int) (string, error) {
+	if a.auth.Token == "" {
+		return "", nil // Not authenticated, no reactions
+	}
+	reaction, err := a.roadmap.GetUserReaction(a.auth.Token, issueID)
+	if err != nil && isUnauthorized(err) {
+		if newToken, refreshErr := a.auth.RefreshAccessToken(); refreshErr == nil {
+			return a.roadmap.GetUserReaction(newToken, issueID)
+		}
+		a.auth.Logout()
+		return "", fmt.Errorf("session expired, please login again")
+	}
+	return reaction, err
+}
+
+// GetUserReactions returns a map of issue IDs to user's reaction for syncing with frontend
+// This fetches reactions for all roadmap items at once
+func (a *App) GetUserReactions() (map[int]string, error) {
+	if a.auth.Token == "" {
+		return map[int]string{}, nil // Not authenticated, no reactions
+	}
+
+	// Get all roadmap items from cache (use default language)
+	items, err := a.roadmap.FetchRoadmap("pt-BR")
+	if err != nil {
+		return nil, err
+	}
+
+	reactions := make(map[int]string)
+	for _, item := range items {
+		reaction, err := a.roadmap.GetUserReaction(a.auth.Token, item.ID)
+		if err != nil {
+			// Log but continue - don't fail the whole batch for one item
+			continue
+		}
+		if reaction != "" {
+			reactions[item.ID] = reaction
+		}
+	}
+
+	return reactions, nil
+}
+
 func (a *App) SuggestFeature(title, desc string) error {
 	if a.auth.Token == "" {
 		return fmt.Errorf("authentication required")

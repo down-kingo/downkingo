@@ -31,10 +31,12 @@ func main() {
 	})
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "DownKingo",
-		Width:            1280,
-		Height:           800,
-		BackgroundColour: application.NewRGB(255, 255, 255),
+		Title:                  "DownKingo",
+		Width:                  1280,
+		Height:                 800,
+		BackgroundColour:       application.NewRGB(255, 255, 255),
+		DevToolsEnabled:        true,
+		OpenInspectorOnStartup: true,
 	})
 
 	if err := app.Run(); err != nil {

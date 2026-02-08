@@ -292,6 +292,27 @@ export function GetSettings() {
 }
 
 /**
+ * GetUserReaction returns the user's current reaction on a specific issue
+ * Returns "+1" for thumbs up, "-1" for thumbs down, or "" for no reaction
+ * @param {number} issueID
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetUserReaction(issueID) {
+    return $Call.ByID(3424788871, issueID);
+}
+
+/**
+ * GetUserReactions returns a map of issue IDs to user's reaction for syncing with frontend
+ * This fetches reactions for all roadmap items at once
+ * @returns {$CancellablePromise<{ [_ in `${number}`]?: string }>}
+ */
+export function GetUserReactions() {
+    return $Call.ByID(1304130332).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType19($result);
+    }));
+}
+
+/**
  * @returns {$CancellablePromise<string>}
  */
 export function GetVersion() {
@@ -312,7 +333,7 @@ export function GetVideoDownloadPath() {
  */
 export function GetVideoInfo(url) {
     return $Call.ByID(545710026, url).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType20($result);
+        return $$createType21($result);
     }));
 }
 
@@ -435,7 +456,7 @@ export function SetClipboardMonitor(enabled) {
  */
 export function StartGitHubAuth() {
     return $Call.ByID(4217852034).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType22($result);
+        return $$createType23($result);
     }));
 }
 
@@ -492,7 +513,8 @@ const $$createType15 = $Create.Nullable($$createType14);
 const $$createType16 = roadmap$0.RoadmapItem.createFrom;
 const $$createType17 = $Create.Array($$createType16);
 const $$createType18 = config$0.Config.createFrom;
-const $$createType19 = youtube$0.VideoInfo.createFrom;
-const $$createType20 = $Create.Nullable($$createType19);
-const $$createType21 = auth$0.DeviceCodeResponse.createFrom;
-const $$createType22 = $Create.Nullable($$createType21);
+const $$createType19 = $Create.Map($Create.Any, $Create.Any);
+const $$createType20 = youtube$0.VideoInfo.createFrom;
+const $$createType21 = $Create.Nullable($$createType20);
+const $$createType22 = auth$0.DeviceCodeResponse.createFrom;
+const $$createType23 = $Create.Nullable($$createType22);

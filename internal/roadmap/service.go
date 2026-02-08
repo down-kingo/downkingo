@@ -508,7 +508,8 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 								body
 								url
 								comments { totalCount }
-								reactions(content: THUMBS_UP) { totalCount }
+								reactionsUp: reactions(content: THUMBS_UP) { totalCount }
+								reactionsDown: reactions(content: THUMBS_DOWN) { totalCount }
 								labels(first: 10) { nodes { name } }
 								author { login, avatarUrl }
 								createdAt
@@ -563,15 +564,16 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 					Items struct {
 						Nodes []struct {
 							Content struct {
-								Number    int    `json:"number"`
-								Title     string `json:"title"`
-								Body      string `json:"body"`
-								URL       string `json:"url"`
-								Comments  struct{ TotalCount int }
-								Reactions struct{ TotalCount int }
-								Labels    struct{ Nodes []struct{ Name string } }
-								Author    struct{ Login, AvatarUrl string }
-								CreatedAt string
+								Number        int    `json:"number"`
+								Title         string `json:"title"`
+								Body          string `json:"body"`
+								URL           string `json:"url"`
+								Comments      struct{ TotalCount int }
+								ReactionsUp   struct{ TotalCount int } `json:"reactionsUp"`
+								ReactionsDown struct{ TotalCount int } `json:"reactionsDown"`
+								Labels        struct{ Nodes []struct{ Name string } }
+								Author        struct{ Login, AvatarUrl string }
+								CreatedAt     string
 							}
 							FieldValueByName *struct {
 								Name string
@@ -622,8 +624,9 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 			Title:        content.Title,
 			Description:  content.Body,
 			Status:       status,
-			Votes:        content.Reactions.TotalCount,
-			VotesUp:      content.Reactions.TotalCount,
+			Votes:        content.ReactionsUp.TotalCount,
+			VotesUp:      content.ReactionsUp.TotalCount,
+			VotesDown:    content.ReactionsDown.TotalCount,
 			Comments:     content.Comments.TotalCount,
 			URL:          content.URL,
 			Labels:       labels,
@@ -639,17 +642,174 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 }
 
 // VoteOnIssue adds a thumbs-up reaction to an issue (direct GitHub API)
+// If user already has a thumbs-down, it will be removed first
 func (s *Service) VoteOnIssue(token string, issueID int) error {
+	// First, remove any existing thumbs-down from this user
+	if err := s.removeUserReaction(token, issueID, "-1"); err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-down (may not exist)")
+	}
 	return s.addReaction(token, issueID, "+1")
 }
 
 // VoteDownOnIssue adds a thumbs-down reaction to an issue (direct GitHub API)
+// If user already has a thumbs-up, it will be removed first
 func (s *Service) VoteDownOnIssue(token string, issueID int) error {
+	// First, remove any existing thumbs-up from this user
+	if err := s.removeUserReaction(token, issueID, "+1"); err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-up (may not exist)")
+	}
 	return s.addReaction(token, issueID, "-1")
+}
+
+// GetUserReaction returns the user's current reaction on an issue (+1, -1, or empty)
+func (s *Service) GetUserReaction(token string, issueID int) (string, error) {
+	if token == "" {
+		return "", nil
+	}
+
+	// Get current user login
+	userLogin, err := s.getCurrentUserLogin(token)
+	if err != nil {
+		return "", err
+	}
+
+	// Check for +1 reaction
+	reactions, err := s.getIssueReactions(token, issueID)
+	if err != nil {
+		return "", err
+	}
+
+	for _, r := range reactions {
+		if r.User.Login == userLogin {
+			return r.Content, nil
+		}
+	}
+
+	return "", nil // No reaction
+}
+
+// Reaction represents a GitHub reaction
+type Reaction struct {
+	ID      int    `json:"id"`
+	Content string `json:"content"`
+	User    struct {
+		Login string `json:"login"`
+	} `json:"user"`
+}
+
+// getCurrentUserLogin fetches the authenticated user's login
+func (s *Service) getCurrentUserLogin(token string) (string, error) {
+	req, _ := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("failed to get user: status %d", resp.StatusCode)
+	}
+
+	var user struct {
+		Login string `json:"login"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+		return "", err
+	}
+
+	return user.Login, nil
+}
+
+// getIssueReactions fetches all reactions on an issue
+func (s *Service) getIssueReactions(token string, issueID int) ([]Reaction, error) {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions", s.repoOwner, s.repoName, issueID)
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.squirrel-girl-preview+json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get reactions: status %d", resp.StatusCode)
+	}
+
+	var reactions []Reaction
+	if err := json.NewDecoder(resp.Body).Decode(&reactions); err != nil {
+		return nil, err
+	}
+
+	return reactions, nil
+}
+
+// removeUserReaction removes a specific reaction from the current user on an issue
+func (s *Service) removeUserReaction(token string, issueID int, content string) error {
+	if token == "" {
+		return nil
+	}
+
+	// Get current user login
+	userLogin, err := s.getCurrentUserLogin(token)
+	if err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to get current user login")
+		return err
+	}
+
+	// Get all reactions to find the user's reaction ID
+	reactions, err := s.getIssueReactions(token, issueID)
+	if err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to get reactions")
+		return err
+	}
+
+	// Find the user's reaction with the specified content
+	var reactionID int
+	for _, r := range reactions {
+		if r.User.Login == userLogin && r.Content == content {
+			reactionID = r.ID
+			break
+		}
+	}
+
+	if reactionID == 0 {
+		// User doesn't have this reaction, nothing to remove
+		return nil
+	}
+
+	// Delete the reaction
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions/%d", s.repoOwner, s.repoName, issueID, reactionID)
+	req, _ := http.NewRequest("DELETE", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 204 {
+		return fmt.Errorf("failed to delete reaction: status %d", resp.StatusCode)
+	}
+
+	logger.Log.Info().Int("issueID", issueID).Str("content", content).Msg("Removed user reaction")
+	return nil
 }
 
 // addReaction is a helper that adds a reaction to an issue
 func (s *Service) addReaction(token string, issueID int, reaction string) error {
+	logger.Log.Info().Int("issueID", issueID).Str("reaction", reaction).Msg("Adding reaction to issue")
+
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions", s.repoOwner, s.repoName, issueID)
 	body := map[string]string{"content": reaction}
 	jsonBody, _ := json.Marshal(body)
@@ -661,15 +821,29 @@ func (s *Service) addReaction(token string, issueID int, reaction string) error 
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
+		logger.Log.Error().Err(err).Msg("GitHub API request failed")
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		logger.Log.Error().Int("status", resp.StatusCode).Msg("GitHub API returned error")
 		return fmt.Errorf("reaction failed: status %d", resp.StatusCode)
 	}
 
+	logger.Log.Info().Int("issueID", issueID).Msg("Reaction added successfully, triggering sync")
+
+	// Invalidate cache and trigger immediate sync to emit roadmap:update event
 	s.invalidateCache()
+
+	// Get current language from cache for sync
+	s.mu.RLock()
+	lang := s.cacheLang
+	s.mu.RUnlock()
+
+	// Trigger background sync to fetch fresh data and emit event to frontend
+	go s.syncInBackground("reaction", lang)
+
 	return nil
 }
 

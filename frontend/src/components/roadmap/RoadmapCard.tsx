@@ -9,14 +9,37 @@ import {
 import type { RoadmapItem } from "../../types/roadmap";
 import type { ColumnConfig } from "./types";
 
+// User vote state type
+type UserVote = "up" | "down" | null;
+
 interface RoadmapCardProps {
   item: RoadmapItem;
   column: ColumnConfig;
   index: number;
   isAuthenticated: boolean;
+  userVote: UserVote; // Current user's vote on this item
   onVote: (id: number) => void;
   onVoteDown: (id: number) => void;
   onClick: () => void;
+}
+
+// Custom comparison function to properly detect vote changes
+function arePropsEqual(
+  prev: RoadmapCardProps,
+  next: RoadmapCardProps,
+): boolean {
+  return (
+    prev.item.id === next.item.id &&
+    prev.item.votes_up === next.item.votes_up &&
+    prev.item.votes_down === next.item.votes_down &&
+    prev.item.votes === next.item.votes &&
+    prev.item.title === next.item.title &&
+    prev.item.status === next.item.status &&
+    prev.column.id === next.column.id &&
+    prev.index === next.index &&
+    prev.isAuthenticated === next.isAuthenticated &&
+    prev.userVote === next.userVote
+  );
 }
 
 export const RoadmapCard = memo(function RoadmapCard({
@@ -24,6 +47,7 @@ export const RoadmapCard = memo(function RoadmapCard({
   column,
   index,
   isAuthenticated,
+  userVote,
   onVote,
   onVoteDown,
   onClick,
@@ -33,7 +57,7 @@ export const RoadmapCard = memo(function RoadmapCard({
   const cleanTitle = (text: string) =>
     text.replace(
       /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
-      ""
+      "",
     );
 
   const displayTitle =
@@ -128,26 +152,34 @@ export const RoadmapCard = memo(function RoadmapCard({
           )}
 
           <div className="flex items-center gap-3">
+            {/* Upvote button */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onVote(item.id);
+                if (isAuthenticated && userVote !== "up") {
+                  onVote(item.id);
+                }
               }}
-              className="flex items-center gap-1 group/up focus:outline-none"
-              title={t("card.like")}
+              disabled={!isAuthenticated || userVote === "up"}
+              className={`flex items-center gap-1 group/up focus:outline-none transition-opacity ${
+                userVote === "up"
+                  ? "opacity-100"
+                  : "opacity-70 hover:opacity-100"
+              } ${!isAuthenticated || userVote === "up" ? "cursor-default" : "cursor-pointer"}`}
+              title={userVote === "up" ? t("card.voted") : t("card.like")}
             >
               <IconThumbUp
                 size={16}
                 stroke={2}
                 className={`transition-colors ${
-                  isAuthenticated && (item.votes_up || 0) > 0
-                    ? "text-green-600 fill-green-100 dark:fill-green-900/30"
+                  userVote === "up"
+                    ? "text-green-600 fill-green-200 dark:fill-green-900/50"
                     : "text-surface-400 group-hover/up:text-green-600"
                 }`}
               />
               <span
                 className={`text-xs font-bold ${
-                  isAuthenticated && (item.votes_up || 0) > 0
+                  userVote === "up"
                     ? "text-green-700 dark:text-green-400"
                     : "text-surface-500"
                 }`}
@@ -156,26 +188,34 @@ export const RoadmapCard = memo(function RoadmapCard({
               </span>
             </button>
 
+            {/* Downvote button */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onVoteDown(item.id);
+                if (isAuthenticated && userVote !== "down") {
+                  onVoteDown(item.id);
+                }
               }}
-              className="flex items-center gap-1 group/down focus:outline-none"
-              title={t("card.dislike")}
+              disabled={!isAuthenticated || userVote === "down"}
+              className={`flex items-center gap-1 group/down focus:outline-none transition-opacity ${
+                userVote === "down"
+                  ? "opacity-100"
+                  : "opacity-70 hover:opacity-100"
+              } ${!isAuthenticated || userVote === "down" ? "cursor-default" : "cursor-pointer"}`}
+              title={userVote === "down" ? t("card.voted") : t("card.dislike")}
             >
               <IconThumbDown
                 size={16}
                 stroke={2}
                 className={`transition-colors ${
-                  isAuthenticated && (item.votes_down || 0) > 0
-                    ? "text-red-600"
+                  userVote === "down"
+                    ? "text-red-600 fill-red-200 dark:fill-red-900/50"
                     : "text-surface-400 group-hover/down:text-red-600"
                 }`}
               />
               <span
                 className={`text-xs font-bold ${
-                  isAuthenticated && (item.votes_down || 0) > 0
+                  userVote === "down"
                     ? "text-red-700 dark:text-red-400"
                     : "text-surface-500"
                 }`}
@@ -188,4 +228,4 @@ export const RoadmapCard = memo(function RoadmapCard({
       </div>
     </motion.div>
   );
-});
+}, arePropsEqual);

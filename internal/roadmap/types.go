@@ -99,6 +99,8 @@ func (c *CDNItem) ToRoadmapItem() RoadmapItem {
 		Description:   c.Description,
 		Status:        c.Status,
 		Votes:         c.VotesUp, // Maintain backwards compatibility
+		VotesUp:       c.VotesUp,
+		VotesDown:     c.VotesDown,
 		Comments:      c.Comments,
 		URL:           c.URL,
 		Labels:        c.Labels,

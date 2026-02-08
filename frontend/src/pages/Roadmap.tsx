@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -98,14 +98,14 @@ export default function Roadmap() {
   const { t, i18n } = useTranslation("roadmap");
   const COLUMNS = getColumns(t);
 
-  // Store state
+  // Store state - don't include lastUpdated in selector to avoid infinite loop
   const {
     items,
     isLoading,
     fetchRoadmap,
     voteForItem,
     voteDownForItem,
-    getItemsByStatus,
+    getUserVote,
   } = useRoadmapStore(
     (state) => ({
       items: state.items,
@@ -113,12 +113,16 @@ export default function Roadmap() {
       fetchRoadmap: state.fetchRoadmap,
       voteForItem: state.voteForItem,
       voteDownForItem: state.voteDownForItem,
-      getItemsByStatus: state.getItemsByStatus,
+      getUserVote: state.getUserVote,
     }),
-    shallow
+    shallow,
   );
 
-  const { initialize, refetch } = useRoadmapInit();
+  // Helper to filter items by status - runs during render, not as selector
+  const getItemsByStatus = (status: RoadmapStatus) =>
+    items.filter((item) => item.status === status);
+
+  const { initialize, refetch, syncUserVotes } = useRoadmapInit();
 
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -143,11 +147,16 @@ export default function Roadmap() {
     const cleanup = initialize(i18n.language);
     checkAuth();
     return cleanup;
-  }, [initialize]); // Run once on mount (or if initialize fn changes)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
-  // React to language changes specifically
+  // React to language changes specifically (skip initial render)
+  const prevLang = useRef(i18n.language);
   useEffect(() => {
-    refetch(i18n.language);
+    if (prevLang.current !== i18n.language) {
+      prevLang.current = i18n.language;
+      refetch(i18n.language);
+    }
   }, [i18n.language, refetch]);
 
   const checkAuth = async () => {
@@ -189,6 +198,8 @@ export default function Roadmap() {
         setIsAuthenticated(true);
         setIsAuthModalOpen(false);
         setAuthData(null);
+        // Sync user's votes from GitHub after login
+        syncUserVotes();
       }
     } catch (err: unknown) {
       console.error("Auth poll failed", err);
@@ -215,7 +226,10 @@ export default function Roadmap() {
       await voteForItem(id);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("session expired") || msg.includes("authentication required")) {
+      if (
+        msg.includes("session expired") ||
+        msg.includes("authentication required")
+      ) {
         setIsAuthenticated(false);
         startLogin();
       }
@@ -233,7 +247,10 @@ export default function Roadmap() {
       await voteDownForItem(id);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("session expired") || msg.includes("authentication required")) {
+      if (
+        msg.includes("session expired") ||
+        msg.includes("authentication required")
+      ) {
         setIsAuthenticated(false);
         startLogin();
       }
@@ -371,6 +388,7 @@ export default function Roadmap() {
                           column={col}
                           index={index}
                           isAuthenticated={isAuthenticated}
+                          userVote={getUserVote(item.id)}
                           onVote={handleVote}
                           onVoteDown={handleVoteDown}
                           onClick={() => setSelectedItemId(item.id)}
@@ -393,6 +411,7 @@ export default function Roadmap() {
               column={COLUMNS.find((c) => c.id === selectedItem.status)!}
               onVote={handleVote}
               onVoteDown={handleVoteDown}
+              userVote={getUserVote(selectedItem.id)}
             />
           )}
         </AnimatePresence>
@@ -552,25 +571,27 @@ function RoadmapDetail({
   column,
   onVote,
   onVoteDown,
+  userVote,
 }: {
   item: RoadmapItem;
   onClose: () => void;
   column: ColumnConfig;
   onVote: (id: number) => void;
   onVoteDown: (id: number) => void;
+  userVote: "up" | "down" | null;
 }) {
   const { t, i18n } = useTranslation("roadmap");
   console.log(
     "[RoadmapDetail] Description length:",
     item.description?.length,
     "Content:",
-    item.description?.slice(0, 50)
+    item.description?.slice(0, 50),
   );
 
   const cleanTitle = (text: string) =>
     text.replace(
       /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
-      ""
+      "",
     );
 
   // Resolve localized title
@@ -628,7 +649,7 @@ function RoadmapDetail({
                   {(() => {
                     try {
                       return new Date(item.created_at).toLocaleDateString(
-                        i18n.language
+                        i18n.language,
                       );
                     } catch {
                       return "";
@@ -760,26 +781,52 @@ function RoadmapDetail({
             {/* Votação */}
             <div className="flex items-center gap-6">
               <button
-                onClick={() => onVote(item.id)}
-                className="flex items-center gap-2 text-surface-600 dark:text-surface-300 hover:text-green-500 transition-colors group"
+                onClick={() => {
+                  if (userVote !== "up") onVote(item.id);
+                }}
+                disabled={userVote === "up"}
+                className={`flex items-center gap-2 transition-colors group ${
+                  userVote === "up"
+                    ? "text-green-600 cursor-default"
+                    : "text-surface-600 dark:text-surface-300 hover:text-green-500 cursor-pointer"
+                }`}
               >
-                <div className="p-3 rounded-full bg-white dark:bg-white/5 border border-surface-200 dark:border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10 transition-all">
+                <div
+                  className={`p-3 rounded-full transition-all ${
+                    userVote === "up"
+                      ? "bg-green-100 dark:bg-green-900/30 border-green-500/50"
+                      : "bg-white dark:bg-white/5 border-surface-200 dark:border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10"
+                  } border`}
+                >
                   <IconThumbUp
                     size={24}
-                    className="group-hover:scale-110 transition-transform"
+                    className={`transition-transform ${userVote !== "up" ? "group-hover:scale-110" : ""}`}
                   />
                 </div>
                 <span className="font-bold text-lg">{item.votes_up || 0}</span>
               </button>
 
               <button
-                onClick={() => onVoteDown(item.id)}
-                className="flex items-center gap-2 text-surface-600 dark:text-surface-300 hover:text-red-500 transition-colors group"
+                onClick={() => {
+                  if (userVote !== "down") onVoteDown(item.id);
+                }}
+                disabled={userVote === "down"}
+                className={`flex items-center gap-2 transition-colors group ${
+                  userVote === "down"
+                    ? "text-red-600 cursor-default"
+                    : "text-surface-600 dark:text-surface-300 hover:text-red-500 cursor-pointer"
+                }`}
               >
-                <div className="p-3 rounded-full bg-white dark:bg-white/5 border border-surface-200 dark:border-white/10 group-hover:border-red-500/50 group-hover:bg-red-500/10 transition-all">
+                <div
+                  className={`p-3 rounded-full transition-all ${
+                    userVote === "down"
+                      ? "bg-red-100 dark:bg-red-900/30 border-red-500/50"
+                      : "bg-white dark:bg-white/5 border-surface-200 dark:border-white/10 group-hover:border-red-500/50 group-hover:bg-red-500/10"
+                  } border`}
+                >
                   <IconThumbDown
                     size={24}
-                    className="group-hover:scale-110 transition-transform"
+                    className={`transition-transform ${userVote !== "down" ? "group-hover:scale-110" : ""}`}
                   />
                 </div>
                 <span className="font-bold text-lg">
