@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // Version is set at build time via ldflags
@@ -60,15 +60,15 @@ func NewApp() *App {
 	}
 }
 
-// OnStartup is called when the app starts
-func (a *App) OnStartup(ctx context.Context) {
+// ServiceStartup is called when the app starts (Wails v3 lifecycle)
+func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	a.ctx = ctx
 
 	// Initialize paths
 	paths, err := app.GetPaths()
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to get paths")
-		return
+		return err
 	}
 	a.paths = paths
 
@@ -111,14 +111,14 @@ func (a *App) OnStartup(ctx context.Context) {
 	// Ensure directories exist
 	if err := paths.EnsureDirectories(); err != nil {
 		logger.Log.Error().Err(err).Msg("failed to create directories")
-		return
+		return err
 	}
 
 	// Initialize SQLite database
 	db, err := storage.New(paths.AppData)
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to initialize database")
-		return
+		return err
 	}
 	a.db = db
 	a.downloadRepo = storage.NewDownloadRepository(db)
@@ -128,7 +128,7 @@ func (a *App) OnStartup(ctx context.Context) {
 	a.roadmap.SetDB(db.Conn())
 	a.roadmap.SetContext(ctx)
 	a.roadmap.SetEventEmitter(func(eventName string, data interface{}) {
-		runtime.EventsEmit(ctx, eventName, data)
+		application.Get().Event.Emit(eventName, data)
 	})
 	a.roadmap.ApplyConfig(cfg.GetRoadmapConfig()) // Apply CDN settings from config/env
 
@@ -165,17 +165,19 @@ func (a *App) OnStartup(ctx context.Context) {
 	for _, arg := range os.Args {
 		if strings.HasPrefix(arg, "kingo://") {
 			logger.Log.Info().Str("url", arg).Msg("processing deep link from cold start")
-			runtime.EventsEmit(ctx, "deep-link", arg)
+			application.Get().Event.Emit("deep-link", arg)
 			break
 		}
 	}
 
 	// Emit app:ready event to frontend with setup status
 	needsSetup := a.NeedsDependencies()
-	runtime.EventsEmit(ctx, "app:ready", map[string]interface{}{
+	application.Get().Event.Emit("app:ready", map[string]interface{}{
 		"needsSetup": needsSetup,
 	})
 	logger.Log.Info().Bool("needsSetup", needsSetup).Msg("app:ready event emitted")
+
+	return nil
 }
 
 // startClipboardMonitor handles the start logic
@@ -208,7 +210,7 @@ func (a *App) initializeHandlers(ctx context.Context) {
 
 // consoleLog emits a user-friendly message to the frontend console.
 func (a *App) consoleLog(message string) {
-	runtime.EventsEmit(a.ctx, events.ConsoleLog, message)
+	application.Get().Event.Emit(events.ConsoleLog, message)
 }
 
 // GetVideoInfo delegates to videoHandler
@@ -249,7 +251,7 @@ func (a *App) CancelDownload(id string) error {
 }
 
 func (a *App) OpenUrl(url string) {
-	runtime.BrowserOpenURL(a.ctx, url)
+	application.Get().Browser.OpenURL(url)
 }
 
 // SetClipboardMonitor enables or disables the clipboard monitoring
@@ -414,7 +416,8 @@ func (a *App) GetRoadmap(lang string) ([]roadmap.RoadmapItem, error) {
 	return a.roadmap.FetchRoadmap(lang)
 }
 
-func (a *App) Shutdown(ctx context.Context) {
+// ServiceShutdown is called when the app shuts down (Wails v3 lifecycle)
+func (a *App) ServiceShutdown() error {
 	// Stop download manager gracefully
 	if a.downloadManager != nil {
 		a.downloadManager.Stop()
@@ -433,6 +436,7 @@ func (a *App) Shutdown(ctx context.Context) {
 	}
 
 	logger.Log.Info().Msg("application shutdown complete")
+	return nil
 }
 
 // --- Auth & Interactivity ---

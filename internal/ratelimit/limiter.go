@@ -3,6 +3,7 @@
 package ratelimit
 
 import (
+	"context"
 	"sync"
 	"time"
 )
@@ -66,10 +67,17 @@ func (l *Limiter) refill() {
 }
 
 // Wait blocks until a token is available or the context is cancelled.
-func (l *Limiter) Wait() {
+// Returns nil on success, or the context error if cancelled/timed out.
+func (l *Limiter) Wait(ctx context.Context) error {
 	for !l.Allow() {
-		time.Sleep(100 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(100 * time.Millisecond):
+			// retry
+		}
 	}
+	return nil
 }
 
 // Reset resets the limiter to full tokens.

@@ -35,7 +35,7 @@ import {
   SuggestFeature,
   OpenUrl,
   LogoutGitHub,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 
 // Tipo para configuração de coluna
 

@@ -10,7 +10,7 @@ import (
 	"kingo/internal/storage"
 	"kingo/internal/youtube"
 
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // Job represents a download job in the queue
@@ -34,6 +34,10 @@ type Manager struct {
 	mu          sync.RWMutex
 	quit        chan struct{}
 	wg          sync.WaitGroup
+
+	// Metrics
+	totalCompleted int64
+	totalFailed    int64
 }
 
 // NewManager creates a new download manager
@@ -64,6 +68,9 @@ func (m *Manager) Start() {
 
 	// Restore pending jobs from database
 	m.restorePendingJobs()
+
+	// Periodic stats logging
+	go m.logStatsLoop()
 
 	// Main processing loop
 	go func() {
@@ -154,7 +161,8 @@ func (m *Manager) AddJob(opts youtube.DownloadOptions) (*storage.Download, error
 	m.queue <- job
 
 	logger.Log.Info().
-		Str("id", download.ID).
+		Str("traceID", download.ID).
+		Str("phase", "enqueue").
 		Str("url", opts.URL).
 		Bool("audioOnly", opts.AudioOnly).
 		Msg("job added to queue")
@@ -201,7 +209,8 @@ func (m *Manager) processJob(job *Job) {
 	download := job.Download
 
 	logger.Log.Info().
-		Str("id", download.ID).
+		Str("traceID", download.ID).
+		Str("phase", "start").
 		Str("url", download.URL).
 		Msg("processing job")
 
@@ -311,9 +320,11 @@ func (m *Manager) failJob(download *storage.Download, errMsg string) {
 	}
 
 	m.cleanupJob(download.ID)
+	m.totalFailed++
 
 	logger.Log.Error().
-		Str("id", download.ID).
+		Str("traceID", download.ID).
+		Str("phase", "failed").
 		Str("error", errMsg).
 		Msg("job failed")
 }
@@ -337,7 +348,7 @@ func (m *Manager) cancelJob(download *storage.Download) {
 
 	m.cleanupJob(download.ID)
 
-	logger.Log.Info().Str("id", download.ID).Msg("job cancelled")
+	logger.Log.Info().Str("traceID", download.ID).Str("phase", "cancelled").Msg("job cancelled")
 }
 
 func (m *Manager) completeJob(download *storage.Download) {
@@ -362,9 +373,11 @@ func (m *Manager) completeJob(download *storage.Download) {
 	}
 
 	m.cleanupJob(download.ID)
+	m.totalCompleted++
 
 	logger.Log.Info().
-		Str("id", download.ID).
+		Str("traceID", download.ID).
+		Str("phase", "completed").
 		Str("title", download.Title).
 		Msg("job completed")
 }
@@ -416,11 +429,33 @@ func (m *Manager) restorePendingJobs() {
 	}
 }
 
-// emitEvent is a helper to emit events using Wails v2 API
-func (m *Manager) emitEvent(eventName string, data any) {
-	if m.ctx != nil {
-		wailsRuntime.EventsEmit(m.ctx, eventName, data)
+// logStatsLoop periodically logs manager metrics for observability.
+func (m *Manager) logStatsLoop() {
+	ticker := time.NewTicker(60 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			m.mu.RLock()
+			activeJobs := len(m.jobs)
+			m.mu.RUnlock()
+			queueLen := len(m.queue)
+
+			logger.Log.Info().
+				Int("activeJobs", activeJobs).
+				Int("queueLen", queueLen).
+				Int64("totalCompleted", m.totalCompleted).
+				Int64("totalFailed", m.totalFailed).
+				Msg("manager stats")
+		case <-m.quit:
+			return
+		}
 	}
+}
+
+// emitEvent is a helper to emit events using Wails v3 API
+func (m *Manager) emitEvent(eventName string, data any) {
+	application.Get().Event.Emit(eventName, data)
 }
 
 // emitJobAdded emits an event when a job is added

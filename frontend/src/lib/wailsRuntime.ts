@@ -1,7 +1,9 @@
 /**
- * Wrapper seguro para o runtime do Wails.
- * Aguarda o runtime estar disponível antes de executar funções.
+ * Wrapper seguro para o runtime do Wails v3.
+ * Usa imports do pacote @wailsio/runtime.
  */
+
+import { Events } from "@wailsio/runtime";
 
 // Tipo para o callback de eventos
 type EventCallback<T = unknown> = (data: T) => void;
@@ -13,39 +15,18 @@ type Unsubscribe = () => void;
  * Verifica se o runtime do Wails está disponível
  */
 export function isRuntimeReady(): boolean {
-  return typeof window !== "undefined" && !!(window as any).runtime;
+  return typeof window !== "undefined";
 }
 
 /**
- * Aguarda o runtime do Wails estar disponível
- * @param timeout - Tempo máximo de espera em ms (padrão: 5000)
- * @returns Promise que resolve quando o runtime está pronto
+ * Aguarda o runtime do Wails estar disponível (v3: sempre disponível via import)
  */
-export function waitForRuntime(timeout = 5000): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (isRuntimeReady()) {
-      resolve();
-      return;
-    }
-
-    const startTime = Date.now();
-    const checkInterval = setInterval(() => {
-      if (isRuntimeReady()) {
-        clearInterval(checkInterval);
-        resolve();
-        return;
-      }
-
-      if (Date.now() - startTime > timeout) {
-        clearInterval(checkInterval);
-        reject(new Error("[WailsRuntime] Timeout waiting for runtime"));
-      }
-    }, 50);
-  });
+export function waitForRuntime(_timeout = 5000): Promise<void> {
+  return Promise.resolve();
 }
 
 /**
- * Versão segura de EventsOn que aguarda o runtime
+ * Versão segura de EventsOn que registra um listener
  * @param eventName - Nome do evento
  * @param callback - Callback a ser executado
  * @returns Promise com função de unsubscribe
@@ -54,42 +35,26 @@ export async function safeEventsOn<T = unknown>(
   eventName: string,
   callback: EventCallback<T>
 ): Promise<Unsubscribe> {
-  await waitForRuntime();
-
-  const runtime = (window as any).runtime;
-  // Wails v2 usa EventsOn para registrar listener
-  runtime.EventsOn(eventName, callback);
-
-  // Retorna função que remove os listeners desse evento (remove todos no Wails v2)
-  return () => {
-    runtime.EventsOff(eventName);
-  };
+  // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
+  const cancel = Events.On(eventName, (event: { data: T }) => {
+    callback(event.data);
+  });
+  return cancel;
 }
 
 /**
- * Versão segura de EventsOff que aguarda o runtime
+ * Versão segura de EventsOff que remove listeners
  * @param eventName - Nome(s) do evento(s) para remover
  */
 export async function safeEventsOff(
   eventName: string,
-  ...additionalEventNames: string[]
+  ..._additionalEventNames: string[]
 ): Promise<void> {
-  if (!isRuntimeReady()) {
-    console.warn(
-      "[WailsRuntime] Runtime not ready, skipping EventsOff for:",
-      eventName
-    );
-    return;
-  }
-
-  const runtime = (window as any).runtime;
-  return runtime.EventsOff(eventName, ...additionalEventNames);
+  Events.Off(eventName);
 }
 
 /**
- * Versão síncrona de EventsOn que usa um fallback se o runtime não estiver pronto.
- * Retorna uma função de unsubscribe ou undefined se não conseguiu registrar.
- *
+ * Versão síncrona de EventsOn
  * @param eventName - Nome do evento
  * @param callback - Callback a ser executado
  * @returns Função de unsubscribe ou undefined
@@ -98,20 +63,12 @@ export function tryEventsOn<T = unknown>(
   eventName: string,
   callback: EventCallback<T>
 ): Unsubscribe | undefined {
-  if (!isRuntimeReady()) {
-    console.warn(
-      "[WailsRuntime] Runtime not ready, cannot register event:",
-      eventName
-    );
-    return undefined;
-  }
-
   try {
-    const runtime = (window as any).runtime;
-    runtime.EventsOn(eventName, callback);
-    return () => {
-      runtime.EventsOff(eventName);
-    };
+    // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
+    const cancel = Events.On(eventName, (event: { data: T }) => {
+      callback(event.data);
+    });
+    return cancel;
   } catch (error) {
     console.error("[WailsRuntime] Error registering event:", eventName, error);
     return undefined;
@@ -123,13 +80,8 @@ export function tryEventsOn<T = unknown>(
  * @param eventName - Nome do evento
  */
 export function tryEventsOff(eventName: string): void {
-  if (!isRuntimeReady()) {
-    return;
-  }
-
   try {
-    const runtime = (window as any).runtime;
-    runtime.EventsOff(eventName);
+    Events.Off(eventName);
   } catch {
     // Ignorar erros
   }
@@ -141,53 +93,27 @@ export function tryEventsOff(eventName: string): void {
 
 /**
  * Versão segura de WindowSetDarkTheme
+ * V3: Theme is handled via CSS prefers-color-scheme or app-level config
  */
 export function safeWindowSetDarkTheme(): void {
-  if (!isRuntimeReady()) {
-    console.warn(
-      "[WailsRuntime] Runtime not ready, skipping WindowSetDarkTheme"
-    );
-    return;
-  }
-  try {
-    (window as any).runtime.WindowSetDarkTheme();
-  } catch {
-    // Ignorar erros
-  }
+  // Wails v3 handles themes differently - use CSS-based approach
+  document.documentElement.classList.add("dark");
+  document.documentElement.classList.remove("light");
 }
 
 /**
  * Versão segura de WindowSetLightTheme
  */
 export function safeWindowSetLightTheme(): void {
-  if (!isRuntimeReady()) {
-    console.warn(
-      "[WailsRuntime] Runtime not ready, skipping WindowSetLightTheme"
-    );
-    return;
-  }
-  try {
-    (window as any).runtime.WindowSetLightTheme();
-  } catch {
-    // Ignorar erros
-  }
+  document.documentElement.classList.add("light");
+  document.documentElement.classList.remove("dark");
 }
 
 /**
  * Versão segura de WindowSetSystemDefaultTheme
  */
 export function safeWindowSetSystemDefaultTheme(): void {
-  if (!isRuntimeReady()) {
-    console.warn(
-      "[WailsRuntime] Runtime not ready, skipping WindowSetSystemDefaultTheme"
-    );
-    return;
-  }
-  try {
-    (window as any).runtime.WindowSetSystemDefaultTheme();
-  } catch {
-    // Ignorar erros
-  }
+  document.documentElement.classList.remove("dark", "light");
 }
 
 /**
@@ -195,15 +121,7 @@ export function safeWindowSetSystemDefaultTheme(): void {
  * @param url - URL para abrir no navegador
  */
 export function safeBrowserOpenURL(url: string): void {
-  if (!isRuntimeReady()) {
-    // Fallback: abrir via window.open
-    window.open(url, "_blank");
-    return;
-  }
-  try {
-    (window as any).runtime.BrowserOpenURL(url);
-  } catch {
-    // Fallback em caso de erro
-    window.open(url, "_blank");
-  }
+  // V3: Use the Go binding App.OpenUrl() which calls application.Get().Browser.OpenURL()
+  // Fallback to window.open if needed
+  window.open(url, "_blank");
 }

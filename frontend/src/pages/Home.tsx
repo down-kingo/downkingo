@@ -42,7 +42,7 @@ import {
   OpenUrl,
   CheckAria2cStatus,
   DownloadAria2c,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 import {
   IconDownload,
   IconHistory,

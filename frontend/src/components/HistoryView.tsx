@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { useDownloadStore, type Download } from "../stores/downloadStore";
 import { useDownloadSync } from "../hooks/useDownloadSync";
-import { OpenDownloadFolder, OpenUrl } from "../../wailsjs/go/main/App";
+import { OpenDownloadFolder, OpenUrl } from "../../bindings/kingo/app";
 
 export const HistoryView = memo(function HistoryView() {
   const { t } = useTranslation("common");

@@ -8,7 +8,7 @@ import {
   DownloadDependencies,
   DownloadAndApplyUpdate,
   RestartApp,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
 import {
   IconCheck,

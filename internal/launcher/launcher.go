@@ -19,7 +19,7 @@ import (
 	"kingo/internal/events"
 	"kingo/internal/logger"
 
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // HTTP client with optimized transport for large downloads
@@ -511,9 +511,7 @@ func (l *Launcher) emitProgress(name string, downloaded, total int64, percent fl
 	})
 }
 
-// emitEvent emits an event using Wails v2 API
+// emitEvent emits an event using Wails v3 API
 func (l *Launcher) emitEvent(eventName string, data any) {
-	if l.ctx != nil {
-		wailsRuntime.EventsEmit(l.ctx, eventName, data)
-	}
+	application.Get().Event.Emit(eventName, data)
 }

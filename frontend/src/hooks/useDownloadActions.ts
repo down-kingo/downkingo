@@ -6,8 +6,8 @@ import {
   AddToQueueAdvanced,
   CancelDownload,
   ClearDownloadHistory,
-} from "../../wailsjs/go/main/App";
-import { youtube } from "../../wailsjs/go/models";
+} from "../../bindings/kingo/app";
+import { DownloadOptions } from "../../bindings/kingo/internal/youtube/models.js";
 import { useDownloadStore, Download } from "../stores/downloadStore";
 
 /**
@@ -61,7 +61,7 @@ export function useDownloadActions() {
    * Adiciona um download à fila (avançado com todas as opções).
    */
   const addToQueueAdvanced = useCallback(
-    async (opts: youtube.DownloadOptions) => {
+    async (opts: DownloadOptions) => {
       try {
         setError(null);
         const download = await AddToQueueAdvanced(opts);

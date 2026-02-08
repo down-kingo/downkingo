@@ -42,39 +42,23 @@ vi.mock("../stores/settingsStore", () => ({
   }),
 }));
 
-// Mock Wails runtime for tests
-// This prevents errors when components try to call Wails functions
-const mockWailsRuntime = {
-  EventsOn: vi.fn(() => () => {}),
-  EventsOff: vi.fn(),
-  EventsEmit: vi.fn(),
-  ClipboardGetText: vi.fn(() => Promise.resolve("")),
-  WindowMinimise: vi.fn(),
-  WindowMaximise: vi.fn(),
-  WindowUnmaximise: vi.fn(),
-  WindowToggleMaximise: vi.fn(),
-  Quit: vi.fn(),
-};
-
-// Inject mock runtime globally
-Object.defineProperty(window, "runtime", {
-  value: mockWailsRuntime,
-  writable: true,
-});
-
-// Also handle the case where go functions are called directly
-Object.defineProperty(window, "go", {
-  value: {
-    main: {
-      App: new Proxy(
-        {},
-        {
-          get: () => vi.fn(() => Promise.resolve({})),
-        }
-      ),
-    },
+// Mock @wailsio/runtime for tests
+vi.mock("@wailsio/runtime", () => ({
+  Events: {
+    On: vi.fn(() => () => {}),
+    Off: vi.fn(),
+    Emit: vi.fn(),
   },
-  writable: true,
+}));
+
+// Mock Wails v3 bindings for tests
+vi.mock("../../bindings/kingo/app", () => {
+  return new Proxy(
+    {},
+    {
+      get: () => vi.fn(() => Promise.resolve({})),
+    }
+  );
 });
 
 // Mock ResizeObserver (not available in jsdom)

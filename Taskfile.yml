@@ -1,0 +1,90 @@
+version: '3'
+
+vars:
+  APP_NAME: downkingo
+  BIN_DIR: build/bin
+
+tasks:
+  dev:
+    desc: Run in development mode
+    cmds:
+      - wails3 dev
+
+  build:
+    desc: Build the Go application
+    cmds:
+      - cmd: mkdir -p frontend/dist
+        silent: true
+        ignore_error: true
+      - cmd: cd frontend && bun install
+        silent: true
+      - wails3 generate syso -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
+      - go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
+    vars:
+      BUILD_FLAGS: '{{if eq .DEV "true"}}-tags dev{{end}}'
+
+  build:production:
+    desc: Full production build (frontend + Go)
+    deps:
+      - task: frontend:build
+    cmds:
+      - go build -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
+
+  run:
+    desc: Run the built application
+    cmds:
+      - ./{{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}}
+
+  generate:
+    desc: Generate frontend bindings
+    cmds:
+      - wails3 generate bindings
+
+  generate:bindings:
+    desc: Generate frontend bindings with flags
+    deps:
+      - task: go:mod:tidy
+    cmds:
+      - wails3 generate bindings -f '{{.BUILD_FLAGS}}' -clean=true
+
+  go:mod:tidy:
+    internal: true
+    cmds:
+      - go mod tidy
+
+  frontend:install:
+    desc: Install frontend dependencies
+    dir: frontend
+    sources:
+      - package.json
+      - bun.lockb
+    generates:
+      - node_modules
+    cmds:
+      - bun install
+
+  frontend:build:
+    desc: Build frontend for production
+    dir: frontend
+    deps:
+      - task: frontend:install
+    cmds:
+      - bun run build
+
+  dev:frontend:
+    desc: Run frontend dev server (used by wails3 dev)
+    dir: frontend
+    cmds:
+      - bun run dev -- --port {{.VITE_PORT | default "9245"}} --strictPort
+
+  frontend:dev:
+    desc: Run frontend dev server (standalone)
+    dir: frontend
+    cmds:
+      - bun run dev
+
+  frontend:test:
+    desc: Run frontend tests
+    dir: frontend
+    cmds:
+      - bun test

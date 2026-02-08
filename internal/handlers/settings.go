@@ -6,7 +6,7 @@ import (
 	"kingo/internal/logger"
 	"kingo/internal/youtube"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // SettingsHandler encapsulates all settings-related operations.
@@ -78,9 +78,11 @@ func (h *SettingsHandler) SaveSettings(newCfg *config.Config) error {
 
 // SelectVideoDirectory opens a dialog for selecting video directory.
 func (h *SettingsHandler) SelectVideoDirectory() (string, error) {
-	selection, err := runtime.OpenDirectoryDialog(h.ctx, runtime.OpenDialogOptions{
-		Title: "Selecione a pasta para Vídeos",
-	})
+	selection, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecione a pasta para Vídeos").
+		CanChooseDirectories(true).
+		CanChooseFiles(false).
+		PromptForSingleSelection()
 	if err != nil {
 		return "", err
 	}
@@ -99,9 +101,11 @@ func (h *SettingsHandler) SelectVideoDirectory() (string, error) {
 
 // SelectImageDirectory opens a dialog for selecting image directory.
 func (h *SettingsHandler) SelectImageDirectory() (string, error) {
-	selection, err := runtime.OpenDirectoryDialog(h.ctx, runtime.OpenDialogOptions{
-		Title: "Selecione a pasta para Imagens",
-	})
+	selection, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecione a pasta para Imagens").
+		CanChooseDirectories(true).
+		CanChooseFiles(false).
+		PromptForSingleSelection()
 	if err != nil {
 		return "", err
 	}

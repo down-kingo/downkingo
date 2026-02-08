@@ -20,9 +20,9 @@ export interface Download {
   filePath: string;
   fileSize: number;
   errorMessage: string;
-  createdAt: any;
-  startedAt?: any;
-  completedAt?: any;
+  createdAt: string;
+  startedAt: string | null;
+  completedAt: string | null;
 }
 
 /**

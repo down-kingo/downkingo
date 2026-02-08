@@ -66,20 +66,5 @@ const renderApp = () => {
   );
 };
 
-// Wait for Wails runtime to be ready
-const waitForWails = (retries = 0) => {
-  // @ts-ignore
-  if (window.go && window.runtime) {
-    renderApp();
-  } else {
-    // Timeout after 5 seconds (50 * 100ms)
-    if (retries > 50) {
-      console.warn("Wails runtime timeout, rendering anyway...");
-      renderApp();
-      return;
-    }
-    setTimeout(() => waitForWails(retries + 1), 100);
-  }
-};
-
-waitForWails();
+// Wails v3: Runtime is available immediately via @wailsio/runtime imports
+renderApp();

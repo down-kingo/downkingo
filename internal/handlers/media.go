@@ -114,7 +114,9 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 	// Rate limiting to prevent Instagram blocking
 	if !ratelimit.InstagramLimiter.Allow() {
 		h.consoleLog("[Instagram] ⚠ Aguardando rate limit...")
-		ratelimit.InstagramLimiter.Wait()
+		if err := ratelimit.InstagramLimiter.Wait(h.ctx); err != nil {
+			return nil, apperr.Wrap(op, err)
+		}
 	}
 
 	h.consoleLog("[Instagram] Buscando imagens do post...")

@@ -1,208 +1,186 @@
 # Arquitetura
 
-Documentação técnica da arquitetura do DownKingo.
+Documentacao tecnica da arquitetura do DownKingo.
 
-## Visão Geral
+## Visao Geral
 
-O DownKingo é uma aplicação desktop construída com [Wails](https://wails.io/), que combina um backend em Go com um frontend em React/TypeScript.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        DownKingo                            │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │                    FRONTEND                          │    │
-│  │  React 18 + TypeScript + Tailwind CSS + Zustand     │    │
-│  │                                                      │    │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │    │
-│  │  │  Pages   │  │Components│  │     Stores       │   │    │
-│  │  │  - Home  │  │  - UI    │  │  - downloadStore │   │    │
-│  │  │  - Setup │  │  - Cards │  │                  │   │    │
-│  │  └──────────┘  └──────────┘  └──────────────────┘   │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                            │                                 │
-│                    Wails Bridge (IPC)                        │
-│                            │                                 │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │                    BACKEND (Go)                      │    │
-│  │                                                      │    │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │    │
-│  │  │  app.go  │  │ internal │  │    External      │   │    │
-│  │  │  (API)   │  │ packages │  │    Binaries      │   │    │
-│  │  │          │◄─┤          │◄─┤    - yt-dlp      │   │    │
-│  │  │          │  │ -youtube │  │    - ffmpeg      │   │    │
-│  │  │          │  │ -launcher│  │                  │   │    │
-│  │  │          │  │ -logger  │  │                  │   │    │
-│  │  │          │  │ -updater │  │                  │   │    │
-│  │  └──────────┘  └──────────┘  └──────────────────┘   │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Estrutura de Diretórios
+O DownKingo e uma aplicacao desktop construida com [Wails v3](https://wails.io/), que combina um backend em Go com um frontend em React/TypeScript.
 
 ```
-DownKingo/
-├── main.go                 # Entry point, configuração Wails
-├── app.go                  # Struct App, métodos expostos ao frontend
-│
-├── internal/               # Pacotes internos (não exportados)
-│   ├── app/
-│   │   └── paths.go        # Gerenciamento de diretórios
-│   ├── events/
-│   │   └── events.go       # Constantes de eventos centralizadas
-│   ├── launcher/
-│   │   └── launcher.go     # Download de dependências (fallback)
-│   ├── logger/
-│   │   └── logger.go       # Structured logging (zerolog)
-│   ├── updater/
-│   │   └── updater.go      # Sistema de auto-update
-│   └── youtube/
-│       └── youtube.go      # Wrapper do yt-dlp
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.tsx         # Componente raiz
-│   │   ├── pages/          # Páginas (Home, Setup)
-│   │   ├── components/     # Componentes reutilizáveis
-│   │   └── stores/         # Estado global (Zustand)
-│   └── wailsjs/            # Bindings gerados automaticamente
-│
-├── build/
-│   ├── appicon.png         # Ícone do app
-│   ├── sidecar/            # Binários empacotados
-│   │   ├── windows/
-│   │   ├── darwin/
-│   │   └── linux/
-│   └── windows/
-│       └── installer/
-│           └── project.nsi # Script NSIS
-│
-└── docs/                   # Documentação
++-----------------------------------------------------------------+
+|                          DownKingo                              |
++-----------------------------------------------------------------+
+|  +-----------------------------------------------------------+ |
+|  |                       FRONTEND                             | |
+|  |  React 19 + TypeScript + Tailwind CSS + Zustand            | |
+|  |                                                             | |
+|  |  +----------+  +-----------+  +------------------+          | |
+|  |  |  Pages   |  |Components |  |     Stores       |          | |
+|  |  |  - Home  |  |  - Modals |  |  - downloadStore |          | |
+|  |  |  - Setup |  |  - Video  |  |  - settingsStore |          | |
+|  |  |  - Conv. |  |  - Nav    |  |  - roadmapStore  |          | |
+|  |  +----------+  +-----------+  +------------------+          | |
+|  +-----------------------------------------------------------+ |
+|                              |                                   |
+|                   Wails v3 Bridge (IPC)                          |
+|              Bindings (type-safe) + Events (bus)                 |
+|                              |                                   |
+|  +-----------------------------------------------------------+ |
+|  |                     BACKEND (Go)                           | |
+|  |                                                             | |
+|  |  +----------+  +------------+  +------------------+         | |
+|  |  |  app.go  |  |  Handlers  |  |    Services      |         | |
+|  |  | (Facade) |<-| - Video    |<-|  - youtube       |         | |
+|  |  |          |  | - Media    |  |  - downloader    |         | |
+|  |  |          |  | - Settings |  |  - converter     |         | |
+|  |  |          |  | - System   |  |  - storage (SQL) |         | |
+|  |  |          |  | - Convert  |  |  - config        |         | |
+|  |  +----------+  +------------+  +------------------+         | |
+|  |                                      |                       | |
+|  |  +-----------+  +------------+  +----------+                | |
+|  |  | validate  |  | ratelimit  |  | External |                | |
+|  |  | (input)   |  | (throttle) |  | Binaries |                | |
+|  |  +-----------+  +------------+  | - yt-dlp |                | |
+|  |                                  | - ffmpeg |                | |
+|  |  +-----------+  +------------+  | - aria2c |                | |
+|  |  |  errors   |  |   logger   |  +----------+                | |
+|  |  | (AppError)|  | (zerolog)  |                               | |
+|  |  +-----------+  +------------+                               | |
+|  +-----------------------------------------------------------+ |
++-----------------------------------------------------------------+
 ```
 
-## Componentes Principais
+## Camadas
 
-### Backend (Go)
+### 1. App Facade (`app.go`)
 
-#### `app.go`
+Ponto unico de exposicao para o frontend. Cada metodo publico vira uma funcao TypeScript type-safe via Wails binding generator.
 
-Struct principal que expõe métodos para o frontend via Wails bridge:
+- Inicializa todos os servicos no `ServiceStartup()`
+- Delega para handlers especializados
+- Gerencia ciclo de vida (startup/shutdown)
 
-- `GetVideoInfo(url)` - Obtém metadados do vídeo
-- `Download(opts)` - Inicia download
-- `CheckForUpdate()` - Verifica atualizações
-- `GetDownloadsPath()` - Retorna pasta de downloads
+### 2. Handlers (`internal/handlers/`)
 
-#### `internal/youtube`
+Camada de logica de negocio. Cada handler tem responsabilidade unica:
 
-Wrapper do yt-dlp:
+| Handler | Responsabilidade |
+|---------|-----------------|
+| `VideoHandler` | Busca de info, fila de download, cancelamento |
+| `MediaHandler` | Instagram carousel, imagens, Twitter |
+| `SettingsHandler` | Configuracao, seletores de diretorio |
+| `SystemHandler` | Dependencias, updates, operacoes de sistema |
+| `ConverterHandler` | Conversao de video, audio e imagens via FFmpeg |
 
-- Executa yt-dlp como subprocesso
-- Parseia output JSON para metadados
-- Emite eventos de progresso via Wails
+Cada handler aceita **interfaces** (nao tipos concretos) via construtor, seguindo Interface Segregation Principle.
 
-#### `internal/launcher`
+### 3. Services (`internal/`)
 
-Gerencia dependências (ffmpeg, yt-dlp):
+Implementacoes concretas:
 
-- Verifica se binários existem
-- Baixa se necessário (fallback)
-- Context propagation para cancelamento
+| Service | Pacote | Descricao |
+|---------|--------|-----------|
+| YouTube Client | `youtube/` | Wrapper do yt-dlp com parsing de progresso |
+| Download Manager | `downloader/` | Worker pool com concorrencia controlada (semaforo) |
+| Storage | `storage/` | SQLite via modernc (pure Go, sem CGO) |
+| Config | `config/` | JSON com migracao de legado e env overrides |
+| Logger | `logger/` | Zerolog com rotacao por tamanho (10MB, 5 backups) |
+| Rate Limiter | `ratelimit/` | Token bucket com Wait() cancelavel via context |
+| Updater | `updater/` | Auto-update via GitHub Releases |
+| Roadmap | `roadmap/` | GitHub Projects API + CDN cache com ETag |
 
-#### `internal/logger`
+### 4. Cross-cutting
 
-Logging estruturado com zerolog:
+| Pacote | Descricao |
+|--------|-----------|
+| `errors/` | `AppError` com Op/Err/Message/Code + sentinels (`ErrNotFound`, etc.) |
+| `validate/` | Sanitizacao de URLs, paths, filenames, formatos |
+| `events/` | Constantes centralizadas de eventos (sem magic strings) |
+| `ratelimit/` | Token bucket com limiters globais por endpoint |
 
-- Logs em arquivo JSON
-- Rotação diária
-- Níveis: debug, info, warn, error
+## Comunicacao Go <-> React
 
-### Frontend (React)
+### Bindings (Metodos)
 
-#### Estado (Zustand)
+Wails v3 gera automaticamente funcoes TypeScript type-safe a partir dos metodos publicos do App:
+
+```go
+// Go
+func (a *App) GetVideoInfo(url string) (*youtube.VideoInfo, error)
+```
 
 ```typescript
-// downloadStore.ts
-interface DownloadState {
-  queue: DownloadItem[];
-  addToQueue(url): string;
-  updateProgress(id, progress): void;
-  removeFromQueue(id): void;
-}
+// TypeScript (auto-gerado)
+export function GetVideoInfo(url: string): Promise<youtube.VideoInfo>
 ```
 
-#### Comunicação com Backend
+### Events (Bus)
+
+Para comunicacao assincrona (progresso, notificacoes), Go emite eventos:
+
+```go
+application.Get().Event.Emit("download:progress", data)
+```
+
+React escuta via wrapper type-safe:
 
 ```typescript
-// Chamada de método Go
-import { GetVideoInfo } from '../wailsjs/go/main/App';
-const info = await GetVideoInfo(url);
-
-// Escutar eventos
-import { EventsOn } from '../wailsjs/runtime';
-EventsOn('download:progress', (data) => { ... });
+const unsub = await safeEventsOn<DownloadProgress>("download:progress", (p) => {
+  updateDownload(p.id, p)
+})
 ```
+
+Ver `docs/EVENTS.md` para o contrato completo.
 
 ## Fluxo de Download
 
 ```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│  User    │    │ Frontend │    │ Backend  │    │  yt-dlp  │
-│  Input   │───▶│  React   │───▶│   Go     │───▶│  Binary  │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘
-     │               │               │               │
-     │  Cola URL     │               │               │
-     │──────────────▶│               │               │
-     │               │  GetVideoInfo │               │
-     │               │──────────────▶│               │
-     │               │               │  --dump-json  │
-     │               │               │──────────────▶│
-     │               │               │◀──────────────│
-     │               │◀──────────────│  JSON metadata│
-     │  Mostra Info  │               │               │
-     │◀──────────────│               │               │
-     │               │               │               │
-     │  Clica Download               │               │
-     │──────────────▶│  Download()   │               │
-     │               │──────────────▶│  -f best ...  │
-     │               │               │──────────────▶│
-     │               │    progress   │◀──────────────│
-     │               │◀──Events──────│  (streaming)  │
-     │  Progress Bar │               │               │
-     │◀──────────────│               │               │
-     │               │               │  [Complete]   │
-     │  Done! ✅     │◀──────────────│◀──────────────│
-     │◀──────────────│               │               │
+User -> Frontend -> AddToQueue() -> VideoHandler -> Manager.AddJob()
+                                                        |
+                                                   [persiste no SQLite]
+                                                        |
+                                                   [enfileira no channel]
+                                                        |
+                                              Worker Pool (max 3 concurrent)
+                                                        |
+                                              1. GetVideoInfo (metadata)
+                                              2. Download (yt-dlp)
+                                              3. Emit progress events
+                                              4. Update DB status
+                                                        |
+                                              [completeJob / failJob]
+                                                        |
+                                              Frontend <- Events <- Manager
 ```
 
-## Detecção de Binários (Sidecar)
+## Tratamento de Erros
 
-O app procura binários nesta ordem de prioridade:
+Estrategia em camadas:
 
-### Windows
+1. **Validacao na fronteira** (`validate` package): toda entrada do usuario e sanitizada antes de processar
+2. **Sentinel errors** (`errors` package): `ErrNotFound`, `ErrTimeout`, etc. verificaveis com `errors.Is()`
+3. **AppError com contexto**: cada handler wrapa erros com `Op` (operacao), `Message` (user-friendly), `Code` (frontend)
+4. **Console logging**: mensagens amigaveis emitidas via `console:log` para o Terminal do usuario
 
-1. `$INSTDIR\bin\` (instalador NSIS)
-2. `%AppData%\DownKingo\bin\` (fallback download)
+## Observabilidade
 
-### macOS
-
-1. `DownKingo.app/Contents/Resources/bin/` (bundle)
-2. `~/Library/Application Support/DownKingo/bin/` (fallback)
-
-### Linux
-
-1. Mesmo diretório do executável (AppImage)
-2. `~/.config/DownKingo/bin/` (fallback)
+- **Logs estruturados**: zerolog com campos tipados (traceID, phase, etc.)
+- **Rotacao automatica**: 10MB por arquivo, 5 backups
+- **Build tags**: `debug`/`dev` = Debug level, producao = Info level
+- **Override**: `KINGO_DEBUG=true` ativa debug mesmo em prod
+- **Metricas do Manager**: log periodico de jobs ativos, fila, taxa de sucesso/falha
 
 ## Tecnologias
 
-| Camada           | Stack                      |
-| ---------------- | -------------------------- |
-| **Runtime**      | Wails v2                   |
-| **Backend**      | Go 1.21, zerolog           |
-| **Frontend**     | React 18, TypeScript, Vite |
-| **Estilização**  | Tailwind CSS               |
-| **Estado**       | Zustand                    |
-| **Media**        | yt-dlp, FFmpeg             |
-| **Distribuição** | NSIS, DMG, AppImage        |
+| Camada | Stack |
+|--------|-------|
+| **Runtime** | Wails v3 |
+| **Backend** | Go 1.25, zerolog, modernc/sqlite |
+| **Frontend** | React 19, TypeScript, Vite |
+| **Estilizacao** | Tailwind CSS |
+| **Estado** | Zustand |
+| **i18n** | react-i18next (pt-BR, en-US, es-ES, fr-FR, de-DE) |
+| **Testes Go** | stdlib testing, httptest |
+| **Testes Frontend** | Vitest, React Testing Library |
+| **Media** | yt-dlp, FFmpeg, aria2c |
+| **Distribuicao** | NSIS (Windows), DMG (macOS), AppImage (Linux) |

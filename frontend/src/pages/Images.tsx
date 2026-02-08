@@ -12,8 +12,7 @@ import {
   IconDatabase,
   IconExternalLink,
 } from "@tabler/icons-react";
-// @ts-ignore
-import { GetImageInfo, DownloadImage } from "../../wailsjs/go/main/App";
+import { GetImageInfo, DownloadImage } from "../../bindings/kingo/app";
 import {
   resolveInstagram,
   isInstagramUrl,
@@ -80,9 +79,8 @@ export default function Images() {
       if (isIGPost) {
         // Instagram vai direto para o backend Go (client-side falha por CORS)
         try {
-          // @ts-ignore - A função será gerada pelo Wails
           const { GetInstagramCarousel } = await import(
-            "../../wailsjs/go/main/App"
+            "../../bindings/kingo/app"
           );
           const carouselResult = await GetInstagramCarousel(url);
           if (

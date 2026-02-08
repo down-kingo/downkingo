@@ -16,6 +16,7 @@
     "i18n:check": "bun x i18next-parser --config i18next-parser.config.js --fail-on-update"
   },
   "dependencies": {
+    "@wailsio/runtime": "3.0.0-alpha.79",
     "@tabler/icons-react": "^3.36.0",
     "framer-motion": "^12.24.7",
     "i18next": "^25.7.3",

@@ -10,13 +10,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
 
-// Wails runtime imports
-import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
+// Wails v3 runtime imports
+import { Events } from "@wailsio/runtime";
 import {
   GetRoadmap,
   VoteFeature,
   VoteDownFeature,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 
 interface RoadmapState {
   // Data
@@ -171,11 +171,14 @@ export const useRoadmapStore = create<RoadmapState>()(
         };
 
         // Subscribe to roadmap:update events from Go backend
-        EventsOn("roadmap:update", handleUpdate);
+        // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
+        const cancel = Events.On("roadmap:update", (event: { data: RoadmapItem[] }) => {
+          handleUpdate(event.data);
+        });
 
         // Return cleanup function
         return () => {
-          EventsOff("roadmap:update");
+          cancel();
         };
       },
     }),

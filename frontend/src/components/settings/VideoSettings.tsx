@@ -15,7 +15,7 @@ import {
   CheckAria2cStatus,
   DownloadAria2c,
   DeleteAria2c,
-} from "../../../wailsjs/go/main/App";
+} from "../../../bindings/kingo/app";
 import { useTranslation } from "react-i18next";
 
 // Components locais

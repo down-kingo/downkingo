@@ -8,7 +8,7 @@ import (
 	"kingo/internal/app"
 	"kingo/internal/converter"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // ConverterHandler handles all media conversion operations.
@@ -49,13 +49,11 @@ func (h *ConverterHandler) consoleLog(message string) {
 
 // SelectVideoFile opens a file dialog to select a video file.
 func (h *ConverterHandler) SelectVideoFile() (string, error) {
-	file, err := runtime.OpenFileDialog(h.ctx, runtime.OpenDialogOptions{
-		Title: "Selecionar Vídeo",
-		Filters: []runtime.FileFilter{
-			{DisplayName: "Vídeos", Pattern: "*.mp4;*.mkv;*.avi;*.mov;*.webm;*.wmv;*.flv"},
-			{DisplayName: "Todos os Arquivos", Pattern: "*.*"},
-		},
-	})
+	file, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecionar Vídeo").
+		AddFilter("Vídeos", "*.mp4;*.mkv;*.avi;*.mov;*.webm;*.wmv;*.flv").
+		AddFilter("Todos os Arquivos", "*.*").
+		PromptForSingleSelection()
 
 	if err != nil {
 		return "", err
@@ -65,13 +63,11 @@ func (h *ConverterHandler) SelectVideoFile() (string, error) {
 
 // SelectImageFile opens a file dialog to select an image file.
 func (h *ConverterHandler) SelectImageFile() (string, error) {
-	file, err := runtime.OpenFileDialog(h.ctx, runtime.OpenDialogOptions{
-		Title: "Selecionar Imagem",
-		Filters: []runtime.FileFilter{
-			{DisplayName: "Imagens", Pattern: "*.jpg;*.jpeg;*.png;*.webp;*.avif;*.bmp;*.tiff;*.gif"},
-			{DisplayName: "Todos os Arquivos", Pattern: "*.*"},
-		},
-	})
+	file, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecionar Imagem").
+		AddFilter("Imagens", "*.jpg;*.jpeg;*.png;*.webp;*.avif;*.bmp;*.tiff;*.gif").
+		AddFilter("Todos os Arquivos", "*.*").
+		PromptForSingleSelection()
 
 	if err != nil {
 		return "", err
@@ -81,9 +77,11 @@ func (h *ConverterHandler) SelectImageFile() (string, error) {
 
 // SelectOutputDirectory opens a dialog to select output directory.
 func (h *ConverterHandler) SelectOutputDirectory() (string, error) {
-	dir, err := runtime.OpenDirectoryDialog(h.ctx, runtime.OpenDialogOptions{
-		Title: "Selecionar Pasta de Saída",
-	})
+	dir, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecionar Pasta de Saída").
+		CanChooseDirectories(true).
+		CanChooseFiles(false).
+		PromptForSingleSelection()
 	if err != nil {
 		return "", err
 	}
@@ -419,5 +417,3 @@ func (h *ConverterHandler) CompressImage(inputPath string, quality int) (*Conver
 		Success:     true,
 	}, nil
 }
-
-

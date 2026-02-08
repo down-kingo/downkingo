@@ -20,7 +20,7 @@ import {
   ConvertImage,
   CompressImage,
   OpenUrl,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 
 // Componentes extraídos
 import {
@@ -166,7 +166,7 @@ export default function Converter() {
     setResult(null);
 
     try {
-      let conversionResult: ConversionResult;
+      let conversionResult: ConversionResult | null;
 
       switch (activeTab) {
         case "video-to-video":
@@ -220,7 +220,7 @@ export default function Converter() {
       }
 
       setResult(conversionResult);
-      if (!conversionResult.success) {
+      if (conversionResult && !conversionResult.success) {
         setError(conversionResult.errorMessage || t("error_unknown"));
       }
     } catch (err) {

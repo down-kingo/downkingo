@@ -1,0 +1,39 @@
+version: '3'
+
+info:
+  companyName: "DownKingo"
+  productName: "DownKingo"
+  productIdentifier: "com.downkingo.app"
+  description: "Media downloader and converter"
+  copyright: "(c) 2025, DownKingo"
+  comments: "DownKingo Desktop App"
+  version: "2.0.3"
+
+dev_mode:
+  root_path: .
+  log_level: warn
+  frontend_dev_server_url: http://localhost:9245
+  debounce: 1000
+  ignore:
+    dir:
+      - .git
+      - node_modules
+      - frontend
+      - bin
+      - build/bin
+    file:
+      - .DS_Store
+      - .gitignore
+      - .gitkeep
+    watched_extension:
+      - "*.go"
+    git_ignore: true
+  executes:
+    - cmd: wails3 task build DEV=true
+      type: blocking
+    - cmd: wails3 task dev:frontend
+      type: background
+    - cmd: wails3 task run
+      type: primary
+
+fileAssociations:

@@ -271,8 +271,14 @@ func (c *Client) GetVideoInfo(ctx context.Context, url string) (*VideoInfo, erro
 
 	// Use createCommandWithContext for proper setup (DRY)
 	cmd := c.createCommandWithContext(ctx, args)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	output, err := cmd.Output()
 	if err != nil {
+		errMsg := strings.TrimSpace(stderr.String())
+		if errMsg != "" {
+			return nil, fmt.Errorf("yt-dlp error: %s", errMsg)
+		}
 		return nil, fmt.Errorf("yt-dlp error: %w", err)
 	}
 
@@ -307,8 +313,14 @@ func (c *Client) GetVideoInfoWithCookies(ctx context.Context, url string, browse
 
 	// Use createCommandWithContext for proper setup (DRY)
 	cmd := c.createCommandWithContext(ctx, args)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	output, err := cmd.Output()
 	if err != nil {
+		errMsg := strings.TrimSpace(stderr.String())
+		if errMsg != "" {
+			return nil, fmt.Errorf("yt-dlp error (with cookies): %s", errMsg)
+		}
 		return nil, fmt.Errorf("yt-dlp error (with cookies): %w", err)
 	}
 

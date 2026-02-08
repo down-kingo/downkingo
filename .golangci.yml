@@ -20,8 +20,14 @@ linters:
   disable:
     - typecheck # Handled by go build
 
+linters-settings:
+  errcheck:
+    # Don't check for errors on Close() calls
+    exclude-functions:
+      - (*os.File).Close
+      - (io.Closer).Close
+
 issues:
-  # Exclude some linters from running on tests files
   exclude-rules:
     - path: _test\.go
       linters:
@@ -35,10 +41,3 @@ issues:
     - path: _unix\.go
       linters:
         - typecheck
-
-linters-settings:
-  errcheck:
-    # Don't check for errors on Close() calls
-    exclude-functions:
-      - (*os.File).Close
-      - (io.Closer).Close

@@ -8,7 +8,7 @@ vi.mock("../lib/wailsRuntime", () => ({
 }));
 
 // Mock Wails App bindings
-vi.mock("../../wailsjs/go/main/App", () => ({
+vi.mock("../../bindings/kingo/app", () => ({
   GetDownloadQueue: vi.fn(() => Promise.resolve([])),
   GetDownloadHistory: vi.fn(() => Promise.resolve([])),
   AddToQueue: vi.fn(() =>
@@ -45,7 +45,7 @@ import {
   AddToQueue,
   CancelDownload,
   ClearDownloadHistory,
-} from "../../wailsjs/go/main/App";
+} from "../../bindings/kingo/app";
 
 describe("useDownloadActions", () => {
   beforeEach(() => {

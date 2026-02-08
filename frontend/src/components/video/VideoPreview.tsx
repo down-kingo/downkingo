@@ -11,11 +11,10 @@ import {
   IconDownload,
   IconLoader2,
 } from "@tabler/icons-react";
-import { youtube } from "../../../wailsjs/go/models";
+import { VideoInfo, Format } from "../../../bindings/kingo/internal/youtube/models.js";
 
-// Re-export VideoInfo from Wails generated models
-export type VideoInfo = youtube.VideoInfo;
-export type Format = youtube.Format;
+// Re-export types from Wails v3 generated models
+export type { VideoInfo, Format };
 
 interface QualityOption {
   value: string;

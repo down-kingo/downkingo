@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GetVideoInfo } from "../../wailsjs/go/main/App";
+import { GetVideoInfo } from "../../bindings/kingo/app";
 import {
   IconVideo,
   IconMusic,

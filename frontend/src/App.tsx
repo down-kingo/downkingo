@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { NeedsDependencies } from "../wailsjs/go/main/App";
+import { NeedsDependencies } from "../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
 import Setup from "./pages/Setup";
 import Home from "./pages/Home";

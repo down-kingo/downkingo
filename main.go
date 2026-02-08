@@ -5,41 +5,39 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed build/appicon.png
+var appIcon []byte
+
 func main() {
 	// Create an instance of the app structure
-	app := NewApp()
+	appInstance := NewApp()
 
 	// Create application with options
-	err := wails.Run(&options.App{
-		Title:  "DownKingo",
-		Width:  1280,
-		Height: 800,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
+	app := application.New(application.Options{
+		Name: "DownKingo",
+		Icon: appIcon,
+		Services: []application.Service{
+			application.NewService(appInstance),
 		},
-		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
-		OnStartup:        app.OnStartup,
-		OnShutdown:       app.Shutdown,
-		Bind: []interface{}{
-			app,
-		},
-		Windows: &windows.Options{
-			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
-			// BackdropType:         windows.Mica, // Disabled: Requires Windows 11 or specific W10 builds
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
 		},
 	})
 
-	if err != nil {
+	app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            "DownKingo",
+		Width:            1280,
+		Height:           800,
+		BackgroundColour: application.NewRGB(255, 255, 255),
+	})
+
+	if err := app.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

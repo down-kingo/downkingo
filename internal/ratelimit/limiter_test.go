@@ -1,6 +1,7 @@
 package ratelimit_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -128,6 +129,34 @@ func TestPerEndpointLimiter(t *testing.T) {
 	// Instagram should have its own pool
 	if !limiter.Allow("instagram") {
 		t.Error("First instagram request should be allowed")
+	}
+}
+
+func TestLimiter_Wait_Success(t *testing.T) {
+	limiter := ratelimit.NewLimiter(1, 10) // 1 token, refills fast
+
+	// Use the token
+	limiter.Allow()
+
+	ctx := context.Background()
+	err := limiter.Wait(ctx)
+	if err != nil {
+		t.Errorf("Wait() should succeed after refill: %v", err)
+	}
+}
+
+func TestLimiter_Wait_ContextCancelled(t *testing.T) {
+	limiter := ratelimit.NewLimiter(1, 0.01) // 1 token, refills very slowly
+
+	// Use the token
+	limiter.Allow()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+
+	err := limiter.Wait(ctx)
+	if err == nil {
+		t.Error("Wait() should return error when context is cancelled")
 	}
 }
 

@@ -20,7 +20,7 @@ import {
   SelectVideoDirectory,
   SelectImageDirectory,
   SetClipboardMonitor,
-} from "../../../wailsjs/go/main/App";
+} from "../../../bindings/kingo/app";
 
 // Components locais
 const SettingItem = ({

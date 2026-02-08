@@ -9,7 +9,7 @@ import (
 
 	"kingo/internal/logger"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // supportedDomains lista os domínios de mídia que o Kingo suporta.
@@ -52,8 +52,8 @@ func (m *Monitor) Start(ctx context.Context) {
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	m.isRunning = true
 
-	// Wails v2: use runtime
-	if text, err := runtime.ClipboardGetText(ctx); err == nil {
+	// Wails v3: use application.Get().Clipboard.Text()
+	if text, ok := application.Get().Clipboard.Text(); ok {
 		m.lastText = text
 	}
 
@@ -91,8 +91,8 @@ func (m *Monitor) loop() {
 		case <-m.ctx.Done():
 			return
 		case <-time.After(currentInterval):
-			text, err := runtime.ClipboardGetText(m.ctx)
-			if err != nil {
+			text, ok := application.Get().Clipboard.Text()
+			if !ok {
 				// On error, increase backoff to avoid hammering
 				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
 				continue
@@ -112,7 +112,7 @@ func (m *Monitor) loop() {
 
 				if m.isValidURL(text) {
 					logger.Log.Info().Str("url", text).Msg("Clipboard link detected and valid")
-					runtime.EventsEmit(m.ctx, "clipboard:link-detected", text)
+					application.Get().Event.Emit("clipboard:link-detected", text)
 				} else {
 					logger.Log.Debug().Msg("Clipboard ignored (invalid URL or unsupported domain)")
 				}

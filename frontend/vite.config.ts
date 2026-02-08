@@ -24,7 +24,7 @@ export default defineConfig({
         "src/test/",
         "**/*.d.ts",
         "src/main.tsx",
-        "src/wailsjs/**",
+        "bindings/**",
       ],
     },
   },

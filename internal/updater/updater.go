@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 const (
@@ -260,13 +260,9 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	return nil
 }
 
-// RestartApp restarts the application using Wails v2 API
+// RestartApp restarts the application using Wails v3 API
 func (u *Updater) RestartApp() {
-	if u.ctx != nil {
-		wailsRuntime.Quit(u.ctx)
-	} else {
-		os.Exit(0)
-	}
+	application.Get().Quit()
 }
 
 // InstallVersion finds a release by tag and installs it
@@ -305,10 +301,8 @@ func (u *Updater) InstallVersion(tag string) error {
 }
 
 func (u *Updater) emitProgress(status string, percent float64) {
-	if u.ctx != nil {
-		wailsRuntime.EventsEmit(u.ctx, "updater:progress", map[string]interface{}{
-			"status":  status,
-			"percent": percent,
-		})
-	}
+	application.Get().Event.Emit("updater:progress", map[string]interface{}{
+		"status":  status,
+		"percent": percent,
+	})
 }

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
 import { useSettingsStore } from "../../stores/settingsStore";
-import { GetSettings, SaveSettings } from "../../../wailsjs/go/main/App";
+import { GetSettings, SaveSettings } from "../../../bindings/kingo/app";
 import { useTranslation, Trans } from "react-i18next";
 
 // Components locais

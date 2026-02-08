@@ -13,16 +13,15 @@ import {
   CheckForUpdate,
   DownloadAndApplyUpdate,
   RestartApp,
-} from "../../wailsjs/go/main/App";
-import { EventsOn } from "../../wailsjs/runtime/runtime";
-import type { updater } from "../../wailsjs/go/models";
+} from "../../bindings/kingo/app";
+import { UpdateInfo } from "../../bindings/kingo/internal/updater/models.js";
 import { Logo } from "./Logo";
 import { useTranslation } from "react-i18next";
 
 export default function UpdateModal() {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  const [updateInfo, setUpdateInfo] = useState<updater.UpdateInfo | null>(null);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   // Check for updates on mount
