@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-02-08T06:13:48.678Z",
+  "generated_at": "2026-02-08T18:04:09.551Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -8,25 +8,6 @@
     "project_number": 2
   },
   "items": [
-    {
-      "id": 34,
-      "title": "Spotify Download Support",
-      "description": "### Typ\n\nfeat: Neue Funktionalität\n\n### Bereich\n\nDownload\n\n### Kurzbeschreibung\n\nFügen Sie DownKingo native Unterstützung für den Download von Spotify-Titeln (und optional Playlists/Alben) hinzu, damit Benutzer Audiodateien mit vollständigen Metadaten direkt von Spotify-URLs abrufen können.\n\n### Kontext\n\nDownKingo unterstützt derzeit das Herunterladen von Medien von YouTube, aber noch nicht Spotify als Quelle. Die Bereitstellung von Unterstützung für Spotify-URLs würde den Nutzen der App über Video-Downloads hinaus erweitern und Streaming-Audio-Downloads von einem der am weitesten verbreiteten Musikdienste umfassen.\n\n### Problem / Motivation\n\nViele Benutzer würden davon profitieren, Spotify-Titel, Playlists und Alben zusätzlich zu YouTube-Inhalten herunterladen zu können. Im Moment müssen sich Benutzer auf separate Tools verlassen, um Audio von Spotify zu extrahieren, was den Workflow fragmentiert. Die Integration der Spotify-Unterstützung direkt in DownKingo würde das Herunterladen von Medien in einem einzigen, benutzerfreundlichen Tool vereinheitlichen und die Reibung für Benutzer verringern, die regelmäßig mit YouTube und Spo arbeiten",
-      "status": "planned",
-      "votes": 1,
-      "votes_up": 1,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/34",
-      "labels": [
-        "enhancement"
-      ],
-      "author": "ehsanpo2",
-      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
-      "created_at": "2026-01-10T10:52:42Z",
-      "shipped_at": null,
-      "friendly_title": "Spotify-Download-Unterstützung"
-    },
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
@@ -43,6 +24,25 @@
       "created_at": "2026-01-04T21:04:06Z",
       "shipped_at": "2026-02-08T02:26:20Z",
       "friendly_title": "Architekturmigration zu Wails v3"
+    },
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Typ\n\nfeat: Neue Funktionalität\n\n### Bereich\n\nDownload\n\n### Kurzbeschreibung\n\nFügen Sie DownKingo native Unterstützung für den Download von Spotify-Titeln (und optional Playlists/Alben) hinzu, damit Benutzer Audiodateien mit vollständigen Metadaten direkt von Spotify-URLs abrufen können.\n\n### Kontext\n\nDownKingo unterstützt derzeit das Herunterladen von Medien von YouTube, aber noch nicht Spotify als Quelle. Die Bereitstellung von Unterstützung für Spotify-URLs würde den Nutzen der App über Video-Downloads hinaus erweitern und Streaming-Audio-Downloads von einem der am weitesten verbreiteten Musikdienste umfassen.\n\n### Problem / Motivation\n\nViele Benutzer würden davon profitieren, Spotify-Titel, Playlists und Alben zusätzlich zu YouTube-Inhalten herunterladen zu können. Im Moment müssen sich Benutzer auf separate Tools verlassen, um Audio von Spotify zu extrahieren, was den Workflow fragmentiert. Die Integration der Spotify-Unterstützung direkt in DownKingo würde das Herunterladen von Medien in einem einzigen, benutzerfreundlichen Tool vereinheitlichen und die Reibung für Benutzer verringern, die regelmäßig mit YouTube und Spo arbeiten",
+      "status": "in-progress",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-02-08T18:03:53Z",
+      "friendly_title": "Spotify-Download-Unterstützung"
     },
     {
       "id": 20,
@@ -154,9 +154,9 @@
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
       "description": "## Kontext\nDerzeit hat der Benutzer nach dem Herunterladen eines Videos oder Bildes auf Kingo (PC) keine native und schnelle Möglichkeit, diesen Inhalt auf sein Telefon zu übertragen. Die Abhängigkeit von der Cloud (Google Drive/WhatsApp) ist langsam und verbraucht unnötig Internetbandbreite.\n## Motivation\nErstellen Sie eine \"reibungslose\" Erfahrung, bei der der Benutzer einfach die Kamera seines Telefons auf Kingo richtet und der Download sofort über das lokale Netzwerk (P2P) beginnt, wobei die maximale Wi-Fi-Geschwindigkeit genutzt wird.\n## Problem\nDas Übertragen großer Dateien vom PC auf mobile Geräte ist ein mühsamer Prozess, der normalerweise USB-Kabel oder Uploads zu externen Diensten beinhaltet, was die Agilität einer Download-App beeinträchtigt.\n## Technischer Vorschlag\nImplementieren Sie einen **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Verwenden Sie `net/http`, um einen temporären Webserver auf einem zufälligen Port zu starten.\n   - Implementieren Sie ein **IP Discovery**-System, um die Adresse des PCs im lokalen Netzwerk zu identifizieren (z. B. 192.168.x.x).\n   - Servieren Sie die Datei di",
       "status": "idea",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
+      "votes": 1,
+      "votes_up": 1,
+      "votes_down": 1,
       "comments": 0,
       "url": "https://github.com/down-kingo/downkingo/issues/5",
       "labels": [],
