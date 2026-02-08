@@ -2,3 +2,20 @@ build/bin
 node_modules
 frontend/dist
 .claude
+
+# Executables
+*.exe
+kingo.exe
+main
+bin/
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vite temporary files
+frontend/vite.config.ts.timestamp-*
+*.mjs
+*.js.map
