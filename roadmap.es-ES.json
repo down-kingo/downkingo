@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-01-10T20:27:43.097Z",
+  "generated_at": "2026-02-08T02:26:59.682Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -9,12 +9,29 @@
   },
   "items": [
     {
+      "id": 7,
+      "title": "feat(core): Migração Arquitetural para Wails v3",
+      "description": "## Contexto\nKingo ha madurado y su arquitectura actual en Wails v2 está empezando a limitar la experiencia de \"App Nativo\". La migración a la v3 Alpha/Beta es el paso necesario para transformar Kingo en una utilidad de sistema robusta y multiplataforma.\n## Motivación\nv3 trae soporte primario para **Multi-window**, lo cual es crucial para nuestro sistema de notificaciones y overlays. Además, la nueva API de Wails v3 está mucho más cerca de las capacidades nativas del SO (Windows/Mac/Linux), permitiendo una integración profunda con el sistema que v2 no logra sin \"hacks\".\n## Problema Actual (Limitaciones de v2)\n1. **Notificaciones Limitadas:** Actualmente nuestros Toasts (como el de Clipboard) viven \"dentro\" de la ventana principal. Si la app está minimizada, el usuario no ve nada.\n2. **Ciclo de Vida:** El control de Single Instance y eventos del sistema (como suspensión/reanudación) son menos elegantes en v2.\n3. **Tray y Menús:** v3 ofrece un control mucho superior sobre la bandeja del sistema (System Tray) y menús de",
+      "status": "in-progress",
+      "votes": 1,
+      "votes_up": 1,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/7",
+      "labels": [],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-04T21:04:06Z",
+      "shipped_at": "2026-02-08T02:26:20Z",
+      "friendly_title": "Migración Arquitectónica a Wails v3"
+    },
+    {
       "id": 20,
       "title": "feat(roadmap): Build-in-Public com Votação",
       "description": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
-      "votes": 0,
-      "votes_up": 0,
+      "votes": 1,
+      "votes_up": 1,
       "votes_down": 0,
       "comments": 0,
       "url": "https://github.com/down-kingo/downkingo/issues/20",
@@ -32,7 +49,7 @@
     {
       "id": 14,
       "title": "feat(download): Download de Imagens",
-      "description": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -48,7 +65,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:41Z",
       "shipped_at": "2026-01-08T15:02:56Z",
-      "friendly_title": "Descargar Imágenes"
+      "friendly_title": "Download de Imagens"
     },
     {
       "id": 17,
@@ -146,23 +163,6 @@
       "created_at": "2026-01-04T20:43:35Z",
       "shipped_at": null,
       "friendly_title": "Extensión de navegador y refinamiento de enlaces profundos (Warm Start)"
-    },
-    {
-      "id": 7,
-      "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexto\nKingo ha madurado y su arquitectura actual en Wails v2 está empezando a limitar la experiencia de \"App Nativo\". La migración a la v3 Alpha/Beta es el paso necesario para transformar Kingo en una utilidad de sistema robusta y multiplataforma.\n## Motivación\nv3 trae soporte primario para **Multi-window**, lo cual es crucial para nuestro sistema de notificaciones y overlays. Además, la nueva API de Wails v3 está mucho más cerca de las capacidades nativas del SO (Windows/Mac/Linux), permitiendo una integración profunda con el sistema que v2 no logra sin \"hacks\".\n## Problema Actual (Limitaciones de v2)\n1. **Notificaciones Limitadas:** Actualmente nuestros Toasts (como el de Clipboard) viven \"dentro\" de la ventana principal. Si la app está minimizada, el usuario no ve nada.\n2. **Ciclo de Vida:** El control de Single Instance y eventos del sistema (como suspensión/reanudación) son menos elegantes en v2.\n3. **Tray y Menús:** v3 ofrece un control mucho superior sobre la bandeja del sistema (System Tray) y menús de",
-      "status": "planned",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/7",
-      "labels": [],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-04T21:04:06Z",
-      "shipped_at": null,
-      "friendly_title": "Migración Arquitectónica a Wails v3"
     },
     {
       "id": 9,
@@ -272,7 +272,7 @@
     {
       "id": 18,
       "title": "feat(converter): Conversor de Imagens",
-      "description": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto.\n- **Batch:** Soporte para convertir múltiples archivos en cola.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto (aspect ratio).\n- **Batch:** Soporte para la conversión de múltiples archivos en cola.\n\n### Estado\n✅ Entregado en la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -288,12 +288,12 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:00Z",
       "shipped_at": "2026-01-08T15:03:15Z",
-      "friendly_title": "Convertidor de Imágenes"
+      "friendly_title": "Conversor de Imágenes"
     },
     {
       "id": 19,
       "title": "feat(i18n): Suporte a 5 Idiomas",
-      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descripción\nInternacionalización completa de la interfaz de usuario.\n\n### Detalles Técnicos\n- **Idiomas:** \n  - 🇧🇷 Portugués (Brasil) - Nativo\n  - 🇺🇸 Inglés (EE. UU.) - Nativo\n  - 🇪🇸 Español (básico/comunidad)\n  - 🇫🇷 Francés (básico/comunidad)\n  - 🇩🇪 Alemán (básico/comunidad)\n- **Tecnología:** Uso de `i18next` en React y estructura correspondiente en Go.\n- **Detección:** Detección automática del idioma del sistema operativo en el primer uso.\n\n### Estado\n✅ Entregado en v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -309,7 +309,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:01Z",
       "shipped_at": "2026-01-08T15:03:17Z",
-      "friendly_title": "Suporte a 5 Idiomas"
+      "friendly_title": "Soporte para 5 Idiomas"
     },
     {
       "id": 22,
@@ -610,8 +610,8 @@
       "title": "Spotify Download Support",
       "description": "### Tipo\n\nfeat: Nueva funcionalidad\n\n### Alcance\n\ndescarga\n\n### Breve descripción\n\nAñadir soporte nativo para la descarga de pistas de Spotify (y opcionalmente listas de reproducción/álbumes) a DownKingo, permitiendo a los usuarios obtener archivos de audio con metadatos completos directamente desde URLs de Spotify.\n\n### Contexto\n\nDownKingo actualmente soporta la descarga de contenido multimedia de YouTube, pero aún no soporta Spotify como fuente. Proporcionar soporte para URLs de Spotify ampliaría la utilidad de la aplicación más allá de las descargas de vídeo para incluir descargas de audio en streaming de uno de los servicios de música más utilizados.\n\n### Problema / Motivación\n\nMuchos usuarios se beneficiarían de poder descargar pistas, listas de reproducción y álbumes de Spotify además del contenido de YouTube. En este momento, los usuarios deben depender de herramientas separadas para extraer audio de Spotify, lo que fragmenta el flujo de trabajo. La integración del soporte de Spotify directamente en DownKingo unificaría la descarga de medios en una única herramienta fácil de usar y reduciría la fricción para los usuarios que trabajan regularmente con YouTube y Spo",
       "status": "in-progress",
-      "votes": 0,
-      "votes_up": 0,
+      "votes": 1,
+      "votes_up": 1,
       "votes_down": 0,
       "comments": 0,
       "url": "https://github.com/down-kingo/downkingo/issues/34",

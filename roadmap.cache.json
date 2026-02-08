@@ -163,20 +163,14 @@
   },
   "14": {
     "original_title": "feat(download): Download de Imagens",
-    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_445",
+    "original_desc_hash": "###DescriçãoSuportenativoparabaixarimagensdediversasplataformaseURLsdiretas.###Detalh_444",
     "title_i18n": {
-      "pt-BR": "Download de Imagens",
-      "en-US": "Download Images",
-      "es-ES": "Descargar Imágenes",
-      "fr-FR": "Télécharger des Images",
-      "de-DE": "Bilder herunterladen"
+      "en-US": "Download de Imagens",
+      "pt-BR": "Download de Imagens"
     },
     "description_i18n": {
-      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nNative support for downloading images from various platforms and direct URLs.\n\n### Technical Details\n- **Detection:** Automatic identification of URLs that point to images.\n- **Processing:** Ability to process image galleries (depending on the source).\n- **Output:** Correct saving with the appropriate extension.\n- **Integration:** Works integrated with the clipboard monitor.\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nSoporte nativo para descargar imágenes de diversas plataformas y URLs directas.\n\n### Detalles Técnicos\n- **Detección:** Identificación automática de URLs que apuntan a imágenes.\n- **Procesamiento:** Capacidad de procesar galerías de imágenes (dependiendo de la fuente).\n- **Output:** Guardado correcto con la extensión apropiada.\n- **Integración:** Funciona integrado con el monitor del portapapeles.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "fr-FR": "### Description\nPrise en charge native pour télécharger des images à partir de diverses plateformes et d'URL directes.\n\n### Détails Techniques\n- **Détection:** Identification automatique des URL qui pointent vers des images.\n- **Traitement:** Capacité à traiter les galeries d'images (selon la source).\n- **Output:** Enregistrement correct avec l'extension appropriée.\n- **Intégration:** Fonctionne intégré au moniteur du presse-papiers.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nNative Unterstützung zum Herunterladen von Bildern von verschiedenen Plattformen und direkten URLs.\n\n### Technische Details\n- **Erkennung:** Automatische Identifizierung von URLs, die auf Bilder verweisen.\n- **Verarbeitung:** Fähigkeit, Bildergalerien zu verarbeiten (abhängig von der Quelle).\n- **Output:** Korrektes Speichern mit der entsprechenden Erweiterung.\n- **Integration:** Funktioniert integriert mit dem Zwischenablage-Monitor.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+      "en-US": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nSuporte nativo para baixar imagens de diversas plataformas e URLs diretas.\n\n### Detalhes Técnicos\n- **Detecção:** Identificação automática de URLs que apontam para imagens.\n- **Processamento:** Capacidade de processar galerias de imagens (dependendo da fonte).\n- **Output:** Salvamento correto com a extensão apropriada.\n- **Integração:** Funciona integrado com o monitor da área de transferência.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "15": {
@@ -229,32 +223,38 @@
   },
   "18": {
     "original_title": "feat(converter): Conversor de Imagens",
-    "original_desc_hash": "###DescriçãoUtilitárioparaconvertereotimizarimagens.###DetalhesTécnicos-**Formatos:**P_412",
+    "original_desc_hash": "###Descriç��oUtilitárioparaconvertereotimizarimagens.###DetalhesTécnicos-**Formatos:**_413",
     "title_i18n": {
       "pt-BR": "Conversor de Imagens",
       "en-US": "Image Converter",
-      "es-ES": "Convertidor de Imágenes",
+      "es-ES": "Conversor de Imágenes",
       "fr-FR": "Convertisseur d'Images",
       "de-DE": "Bildkonverter"
     },
     "description_i18n": {
       "pt-BR": "### Descrição\nUtilitário para converter e otimizar imagens.\n\n### Detalhes Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Otimização:** Ajuste de qualidade de compressão para reduzir tamanho sem perder muita qualidade visual.\n- **Redimensionamento:** Opções para redimensionar (resize) mantendo aspect ratio.\n- **Batch:** Suporte a conversão de múltiplos arquivos em fila.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nUtility to convert and optimize images.\n\n### Technical Details\n- **Formats:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimization:** Adjust compression quality to reduce size without losing much visual quality.\n- **Resizing:** Options to resize while maintaining aspect ratio.\n- **Batch:** Support for converting multiple files in a queue.\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto.\n- **Batch:** Soporte para convertir múltiples archivos en cola.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "fr-FR": "### Description\nUtilitaire pour convertir et optimiser des images.\n\n### Détails Techniques\n- **Formats:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimisation:** Ajustement de la qualité de compression pour réduire la taille sans perdre beaucoup de qualité visuelle.\n- **Redimensionnement:** Options pour redimensionner (resize) en conservant le ratio.\n- **Batch:** Prise en charge de la conversion de plusieurs fichiers en file d'attente.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nDienstprogramm zum Konvertieren und Optimieren von Bildern.\n\n### Technische Details\n- **Formate:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimierung:** Anpassung der Kompressionsqualität, um die Größe zu reduzieren, ohne viel visuelle Qualität zu verlieren.\n- **Größenänderung:** Optionen zum Ändern der Größe (resize) unter Beibehaltung des Seitenverhältnisses.\n- **Batch:** Unterstützung für die Konvertierung mehrerer Dateien in einer Warteschlange.\n\n### Status\n✅ Ausgeliefert in v2.0.0"
+      "en-US": "### Description\nUtility for converting and optimizing images.\n\n### Technical Details\n- **Formats:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimization:** Compression quality adjustment to reduce size without losing much visual quality.\n- **Resizing:** Options to resize while maintaining aspect ratio.\n- **Batch:** Support for converting multiple files in a queue.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nUtilidad para convertir y optimizar imágenes.\n\n### Detalles Técnicos\n- **Formatos:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimización:** Ajuste de la calidad de compresión para reducir el tamaño sin perder mucha calidad visual.\n- **Redimensionamiento:** Opciones para redimensionar (resize) manteniendo la relación de aspecto (aspect ratio).\n- **Batch:** Soporte para la conversión de múltiples archivos en cola.\n\n### Estado\n✅ Entregado en la v2.0.0",
+      "fr-FR": "### Description\nUtilitaire pour convertir et optimiser des images.\n\n### Détails Techniques\n- **Formats :** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimisation :** Ajustement de la qualité de compression pour réduire la taille sans perdre trop de qualité visuelle.\n- **Redimensionnement :** Options pour redimensionner (resize) en conservant le rapport d'aspect (aspect ratio).\n- **Batch :** Prise en charge de la conversion de plusieurs fichiers en file d'attente.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nDienstprogramm zum Konvertieren und Optimieren von Bildern.\n\n### Technische Details\n- **Formate:** PNG, JPG/JPEG, WEBP, GIF.\n- **Optimierung:** Anpassung der Kompressionsqualität zur Reduzierung der Größe ohne nennenswerten Verlust der visuellen Qualität.\n- **Größenänderung:** Optionen zur Größenänderung (Resize) unter Beibehaltung des Seitenverhältnisses (Aspect Ratio).\n- **Batch:** Unterstützung für die Konvertierung mehrerer Dateien in einer Warteschlange.\n\n### Status\n✅ Geliefert in v2.0.0"
     }
   },
   "19": {
     "original_title": "feat(i18n): Suporte a 5 Idiomas",
-    "original_desc_hash": "###DescriçãoInternacionalizaçãocompletadainterfacedousuário.###DetalhesTécnicos-**Idiom_483",
+    "original_desc_hash": "###DescriçãoInternacionalizaçãocompletadainterfacedousuário.###DetalhesTécnicos-**Idiom_484",
     "title_i18n": {
-      "en-US": "Suporte a 5 Idiomas",
-      "pt-BR": "Suporte a 5 Idiomas"
+      "pt-BR": "Suporte a 5 Idiomas",
+      "en-US": "5 Language Support",
+      "es-ES": "Soporte para 5 Idiomas",
+      "fr-FR": "Support pour 5 Langues",
+      "de-DE": "Unterstützung für 5 Sprachen"
     },
     "description_i18n": {
-      "en-US": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
-      "pt-BR": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0"
+      "pt-BR": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "en-US": "### Description\nFull internationalization of the user interface.\n\n### Technical Details\n- **Languages:** \n  - 🇧🇷 Portuguese (Brazil) - Native\n  - 🇺🇸 English (US) - Native\n  - 🇪🇸 Spanish (basic/community)\n  - 🇫🇷 French (basic/community)\n  - 🇩🇪 German (basic/community)\n- **Technology:** Use of `i18next` in React and corresponding structure in Go.\n- **Detection:** Automatic detection of the operating system language on first use.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nInternacionalización completa de la interfaz de usuario.\n\n### Detalles Técnicos\n- **Idiomas:** \n  - 🇧🇷 Portugués (Brasil) - Nativo\n  - 🇺🇸 Inglés (EE. UU.) - Nativo\n  - 🇪🇸 Español (básico/comunidad)\n  - 🇫🇷 Francés (básico/comunidad)\n  - 🇩🇪 Alemán (básico/comunidad)\n- **Tecnología:** Uso de `i18next` en React y estructura correspondiente en Go.\n- **Detección:** Detección automática del idioma del sistema operativo en el primer uso.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "fr-FR": "### Description\nInternationalisation complète de l'interface utilisateur.\n\n### Détails Techniques\n- **Langues :** \n  - 🇧🇷 Portugais (Brésil) - Natif\n  - 🇺🇸 Anglais (US) - Natif\n  - 🇪🇸 Espagnol (basique/communauté)\n  - 🇫🇷 Français (basique/communauté)\n  - 🇩🇪 Allemand (basique/communauté)\n- **Technologie :** Utilisation de `i18next` dans React et structure correspondante dans Go.\n- **Détection :** Détection automatique de la langue du système d'exploitation lors de la première utilisation.\n\n### Statut\n✅ Livré en v2.0.0",
+      "de-DE": "### Beschreibung\nVollständige Internationalisierung der Benutzeroberfläche.\n\n### Technische Details\n- **Sprachen:** \n  - 🇧🇷 Portugiesisch (Brasilien) - Nativ\n  - 🇺🇸 Englisch (USA) - Nativ\n  - 🇪🇸 Spanisch (Basis/Community)\n  - 🇫🇷 Französisch (Basis/Community)\n  - 🇩🇪 Deutsch (Basis/Community)\n- **Technologie:** Verwendung von `i18next` in React und entsprechende Struktur in Go.\n- **Erkennung:** Automatische Erkennung der Betriebssystemsprache bei der ersten Verwendung.\n\n### Status\n✅ Geliefert in v2.0.0"
     }
   },
   "20": {
