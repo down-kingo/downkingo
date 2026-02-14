@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-02-08T18:04:09.551Z",
+  "generated_at": "2026-02-14T06:00:28.715Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -24,25 +24,6 @@
       "created_at": "2026-01-04T21:04:06Z",
       "shipped_at": "2026-02-08T02:26:20Z",
       "friendly_title": "Migration Architecturale vers Wails v3"
-    },
-    {
-      "id": 34,
-      "title": "Spotify Download Support",
-      "description": "### Type\n\nfeat : Nouvelle fonctionnalité\n\n### Scope\n\ntéléchargement\n\n### Brève description\n\nAjouter la prise en charge native du téléchargement de titres Spotify (et éventuellement de playlists/albums) à DownKingo, permettant aux utilisateurs d'extraire des fichiers audio avec des métadonnées complètes directement à partir d'URL Spotify.\n\n### Contexte\n\nDownKingo prend actuellement en charge le téléchargement de médias depuis YouTube, mais ne prend pas encore en charge Spotify comme source. Fournir une prise en charge des URL Spotify élargirait l'utilité de l'application au-delà des téléchargements de vidéos pour inclure les téléchargements audio en streaming de l'un des services de musique les plus utilisés.\n\n### Problème / Motivation\n\nDe nombreux utilisateurs bénéficieraient de la possibilité de télécharger des titres, des playlists et des albums Spotify en plus du contenu YouTube. Pour le moment, les utilisateurs doivent s'appuyer sur des outils séparés pour extraire l'audio de Spotify, ce qui fragmente le flux de travail. L'intégration de la prise en charge de Spotify directement dans DownKingo unifierait le téléchargement de médias en un seul outil convivial et réduirait les frictions pour les utilisateurs qui travaillent régulièrement avec YouTube et Spo",
-      "status": "in-progress",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/34",
-      "labels": [
-        "enhancement"
-      ],
-      "author": "ehsanpo2",
-      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
-      "created_at": "2026-01-10T10:52:42Z",
-      "shipped_at": "2026-02-08T18:03:53Z",
-      "friendly_title": "Support de Téléchargement Spotify"
     },
     {
       "id": 20,
@@ -170,7 +151,7 @@
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
       "description": "## Contexte\nL'écosystème Kingo a besoin d'une intégration plus fluide avec le navigateur. Actuellement, l'utilisateur dépend du moniteur du presse-papiers ou du copier/coller manuel. Le schéma de protocole `kingo://` existe déjà dans le code, mais le comportement \"instance unique\" n'a pas encore été affiné.\n## Motivation\nPermettre à l'utilisateur d'envoyer des vidéos à Kingo en un seul clic directement depuis YouTube/Instagram, sans avoir besoin de copier les liens dans le presse-papiers. Cela rend le flux de travail beaucoup plus rapide et plus professionnel.\n## Problème\n1. **Manque de Bridge :** Il n'y a pas d'extension officielle pour faciliter l'envoi d'URL.\n2. **Redondance des fenêtres :** En cliquant sur un lien `kingo://` avec l'application déjà ouverte, Windows essaie d'ouvrir une seconde instance de Kingo, ce qui entraîne deux fenêtres et une erreur de concurrence dans la base de données.\n## Proposition technique\n### 1. Extension de navigateur (Kingo Bridge)\n* Créer une extension (Manifest v3) compatible avec Chrome, Edge et Brave.\n* Ajouter un bouton \"Ba",
-      "status": "idea",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -180,7 +161,7 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
-      "shipped_at": null,
+      "shipped_at": "2026-02-14T06:00:17Z",
       "friendly_title": "Extension de navigateur et affinement des liens profonds (Warm Start)"
     },
     {
@@ -623,6 +604,25 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Paramètres d'image"
+    },
+    {
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Type\n\nfeat : Nouvelle fonctionnalité\n\n### Scope\n\ntéléchargement\n\n### Brève description\n\nAjouter la prise en charge native du téléchargement de titres Spotify (et éventuellement de playlists/albums) à DownKingo, permettant aux utilisateurs d'extraire des fichiers audio avec des métadonnées complètes directement à partir d'URL Spotify.\n\n### Contexte\n\nDownKingo prend actuellement en charge le téléchargement de médias depuis YouTube, mais ne prend pas encore en charge Spotify comme source. Fournir une prise en charge des URL Spotify élargirait l'utilité de l'application au-delà des téléchargements de vidéos pour inclure les téléchargements audio en streaming de l'un des services de musique les plus utilisés.\n\n### Problème / Motivation\n\nDe nombreux utilisateurs bénéficieraient de la possibilité de télécharger des titres, des playlists et des albums Spotify en plus du contenu YouTube. Pour le moment, les utilisateurs doivent s'appuyer sur des outils séparés pour extraire l'audio de Spotify, ce qui fragmente le flux de travail. L'intégration de la prise en charge de Spotify directement dans DownKingo unifierait le téléchargement de médias en un seul outil convivial et réduirait les frictions pour les utilisateurs qui travaillent régulièrement avec YouTube et Spo",
+      "status": "in-progress",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-02-08T18:03:53Z",
+      "friendly_title": "Support de Téléchargement Spotify"
     }
   ]
 }
