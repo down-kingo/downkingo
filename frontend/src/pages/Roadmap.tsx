@@ -21,7 +21,7 @@ import SuggestionModal from "../components/SuggestionModal";
 
 // Store & Utils
 import { useRoadmapStore, useRoadmapInit } from "../stores/roadmapStore";
-import { shallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
 import { getDisplayTitle, getDisplayDescription } from "../utils/textUtils";
 import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
 import { RoadmapCard } from "../components/roadmap/RoadmapCard";
@@ -102,20 +102,21 @@ export default function Roadmap() {
   const {
     items,
     isLoading,
+    userVotes,
     fetchRoadmap,
     voteForItem,
     voteDownForItem,
     getUserVote,
   } = useRoadmapStore(
-    (state) => ({
+    useShallow((state) => ({
       items: state.items,
       isLoading: state.isLoading,
+      userVotes: state.userVotes,
       fetchRoadmap: state.fetchRoadmap,
       voteForItem: state.voteForItem,
       voteDownForItem: state.voteDownForItem,
       getUserVote: state.getUserVote,
-    }),
-    shallow,
+    })),
   );
 
   // Helper to filter items by status - runs during render, not as selector
@@ -581,13 +582,6 @@ function RoadmapDetail({
   userVote: "up" | "down" | null;
 }) {
   const { t, i18n } = useTranslation("roadmap");
-  console.log(
-    "[RoadmapDetail] Description length:",
-    item.description?.length,
-    "Content:",
-    item.description?.slice(0, 50),
-  );
-
   const cleanTitle = (text: string) =>
     text.replace(
       /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
@@ -772,7 +766,7 @@ function RoadmapDetail({
                 ),
               }}
             >
-              {item.description || "Sem descrição disponível."}
+              {item.description || t("detail.no_description")}
             </ReactMarkdown>
           </div>
 
@@ -841,7 +835,7 @@ function RoadmapDetail({
               className="flex items-center gap-3 px-6 py-3 bg-surface-900 dark:bg-primary-600 text-white dark:text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-surface-900/10 dark:shadow-primary-600/20"
             >
               <IconBrandGithub size={20} />
-              <span>Ver discussão e comentar</span>
+              <span>{t("detail.view_discussion")}</span>
               <IconExternalLink size={16} className="opacity-50" />
             </button>
           </div>
@@ -850,7 +844,7 @@ function RoadmapDetail({
           <div className="mt-auto pt-16 w-full max-w-4xl flex flex-wrap items-end justify-between border-t border-surface-200 dark:border-white/10 pb-8 gap-6">
             <div className="flex flex-col items-start gap-3">
               <span className="text-xs font-medium text-surface-400 uppercase tracking-widest">
-                Status do Projeto
+                {t("detail.project_status")}
               </span>
               <div
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-50 dark:bg-white/5 border border-surface-200 dark:border-white/10`}
@@ -864,7 +858,7 @@ function RoadmapDetail({
 
             <div className="flex flex-col items-end gap-3">
               <span className="text-xs font-medium text-surface-400 uppercase tracking-widest">
-                Labels
+                {t("detail.labels")}
               </span>
               <div className="flex flex-wrap justify-end gap-2">
                 {(item.labels || []).map((l) => (
@@ -877,7 +871,7 @@ function RoadmapDetail({
                 ))}
                 {!item.labels?.length && (
                   <span className="text-surface-400 text-sm italic">
-                    Sem labels
+                    {t("detail.no_labels")}
                   </span>
                 )}
               </div>

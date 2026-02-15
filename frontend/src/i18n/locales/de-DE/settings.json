@@ -97,7 +97,7 @@
   },
   "privacy": {
     "anonymous": "Inkognito-Modus",
-    "anonymous_desc": "Download-Verlauf nicht speichern",
+    "anonymous_desc": "Keine anonymen Nutzungsstatistiken senden",
     "title": "Datenschutz"
   },
   "rembg_settings": {
@@ -126,9 +126,20 @@
     "privacy": "Datenschutz",
     "regional": "Regional",
     "shortcuts": "Tastenkombinationen",
+    "features": "Funktionen",
     "storage": "Speicher",
     "system": "System",
     "video": "Video"
+  },
+  "features": {
+    "videos": "Videos herunterladen",
+    "videos_desc": "Video-Download-Tab anzeigen",
+    "images": "Bilder herunterladen",
+    "images_desc": "Bild-Download-Tab anzeigen",
+    "converter": "Medien konvertieren",
+    "converter_desc": "Medienkonverter-Tab anzeigen",
+    "transcriber": "Transkription",
+    "transcriber_desc": "Transkriptions-Tab anzeigen"
   },
   "shortcuts": {
     "desc": "Tastenkombinationen anpassen.",

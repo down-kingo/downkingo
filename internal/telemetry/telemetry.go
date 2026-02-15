@@ -47,12 +47,12 @@ func (s *Service) TrackAppStart() {
 }
 
 func (s *Service) isEnabled() bool {
-	// Check config
-	if !s.cfg.Get().TelemetryEnabled {
+	// Anonymous mode disables all tracking
+	if s.cfg.Get().AnonymousMode {
 		return false
 	}
 	// Check if key is valid (basic check)
-	if AptabaseKey == "YOUR_APTABASE_KEY_HERE" || AptabaseKey == "" {
+	if AptabaseKey == "APTABASE_KEY" || AptabaseKey == "" {
 		return false
 	}
 	return true

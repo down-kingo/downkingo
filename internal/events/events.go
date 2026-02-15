@@ -29,3 +29,9 @@ const (
 	UpdateProgress = "update:progress"
 	UpdateComplete = "update:complete"
 )
+
+// Eventos do Whisper (Transcrição)
+const (
+	WhisperModelProgress     = "whisper:model-progress"
+	WhisperTranscribeProgress = "whisper:transcribe-progress"
+)

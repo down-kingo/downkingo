@@ -48,6 +48,14 @@
       "video_downloader": {
         "desc": "Download videos and audio from YouTube, TikTok, and more.",
         "title": "Video Downloader"
+      },
+      "converter": {
+        "desc": "Convert between audio and video formats quickly.",
+        "title": "Media Converter"
+      },
+      "transcriber": {
+        "desc": "Transcribe audio and video to text with AI.",
+        "title": "Transcriber"
       }
     },
     "unknown": "Unknown",
@@ -122,6 +130,7 @@
   "nav": {
     "console": "Console",
     "converter": "Convert",
+    "tools": "Tools",
     "folder": "Downloads Folder",
     "history": "History",
     "home": "Home",
@@ -129,6 +138,7 @@
     "queue": "Queue",
     "roadmap": "Roadmap",
     "settings": "Settings",
+    "transcriber": "Transcriber",
     "videos": "Videos"
   },
   "onboarding": {
@@ -175,7 +185,19 @@
       "verifying": "Verifying...",
       "waiting": "Waiting..."
     },
-    "title": "Setting up essential components..."
+    "title": "Setting up essential components...",
+    "features": {
+      "title": "What do you want to use?",
+      "videos": "Download Videos",
+      "videos_desc": "YouTube, TikTok, Instagram and more",
+      "images": "Download Images",
+      "images_desc": "Extract photos from links and social networks",
+      "converter": "Convert Media",
+      "converter_desc": "Convert between audio and video formats",
+      "transcriber": "Transcription",
+      "transcriber_desc": "Transcribe audio and video to text",
+      "continue": "Continue"
+    }
   },
   "smaller_file": "",
   "start": "",

@@ -354,6 +354,58 @@ export class MediaItemDTO {
 }
 
 /**
+ * TranscribeRequest represents a transcription request from frontend.
+ */
+export class TranscribeRequest {
+    /**
+     * Creates a new TranscribeRequest instance.
+     * @param {Partial<TranscribeRequest>} [$$source = {}] - The source object to create the TranscribeRequest.
+     */
+    constructor($$source = {}) {
+        if (!("filePath" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["filePath"] = "";
+        }
+        if (!("model" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["model"] = "";
+        }
+        if (!("language" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["language"] = "";
+        }
+        if (!("outputFormat" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["outputFormat"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TranscribeRequest instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {TranscribeRequest}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TranscribeRequest(/** @type {Partial<TranscribeRequest>} */($$parsedSource));
+    }
+}
+
+/**
  * VideoConvertRequest represents a video conversion request from frontend.
  */
 export class VideoConvertRequest {

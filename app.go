@@ -17,6 +17,7 @@ import (
 	"kingo/internal/storage"
 	"kingo/internal/telemetry"
 	"kingo/internal/updater"
+	"kingo/internal/whisper"
 	"kingo/internal/youtube"
 	"os"
 	"strings"
@@ -24,8 +25,8 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-// Version is set at build time via ldflags
-var Version = "2.0.3"
+// Version is set at build time via ldflags, or read from the embedded VERSION file.
+var Version string
 
 // App struct is the Facade that exposes methods to the Frontend.
 type App struct {
@@ -45,17 +46,19 @@ type App struct {
 	roadmap          *roadmap.Service
 	auth             *auth.AuthService
 
-	videoHandler     *handlers.VideoHandler
-	mediaHandler     *handlers.MediaHandler
-	settingsHandler  *handlers.SettingsHandler
-	systemHandler    *handlers.SystemHandler
-	converterHandler *handlers.ConverterHandler
+	videoHandler       *handlers.VideoHandler
+	mediaHandler       *handlers.MediaHandler
+	settingsHandler    *handlers.SettingsHandler
+	systemHandler      *handlers.SystemHandler
+	converterHandler   *handlers.ConverterHandler
+	transcriberHandler *handlers.TranscriberHandler
+	whisperClient      *whisper.Client
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
+func NewApp(appIcon []byte) *App {
 	return &App{
-		clipboardMonitor: clipboard.NewMonitor(),
+		clipboardMonitor: clipboard.NewMonitor(appIcon),
 		roadmap:          roadmap.NewService("down-kingo", "downkingo"),
 	}
 }
@@ -206,6 +209,11 @@ func (a *App) initializeHandlers(ctx context.Context) {
 	a.converterHandler = handlers.NewConverterHandler(a.paths)
 	a.converterHandler.SetContext(ctx)
 	a.converterHandler.SetConsoleEmitter(a.consoleLog)
+
+	a.whisperClient = whisper.NewClient(a.paths.WhisperDir())
+	a.transcriberHandler = handlers.NewTranscriberHandler(a.paths, a.whisperClient)
+	a.transcriberHandler.SetContext(ctx)
+	a.transcriberHandler.SetConsoleEmitter(a.consoleLog)
 }
 
 // consoleLog emits a user-friendly message to the frontend console.
@@ -411,6 +419,40 @@ func (a *App) GetVersion() string {
 	return Version
 }
 
+// --- Transcriber ---
+
+func (a *App) SelectMediaFile() (string, error) {
+	return a.transcriberHandler.SelectMediaFile()
+}
+
+func (a *App) TranscribeFile(req handlers.TranscribeRequest) (*whisper.TranscribeResult, error) {
+	return a.transcriberHandler.TranscribeFile(req)
+}
+
+func (a *App) ListWhisperModels() ([]whisper.ModelInfo, error) {
+	return a.transcriberHandler.ListWhisperModels()
+}
+
+func (a *App) GetAvailableWhisperModels() []whisper.AvailableModel {
+	return a.transcriberHandler.GetAvailableWhisperModels()
+}
+
+func (a *App) DownloadWhisperModel(name string) error {
+	return a.transcriberHandler.DownloadWhisperModel(name)
+}
+
+func (a *App) DeleteWhisperModel(name string) error {
+	return a.transcriberHandler.DeleteWhisperModel(name)
+}
+
+func (a *App) IsWhisperInstalled() bool {
+	return a.transcriberHandler.IsWhisperInstalled()
+}
+
+func (a *App) DownloadWhisperBinary() error {
+	return a.transcriberHandler.DownloadWhisperBinary()
+}
+
 // GetRoadmap fetches roadmap items from the configured source
 func (a *App) GetRoadmap(lang string) ([]roadmap.RoadmapItem, error) {
 	return a.roadmap.FetchRoadmap(lang)
@@ -513,10 +555,15 @@ func (a *App) GetUserReactions() (map[int]string, error) {
 		return map[int]string{}, nil // Not authenticated, no reactions
 	}
 
-	// Get all roadmap items from cache (use default language)
-	items, err := a.roadmap.FetchRoadmap("pt-BR")
-	if err != nil {
-		return nil, err
+	// Get all roadmap items from cache without triggering a fetch
+	items := a.roadmap.GetCachedItems()
+	if len(items) == 0 {
+		// Fallback: fetch if cache is empty
+		var err error
+		items, err = a.roadmap.FetchRoadmap("pt-BR")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	reactions := make(map[int]string)

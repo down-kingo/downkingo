@@ -1,5 +1,11 @@
-import { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState, useRef, useCallback } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { NeedsDependencies } from "../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
 import Setup from "./pages/Setup";
@@ -12,6 +18,45 @@ import UpdateModal from "./components/UpdateModal";
 // Payload enviado pelo backend no evento app:ready
 interface AppReadyPayload {
   needsSetup: boolean;
+}
+
+/** Atalhos de desenvolvimento (Ctrl+Shift+F8 → toggle Setup preview, Ctrl+Shift+F9 → toggle Onboarding) */
+function DevShortcuts() {
+  const navigate = useNavigate();
+  const { hasCompletedOnboarding, completeOnboarding } = useSettingsStore();
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      // Ctrl+Shift+F8 → toggle entre Setup preview e Home
+      if (e.ctrlKey && e.shiftKey && e.key === "F8") {
+        e.preventDefault();
+        const isOnSetup = window.location.pathname === "/setup";
+        if (isOnSetup) {
+          navigate("/home");
+        } else {
+          navigate("/setup", { state: { preview: true } });
+        }
+      }
+
+      // Ctrl+Shift+F9 → toggle Onboarding modal
+      if (e.ctrlKey && e.shiftKey && e.key === "F9") {
+        e.preventDefault();
+        if (hasCompletedOnboarding) {
+          useSettingsStore.setState({ hasCompletedOnboarding: false });
+        } else {
+          completeOnboarding();
+        }
+      }
+    },
+    [navigate, hasCompletedOnboarding, completeOnboarding]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  return null;
 }
 
 function App() {
@@ -166,6 +211,7 @@ function App() {
       <BrowserRouter
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >
+        <DevShortcuts />
         <OnboardingModal />
         <UpdateModal />
         <Routes>

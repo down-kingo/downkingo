@@ -81,6 +81,10 @@ type Service struct {
 	cancelSync context.CancelFunc
 	useCDN     bool // Toggle between CDN and direct GitHub
 	isFetching atomic.Bool
+
+	// Cached user login per token (avoids repeated /user API calls)
+	cachedUserLogin string
+	cachedUserToken string
 }
 
 // statusMapping maps GitHub Project column names to internal Status types
@@ -260,6 +264,13 @@ func (s *Service) FetchRoadmap(lang string) ([]RoadmapItem, error) {
 	return s.fetchFromGitHubDirect()
 }
 
+// GetCachedItems returns the in-memory cached items without triggering a fetch
+func (s *Service) GetCachedItems() []RoadmapItem {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.cache
+}
+
 // loadFromMemoryCache returns in-memory cached items if fresh and matching language
 func (s *Service) loadFromMemoryCache(lang string) []RoadmapItem {
 	s.mu.RLock()
@@ -399,6 +410,17 @@ func (s *Service) fetchFromCDNSync(lang string) ([]RoadmapItem, error) {
 		return nil, err
 	}
 
+	// Handle 304 Not Modified - return existing cache
+	if result.NotModified {
+		s.mu.RLock()
+		cached := s.cache
+		s.mu.RUnlock()
+		if len(cached) > 0 {
+			return cached, nil
+		}
+		// If no cache, fall through to treat as empty
+	}
+
 	if result.Roadmap == nil {
 		logger.Log.Warn().Msg("CDN returned empty roadmap")
 		return []RoadmapItem{}, nil
@@ -414,6 +436,14 @@ func (s *Service) fetchFromCDNSync(lang string) ([]RoadmapItem, error) {
 	}
 
 	s.updateMemoryCache(items, lang)
+
+	// Store ETag for conditional requests
+	if result.ETag != "" {
+		s.mu.Lock()
+		s.lastETag = result.ETag
+		s.mu.Unlock()
+	}
+
 	return items, nil
 }
 
@@ -459,7 +489,10 @@ func (s *Service) StartPeriodicSync(ctx context.Context) {
 			case <-syncCtx.Done():
 				return
 			case <-ticker.C:
-				s.syncInBackground("timer", "")
+				s.mu.RLock()
+				lang := s.cacheLang
+				s.mu.RUnlock()
+				s.syncInBackground("timer", lang)
 			}
 		}
 	}()
@@ -642,23 +675,189 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 }
 
 // VoteOnIssue adds a thumbs-up reaction to an issue (direct GitHub API)
-// If user already has a thumbs-down, it will be removed first
+// Optimized: fetches reactions ONCE, reuses data for check + counts + remove.
+// API calls: 1 (list reactions) + 0-1 (delete opposite) + 1 (add) = 2-3 total
 func (s *Service) VoteOnIssue(token string, issueID int) error {
-	// First, remove any existing thumbs-down from this user
-	if err := s.removeUserReaction(token, issueID, "-1"); err != nil {
-		logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-down (may not exist)")
+	// Single fetch: get all reactions + user login (cached)
+	userLogin, reactions, err := s.getUserAndReactions(token, issueID)
+	if err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to fetch reactions, proceeding with add only")
+		return s.addReactionRaw(token, issueID, "+1")
 	}
-	return s.addReaction(token, issueID, "+1")
+
+	// Check current vote and count existing reactions
+	currentVote, currentCounts := s.analyzeReactions(reactions, userLogin)
+
+	if currentVote == "+1" {
+		// Already voted up — just emit current counts (CDN may be stale)
+		go s.emitVoteCounts(issueID, currentCounts.up, currentCounts.down)
+		return nil
+	}
+
+	// If switching from down to up, remove the -1 reaction
+	if currentVote == "-1" {
+		if err := s.deleteReactionByUser(token, issueID, reactions, userLogin, "-1"); err != nil {
+			logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-down")
+		}
+		currentCounts.down-- // Adjust count locally
+	}
+
+	// Add +1 reaction
+	if err := s.addReactionRaw(token, issueID, "+1"); err != nil {
+		return err
+	}
+
+	// Emit calculated counts (no extra API call needed)
+	currentCounts.up++
+	go s.emitVoteCounts(issueID, currentCounts.up, currentCounts.down)
+	return nil
 }
 
 // VoteDownOnIssue adds a thumbs-down reaction to an issue (direct GitHub API)
-// If user already has a thumbs-up, it will be removed first
+// Optimized: same pattern as VoteOnIssue — 2-3 API calls total.
 func (s *Service) VoteDownOnIssue(token string, issueID int) error {
-	// First, remove any existing thumbs-up from this user
-	if err := s.removeUserReaction(token, issueID, "+1"); err != nil {
-		logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-up (may not exist)")
+	userLogin, reactions, err := s.getUserAndReactions(token, issueID)
+	if err != nil {
+		logger.Log.Warn().Err(err).Msg("Failed to fetch reactions, proceeding with add only")
+		return s.addReactionRaw(token, issueID, "-1")
 	}
-	return s.addReaction(token, issueID, "-1")
+
+	currentVote, currentCounts := s.analyzeReactions(reactions, userLogin)
+
+	if currentVote == "-1" {
+		go s.emitVoteCounts(issueID, currentCounts.up, currentCounts.down)
+		return nil
+	}
+
+	if currentVote == "+1" {
+		if err := s.deleteReactionByUser(token, issueID, reactions, userLogin, "+1"); err != nil {
+			logger.Log.Warn().Err(err).Msg("Failed to remove existing thumbs-up")
+		}
+		currentCounts.up--
+	}
+
+	if err := s.addReactionRaw(token, issueID, "-1"); err != nil {
+		return err
+	}
+
+	currentCounts.down++
+	go s.emitVoteCounts(issueID, currentCounts.up, currentCounts.down)
+	return nil
+}
+
+// reactionCounts holds counted +1/-1 reactions from a single API fetch
+type reactionCounts struct {
+	up   int
+	down int
+}
+
+// getUserAndReactions fetches user login (cached) and all reactions in a single API call
+func (s *Service) getUserAndReactions(token string, issueID int) (string, []Reaction, error) {
+	userLogin, err := s.getCurrentUserLogin(token)
+	if err != nil {
+		return "", nil, err
+	}
+	reactions, err := s.getIssueReactions(token, issueID)
+	if err != nil {
+		return "", nil, err
+	}
+	return userLogin, reactions, nil
+}
+
+// analyzeReactions extracts the user's vote and counts from an already-fetched reactions list
+func (s *Service) analyzeReactions(reactions []Reaction, userLogin string) (string, reactionCounts) {
+	var counts reactionCounts
+	var userVote string
+	for _, r := range reactions {
+		switch r.Content {
+		case "+1":
+			counts.up++
+		case "-1":
+			counts.down++
+		}
+		if r.User.Login == userLogin {
+			userVote = r.Content
+		}
+	}
+	return userVote, counts
+}
+
+// deleteReactionByUser finds and deletes a specific reaction from the already-fetched list
+// No extra GET needed — uses the reaction IDs from the list
+func (s *Service) deleteReactionByUser(token string, issueID int, reactions []Reaction, userLogin, content string) error {
+	var reactionID int
+	for _, r := range reactions {
+		if r.User.Login == userLogin && r.Content == content {
+			reactionID = r.ID
+			break
+		}
+	}
+	if reactionID == 0 {
+		return nil
+	}
+
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions/%d", s.repoOwner, s.repoName, issueID, reactionID)
+	req, _ := http.NewRequest("DELETE", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 204 {
+		return fmt.Errorf("failed to delete reaction: status %d", resp.StatusCode)
+	}
+	return nil
+}
+
+// addReactionRaw adds a reaction without triggering sync or emitting events
+func (s *Service) addReactionRaw(token string, issueID int, reaction string) error {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions", s.repoOwner, s.repoName, issueID)
+	body := map[string]string{"content": reaction}
+	jsonBody, _ := json.Marshal(body)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		return fmt.Errorf("reaction failed: status %d", resp.StatusCode)
+	}
+	return nil
+}
+
+// emitVoteCounts emits a targeted vote update event and updates in-memory cache
+func (s *Service) emitVoteCounts(issueID, up, down int) {
+	if s.eventEmitter != nil {
+		s.eventEmitter("roadmap:vote-update", map[string]interface{}{
+			"id":         issueID,
+			"votes_up":   up,
+			"votes_down": down,
+		})
+	}
+
+	// Update in-memory cache
+	s.mu.Lock()
+	for i, item := range s.cache {
+		if item.ID == issueID {
+			s.cache[i].VotesUp = up
+			s.cache[i].VotesDown = down
+			s.cache[i].Votes = up
+			break
+		}
+	}
+	s.mu.Unlock()
 }
 
 // GetUserReaction returns the user's current reaction on an issue (+1, -1, or empty)
@@ -697,8 +896,17 @@ type Reaction struct {
 	} `json:"user"`
 }
 
-// getCurrentUserLogin fetches the authenticated user's login
+// getCurrentUserLogin fetches the authenticated user's login (cached per token)
 func (s *Service) getCurrentUserLogin(token string) (string, error) {
+	// Return cached login if token matches
+	s.mu.RLock()
+	if s.cachedUserToken == token && s.cachedUserLogin != "" {
+		login := s.cachedUserLogin
+		s.mu.RUnlock()
+		return login, nil
+	}
+	s.mu.RUnlock()
+
 	req, _ := http.NewRequest("GET", "https://api.github.com/user", nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -720,6 +928,12 @@ func (s *Service) getCurrentUserLogin(token string) (string, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		return "", err
 	}
+
+	// Cache the result
+	s.mu.Lock()
+	s.cachedUserLogin = user.Login
+	s.cachedUserToken = token
+	s.mu.Unlock()
 
 	return user.Login, nil
 }
@@ -749,102 +963,6 @@ func (s *Service) getIssueReactions(token string, issueID int) ([]Reaction, erro
 	}
 
 	return reactions, nil
-}
-
-// removeUserReaction removes a specific reaction from the current user on an issue
-func (s *Service) removeUserReaction(token string, issueID int, content string) error {
-	if token == "" {
-		return nil
-	}
-
-	// Get current user login
-	userLogin, err := s.getCurrentUserLogin(token)
-	if err != nil {
-		logger.Log.Warn().Err(err).Msg("Failed to get current user login")
-		return err
-	}
-
-	// Get all reactions to find the user's reaction ID
-	reactions, err := s.getIssueReactions(token, issueID)
-	if err != nil {
-		logger.Log.Warn().Err(err).Msg("Failed to get reactions")
-		return err
-	}
-
-	// Find the user's reaction with the specified content
-	var reactionID int
-	for _, r := range reactions {
-		if r.User.Login == userLogin && r.Content == content {
-			reactionID = r.ID
-			break
-		}
-	}
-
-	if reactionID == 0 {
-		// User doesn't have this reaction, nothing to remove
-		return nil
-	}
-
-	// Delete the reaction
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions/%d", s.repoOwner, s.repoName, issueID, reactionID)
-	req, _ := http.NewRequest("DELETE", url, nil)
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 204 {
-		return fmt.Errorf("failed to delete reaction: status %d", resp.StatusCode)
-	}
-
-	logger.Log.Info().Int("issueID", issueID).Str("content", content).Msg("Removed user reaction")
-	return nil
-}
-
-// addReaction is a helper that adds a reaction to an issue
-func (s *Service) addReaction(token string, issueID int, reaction string) error {
-	logger.Log.Info().Int("issueID", issueID).Str("reaction", reaction).Msg("Adding reaction to issue")
-
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/reactions", s.repoOwner, s.repoName, issueID)
-	body := map[string]string{"content": reaction}
-	jsonBody, _ := json.Marshal(body)
-
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Log.Error().Err(err).Msg("GitHub API request failed")
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		logger.Log.Error().Int("status", resp.StatusCode).Msg("GitHub API returned error")
-		return fmt.Errorf("reaction failed: status %d", resp.StatusCode)
-	}
-
-	logger.Log.Info().Int("issueID", issueID).Msg("Reaction added successfully, triggering sync")
-
-	// Invalidate cache and trigger immediate sync to emit roadmap:update event
-	s.invalidateCache()
-
-	// Get current language from cache for sync
-	s.mu.RLock()
-	lang := s.cacheLang
-	s.mu.RUnlock()
-
-	// Trigger background sync to fetch fresh data and emit event to frontend
-	go s.syncInBackground("reaction", lang)
-
-	return nil
 }
 
 // CreateIssue creates a new issue with 'enhancement' and 'suggestion' labels (direct GitHub API)
@@ -912,7 +1030,8 @@ func itemsEqual(a, b []RoadmapItem) bool {
 		return false
 	}
 	for i := range a {
-		if a[i].ID != b[i].ID || a[i].Title != b[i].Title || a[i].Votes != b[i].Votes {
+		if a[i].ID != b[i].ID || a[i].Title != b[i].Title || a[i].Votes != b[i].Votes ||
+			a[i].VotesUp != b[i].VotesUp || a[i].VotesDown != b[i].VotesDown {
 			return false
 		}
 	}

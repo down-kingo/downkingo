@@ -156,16 +156,16 @@ export const RoadmapCard = memo(function RoadmapCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (isAuthenticated && userVote !== "up") {
+                if (userVote !== "up") {
                   onVote(item.id);
                 }
               }}
-              disabled={!isAuthenticated || userVote === "up"}
+              disabled={userVote === "up"}
               className={`flex items-center gap-1 group/up focus:outline-none transition-opacity ${
                 userVote === "up"
                   ? "opacity-100"
                   : "opacity-70 hover:opacity-100"
-              } ${!isAuthenticated || userVote === "up" ? "cursor-default" : "cursor-pointer"}`}
+              } ${userVote === "up" ? "cursor-default" : "cursor-pointer"}`}
               title={userVote === "up" ? t("card.voted") : t("card.like")}
             >
               <IconThumbUp
@@ -192,16 +192,16 @@ export const RoadmapCard = memo(function RoadmapCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (isAuthenticated && userVote !== "down") {
+                if (userVote !== "down") {
                   onVoteDown(item.id);
                 }
               }}
-              disabled={!isAuthenticated || userVote === "down"}
+              disabled={userVote === "down"}
               className={`flex items-center gap-1 group/down focus:outline-none transition-opacity ${
                 userVote === "down"
                   ? "opacity-100"
                   : "opacity-70 hover:opacity-100"
-              } ${!isAuthenticated || userVote === "down" ? "cursor-default" : "cursor-pointer"}`}
+              } ${userVote === "down" ? "cursor-default" : "cursor-pointer"}`}
               title={userVote === "down" ? t("card.voted") : t("card.dislike")}
             >
               <IconThumbDown

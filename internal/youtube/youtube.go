@@ -265,6 +265,7 @@ func (c *Client) GetVideoInfo(ctx context.Context, url string) (*VideoInfo, erro
 		"--extractor-retries", "0", // Não retry em extratores
 		"--socket-timeout", "10", // Timeout agressivo (10s)
 		"--ignore-errors", // Continua mesmo com erros menores
+		"--js-runtimes", "bun", // Resolve YouTube n-challenge (descriptografa URLs de stream)
 		// FFmpeg não é necessário para metadata (removido)
 		url,
 	}
@@ -308,6 +309,7 @@ func (c *Client) GetVideoInfoWithCookies(ctx context.Context, url string, browse
 		"--extractor-retries", "1", // Permitir 1 retry com cookies
 		"--socket-timeout", "15", // Timeout um pouco maior para auth
 		"--ignore-errors",
+		"--js-runtimes", "bun", // Resolve YouTube n-challenge
 		url,
 	}
 
@@ -344,6 +346,7 @@ func (c *Client) GetPlaylistInfo(ctx context.Context, url string) ([]VideoInfo, 
 		"--extractor-retries", "1",
 		"--socket-timeout", "15",
 		"--ignore-errors",
+		"--js-runtimes", "bun", // Resolve YouTube n-challenge
 		url,
 	}
 
@@ -424,7 +427,8 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 		"--no-check-certificate",                      // Skip SSL verification
 		"--concurrent-fragments", concurrentFragments, // Download N fragments simultaneously
 		"--buffer-size", bufferSize, // Larger buffer for throughput
-		"--no-warnings", // Suppress warnings (like mutagen fallbacks)
+		"--no-warnings",            // Suppress warnings (like mutagen fallbacks)
+		"--js-runtimes", "bun", // Resolve YouTube n-challenge (descriptografa URLs de stream)
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════

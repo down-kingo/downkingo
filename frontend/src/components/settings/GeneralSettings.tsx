@@ -10,9 +10,12 @@ import {
   IconPhoto,
   IconClipboard,
   IconTerminal2,
-  IconChartDots,
+  IconPuzzle,
+  IconDownload,
+  IconTransform,
+  IconMicrophone,
 } from "@tabler/icons-react";
-import { useSettingsStore, Language } from "../../stores/settingsStore";
+import { useSettingsStore, Language, FeatureId } from "../../stores/settingsStore";
 import { supportedLanguages } from "../../i18n";
 import {
   GetVideoDownloadPath,
@@ -97,13 +100,30 @@ export default function GeneralSettings() {
   const {
     language,
     anonymousMode,
-    telemetryEnabled,
     startWithWindows,
     clipboardMonitorEnabled,
     consoleEnabled,
+    enabledFeatures,
     setLanguage,
     setSetting,
+    setEnabledFeatures,
   } = useSettingsStore();
+
+  const featureItems: { id: FeatureId; icon: typeof IconDownload; labelKey: string; descKey: string }[] = [
+    { id: "videos", icon: IconDownload, labelKey: "features.videos", descKey: "features.videos_desc" },
+    { id: "images", icon: IconPhoto, labelKey: "features.images", descKey: "features.images_desc" },
+    { id: "converter", icon: IconTransform, labelKey: "features.converter", descKey: "features.converter_desc" },
+    { id: "transcriber", icon: IconMicrophone, labelKey: "features.transcriber", descKey: "features.transcriber_desc" },
+  ];
+
+  const toggleFeature = (id: FeatureId) => {
+    if (enabledFeatures.includes(id)) {
+      if (enabledFeatures.length <= 1) return;
+      setEnabledFeatures(enabledFeatures.filter((f) => f !== id));
+    } else {
+      setEnabledFeatures([...enabledFeatures, id]);
+    }
+  };
 
   const [videoPath, setVideoPath] = useState("");
   const [imagePath, setImagePath] = useState("");
@@ -160,6 +180,36 @@ export default function GeneralSettings() {
         </div>
       </section>
 
+      {/* Features */}
+      <section>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
+          <IconPuzzle size={14} />
+          {t("sections.features")}
+        </h3>
+        <div className="space-y-3">
+          {featureItems.map((item) => {
+            const isEnabled = enabledFeatures.includes(item.id);
+            const isLastEnabled = isEnabled && enabledFeatures.length <= 1;
+            return (
+              <SettingItem
+                key={item.id}
+                icon={item.icon}
+                label={t(item.labelKey)}
+                desc={t(item.descKey)}
+                active={isEnabled}
+              >
+                <Switch
+                  checked={isEnabled}
+                  onChange={() => {
+                    if (!isLastEnabled) toggleFeature(item.id);
+                  }}
+                />
+              </SettingItem>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Storage */}
       <section>
         <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
@@ -213,18 +263,6 @@ export default function GeneralSettings() {
             <Switch
               checked={anonymousMode}
               onChange={(v) => setSetting("anonymousMode", v)}
-            />
-          </SettingItem>
-
-          <SettingItem
-            icon={IconChartDots}
-            label={t("privacy.telemetry")}
-            desc={t("privacy.telemetry_desc")}
-            active={telemetryEnabled}
-          >
-            <Switch
-              checked={telemetryEnabled}
-              onChange={(v) => setSetting("telemetryEnabled", v)}
             />
           </SettingItem>
         </div>

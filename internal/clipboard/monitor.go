@@ -2,13 +2,17 @@ package clipboard
 
 import (
 	"context"
+	"fmt"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
 	"kingo/internal/logger"
 
+	toast "git.sr.ht/~jackmordaunt/go-toast/v2"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -35,10 +39,21 @@ type Monitor struct {
 	mu        sync.Mutex
 	lastText  string
 	isRunning bool
+	iconPath  string
 }
 
-func NewMonitor() *Monitor {
-	return &Monitor{}
+// NewMonitor creates a clipboard monitor. iconPNG is the raw PNG bytes for the notification icon.
+func NewMonitor(iconPNG []byte) *Monitor {
+	m := &Monitor{}
+	if len(iconPNG) > 0 {
+		p := filepath.Join(os.TempDir(), "downkingo-notify-icon.png")
+		if err := os.WriteFile(p, iconPNG, 0644); err == nil {
+			m.iconPath = p
+		} else {
+			logger.Log.Warn().Err(err).Msg("failed to write notification icon to temp")
+		}
+	}
+	return m
 }
 
 func (m *Monitor) Start(ctx context.Context) {
@@ -112,7 +127,7 @@ func (m *Monitor) loop() {
 
 				if m.isValidURL(text) {
 					logger.Log.Info().Str("url", text).Msg("Clipboard link detected and valid")
-					application.Get().Event.Emit("clipboard:link-detected", text)
+					m.sendNotification(text)
 				} else {
 					logger.Log.Debug().Msg("Clipboard ignored (invalid URL or unsupported domain)")
 				}
@@ -138,6 +153,59 @@ func limitString(s string, max int) string {
 		return s[:max] + "..."
 	}
 	return s
+}
+
+// platformName returns a friendly display name for the detected media platform.
+func platformName(rawURL string) string {
+	platforms := map[string]string{
+		"youtube.com":     "YouTube",
+		"youtu.be":        "YouTube",
+		"instagram.com":   "Instagram",
+		"tiktok.com":      "TikTok",
+		"twitter.com":     "Twitter / X",
+		"x.com":           "Twitter / X",
+		"facebook.com":    "Facebook",
+		"fb.watch":        "Facebook",
+		"twitch.tv":       "Twitch",
+		"vimeo.com":       "Vimeo",
+		"dailymotion.com": "Dailymotion",
+		"pinterest.com":   "Pinterest",
+		"reddit.com":      "Reddit",
+		"threads.net":     "Threads",
+		"soundcloud.com":  "SoundCloud",
+	}
+	lower := strings.ToLower(rawURL)
+	for domain, name := range platforms {
+		if strings.Contains(lower, domain) {
+			return name
+		}
+	}
+	return "Link"
+}
+
+func (m *Monitor) sendNotification(detectedURL string) {
+	platform := platformName(detectedURL)
+	title := fmt.Sprintf("🔗 %s link detectado", platform)
+
+	n := toast.Notification{
+		AppID: "DownKingo",
+		Title: title,
+		Body:  limitString(detectedURL, 80),
+		Icon:  m.iconPath,
+		Actions: []toast.Action{
+			{Type: toast.Protocol, Content: "Download", Arguments: "downkingo:download:" + detectedURL},
+		},
+		ActivationArguments: "downkingo:download:" + detectedURL,
+	}
+
+	if err := n.Push(); err != nil {
+		logger.Log.Warn().Err(err).Str("url", detectedURL).Msg("failed to send native notification, falling back to event")
+		application.Get().Event.Emit("clipboard:link-detected", detectedURL)
+		return
+	}
+
+	// Emit event immediately so frontend can fill URL when notification appears
+	application.Get().Event.Emit("clipboard:link-detected", detectedURL)
 }
 
 func (m *Monitor) isValidURL(text string) bool {

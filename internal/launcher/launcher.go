@@ -335,6 +335,12 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 	}
 	out.Close()
 
+	// Verify downloaded size matches expected
+	if total > 0 && downloaded != total {
+		os.Remove(tempFile)
+		return fmt.Errorf("download incompleto: recebido %d de %d bytes", downloaded, total)
+	}
+
 	// Verify checksum if provided
 	if dep.SHA256 != "" {
 		l.emitProgress(dep.Name, downloaded, total, 100, "verifying")

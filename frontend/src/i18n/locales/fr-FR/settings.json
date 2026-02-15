@@ -97,7 +97,7 @@
   },
   "privacy": {
     "anonymous": "Mode Incognito",
-    "anonymous_desc": "Ne pas enregistrer l'historique",
+    "anonymous_desc": "Ne pas envoyer de statistiques d'utilisation anonymes",
     "title": "Confidentialité"
   },
   "rembg_settings": {
@@ -126,9 +126,20 @@
     "privacy": "Confidentialité",
     "regional": "Régional",
     "shortcuts": "Raccourcis",
+    "features": "Fonctionnalités",
     "storage": "Stockage",
     "system": "Système",
     "video": "Vidéo"
+  },
+  "features": {
+    "videos": "Télécharger des Vidéos",
+    "videos_desc": "Afficher l'onglet de téléchargement de vidéos",
+    "images": "Télécharger des Images",
+    "images_desc": "Afficher l'onglet de téléchargement d'images",
+    "converter": "Convertir des Médias",
+    "converter_desc": "Afficher l'onglet du convertisseur de médias",
+    "transcriber": "Transcription",
+    "transcriber_desc": "Afficher l'onglet de transcription"
   },
   "shortcuts": {
     "desc": "Personnaliser raccourcis clavier.",

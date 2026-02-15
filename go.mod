@@ -3,6 +3,7 @@ module kingo
 go 1.25
 
 require (
+	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.34.0
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.69

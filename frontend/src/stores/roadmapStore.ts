@@ -75,12 +75,6 @@ export const useRoadmapStore = create<RoadmapState>()(
 
         try {
           const data = await GetRoadmap(lang);
-          console.log(
-            "[RoadmapStore] fetchRoadmap received data:",
-            data?.length,
-            "items",
-          );
-
           if (data && Array.isArray(data)) {
             const freshItems = data.map((item) => ({
               ...item,
@@ -122,7 +116,6 @@ export const useRoadmapStore = create<RoadmapState>()(
           // Dynamic import to avoid breaking if binding doesn't exist yet
           const { GetUserReactions } = await import("../../bindings/kingo/app");
           if (typeof GetUserReactions !== "function") {
-            console.log("[RoadmapStore] GetUserReactions not available yet");
             return;
           }
           const reactions = await GetUserReactions();
@@ -139,7 +132,6 @@ export const useRoadmapStore = create<RoadmapState>()(
               }
             }
             set({ userVotes });
-            console.log("[RoadmapStore] Synced user votes:", userVotes);
           }
         } catch (err) {
           console.warn(
@@ -150,111 +142,64 @@ export const useRoadmapStore = create<RoadmapState>()(
       },
 
       /**
-       * Vote UP for an item with exclusive logic:
-       * - If no vote: add up vote
-       * - If already up: do nothing (already voted)
-       * - If down: switch to up (decrement down, increment up)
+       * Vote UP for an item.
+       * Only updates button state (userVotes) optimistically.
+       * Actual vote counts are updated by the server via background sync
+       * to prevent double-counting (server totals already include the user's vote).
        */
       voteForItem: async (id) => {
-        const { items, userVotes } = get();
+        const { userVotes } = get();
         const currentVote = userVotes[id] || null;
 
         // Already voted up - do nothing
         if (currentVote === "up") {
-          console.log("[RoadmapStore] Already voted up, ignoring");
           return;
         }
 
-        const originalItems = [...items];
         const originalUserVotes = { ...userVotes };
 
-        // Calculate optimistic update
-        const updatedItems = items.map((item) => {
-          if (item.id !== id) return { ...item };
-
-          const newItem = { ...item };
-
-          // If switching from down to up
-          if (currentVote === "down") {
-            newItem.votes_down = Math.max(0, (newItem.votes_down || 0) - 1);
-          }
-
-          // Add up vote
-          newItem.votes_up = (newItem.votes_up || 0) + 1;
-          newItem.votes = newItem.votes_up;
-
-          return newItem;
-        });
-
-        // Update state optimistically
+        // Optimistic: only update button highlight, NOT counts
         set({
-          items: updatedItems,
           userVotes: { ...userVotes, [id]: "up" },
-          lastUpdated: Date.now(),
         });
 
         try {
           await VoteFeature(id);
-          console.log("[RoadmapStore] Vote up successful");
         } catch (err) {
           console.error("Vote failed:", err);
-          // Rollback on failure
-          set({ items: originalItems, userVotes: originalUserVotes });
+          // Rollback button state on failure
+          set({ userVotes: originalUserVotes });
           throw err;
         }
       },
 
       /**
-       * Vote DOWN for an item with exclusive logic:
-       * - If no vote: add down vote
-       * - If already down: do nothing (already voted)
-       * - If up: switch to down (decrement up, increment down)
+       * Vote DOWN for an item.
+       * Only updates button state (userVotes) optimistically.
+       * Actual vote counts are updated by the server via background sync.
        */
       voteDownForItem: async (id) => {
-        const { items, userVotes } = get();
+        const { userVotes } = get();
         const currentVote = userVotes[id] || null;
 
         // Already voted down - do nothing
         if (currentVote === "down") {
-          console.log("[RoadmapStore] Already voted down, ignoring");
           return;
         }
 
-        const originalItems = [...items];
         const originalUserVotes = { ...userVotes };
 
-        // Calculate optimistic update
-        const updatedItems = items.map((item) => {
-          if (item.id !== id) return { ...item };
-
-          const newItem = { ...item };
-
-          // If switching from up to down
-          if (currentVote === "up") {
-            newItem.votes_up = Math.max(0, (newItem.votes_up || 0) - 1);
-            newItem.votes = newItem.votes_up;
-          }
-
-          // Add down vote
-          newItem.votes_down = (newItem.votes_down || 0) + 1;
-
-          return newItem;
-        });
-
-        // Update state optimistically
+        // Optimistic: only update button highlight, NOT counts
         set({
-          items: updatedItems,
           userVotes: { ...userVotes, [id]: "down" },
-          lastUpdated: Date.now(),
         });
 
         try {
           await VoteDownFeature(id);
-          console.log("[RoadmapStore] Vote down successful");
         } catch (err) {
           console.error("Vote down failed:", err);
-          // Rollback on failure
-          set({ items: originalItems, userVotes: originalUserVotes });
+          // Rollback button state on failure
+          set({ userVotes: originalUserVotes });
           throw err;
         }
       },
@@ -266,54 +211,52 @@ export const useRoadmapStore = create<RoadmapState>()(
 
       // Subscribe to real-time updates from backend
       subscribeToUpdates: () => {
-        const handleUpdate = (newItems: RoadmapItem[]) => {
-          console.log(
-            "[RoadmapStore] Received roadmap:update event",
-            "items count:",
-            newItems?.length,
-          );
-
+        // Full roadmap update (from CDN sync)
+        const handleFullUpdate = (newItems: RoadmapItem[]) => {
           if (newItems && Array.isArray(newItems)) {
-            // Log first item votes for debugging
-            if (newItems.length > 0) {
-              const first = newItems[0];
-              console.log(
-                "[RoadmapStore] First item votes:",
-                first.id,
-                "up:",
-                first.votes_up,
-                "down:",
-                first.votes_down,
-              );
-            }
-
-            // Create new references to ensure React re-renders
-            const freshItems = newItems.map((item) => ({ ...item }));
-
+            const freshItems = newItems.map(item => ({ ...item }));
             set({
               items: freshItems,
               lastUpdated: Date.now(),
               error: null,
               isLoading: false,
             });
-
-            console.log("[RoadmapStore] State updated with fresh items");
           }
         };
 
-        // Subscribe to roadmap:update events from Go backend
-        // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
-        const cancel = Events.On(
+        // Targeted vote count update (from GitHub API, bypasses CDN)
+        const handleVoteUpdate = (data: { id: number; votes_up: number; votes_down: number }) => {
+          if (!data || !data.id) return;
+          const { items } = get();
+          const updatedItems = items.map(item => {
+            if (item.id !== data.id) return item;
+            return {
+              ...item,
+              votes_up: data.votes_up,
+              votes_down: data.votes_down,
+              votes: data.votes_up,
+            };
+          });
+          set({ items: updatedItems, lastUpdated: Date.now() });
+        };
+
+        const cancelFullUpdate = Events.On(
           "roadmap:update",
           (event: { data: RoadmapItem[] }) => {
-            console.log("[RoadmapStore] Raw event received:", event);
-            handleUpdate(event.data);
+            handleFullUpdate(event.data);
           },
         );
 
-        // Return cleanup function
+        const cancelVoteUpdate = Events.On(
+          "roadmap:vote-update",
+          (event: { data: { id: number; votes_up: number; votes_down: number } }) => {
+            handleVoteUpdate(event.data);
+          },
+        );
+
         return () => {
-          cancel();
+          cancelFullUpdate();
+          cancelVoteUpdate();
         };
       },
     }),

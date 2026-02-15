@@ -2,12 +2,15 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
+import { useSettingsStore, FeatureId } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import {
   CheckDependencies,
   DownloadDependencies,
   DownloadAndApplyUpdate,
   RestartApp,
+  IsWhisperInstalled,
+  DownloadWhisperBinary,
 } from "../../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
 import {
@@ -16,13 +19,52 @@ import {
   IconLoader2,
   IconDownload,
   IconPackage,
+  IconVideo,
+  IconPhoto,
+  IconTransform,
+  IconMicrophone,
 } from "@tabler/icons-react";
+
+const FEATURES: { id: FeatureId; icon: typeof IconVideo }[] = [
+  { id: "videos", icon: IconVideo },
+  { id: "images", icon: IconPhoto },
+  { id: "converter", icon: IconTransform },
+  { id: "transcriber", icon: IconMicrophone },
+];
 
 export default function Setup() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
+
+  // Feature selection step
+  const [step, setStep] = useState<"features" | "install">("features");
+  const [selectedFeatures, setSelectedFeatures] = useState<FeatureId[]>([
+    "videos",
+    "images",
+    "converter",
+    "transcriber",
+  ]);
+  const setEnabledFeatures = useSettingsStore((s) => s.setEnabledFeatures);
+
+  const toggleFeature = (id: FeatureId) => {
+    setSelectedFeatures((prev) => {
+      if (prev.includes(id)) {
+        if (prev.length <= 1) return prev; // mínimo 1
+        return prev.filter((f) => f !== id);
+      }
+      return [...prev, id];
+    });
+  };
+
+  const handleContinueFeatures = () => {
+    setEnabledFeatures(selectedFeatures);
+    setStep("install");
+  };
+
+  // Preview Mode — exibe a UI sem iniciar downloads (dev only)
+  const isPreview = location.state?.preview || false;
 
   // Update Mode State
   const isUpdateMode = location.state?.isUpdate || false;
@@ -45,6 +87,13 @@ export default function Setup() {
     reset,
   } = useLauncherStore();
 
+  // Track whisper download progress separately
+  const [whisperProgress, setWhisperProgress] = useState<{
+    status: string;
+    percent: number;
+  } | null>(null);
+  const needsWhisperRef = useRef(false);
+
   const startSetup = async () => {
     try {
       if (isUpdateMode) {
@@ -58,16 +107,48 @@ export default function Setup() {
       } else {
         reset();
         setIsRetrying(false);
+        needsWhisperRef.current = false;
 
         const deps = await CheckDependencies();
-        setDependencies(deps);
 
-        if (deps.every((d: { installed: boolean }) => d.installed)) {
+        // Se transcriber foi selecionado, verificar se whisper está instalado
+        const wantsTranscriber = selectedFeatures.includes("transcriber");
+        let whisperInstalled = true;
+        if (wantsTranscriber) {
+          try {
+            whisperInstalled = await IsWhisperInstalled();
+          } catch {
+            whisperInstalled = false;
+          }
+        }
+
+        // Adicionar Whisper à lista de dependências se necessário
+        const allDeps = [...deps];
+        if (wantsTranscriber) {
+          allDeps.push({
+            name: "Whisper",
+            installed: whisperInstalled,
+            size: 0,
+          });
+        }
+
+        setDependencies(allDeps);
+        needsWhisperRef.current = wantsTranscriber && !whisperInstalled;
+
+        if (allDeps.every((d: { installed: boolean }) => d.installed)) {
           navigate("/home");
           return;
         }
 
-        await DownloadDependencies();
+        // Baixar dependências padrão (yt-dlp, FFmpeg)
+        const standardNeedsDownload = deps.some((d: { installed: boolean }) => !d.installed);
+        if (standardNeedsDownload) {
+          await DownloadDependencies();
+          // launcher:complete será emitido pelo backend → callback faz o whisper se necessário
+        } else if (needsWhisperRef.current) {
+          // Dependências padrão já OK, mas whisper precisa ser baixado
+          await startWhisperDownload();
+        }
       }
     } catch (err) {
       if (isUpdateMode) {
@@ -79,9 +160,20 @@ export default function Setup() {
     }
   };
 
+  const startWhisperDownload = async () => {
+    try {
+      setWhisperProgress({ status: "downloading", percent: 0 });
+      await DownloadWhisperBinary();
+      // whisper:binary-progress events atualizam o progresso via listener
+    } catch (err) {
+      setError(String(err));
+    }
+  };
+
   const unsubscribeRef = useRef<{
     progress?: () => void;
     complete?: () => void;
+    whisperProgress?: () => void;
   }>({});
   const mountedRef = useRef(true);
 
@@ -125,7 +217,12 @@ export default function Setup() {
           const unsubComplete = await safeEventsOn<void>(
             "launcher:complete",
             () => {
-              if (mountedRef.current) {
+              if (!mountedRef.current) return;
+              if (needsWhisperRef.current) {
+                // Deps padrão OK, agora baixar whisper
+                needsWhisperRef.current = false;
+                startWhisperDownload();
+              } else {
                 setComplete();
                 setTimeout(() => {
                   if (mountedRef.current) navigate("/home");
@@ -136,11 +233,65 @@ export default function Setup() {
           if (mountedRef.current)
             unsubscribeRef.current.complete = unsubComplete;
           else unsubComplete();
+
+          // Listener para progresso do whisper binary
+          const unsubWhisper = await safeEventsOn<any>(
+            "whisper:binary-progress",
+            (data) => {
+              if (!mountedRef.current) return;
+              const percent = data.percent || 0;
+              const status = data.status || "downloading";
+
+              setWhisperProgress({ status, percent });
+
+              // Atualizar o item "Whisper" no progress da launcher store
+              updateLauncherProgress({
+                name: "Whisper",
+                downloaded: 0,
+                total: 0,
+                percent,
+                status: status === "complete" ? "complete" : status === "extracting" ? "extracting" : "downloading",
+              });
+
+              if (status === "complete") {
+                setComplete();
+                setTimeout(() => {
+                  if (mountedRef.current) navigate("/home");
+                }, 1000);
+              }
+            }
+          );
+          if (mountedRef.current)
+            unsubscribeRef.current.whisperProgress = unsubWhisper;
+          else unsubWhisper();
         }
       } catch (e) {
         console.warn("[Setup] Failed to register event listeners:", e);
       }
     };
+
+    if (isPreview) {
+      // Modo preview: popula dados mockados sem iniciar downloads
+      reset();
+      const mockDeps: any[] = [
+        { name: "yt-dlp", installed: false },
+        { name: "FFmpeg", installed: false },
+      ];
+      if (selectedFeatures.includes("transcriber")) {
+        mockDeps.push({ name: "Whisper", installed: false });
+      }
+      setDependencies(mockDeps);
+      return () => {
+        mountedRef.current = false;
+      };
+    }
+
+    // Só inicia download quando estiver no step de instalação (ou update mode)
+    if (step !== "install" && !isUpdateMode) {
+      return () => {
+        mountedRef.current = false;
+      };
+    }
 
     registerListeners();
     startSetup();
@@ -155,8 +306,11 @@ export default function Setup() {
 
       if (unsubscribeRef.current.complete) unsubscribeRef.current.complete();
       else if (!isUpdateMode) tryEventsOff("launcher:complete");
+
+      if (unsubscribeRef.current.whisperProgress) unsubscribeRef.current.whisperProgress();
+      else if (!isUpdateMode) tryEventsOff("whisper:binary-progress");
     };
-  }, [isUpdateMode]);
+  }, [isUpdateMode, step]);
 
   const handleRetry = () => {
     setIsRetrying(true);
@@ -286,6 +440,119 @@ export default function Setup() {
     }
     return getStatusInfo(item);
   };
+
+  // Feature Selection Step
+  if ((step === "features" && !isUpdateMode) || (isPreview && step === "features")) {
+    return (
+      <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
+        {/* Header */}
+        <div className="w-full max-w-4xl text-center mb-16 space-y-4">
+          <motion.h1
+            className="font-black uppercase text-surface-950"
+            style={{
+              fontSize: "150px",
+              lineHeight: "1.1",
+              letterSpacing: "-4px",
+              filter: "drop-shadow(rgba(0, 0, 0, 0.15) 0px 25px 25px)",
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            DOWNKINGO
+          </motion.h1>
+
+          <motion.div
+            className="flex items-center justify-center gap-2 text-surface-500 font-medium tracking-wide text-sm uppercase"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            {t("setup.features.title")}
+          </motion.div>
+        </div>
+
+        {/* Feature Cards */}
+        <motion.div
+          className="w-full max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            {FEATURES.map((feature) => {
+              const Icon = feature.icon;
+              const isSelected = selectedFeatures.includes(feature.id);
+              return (
+                <button
+                  key={feature.id}
+                  onClick={() => toggleFeature(feature.id)}
+                  className={`
+                    group relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all duration-200
+                    ${
+                      isSelected
+                        ? "border-surface-900 bg-surface-50 shadow-sm"
+                        : "border-surface-200 bg-white hover:border-surface-300"
+                    }
+                  `}
+                >
+                  {/* Check indicator */}
+                  <div
+                    className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      isSelected
+                        ? "border-surface-900 bg-surface-900"
+                        : "border-surface-300"
+                    }`}
+                  >
+                    {isSelected && (
+                      <IconCheck size={12} className="text-white" stroke={3} />
+                    )}
+                  </div>
+
+                  <Icon
+                    size={28}
+                    className={`transition-colors ${
+                      isSelected ? "text-surface-900" : "text-surface-400"
+                    }`}
+                    stroke={1.5}
+                  />
+                  <div className="text-center">
+                    <p
+                      className={`text-sm font-bold tracking-tight ${
+                        isSelected ? "text-surface-900" : "text-surface-500"
+                      }`}
+                    >
+                      {t(`setup.features.${feature.id}`)}
+                    </p>
+                    <p className="text-xs text-surface-400 mt-1">
+                      {t(`setup.features.${feature.id}_desc`)}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={handleContinueFeatures}
+            className="w-full py-3 bg-surface-900 text-white font-bold text-sm uppercase tracking-wider rounded-lg hover:bg-surface-800 transition-colors"
+          >
+            {t("setup.features.continue")}
+          </button>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div
+          className="fixed bottom-8 text-surface-300 text-xs font-medium uppercase tracking-widest"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          Open Source Downloader
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">

@@ -65,7 +65,7 @@ func (h *SettingsHandler) SaveSettings(newCfg *config.Config) error {
 
 		// Persist Clipboard Monitor setting
 		c.ClipboardMonitorEnabled = newCfg.ClipboardMonitorEnabled
-		c.TelemetryEnabled = newCfg.TelemetryEnabled
+		c.AnonymousMode = newCfg.AnonymousMode
 	})
 
 	// Update youtube client output directory if needed

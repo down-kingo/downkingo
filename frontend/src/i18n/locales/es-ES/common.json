@@ -48,6 +48,14 @@
       "video_downloader": {
         "desc": "Descarga videos y audios de YouTube, TikTok y más.",
         "title": "Descargador de Video"
+      },
+      "converter": {
+        "desc": "Convierte entre formatos de audio y video rápidamente.",
+        "title": "Conversor de Medios"
+      },
+      "transcriber": {
+        "desc": "Transcribe audio y video a texto con IA.",
+        "title": "Transcriptor"
       }
     },
     "unknown": "Desconocido",
@@ -123,6 +131,7 @@
   "nav": {
     "console": "Consola",
     "converter": "Convertir",
+    "tools": "Herramientas",
     "folder": "Carpeta de Descargas",
     "history": "Historial",
     "home": "Inicio",
@@ -130,6 +139,7 @@
     "queue": "Cola",
     "roadmap": "Roadmap",
     "settings": "Ajustes",
+    "transcriber": "Transcriptor",
     "videos": "Videos"
   },
   "original_folder": "",
@@ -169,7 +179,19 @@
       "verifying": "Verificando...",
       "waiting": "Esperando..."
     },
-    "title": "Preparando componentes esenciales..."
+    "title": "Preparando componentes esenciales...",
+    "features": {
+      "title": "¿Qué quieres usar?",
+      "videos": "Descargar Videos",
+      "videos_desc": "YouTube, TikTok, Instagram y más",
+      "images": "Descargar Imágenes",
+      "images_desc": "Extrae imágenes de enlaces y redes sociales",
+      "converter": "Convertir Medios",
+      "converter_desc": "Convierte entre formatos de audio y video",
+      "transcriber": "Transcripción",
+      "transcriber_desc": "Transcribe audio y video a texto",
+      "continue": "Continuar"
+    }
   },
   "smaller_file": "",
   "start": "",

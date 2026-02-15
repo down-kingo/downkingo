@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=https://json.schemastore.org/golangci-lint.json
 # golangci-lint configuration for DownKingo
 # See: https://golangci-lint.run/usage/configuration/
 

@@ -9,5 +9,6 @@ export {
     ImageConvertRequest,
     MediaInfo,
     MediaItemDTO,
+    TranscribeRequest,
     VideoConvertRequest
 } from "./models.js";

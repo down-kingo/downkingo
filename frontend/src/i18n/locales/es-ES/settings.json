@@ -97,7 +97,7 @@
   },
   "privacy": {
     "anonymous": "Modo Incógnito",
-    "anonymous_desc": "No guardar historial de descargas",
+    "anonymous_desc": "No enviar estadísticas de uso anónimas",
     "title": "Privacidad"
   },
   "rembg_settings": {
@@ -126,9 +126,20 @@
     "privacy": "Privacidad",
     "regional": "Regional",
     "shortcuts": "Atajos",
+    "features": "Funcionalidades",
     "storage": "Almacenamiento",
     "system": "Sistema",
     "video": "Video"
+  },
+  "features": {
+    "videos": "Descargar Videos",
+    "videos_desc": "Mostrar pestaña de descarga de videos",
+    "images": "Descargar Imágenes",
+    "images_desc": "Mostrar pestaña de descarga de imágenes",
+    "converter": "Convertir Medios",
+    "converter_desc": "Mostrar pestaña del conversor de medios",
+    "transcriber": "Transcripción",
+    "transcriber_desc": "Mostrar pestaña de transcripción"
   },
   "shortcuts": {
     "desc": "Personalizar atajos de teclado.",

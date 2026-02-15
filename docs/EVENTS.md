@@ -155,3 +155,20 @@ Emitido quando o app recebe uma URL via protocolo `kingo://`.
 ```typescript
 type DeepLink = string; // e.g., "kingo://open?url=https%3A%2F%2Fyoutube.com%2F..."
 ```
+
+## Eventos de Clipboard
+
+### `clipboard:url`
+
+Emitido quando o monitor de clipboard detecta uma URL valida copiada.
+
+**Emitido por**: `clipboard.Monitor`
+
+```typescript
+type ClipboardUrl = string; // URL detectada
+```
+
+## Nota sobre Wails v3
+
+Na v3, os eventos sao emitidos via `application.Get().Event.Emit()` (Wails v3 API).
+As constantes de eventos estao centralizadas em `internal/events/events.go` para evitar magic strings.

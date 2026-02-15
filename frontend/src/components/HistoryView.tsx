@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
 import {
   IconCheck,
   IconX,
@@ -17,7 +17,7 @@ import { OpenDownloadFolder, OpenUrl } from "../../bindings/kingo/app";
 
 export const HistoryView = memo(function HistoryView() {
   const { t } = useTranslation("common");
-  const history = useDownloadStore((state) => state.history, shallow);
+  const history = useDownloadStore(useShallow((state) => state.history));
   const { clearHistory } = useDownloadSync();
 
   const getStatusBadge = (download: Download) => {

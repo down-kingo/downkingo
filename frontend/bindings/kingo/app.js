@@ -37,6 +37,9 @@ import * as storage$0 from "./internal/storage/models.js";
 import * as updater$0 from "./internal/updater/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as whisper$0 from "./internal/whisper/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as youtube$0 from "./internal/youtube/models.js";
 
 /**
@@ -154,6 +157,14 @@ export function DeleteAria2c() {
 }
 
 /**
+ * @param {string} name
+ * @returns {$CancellablePromise<void>}
+ */
+export function DeleteWhisperModel(name) {
+    return $Call.ByID(111941057, name);
+}
+
+/**
  * @param {youtube$0.DownloadOptions} opts
  * @returns {$CancellablePromise<void>}
  */
@@ -193,6 +204,21 @@ export function DownloadImage(url, filename) {
 }
 
 /**
+ * @returns {$CancellablePromise<void>}
+ */
+export function DownloadWhisperBinary() {
+    return $Call.ByID(4064086400);
+}
+
+/**
+ * @param {string} name
+ * @returns {$CancellablePromise<void>}
+ */
+export function DownloadWhisperModel(name) {
+    return $Call.ByID(250633958, name);
+}
+
+/**
  * @param {handlers$0.AudioExtractRequest} req
  * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
  */
@@ -212,12 +238,21 @@ export function GetAvailableAppVersions() {
 }
 
 /**
+ * @returns {$CancellablePromise<whisper$0.AvailableModel[]>}
+ */
+export function GetAvailableWhisperModels() {
+    return $Call.ByID(1348308402).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType12($result);
+    }));
+}
+
+/**
  * @param {number} limit
  * @returns {$CancellablePromise<(storage$0.Download | null)[]>}
  */
 export function GetDownloadHistory(limit) {
     return $Call.ByID(863967493, limit).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType11($result);
+        return $$createType13($result);
     }));
 }
 
@@ -226,7 +261,7 @@ export function GetDownloadHistory(limit) {
  */
 export function GetDownloadQueue() {
     return $Call.ByID(2432386474).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType11($result);
+        return $$createType13($result);
     }));
 }
 
@@ -257,7 +292,7 @@ export function GetImageDownloadPath() {
  */
 export function GetImageInfo(url) {
     return $Call.ByID(3625829128, url).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType13($result);
+        return $$createType15($result);
     }));
 }
 
@@ -267,7 +302,7 @@ export function GetImageInfo(url) {
  */
 export function GetInstagramCarousel(url) {
     return $Call.ByID(881087455, url).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType15($result);
+        return $$createType17($result);
     }));
 }
 
@@ -278,7 +313,7 @@ export function GetInstagramCarousel(url) {
  */
 export function GetRoadmap(lang) {
     return $Call.ByID(3740686969, lang).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType17($result);
+        return $$createType19($result);
     }));
 }
 
@@ -287,7 +322,7 @@ export function GetRoadmap(lang) {
  */
 export function GetSettings() {
     return $Call.ByID(2554697378).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType18($result);
+        return $$createType20($result);
     }));
 }
 
@@ -308,7 +343,7 @@ export function GetUserReaction(issueID) {
  */
 export function GetUserReactions() {
     return $Call.ByID(1304130332).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType19($result);
+        return $$createType21($result);
     }));
 }
 
@@ -333,7 +368,7 @@ export function GetVideoDownloadPath() {
  */
 export function GetVideoInfo(url) {
     return $Call.ByID(545710026, url).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType21($result);
+        return $$createType23($result);
     }));
 }
 
@@ -343,6 +378,22 @@ export function GetVideoInfo(url) {
  */
 export function InstallAppVersion(tag) {
     return $Call.ByID(3982740749, tag);
+}
+
+/**
+ * @returns {$CancellablePromise<boolean>}
+ */
+export function IsWhisperInstalled() {
+    return $Call.ByID(444764833);
+}
+
+/**
+ * @returns {$CancellablePromise<whisper$0.ModelInfo[]>}
+ */
+export function ListWhisperModels() {
+    return $Call.ByID(1479260439).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType25($result);
+    }));
 }
 
 /**
@@ -423,6 +474,13 @@ export function SelectImageFile() {
 /**
  * @returns {$CancellablePromise<string>}
  */
+export function SelectMediaFile() {
+    return $Call.ByID(2449334365);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
 export function SelectOutputDirectory() {
     return $Call.ByID(2051919695);
 }
@@ -456,7 +514,7 @@ export function SetClipboardMonitor(enabled) {
  */
 export function StartGitHubAuth() {
     return $Call.ByID(4217852034).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType23($result);
+        return $$createType27($result);
     }));
 }
 
@@ -467,6 +525,16 @@ export function StartGitHubAuth() {
  */
 export function SuggestFeature(title, desc) {
     return $Call.ByID(2695915429, title, desc);
+}
+
+/**
+ * @param {handlers$0.TranscribeRequest} req
+ * @returns {$CancellablePromise<whisper$0.TranscribeResult | null>}
+ */
+export function TranscribeFile(req) {
+    return $Call.ByID(1827659560, req).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType29($result);
+    }));
 }
 
 /**
@@ -505,16 +573,22 @@ const $$createType7 = handlers$0.ConversionResult.createFrom;
 const $$createType8 = $Create.Nullable($$createType7);
 const $$createType9 = updater$0.Release.createFrom;
 const $$createType10 = $Create.Array($$createType9);
-const $$createType11 = $Create.Array($$createType1);
-const $$createType12 = images$0.ImageInfo.createFrom;
-const $$createType13 = $Create.Nullable($$createType12);
-const $$createType14 = handlers$0.MediaInfo.createFrom;
+const $$createType11 = whisper$0.AvailableModel.createFrom;
+const $$createType12 = $Create.Array($$createType11);
+const $$createType13 = $Create.Array($$createType1);
+const $$createType14 = images$0.ImageInfo.createFrom;
 const $$createType15 = $Create.Nullable($$createType14);
-const $$createType16 = roadmap$0.RoadmapItem.createFrom;
-const $$createType17 = $Create.Array($$createType16);
-const $$createType18 = config$0.Config.createFrom;
-const $$createType19 = $Create.Map($Create.Any, $Create.Any);
-const $$createType20 = youtube$0.VideoInfo.createFrom;
-const $$createType21 = $Create.Nullable($$createType20);
-const $$createType22 = auth$0.DeviceCodeResponse.createFrom;
+const $$createType16 = handlers$0.MediaInfo.createFrom;
+const $$createType17 = $Create.Nullable($$createType16);
+const $$createType18 = roadmap$0.RoadmapItem.createFrom;
+const $$createType19 = $Create.Array($$createType18);
+const $$createType20 = config$0.Config.createFrom;
+const $$createType21 = $Create.Map($Create.Any, $Create.Any);
+const $$createType22 = youtube$0.VideoInfo.createFrom;
 const $$createType23 = $Create.Nullable($$createType22);
+const $$createType24 = whisper$0.ModelInfo.createFrom;
+const $$createType25 = $Create.Array($$createType24);
+const $$createType26 = auth$0.DeviceCodeResponse.createFrom;
+const $$createType27 = $Create.Nullable($$createType26);
+const $$createType28 = whisper$0.TranscribeResult.createFrom;
+const $$createType29 = $Create.Nullable($$createType28);

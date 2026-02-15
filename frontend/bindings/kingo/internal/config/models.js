@@ -55,12 +55,12 @@ export class Config {
              */
             this["clipboardMonitorEnabled"] = false;
         }
-        if (!("telemetryEnabled" in $$source)) {
+        if (!("anonymousMode" in $$source)) {
             /**
              * @member
              * @type {boolean}
              */
-            this["telemetryEnabled"] = false;
+            this["anonymousMode"] = false;
         }
         if (!("roadmap" in $$source)) {
             /**

@@ -8,6 +8,7 @@ export type AppColor = "red" | "blue" | "green" | "orange" | "purple";
 export type Language = "pt-BR" | "en-US" | "es-ES" | "fr-FR" | "de-DE";
 export type YtDlpChannel = "stable" | "nightly" | "master";
 export type ImageFormat = "original" | "jpg" | "png" | "webp" | "avif";
+export type FeatureId = "videos" | "images" | "converter" | "transcriber";
 
 // Compatibilidade de Codec
 // "universal" = H.264 + AAC (funciona em QUALQUER player, TVs antigas, Windows Media Player)
@@ -35,8 +36,7 @@ interface SettingsState {
   shortcuts: ShortcutsConfig;
 
   // Privacy
-  anonymousMode: boolean; // Não salvar histórico
-  telemetryEnabled: boolean; // Enviar estatísticas anônimas (Aptabase)
+  anonymousMode: boolean; // Desativa rastreamento de uso (telemetria)
 
   // Download Options
   remuxVideo: boolean;
@@ -58,6 +58,7 @@ interface SettingsState {
   startWithWindows: boolean;
   clipboardMonitorEnabled: boolean;
   consoleEnabled: boolean; // Mostrar/ocultar console de logs
+  enabledFeatures: FeatureId[];
   hasCompletedOnboarding: boolean; // First-run setup completed
 
   // Actions
@@ -68,6 +69,7 @@ interface SettingsState {
   setAnonymousMode: (enabled: boolean) => void;
   setShortcuts: (shortcuts: ShortcutsConfig) => void;
   setSetting: (key: keyof SettingsState, value: any) => void;
+  setEnabledFeatures: (features: FeatureId[]) => void;
   completeOnboarding: () => void;
 }
 
@@ -89,7 +91,6 @@ export const useSettingsStore = create<SettingsState>()(
       },
 
       anonymousMode: false,
-      telemetryEnabled: false,
 
       remuxVideo: true,
       remuxFormat: "mp4",
@@ -108,6 +109,7 @@ export const useSettingsStore = create<SettingsState>()(
       startWithWindows: false,
       clipboardMonitorEnabled: true,
       consoleEnabled: false, // Desativado por padrão
+      enabledFeatures: ["videos", "images", "converter", "transcriber"] as FeatureId[],
       hasCompletedOnboarding: false, // Show onboarding on first launch
 
       toggleTheme: () =>
@@ -129,6 +131,7 @@ export const useSettingsStore = create<SettingsState>()(
       setShortcuts: (shortcuts) => set({ shortcuts }),
 
       setSetting: (key, value) => set((state) => ({ ...state, [key]: value })),
+      setEnabledFeatures: (features) => set({ enabledFeatures: features }),
       completeOnboarding: () => set({ hasCompletedOnboarding: true }),
     }),
     {

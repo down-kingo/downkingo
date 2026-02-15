@@ -70,10 +70,11 @@ func (r *DownloadRepository) ExistsActiveByURL(url string) (*Download, error) {
 		LIMIT 1
 	`
 	d := &Download{}
+	var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 	err := r.db.conn.QueryRow(query, url).Scan(
-		&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
-		&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
-		&d.FilePath, &d.FileSize, &d.ErrorMessage,
+		&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
+		&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
+		&filePath, &d.FileSize, &errorMessage,
 		&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 	)
 	if err == sql.ErrNoRows {
@@ -82,6 +83,14 @@ func (r *DownloadRepository) ExistsActiveByURL(url string) (*Download, error) {
 	if err != nil {
 		return nil, err
 	}
+	d.Title = title.String
+	d.Thumbnail = thumbnail.String
+	d.Uploader = uploader.String
+	d.Format = format.String
+	d.Speed = speed.String
+	d.ETA = eta.String
+	d.FilePath = filePath.String
+	d.ErrorMessage = errorMessage.String
 	return d, nil
 }
 
@@ -109,17 +118,29 @@ func (r *DownloadRepository) GetByID(id string) (*Download, error) {
 	`
 
 	d := &Download{}
+	var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 	err := r.db.conn.QueryRow(query, id).Scan(
-		&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
-		&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
-		&d.FilePath, &d.FileSize, &d.ErrorMessage,
+		&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
+		&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
+		&filePath, &d.FileSize, &errorMessage,
 		&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 	)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-	return d, err
+	if err != nil {
+		return nil, err
+	}
+	d.Title = title.String
+	d.Thumbnail = thumbnail.String
+	d.Uploader = uploader.String
+	d.Format = format.String
+	d.Speed = speed.String
+	d.ETA = eta.String
+	d.FilePath = filePath.String
+	d.ErrorMessage = errorMessage.String
+	return d, nil
 }
 
 // GetPending retrieves all pending downloads ordered by creation time
@@ -219,15 +240,24 @@ func (r *DownloadRepository) scanDownloads(rows *sql.Rows) ([]*Download, error) 
 
 	for rows.Next() {
 		d := &Download{}
+		var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 		err := rows.Scan(
-			&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
-			&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
-			&d.FilePath, &d.FileSize, &d.ErrorMessage,
+			&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
+			&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
+			&filePath, &d.FileSize, &errorMessage,
 			&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
+		d.Title = title.String
+		d.Thumbnail = thumbnail.String
+		d.Uploader = uploader.String
+		d.Format = format.String
+		d.Speed = speed.String
+		d.ETA = eta.String
+		d.FilePath = filePath.String
+		d.ErrorMessage = errorMessage.String
 		downloads = append(downloads, d)
 	}
 

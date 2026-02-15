@@ -6,17 +6,66 @@ import {
   IconArrowRight,
   IconDownload,
   IconSparkles,
+  IconTransform,
+  IconMicrophone,
 } from "@tabler/icons-react";
 import { useDownloadStore } from "../stores/downloadStore";
+import { useSettingsStore, FeatureId } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import { TabType } from "../components/navigation/Sidebar";
+
+function ToolCard({
+  onClick,
+  icon: Icon,
+  glowColor,
+  hoverColor,
+  title,
+  desc,
+}: {
+  onClick: () => void;
+  icon: typeof IconVideo;
+  glowColor: string;
+  hoverColor: string;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left group bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-6 hover:bg-surface-50 dark:hover:bg-surface-200/50 transition-all duration-300 relative overflow-hidden"
+    >
+      <div
+        className={`absolute top-0 right-0 w-32 h-32 ${glowColor} blur-2xl rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+      />
+      <div className="flex items-start justify-between mb-4 relative z-10">
+        <div
+          className={`p-3 bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/5 rounded-xl text-surface-600 dark:text-surface-900 ${hoverColor} transition-colors shadow-sm`}
+        >
+          <Icon size={26} className="stroke-[1.5]" />
+        </div>
+        <IconArrowRight
+          size={18}
+          className="text-surface-400 dark:text-surface-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+        />
+      </div>
+      <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
+        {title}
+      </h3>
+      <p className="text-xs text-surface-500 dark:text-surface-500 leading-relaxed">
+        {desc}
+      </p>
+    </button>
+  );
+}
 
 interface DashboardProps {
-  onNavigate: (tab: "video" | "images" | "history") => void;
+  onNavigate: (tab: TabType) => void;
 }
 
 export default function Dashboard({ onNavigate }: DashboardProps) {
   const { history } = useDownloadStore();
   const { t } = useTranslation("common");
+  const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
 
   // Recent items limited to 5 for density
   const recentDownloads = history.slice(0, 5);
@@ -58,59 +107,57 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           animate="show"
           className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
         >
-          {/* Video Tool */}
-          <motion.div variants={item}>
-            <button
-              onClick={() => onNavigate("video")}
-              className="w-full text-left group bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-6 hover:bg-surface-50 dark:hover:bg-surface-200/50 transition-all duration-300 relative overflow-hidden"
-            >
-              {/* Glow Effect */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/20 dark:bg-primary-600/40 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {enabledFeatures.includes("videos") && (
+            <motion.div variants={item}>
+              <ToolCard
+                onClick={() => onNavigate("video")}
+                icon={IconVideo}
+                glowColor="bg-primary-600/20 dark:bg-primary-600/40"
+                hoverColor="group-hover:text-primary-600 dark:group-hover:text-primary-600"
+                title={t("dashboard.tools.video_downloader.title")}
+                desc={t("dashboard.tools.video_downloader.desc")}
+              />
+            </motion.div>
+          )}
 
-              <div className="flex items-start justify-between mb-4 relative z-10">
-                <div className="p-3 bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/5 rounded-xl text-surface-600 dark:text-surface-900 group-hover:text-primary-600 dark:group-hover:text-primary-600 transition-colors shadow-sm">
-                  <IconVideo size={26} className="stroke-[1.5]" />
-                </div>
-                <IconArrowRight
-                  size={18}
-                  className="text-surface-400 dark:text-surface-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
-                />
-              </div>
-              <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
-                {t("dashboard.tools.video_downloader.title")}
-              </h3>
-              <p className="text-xs text-surface-500 dark:text-surface-500 leading-relaxed">
-                {t("dashboard.tools.video_downloader.desc")}
-              </p>
-            </button>
-          </motion.div>
+          {enabledFeatures.includes("images") && (
+            <motion.div variants={item}>
+              <ToolCard
+                onClick={() => onNavigate("images")}
+                icon={IconPhoto}
+                glowColor="bg-purple-600/20 dark:bg-purple-600/40"
+                hoverColor="group-hover:text-purple-600 dark:group-hover:text-purple-600"
+                title={t("dashboard.tools.image_extractor.title")}
+                desc={t("dashboard.tools.image_extractor.desc")}
+              />
+            </motion.div>
+          )}
 
-          {/* Image Tool */}
-          <motion.div variants={item}>
-            <button
-              onClick={() => onNavigate("images")}
-              className="w-full text-left group bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-6 hover:bg-surface-50 dark:hover:bg-surface-200/50 transition-all duration-300 relative overflow-hidden"
-            >
-              {/* Glow Effect */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 dark:bg-purple-600/40 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {enabledFeatures.includes("converter") && (
+            <motion.div variants={item}>
+              <ToolCard
+                onClick={() => onNavigate("converter")}
+                icon={IconTransform}
+                glowColor="bg-blue-600/20 dark:bg-blue-600/40"
+                hoverColor="group-hover:text-blue-600 dark:group-hover:text-blue-600"
+                title={t("dashboard.tools.converter.title")}
+                desc={t("dashboard.tools.converter.desc")}
+              />
+            </motion.div>
+          )}
 
-              <div className="flex items-start justify-between mb-4 relative z-10">
-                <div className="p-3 bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/5 rounded-xl text-surface-600 dark:text-surface-900 group-hover:text-purple-600 dark:group-hover:text-purple-600 transition-colors shadow-sm">
-                  <IconPhoto size={26} className="stroke-[1.5]" />
-                </div>
-                <IconArrowRight
-                  size={18}
-                  className="text-surface-400 dark:text-surface-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
-                />
-              </div>
-              <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
-                {t("dashboard.tools.image_extractor.title")}
-              </h3>
-              <p className="text-xs text-surface-500 dark:text-surface-500 leading-relaxed">
-                {t("dashboard.tools.image_extractor.desc")}
-              </p>
-            </button>
-          </motion.div>
+          {enabledFeatures.includes("transcriber") && (
+            <motion.div variants={item}>
+              <ToolCard
+                onClick={() => onNavigate("transcriber")}
+                icon={IconMicrophone}
+                glowColor="bg-emerald-600/20 dark:bg-emerald-600/40"
+                hoverColor="group-hover:text-emerald-600 dark:group-hover:text-emerald-600"
+                title={t("dashboard.tools.transcriber.title")}
+                desc={t("dashboard.tools.transcriber.desc")}
+              />
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Recent Activity Section */}

@@ -97,9 +97,7 @@
   },
   "privacy": {
     "anonymous": "Modo Anônimo",
-    "anonymous_desc": "Não salvar histórico de downloads",
-    "telemetry": "Compartilhar estatísticas anônimas",
-    "telemetry_desc": "Ajude a melhorar o app enviando dados de uso anônimos (Aptabase)",
+    "anonymous_desc": "Não enviar estatísticas de uso anônimas",
     "title": "Privacidade"
   },
   "rembg_settings": {
@@ -128,9 +126,20 @@
     "privacy": "Privacidade",
     "regional": "Regional",
     "shortcuts": "Atalhos",
+    "features": "Funcionalidades",
     "storage": "Armazenamento",
     "system": "Sistema",
     "video": "Vídeo"
+  },
+  "features": {
+    "videos": "Baixar Vídeos",
+    "videos_desc": "Mostrar aba de download de vídeos",
+    "images": "Baixar Fotos",
+    "images_desc": "Mostrar aba de download de imagens",
+    "converter": "Converter Mídia",
+    "converter_desc": "Mostrar aba do conversor de mídia",
+    "transcriber": "Transcrição",
+    "transcriber_desc": "Mostrar aba de transcrição"
   },
   "shortcuts": {
     "desc": "Personalize os atalhos do teclado.",

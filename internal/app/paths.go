@@ -165,3 +165,8 @@ func (p *Paths) Aria2cPath() string {
 	}
 	return p.getBinaryPath("aria2c")
 }
+
+// WhisperDir returns the directory for whisper.cpp binary and models
+func (p *Paths) WhisperDir() string {
+	return filepath.Join(p.AppData, "whisper")
+}

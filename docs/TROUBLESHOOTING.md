@@ -2,55 +2,56 @@
 
 Guia para resolver problemas comuns do DownKingo.
 
-## Índice
+## Indice
 
-- [Problemas de Instalação](#problemas-de-instalação)
+- [Problemas de Instalacao](#problemas-de-instalacao)
 - [Problemas de Download](#problemas-de-download)
+- [Problemas de Transcricao](#problemas-de-transcricao)
 - [Problemas de Performance](#problemas-de-performance)
-- [Logs e Diagnóstico](#logs-e-diagnóstico)
+- [Logs e Diagnostico](#logs-e-diagnostico)
 
 ---
 
-## Problemas de Instalação
+## Problemas de Instalacao
 
 ### Windows: SmartScreen bloqueia o instalador
 
-**Causa:** O instalador não é assinado digitalmente.
+**Causa:** O instalador nao e assinado digitalmente.
 
-**Solução:**
+**Solucao:**
 
-1. Clique em "Mais informações"
+1. Clique em "Mais informacoes"
 2. Clique em "Executar assim mesmo"
 
-### Windows: "VCRUNTIME140.dll não encontrado"
+### Windows: "VCRUNTIME140.dll nao encontrado"
 
-**Causa:** Visual C++ Redistributable não instalado.
+**Causa:** Visual C++ Redistributable nao instalado.
 
-**Solução:**
+**Solucao:**
 Baixe e instale o [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
 
-### macOS: "O app não pode ser aberto pois é de desenvolvedor não identificado"
+### macOS: "O app nao pode ser aberto pois e de desenvolvedor nao identificado"
 
-**Causa:** App não é notarizado pela Apple.
+**Causa:** App nao e notarizado pela Apple.
 
-**Solução:**
+**Solucao:**
 
 ```bash
 # No Terminal:
 xattr -cr /Applications/DownKingo.app
 ```
 
-Ou: Clique direito → Abrir → Confirmar.
+Ou: Clique direito -> Abrir -> Confirmar.
 
-### Linux: AppImage não executa
+### Linux: AppImage nao executa
 
-**Causa 1:** Sem permissão de execução.
+**Causa 1:** Sem permissao de execucao.
 
 ```bash
 chmod +x DownKingo-linux-amd64.AppImage
 ```
 
-**Causa 2:** FUSE não instalado.
+**Causa 2:** FUSE nao instalado.
 
 ```bash
 # Ubuntu/Debian
@@ -69,42 +70,65 @@ sudo pacman -S fuse2
 
 ### Erro 403 Forbidden
 
-**Causa:** Proteção anti-bot do site ou sessão expirada.
+**Causa:** Protecao anti-bot do site ou sessao expirada.
 
-**Soluções:**
+**Solucoes:**
 
-1. Atualize o DownKingo para a última versão
+1. Atualize o DownKingo para a ultima versao
 2. Aguarde alguns minutos e tente novamente
-3. Verifique se o vídeo não é privado
+3. Verifique se o video nao e privado
 
 ### Erro "Unable to extract video data"
 
 **Causa:** Formato do site mudou ou yt-dlp desatualizado.
 
-**Solução:** Aguarde uma atualização do DownKingo que inclua nova versão do yt-dlp.
+**Solucao:** Aguarde uma atualizacao do DownKingo que inclua nova versao do yt-dlp, ou atualize o yt-dlp manualmente pelo app (Configuracoes -> Atualizar yt-dlp).
 
 ### Download lento
 
-**Causas possíveis:**
+**Causas possiveis:**
 
-1. Limitação do servidor de origem
-2. Conexão de internet lenta
+1. Limitacao do servidor de origem
+2. Conexao de internet lenta
 3. VPN ativa
 
-**Soluções:**
+**Solucoes:**
 
-1. Tente em horários de menor tráfego
+1. Tente em horarios de menor trafego
 2. Desative VPN temporariamente
-3. Verifique sua conexão de internet
+3. Verifique sua conexao de internet
+4. Ative o aria2c nas configuracoes para downloads segmentados
 
-### Vídeo baixado sem áudio
+### Video baixado sem audio
 
-**Causa:** Alguns sites separam vídeo e áudio em streams diferentes.
+**Causa:** Alguns sites separam video e audio em streams diferentes.
 
-**Solução:** O DownKingo usa FFmpeg para mesclar automaticamente. Se falhar:
+**Solucao:** O DownKingo usa FFmpeg para mesclar automaticamente. Se falhar:
 
 1. Verifique os logs
-2. Tente baixar como "Apenas Áudio" separadamente
+2. Tente baixar como "Apenas Audio" separadamente
+
+---
+
+## Problemas de Transcricao
+
+### Whisper nao esta instalado
+
+**Causa:** O binario do Whisper precisa ser baixado separadamente.
+
+**Solucao:** Na pagina do Transcritor, clique em "Instalar Whisper" para baixar o binario automaticamente.
+
+### Transcricao muito lenta
+
+**Causa:** O modelo Whisper selecionado e muito grande para o seu hardware.
+
+**Solucao:** Use um modelo menor (tiny ou base) para transcricoes mais rapidas, com tradeoff de precisao.
+
+### Modelo nao encontrado
+
+**Causa:** O modelo Whisper nao foi baixado ainda.
+
+**Solucao:** Na pagina do Transcritor, baixe o modelo desejado antes de iniciar a transcricao.
 
 ---
 
@@ -112,34 +136,34 @@ sudo pacman -S fuse2
 
 ### App lento para iniciar
 
-**Causa:** Verificação de atualizações ou dependências.
+**Causa:** Verificacao de atualizacoes ou dependencias.
 
-**Soluções:**
+**Solucoes:**
 
-1. Aguarde a primeira inicialização completar
-2. Verifique se antivírus não está escaneando o app
+1. Aguarde a primeira inicializacao completar
+2. Verifique se antivirus nao esta escaneando o app
 
-### Alto uso de memória
+### Alto uso de memoria
 
-**Causa:** Múltiplos downloads simultâneos.
+**Causa:** Multiplos downloads simultaneos ou transcricao com modelo grande.
 
-**Solução:** Limite o número de downloads paralelos.
+**Solucao:** Limite o numero de downloads paralelos ou use modelos Whisper menores.
 
 ### App congela durante download
 
-**Causa:** Possível deadlock ou processo yt-dlp travado.
+**Causa:** Possivel deadlock ou processo yt-dlp travado.
 
-**Solução:**
+**Solucao:**
 
 1. Feche e reabra o app
-2. Verifique se há processos `yt-dlp` órfãos no gerenciador de tarefas
+2. Verifique se ha processos `yt-dlp` orfaos no gerenciador de tarefas
 3. Reporte o bug com logs
 
 ---
 
-## Logs e Diagnóstico
+## Logs e Diagnostico
 
-### Localização dos Logs
+### Localizacao dos Logs
 
 | Sistema | Caminho                                                      |
 | ------- | ------------------------------------------------------------ |
@@ -149,27 +173,35 @@ sudo pacman -S fuse2
 
 ### Como ler os logs
 
-Os logs são em formato JSON estruturado:
+Os logs sao em formato JSON estruturado (zerolog):
 
 ```json
-{"level":"info","time":"2024-12-28T10:00:00Z","message":"download started","url":"..."}
-{"level":"error","time":"2024-12-28T10:00:05Z","error":"network timeout","message":"download failed"}
+{"level":"info","time":"2025-01-15T10:00:00Z","version":"3.0.0","message":"kingo starting up"}
+{"level":"error","time":"2025-01-15T10:00:05Z","error":"network timeout","message":"download failed"}
+```
+
+### Debug mode
+
+Para ativar logs detalhados em producao, defina a variavel de ambiente:
+
+```bash
+KINGO_DEBUG=true
 ```
 
 ### Reportando Problemas
 
 Ao abrir uma issue, inclua:
 
-1. **Versão do DownKingo**
-2. **Sistema operacional e versão**
+1. **Versao do DownKingo** (visivel em Configuracoes ou via `GetVersion()`)
+2. **Sistema operacional e versao**
 3. **Passos para reproduzir**
-4. **Logs relevantes** (remova informações sensíveis)
-5. **Screenshots** (se aplicável)
+4. **Logs relevantes** (remova informacoes sensiveis)
+5. **Screenshots** (se aplicavel)
 
 ---
 
 ## Ainda com problemas?
 
-- 📖 Consulte o [FAQ](FAQ.md)
-- 🐛 Abra uma [Issue](https://github.com/Capman002/DownKingo/issues)
-- 💬 Pergunte nas [Discussões](https://github.com/Capman002/DownKingo/discussions)
+- Consulte o [FAQ](FAQ.md)
+- Abra uma [Issue](https://github.com/down-kingo/downkingo/issues)
+- Pergunte nas [Discussoes](https://github.com/down-kingo/downkingo/discussions)

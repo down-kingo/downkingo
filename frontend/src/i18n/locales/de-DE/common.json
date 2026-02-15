@@ -48,6 +48,14 @@
       "video_downloader": {
         "desc": "Laden Sie Videos und Audios von YouTube, TikTok und mehr herunter.",
         "title": "Video Downloader"
+      },
+      "converter": {
+        "desc": "Schnell zwischen Audio- und Videoformaten konvertieren.",
+        "title": "Medienkonverter"
+      },
+      "transcriber": {
+        "desc": "Audio und Video mit KI in Text transkribieren.",
+        "title": "Transkriptor"
       }
     },
     "unknown": "Unbekannt",
@@ -117,6 +125,7 @@
   "nav": {
     "console": "Konsole",
     "converter": "Konvertieren",
+    "tools": "Werkzeuge",
     "folder": "Download-Ordner",
     "history": "Verlauf",
     "home": "Startseite",
@@ -124,6 +133,7 @@
     "queue": "Warteschlange",
     "roadmap": "Roadmap",
     "settings": "Einstellungen",
+    "transcriber": "Transkriptor",
     "videos": "Videos"
   },
   "original_folder": "",
@@ -163,7 +173,19 @@
       "verifying": "Verifizieren...",
       "waiting": "Warten..."
     },
-    "title": "Wichtige Komponenten werden vorbereitet..."
+    "title": "Wichtige Komponenten werden vorbereitet...",
+    "features": {
+      "title": "Was möchten Sie verwenden?",
+      "videos": "Videos herunterladen",
+      "videos_desc": "YouTube, TikTok, Instagram und mehr",
+      "images": "Bilder herunterladen",
+      "images_desc": "Bilder aus Links und sozialen Netzwerken extrahieren",
+      "converter": "Medien konvertieren",
+      "converter_desc": "Zwischen Audio- und Videoformaten konvertieren",
+      "transcriber": "Transkription",
+      "transcriber_desc": "Audio und Video in Text transkribieren",
+      "continue": "Weiter"
+    }
   },
   "smaller_file": "",
   "start": "",

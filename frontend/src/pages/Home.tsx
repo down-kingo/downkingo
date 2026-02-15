@@ -3,17 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   safeWindowSetDarkTheme,
   safeWindowSetLightTheme,
+  safeEventsOn,
 } from "../lib/wailsRuntime";
 import { useDownloadStore, Download } from "../stores/downloadStore";
 import { useDownloadSync } from "../hooks/useDownloadSync";
-import { shallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useDebounce } from "../hooks/useDebounce";
 import SettingsPanel, { SettingsTab } from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
-import ClipboardToast from "../components/ClipboardToast";
 import OnboardingModal from "../components/OnboardingModal";
 import QueueList from "../components/QueueList";
 import { Sidebar, Topbar, TabType } from "../components/navigation";
@@ -24,6 +24,7 @@ import {
 } from "../components/video";
 import Images from "./Images";
 import Converter from "./Converter";
+import Transcriber from "./Transcriber";
 import Roadmap from "./Roadmap";
 import Dashboard from "./Dashboard";
 import { HistoryView } from "../components/HistoryView";
@@ -75,12 +76,11 @@ import {
 
 export default function Home() {
   const settings = useSettingsStore(
-    (state) => ({
+    useShallow((state) => ({
       theme: state.theme,
       layout: state.layout,
       primaryColor: state.primaryColor,
       language: state.language,
-      anonymousMode: state.anonymousMode,
       remuxVideo: state.remuxVideo,
       remuxFormat: state.remuxFormat,
       embedThumbnail: state.embedThumbnail,
@@ -91,8 +91,7 @@ export default function Home() {
       videoCompatibility: state.videoCompatibility,
       useAria2c: state.useAria2c,
       aria2cConnections: state.aria2cConnections,
-    }),
-    shallow
+    }))
   );
 
   const {
@@ -100,7 +99,6 @@ export default function Home() {
     layout,
     primaryColor,
     language,
-    anonymousMode,
     remuxVideo,
     remuxFormat,
     embedThumbnail,
@@ -112,6 +110,7 @@ export default function Home() {
     useAria2c,
     aria2cConnections,
   } = settings;
+  const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
   const { t } = useTranslation("common");
 
   const VIDEO_QUALITIES = getVideoQualities(videoCompatibility);
@@ -125,7 +124,32 @@ export default function Home() {
   const [version, setVersion] = useState("");
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<TabType>("home");
+  const [activeTab, setActiveTabRaw] = useState<TabType>("home");
+
+  // Map TabType → FeatureId for feature-gated tabs
+  const tabToFeature: Partial<Record<TabType, typeof enabledFeatures[number]>> = {
+    video: "videos",
+    images: "images",
+    converter: "converter",
+    transcriber: "transcriber",
+  };
+
+  // Guard: only allow navigation to enabled tabs
+  const setActiveTab = (tab: TabType) => {
+    const requiredFeature = tabToFeature[tab];
+    if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
+      return; // Block navigation to disabled feature
+    }
+    setActiveTabRaw(tab);
+  };
+
+  // Reset to home if current tab was disabled
+  useEffect(() => {
+    const requiredFeature = tabToFeature[activeTab];
+    if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
+      setActiveTabRaw("home");
+    }
+  }, [enabledFeatures, activeTab]);
 
   // Settings panel state
   const [settingsState, setSettingsState] = useState<{
@@ -147,31 +171,29 @@ export default function Home() {
   useKeyboardShortcuts({
     onOpenSettings: () => openSettings(),
     onFocusInput: () => {
-      setActiveTab("video");
-      setTimeout(() => inputRef.current?.focus(), 50);
+      if (enabledFeatures.includes("videos")) {
+        setActiveTab("video");
+        setTimeout(() => inputRef.current?.focus(), 50);
+      }
     },
   });
 
-  // Listen for clipboard fill events (local custom event)
+  // Listen for clipboard link detected events (from native notification callback)
   useEffect(() => {
-    const handleFillUrl = (event: CustomEvent) => {
-      const detectedUrl = event.detail;
-      if (detectedUrl) {
+    let cancel: (() => void) | undefined;
+
+    safeEventsOn<string>("clipboard:link-detected", (detectedUrl) => {
+      if (detectedUrl && enabledFeatures.includes("videos")) {
         setUrl(detectedUrl);
         setActiveTab("video");
         setTimeout(() => inputRef.current?.focus(), 100);
       }
-    };
+    }).then((unsubscribe) => {
+      cancel = unsubscribe;
+    });
 
-    window.addEventListener(
-      "kinematic:fill-url",
-      handleFillUrl as EventListener
-    );
     return () => {
-      window.removeEventListener(
-        "kinematic:fill-url",
-        handleFillUrl as EventListener
-      );
+      cancel?.();
     };
   }, []);
 
@@ -338,7 +360,7 @@ export default function Home() {
         remuxFormat: remuxFormat || "mp4",
         embedThumbnail: embedThumbnail,
         skipExisting: skipExisting,
-        incognito: anonymousMode,
+        incognito: false,
         useAria2c: useAria2c,
         aria2cConnections: aria2cConnections,
       });
@@ -379,7 +401,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-surface-50 dark:bg-surface-50 text-surface-900 transition-colors duration-300">
-      <ClipboardToast />
       <OnboardingModal />
 
       <div
@@ -414,7 +435,7 @@ export default function Home() {
               </TabContent>
             )}
 
-            {activeTab === "images" && (
+            {activeTab === "images" && enabledFeatures.includes("images") && (
               <TabContent key="images">
                 <div className="flex-1 overflow-y-auto p-8 bg-surface-50 dark:bg-surface-950">
                   <Images />
@@ -422,9 +443,15 @@ export default function Home() {
               </TabContent>
             )}
 
-            {activeTab === "converter" && (
+            {activeTab === "converter" && enabledFeatures.includes("converter") && (
               <TabContent key="converter">
                 <Converter />
+              </TabContent>
+            )}
+
+            {activeTab === "transcriber" && enabledFeatures.includes("transcriber") && (
+              <TabContent key="transcriber">
+                <Transcriber />
               </TabContent>
             )}
 
@@ -434,7 +461,7 @@ export default function Home() {
               </TabContent>
             )}
 
-            {activeTab === "video" && (
+            {activeTab === "video" && enabledFeatures.includes("videos") && (
               <TabContent key="video" className="flex flex-col h-full">
                 <header className="header p-6 shrink-0">
                   <div className="max-w-4xl mx-auto w-full">

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -14,9 +15,17 @@ var assets embed.FS
 //go:embed build/appicon.png
 var appIcon []byte
 
+//go:embed VERSION
+var versionFile string
+
 func main() {
+	// Set version from embedded VERSION file if not overridden by ldflags
+	if Version == "" {
+		Version = strings.TrimSpace(versionFile)
+	}
+
 	// Create an instance of the app structure
-	appInstance := NewApp()
+	appInstance := NewApp(appIcon)
 
 	// Create application with options
 	app := application.New(application.Options{
