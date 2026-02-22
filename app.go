@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"kingo/internal/app"
 	"kingo/internal/auth"
 	"kingo/internal/clipboard"
@@ -19,8 +20,11 @@ import (
 	"kingo/internal/updater"
 	"kingo/internal/whisper"
 	"kingo/internal/youtube"
+	"net"
+	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -53,6 +57,12 @@ type App struct {
 	converterHandler   *handlers.ConverterHandler
 	transcriberHandler *handlers.TranscriberHandler
 	whisperClient      *whisper.Client
+
+	// Stream proxy server for video trimmer preview
+	proxyServer   *http.Server
+	proxyPort     int
+	proxyMu       sync.Mutex
+	proxyStreamURL string
 }
 
 // NewApp creates a new App application struct
@@ -219,6 +229,121 @@ func (a *App) initializeHandlers(ctx context.Context) {
 // consoleLog emits a user-friendly message to the frontend console.
 func (a *App) consoleLog(message string) {
 	application.Get().Event.Emit(events.ConsoleLog, message)
+}
+
+// startProxyServer starts a local HTTP proxy server for streaming video to the frontend trimmer.
+// It proxies the direct stream URL (from yt-dlp) to avoid CORS/Referer issues in WebView.
+func (a *App) startProxyServer() {
+	a.proxyMu.Lock()
+	defer a.proxyMu.Unlock()
+
+	if a.proxyServer != nil {
+		return // Already running
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/proxy/stream", func(w http.ResponseWriter, r *http.Request) {
+		a.proxyMu.Lock()
+		streamURL := a.proxyStreamURL
+		a.proxyMu.Unlock()
+
+		if streamURL == "" {
+			http.Error(w, "no stream URL configured", http.StatusBadRequest)
+			return
+		}
+
+		// Create request to the actual stream
+		req, err := http.NewRequestWithContext(r.Context(), "GET", streamURL, nil)
+		if err != nil {
+			http.Error(w, "failed to create request", http.StatusInternalServerError)
+			return
+		}
+
+		// Forward Range header for seeking support
+		if rangeHeader := r.Header.Get("Range"); rangeHeader != "" {
+			req.Header.Set("Range", rangeHeader)
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			http.Error(w, "failed to fetch stream", http.StatusBadGateway)
+			return
+		}
+		defer resp.Body.Close()
+
+		// Copy response headers
+		w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+		if cl := resp.Header.Get("Content-Length"); cl != "" {
+			w.Header().Set("Content-Length", cl)
+		}
+		if cr := resp.Header.Get("Content-Range"); cr != "" {
+			w.Header().Set("Content-Range", cr)
+		}
+		w.Header().Set("Accept-Ranges", "bytes")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+	})
+
+	// Find available port
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("failed to start proxy server")
+		return
+	}
+
+	a.proxyPort = listener.Addr().(*net.TCPAddr).Port
+	a.proxyServer = &http.Server{Handler: mux}
+
+	go func() {
+		if err := a.proxyServer.Serve(listener); err != nil && err != http.ErrServerClosed {
+			logger.Log.Error().Err(err).Msg("proxy server error")
+		}
+	}()
+
+	logger.Log.Info().Int("port", a.proxyPort).Msg("stream proxy server started")
+}
+
+// GetStreamURL extracts the stream URL and returns a local proxy URL for the frontend.
+// Returns the proxy URL (http://127.0.0.1:PORT/proxy/stream) for CORS-free video preview.
+func (a *App) GetStreamURL(url string, format string) (string, error) {
+	streamURL, err := a.videoHandler.GetStreamURL(url, format)
+	if err != nil {
+		return "", err
+	}
+
+	// Start proxy server if not running
+	a.startProxyServer()
+
+	// Store the stream URL for the proxy to use
+	a.proxyMu.Lock()
+	a.proxyStreamURL = streamURL
+	a.proxyMu.Unlock()
+
+	proxyURL := fmt.Sprintf("http://127.0.0.1:%d/proxy/stream", a.proxyPort)
+	return proxyURL, nil
+}
+
+// SetStreamURL registers a direct stream URL in the proxy without invoking yt-dlp.
+// Used when the frontend already has a valid stream URL (e.g., from videoInfo.formats).
+// This is instant because it skips the yt-dlp extraction step entirely.
+func (a *App) SetStreamURL(directURL string) (string, error) {
+	if directURL == "" {
+		return "", fmt.Errorf("empty stream URL")
+	}
+
+	// Start proxy server if not running
+	a.startProxyServer()
+
+	// Store the stream URL for the proxy to use
+	a.proxyMu.Lock()
+	a.proxyStreamURL = directURL
+	a.proxyMu.Unlock()
+
+	proxyURL := fmt.Sprintf("http://127.0.0.1:%d/proxy/stream", a.proxyPort)
+	return proxyURL, nil
 }
 
 // GetVideoInfo delegates to videoHandler
@@ -468,6 +593,11 @@ func (a *App) ServiceShutdown() error {
 	// Stop clipboard monitor
 	if a.clipboardMonitor != nil {
 		a.clipboardMonitor.Stop()
+	}
+
+	// Stop proxy server
+	if a.proxyServer != nil {
+		a.proxyServer.Close()
 	}
 
 	// Close database connection

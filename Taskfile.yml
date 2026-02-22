@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   APP_NAME: downkingo
@@ -28,7 +28,7 @@ tasks:
     deps:
       - task: frontend:build
     cmds:
-      - go build -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
+      - go build -ldflags "-s -w" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
 
   run:
     desc: Run the built application

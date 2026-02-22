@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   IconInfoCircle,
   IconHeart,
@@ -7,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import { safeBrowserOpenURL } from "../../lib/wailsRuntime";
 import { useTranslation } from "react-i18next";
+import { GetVersion } from "../../../bindings/kingo/app";
 
 const SettingItem = ({
   icon: Icon,
@@ -54,7 +56,11 @@ const SettingItem = ({
 export default function AboutSettings() {
   const { t } = useTranslation("settings");
 
-  const appVersion = "2.0.2"; // Idealmente viria do backend/config
+  const [appVersion, setAppVersion] = useState("...");
+
+  useEffect(() => {
+    GetVersion().then(setAppVersion).catch(console.error);
+  }, []);
 
   const handleOpenLink = (url: string) => {
     safeBrowserOpenURL(url);
@@ -67,7 +73,7 @@ export default function AboutSettings() {
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="w-20 h-20 bg-surface-100 dark:bg-surface-200 rounded-2xl flex items-center justify-center mb-4">
             <img
-              src="/src/assets/images/appicon.png"
+              src="/src/assets/images/appicon.avif"
               alt="DownKingo Logo"
               className="w-16 h-16 object-contain"
             />

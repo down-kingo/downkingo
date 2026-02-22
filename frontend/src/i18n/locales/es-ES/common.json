@@ -217,6 +217,16 @@
     "minimize": "Minimizar",
     "ready": "Listo para capturar salida..."
   },
+  "trimmer": {
+    "title": "Recortar Vídeo",
+    "description": "Selecciona un fragmento para descargar solo la parte deseada",
+    "start": "Inicio",
+    "end": "Fin",
+    "selected_duration": "Duración seleccionada",
+    "preview": "Vista previa",
+    "preview_unavailable": "Vista previa no disponible",
+    "manual_fallback": "Usa los campos de tiempo para definir el fragmento manualmente."
+  },
   "video": "",
   "wait": ""
 }

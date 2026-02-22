@@ -28,4 +28,16 @@ export default defineConfig({
       ],
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "ui-vendor": ["framer-motion", "@tabler/icons-react"],
+          "utils-vendor": ["i18next", "react-i18next", "zustand"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 });

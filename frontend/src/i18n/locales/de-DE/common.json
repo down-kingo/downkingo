@@ -211,6 +211,16 @@
     "minimize": "Minimieren",
     "ready": "Bereit für Ausgabeaufnahme..."
   },
+  "trimmer": {
+    "title": "Video zuschneiden",
+    "description": "Wählen Sie einen Abschnitt aus, um nur den gewünschten Teil herunterzuladen",
+    "start": "Start",
+    "end": "Ende",
+    "selected_duration": "Ausgewählte Dauer",
+    "preview": "Vorschau",
+    "preview_unavailable": "Vorschau nicht verfügbar",
+    "manual_fallback": "Verwenden Sie die Zeitfelder, um den Abschnitt manuell festzulegen."
+  },
   "video": "",
   "wait": ""
 }

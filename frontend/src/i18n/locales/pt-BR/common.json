@@ -231,6 +231,16 @@
     "ready": "Pronto para capturar saída...",
     "saving": "Salvando: {{filename}}"
   },
+  "trimmer": {
+    "title": "Recortar Vídeo",
+    "description": "Selecione um trecho para baixar apenas a parte desejada",
+    "start": "Início",
+    "end": "Fim",
+    "selected_duration": "Duração selecionada",
+    "preview": "Preview",
+    "preview_unavailable": "Preview indisponível",
+    "manual_fallback": "Use os campos de tempo para definir o trecho manualmente."
+  },
   "video": "",
   "wait": ""
 }

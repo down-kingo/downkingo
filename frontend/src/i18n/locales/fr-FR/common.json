@@ -212,6 +212,16 @@
     "minimize": "Minimiser",
     "ready": "Prêt à capturer la sortie..."
   },
+  "trimmer": {
+    "title": "Découper la vidéo",
+    "description": "Sélectionnez un extrait pour ne télécharger que la partie souhaitée",
+    "start": "Début",
+    "end": "Fin",
+    "selected_duration": "Durée sélectionnée",
+    "preview": "Aperçu",
+    "preview_unavailable": "Aperçu indisponible",
+    "manual_fallback": "Utilisez les champs de temps pour définir l'extrait manuellement."
+  },
   "video": "",
   "wait": ""
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import appIcon from "../assets/images/appicon.png";
+import appIcon from "../assets/images/appicon.avif";
 
 interface LogoProps {
   className?: string;

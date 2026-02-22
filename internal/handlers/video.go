@@ -17,6 +17,7 @@ type YouTubeClientInterface interface {
 	GetVideoInfo(ctx context.Context, url string) (*youtube.VideoInfo, error)
 	Download(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error
 	UpdateYtDlp(channel string) (string, error)
+	GetStreamURL(ctx context.Context, url string, format string) (string, error)
 }
 
 // DownloadManagerInterface defines what VideoHandler needs from a download manager.
@@ -300,6 +301,30 @@ func (h *VideoHandler) CancelDownload(id string) error {
 	}
 
 	return nil
+}
+
+// GetStreamURL extracts the direct stream URL for video preview (trimmer).
+func (h *VideoHandler) GetStreamURL(url string, format string) (string, error) {
+	const op = "VideoHandler.GetStreamURL"
+
+	if _, err := validate.URL(url); err != nil {
+		return "", apperr.Wrap(op, err)
+	}
+
+	if h.youtube == nil {
+		return "", apperr.NewWithMessage(op, apperr.ErrDependencyMissing, "cliente YouTube não inicializado")
+	}
+
+	h.consoleLog("[Trimmer] Extraindo URL do stream...")
+
+	streamURL, err := h.youtube.GetStreamURL(h.ctx, url, format)
+	if err != nil {
+		h.consoleLog("[Trimmer] ✗ Falha ao extrair URL do stream")
+		return "", apperr.Wrap(op, err)
+	}
+
+	h.consoleLog("[Trimmer] ✓ Stream URL extraído com sucesso")
+	return streamURL, nil
 }
 
 // OpenDownloadFolder opens the folder containing the download file.

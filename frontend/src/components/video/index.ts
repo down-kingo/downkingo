@@ -5,3 +5,5 @@ export {
   type VideoInfo,
   type Format,
 } from "./VideoPreview";
+
+export { default as VideoTrimmer } from "./VideoTrimmer";

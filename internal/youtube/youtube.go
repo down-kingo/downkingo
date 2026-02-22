@@ -263,10 +263,9 @@ func (c *Client) GetVideoInfo(ctx context.Context, url string) (*VideoInfo, erro
 		"--no-check-certificate",   // Pula verificação SSL
 		"--no-warnings",            // Menos output
 		"--extractor-retries", "0", // Não retry em extratores
-		"--socket-timeout", "10", // Timeout agressivo (10s)
-		"--ignore-errors", // Continua mesmo com erros menores
-		"--js-runtimes", "bun", // Resolve YouTube n-challenge (descriptografa URLs de stream)
-		// FFmpeg não é necessário para metadata (removido)
+		"--socket-timeout", "10",   // Timeout de 10s
+		"--ignore-errors",          // Continua mesmo com erros menores
+		"--js-runtimes", "bun",     // Resolve YouTube n-challenge
 		url,
 	}
 
@@ -413,6 +412,10 @@ type DownloadOptions struct {
 	Aria2cConnections int    `json:"aria2cConnections"` // Number of connections (default 16)
 	Title             string `json:"title"`             // Optional metadata
 	Thumbnail         string `json:"thumbnail"`         // Optional metadata
+
+	// Trimmer: cortar trecho do vídeo
+	StartTime string `json:"startTime"` // HH:MM:SS or MM:SS (início do corte)
+	EndTime   string `json:"endTime"`   // HH:MM:SS or MM:SS (fim do corte)
 }
 
 // Download downloads a video with progress callbacks
@@ -524,6 +527,12 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 				args = append(args, "--embed-subs")
 			}
 		}
+	}
+
+	// Trimmer: cortar trecho do vídeo usando --download-sections
+	if opts.StartTime != "" && opts.EndTime != "" {
+		section := fmt.Sprintf("*%s-%s", opts.StartTime, opts.EndTime)
+		args = append(args, "--download-sections", section, "--force-keyframes-at-cuts")
 	}
 
 	args = append(args, opts.URL)
@@ -683,4 +692,47 @@ func (c *Client) Download(ctx context.Context, opts DownloadOptions, onProgress 
 // HasAria2 retorna true se aria2c está configurado e disponível
 func (c *Client) HasAria2() bool {
 	return c.aria2cPath != ""
+}
+
+// GetStreamURL extracts the direct stream URL using yt-dlp --get-url
+// Used by the frontend video trimmer to preview the video before download
+func (c *Client) GetStreamURL(ctx context.Context, url string, format string) (string, error) {
+	if format == "" {
+		format = "best[ext=mp4]/best"
+	}
+
+	args := []string{
+		"--get-url",
+		"-f", format,
+		"--no-playlist",
+		"--no-check-certificate",
+		"--no-warnings",
+		"--socket-timeout", "10",
+		"--js-runtimes", "bun",
+		url,
+	}
+
+	cmd := c.createCommandWithContext(ctx, args)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		errMsg := strings.TrimSpace(stderr.String())
+		if errMsg != "" {
+			return "", fmt.Errorf("yt-dlp get-url error: %s", errMsg)
+		}
+		return "", fmt.Errorf("yt-dlp get-url error: %w", err)
+	}
+
+	streamURL := strings.TrimSpace(string(output))
+	// yt-dlp may return multiple URLs (video+audio), take the first one
+	if lines := strings.Split(streamURL, "\n"); len(lines) > 0 {
+		streamURL = strings.TrimSpace(lines[0])
+	}
+
+	if streamURL == "" {
+		return "", fmt.Errorf("no stream URL returned")
+	}
+
+	return streamURL, nil
 }

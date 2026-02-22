@@ -185,7 +185,6 @@ export default function SettingsPanel({
               {/* Tabs with Groups */}
               <nav
                 className="flex-1 p-2 space-y-3 overflow-y-auto"
-                data-lenis-prevent
               >
                 {tabGroups.map((group, groupIndex) => (
                   <div key={groupIndex}>
@@ -282,7 +281,7 @@ export default function SettingsPanel({
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-8" data-lenis-prevent>
+              <div className="flex-1 overflow-y-auto p-8">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

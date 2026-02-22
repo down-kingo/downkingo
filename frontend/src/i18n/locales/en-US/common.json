@@ -230,6 +230,16 @@
     "ready": "Ready to capture output...",
     "saving": "Saving: {{filename}}"
   },
+  "trimmer": {
+    "title": "Trim Video",
+    "description": "Select a section to download only the desired part",
+    "start": "Start",
+    "end": "End",
+    "selected_duration": "Selected duration",
+    "preview": "Preview",
+    "preview_unavailable": "Preview unavailable",
+    "manual_fallback": "Use the time fields to define the section manually."
+  },
   "video": "",
   "wait": ""
 }

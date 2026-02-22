@@ -361,8 +361,6 @@ export default function Roadmap() {
 
                 <div
                   className="flex-1 overflow-y-auto custom-scrollbar px-1 space-y-3 relative pb-2 min-h-0"
-                  data-lenis-prevent
-                  onWheel={(e) => e.stopPropagation()}
                 >
                   {isLoading && items.length === 0 ? (
                     [1, 2, 3].map((i) => (
@@ -627,8 +625,6 @@ function RoadmapDetail({
       {/* Área Scrollable - Ocupa tudo, scroll na borda direita */}
       <div
         className="h-full w-full overflow-y-auto custom-scrollbar"
-        data-lenis-prevent
-        onWheel={(e) => e.stopPropagation()}
       >
         {/* Container Central */}
         <div className="max-w-3xl mx-auto px-6 md:px-12 pb-12 pt-20 md:pt-24 flex flex-col items-center text-center">

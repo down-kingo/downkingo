@@ -1,4 +1,11 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import {
   BrowserRouter,
   Routes,
@@ -8,8 +15,8 @@ import {
 } from "react-router-dom";
 import { NeedsDependencies } from "../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
-import Setup from "./pages/Setup";
-import Home from "./pages/Home";
+const Setup = lazy(() => import("./pages/Setup"));
+const Video = lazy(() => import("./pages/Video"));
 import { useSettingsStore } from "./stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import OnboardingModal from "./components/OnboardingModal";
@@ -48,7 +55,7 @@ function DevShortcuts() {
         }
       }
     },
-    [navigate, hasCompletedOnboarding, completeOnboarding]
+    [navigate, hasCompletedOnboarding, completeOnboarding],
   );
 
   useEffect(() => {
@@ -91,7 +98,7 @@ function App() {
               console.log("[App] Received app:ready event:", payload);
               setNeedsSetup(payload.needsSetup);
             }
-          }
+          },
         );
         if (mountedRef.current) {
           unsubscribeRef.current = unsubscribe;
@@ -102,7 +109,7 @@ function App() {
       } catch (e) {
         console.warn(
           "[App] Failed to register app:ready listener, relying on fallback.",
-          e
+          e,
         );
       }
     };
@@ -165,18 +172,18 @@ function App() {
                 const decodedUrl = decodeURIComponent(targetUrl);
                 console.log(
                   "[App] Dispatching kinematic:fill-url with:",
-                  decodedUrl
+                  decodedUrl,
                 );
 
                 // Dispatch custom event to fill the URL input
                 window.dispatchEvent(
-                  new CustomEvent("kinematic:fill-url", { detail: decodedUrl })
+                  new CustomEvent("kinematic:fill-url", { detail: decodedUrl }),
                 );
               }
             } catch (e) {
               console.error("[App] Failed to parse deep-link URL:", e);
             }
-          }
+          },
         );
       } catch (e) {
         console.warn("[App] Failed to register deep-link listener:", e);
@@ -214,15 +221,25 @@ function App() {
         <DevShortcuts />
         <OnboardingModal />
         <UpdateModal />
-        <Routes>
-          <Route path="/setup" element={<Setup />} />
-          <Route path="/home" element={<Home />} />
+        <Suspense
+          fallback={
+            <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/setup" element={<Setup />} />
+            <Route path="/home" element={<Video />} />
 
-          <Route
-            path="/"
-            element={<Navigate to={needsSetup ? "/setup" : "/home"} replace />}
-          />
-        </Routes>
+            <Route
+              path="/"
+              element={
+                <Navigate to={needsSetup ? "/setup" : "/home"} replace />
+              }
+            />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );

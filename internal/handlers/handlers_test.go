@@ -42,6 +42,10 @@ func (m *MockYouTubeClient) UpdateYtDlp(channel string) (string, error) {
 	return "2024.01.01", nil
 }
 
+func (m *MockYouTubeClient) GetStreamURL(ctx context.Context, url string, format string) (string, error) {
+	return "https://example.com/stream", nil
+}
+
 // MockDownloadManager is a test double for the download manager.
 type MockDownloadManager struct {
 	AddJobFunc       func(opts youtube.DownloadOptions) (*storage.Download, error)

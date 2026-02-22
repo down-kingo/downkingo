@@ -3,20 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./i18n"; // Inicializa react-i18next
 import "./index.css";
-import Lenis from "lenis";
-
-// Initialize Lenis for smooth scrolling
-const lenis = new Lenis({
-  lerp: 0.1,
-  smoothWheel: true,
-});
-
-function raf(time: number) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-
-requestAnimationFrame(raf);
 
 class ErrorBoundary extends React.Component<
   any,

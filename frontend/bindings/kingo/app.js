@@ -362,6 +362,27 @@ export function GetVideoDownloadPath() {
 }
 
 /**
+ * GetStreamURL extracts the stream URL and returns a local proxy URL for the frontend.
+ * Returns the proxy URL (http://127.0.0.1:PORT/proxy/stream) for CORS-free video preview.
+ * @param {string} url
+ * @param {string} format
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetStreamURL(url, format) {
+    return $Call.ByName("main.App.GetStreamURL", url, format);
+}
+
+/**
+ * SetStreamURL registers a direct stream URL in the proxy without invoking yt-dlp.
+ * Instant alternative to GetStreamURL when the frontend already has the stream URL.
+ * @param {string} directURL
+ * @returns {$CancellablePromise<string>}
+ */
+export function SetStreamURL(directURL) {
+    return $Call.ByName("main.App.SetStreamURL", directURL);
+}
+
+/**
  * GetVideoInfo delegates to videoHandler
  * @param {string} url
  * @returns {$CancellablePromise<youtube$0.VideoInfo | null>}

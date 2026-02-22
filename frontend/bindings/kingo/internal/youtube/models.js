@@ -151,6 +151,22 @@ export class DownloadOptions {
              */
             this["thumbnail"] = "";
         }
+        if (!("startTime" in $$source)) {
+            /**
+             * Trimmer: HH:MM:SS or MM:SS (início do corte)
+             * @member
+             * @type {string}
+             */
+            this["startTime"] = "";
+        }
+        if (!("endTime" in $$source)) {
+            /**
+             * Trimmer: HH:MM:SS or MM:SS (fim do corte)
+             * @member
+             * @type {string}
+             */
+            this["endTime"] = "";
+        }
 
         Object.assign(this, $$source);
     }
