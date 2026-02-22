@@ -35,7 +35,10 @@ func New(dataDir string) (*DB, error) {
 		"PRAGMA foreign_keys = ON",
 		"PRAGMA journal_mode = WAL",
 		"PRAGMA synchronous = NORMAL",
-		"PRAGMA cache_size = -64000", // 64MB cache
+		"PRAGMA cache_size = -64000",    // 64MB cache
+		"PRAGMA busy_timeout = 5000",    // Wait 5s on lock instead of failing immediately
+		"PRAGMA temp_store = MEMORY",    // Store temp tables in memory
+		"PRAGMA mmap_size = 268435456",  // 256MB memory-mapped I/O
 	}
 
 	for _, pragma := range pragmas {

@@ -25,9 +25,22 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
+
+// proxyHTTPClient is a shared HTTP client for the proxy server.
+// Reused across requests to leverage connection pooling and avoid per-request allocations.
+var proxyHTTPClient = &http.Client{
+	Timeout: 60 * time.Second,
+	Transport: &http.Transport{
+		MaxIdleConns:        10,
+		IdleConnTimeout:     90 * time.Second,
+		DisableCompression:  true, // streams are already compressed
+		MaxConnsPerHost:     5,
+	},
+}
 
 // Version is set at build time via ldflags, or read from the embedded VERSION file.
 var Version string
@@ -201,9 +214,10 @@ func (a *App) startClipboardMonitor(ctx context.Context) {
 
 // initializeHandlers creates and configures all business logic handlers.
 func (a *App) initializeHandlers(ctx context.Context) {
-	a.videoHandler = handlers.NewVideoHandler(a.youtube, a.downloadManager)
-	a.videoHandler.SetContext(ctx)
-	a.videoHandler.SetConsoleEmitter(a.consoleLog)
+	a.videoHandler = handlers.NewVideoHandler(a.youtube, a.downloadManager,
+		handlers.WithContext(ctx),
+		handlers.WithConsoleEmitter(a.consoleLog),
+	)
 
 	a.mediaHandler = handlers.NewMediaHandler(a.imageClient, a.youtube)
 	a.mediaHandler.SetContext(ctx)
@@ -264,8 +278,7 @@ func (a *App) startProxyServer() {
 			req.Header.Set("Range", rangeHeader)
 		}
 
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := proxyHTTPClient.Do(req)
 		if err != nil {
 			http.Error(w, "failed to fetch stream", http.StatusBadGateway)
 			return
@@ -696,16 +709,39 @@ func (a *App) GetUserReactions() (map[int]string, error) {
 		}
 	}
 
-	reactions := make(map[int]string)
+	// Fetch reactions concurrently with bounded parallelism
+	type result struct {
+		id       int
+		reaction string
+	}
+
+	results := make(chan result, len(items))
+	sem := make(chan struct{}, 5) // Max 5 concurrent API calls
+
+	var wg sync.WaitGroup
 	for _, item := range items {
-		reaction, err := a.roadmap.GetUserReaction(a.auth.Token, item.ID)
-		if err != nil {
-			// Log but continue - don't fail the whole batch for one item
-			continue
-		}
-		if reaction != "" {
-			reactions[item.ID] = reaction
-		}
+		wg.Add(1)
+		go func(issueID int) {
+			defer wg.Done()
+			sem <- struct{}{}        // Acquire
+			defer func() { <-sem }() // Release
+
+			reaction, err := a.roadmap.GetUserReaction(a.auth.Token, issueID)
+			if err != nil || reaction == "" {
+				return
+			}
+			results <- result{id: issueID, reaction: reaction}
+		}(item.ID)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	reactions := make(map[int]string)
+	for r := range results {
+		reactions[r.id] = r.reaction
 	}
 
 	return reactions, nil

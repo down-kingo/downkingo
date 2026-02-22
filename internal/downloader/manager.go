@@ -38,6 +38,11 @@ type Manager struct {
 	// Metrics
 	totalCompleted int64
 	totalFailed    int64
+
+	// Batched progress: stores latest progress per job, flushed every 50ms
+	pendingProgress map[string]map[string]interface{}
+	progressMu      sync.Mutex
+	progressTicker  *time.Ticker
 }
 
 // NewManager creates a new download manager
@@ -47,13 +52,14 @@ func NewManager(repo *storage.DownloadRepository, client *youtube.Client, maxCon
 	}
 
 	return &Manager{
-		repo:          repo,
-		client:        client,
-		maxConcurrent: maxConcurrent,
-		queue:         make(chan *Job, 100), // Buffered to not block UI
-		activeSlots:   make(chan struct{}, maxConcurrent),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		repo:            repo,
+		client:          client,
+		maxConcurrent:   maxConcurrent,
+		queue:           make(chan *Job, 100), // Buffered to not block UI
+		activeSlots:     make(chan struct{}, maxConcurrent),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 }
 
@@ -71,6 +77,10 @@ func (m *Manager) Start() {
 
 	// Periodic stats logging
 	go m.logStatsLoop()
+
+	// Batched progress flush loop (50ms window to reduce frontend event thrashing)
+	m.progressTicker = time.NewTicker(50 * time.Millisecond)
+	go m.flushProgressLoop()
 
 	// Main processing loop
 	go func() {
@@ -98,6 +108,10 @@ func (m *Manager) Start() {
 // Stop gracefully shuts down the manager
 func (m *Manager) Stop() {
 	close(m.quit)
+	if m.progressTicker != nil {
+		m.progressTicker.Stop()
+	}
+	m.flushPendingProgress() // Flush remaining progress events
 	m.wg.Wait()
 	logger.Log.Info().Msg("download manager stopped")
 }
@@ -453,9 +467,12 @@ func (m *Manager) logStatsLoop() {
 	}
 }
 
-// emitEvent is a helper to emit events using Wails v3 API
+// emitEvent is a helper to emit events using Wails v3 API.
+// Safe for tests where application.Get() may return nil.
 func (m *Manager) emitEvent(eventName string, data any) {
-	application.Get().Event.Emit(eventName, data)
+	if app := application.Get(); app != nil {
+		app.Event.Emit(eventName, data)
+	}
 }
 
 // emitJobAdded emits an event when a job is added
@@ -476,7 +493,8 @@ func (m *Manager) emitProgress(download *storage.Download) {
 	})
 }
 
-// emitDetailedProgress emite progresso com ID do job (para callbacks)
+// emitDetailedProgress buffers progress updates to be flushed every 50ms.
+// This reduces frontend event thrashing during rapid yt-dlp output.
 func (m *Manager) emitDetailedProgress(jobID string, p youtube.DownloadProgress) {
 	m.mu.RLock()
 	job, exists := m.jobs[jobID]
@@ -487,14 +505,52 @@ func (m *Manager) emitDetailedProgress(jobID string, p youtube.DownloadProgress)
 		thumbnail = job.Download.Thumbnail
 	}
 
-	m.emitEvent(events.DownloadProgress, map[string]interface{}{
+	data := map[string]interface{}{
 		"id":        jobID,
 		"status":    p.Status,
 		"progress":  p.Percent,
 		"speed":     p.Speed,
 		"eta":       p.ETA,
 		"thumbnail": thumbnail,
-	})
+	}
+
+	// For terminal states, emit immediately (don't buffer)
+	if p.Status == "merging" || p.Status == "completed" || p.Status == "failed" {
+		m.emitEvent(events.DownloadProgress, data)
+		return
+	}
+
+	m.progressMu.Lock()
+	m.pendingProgress[jobID] = data
+	m.progressMu.Unlock()
+}
+
+// flushProgressLoop periodically sends batched progress to frontend
+func (m *Manager) flushProgressLoop() {
+	for {
+		select {
+		case <-m.progressTicker.C:
+			m.flushPendingProgress()
+		case <-m.quit:
+			return
+		}
+	}
+}
+
+// flushPendingProgress emits all buffered progress events
+func (m *Manager) flushPendingProgress() {
+	m.progressMu.Lock()
+	if len(m.pendingProgress) == 0 {
+		m.progressMu.Unlock()
+		return
+	}
+	pending := m.pendingProgress
+	m.pendingProgress = make(map[string]map[string]interface{})
+	m.progressMu.Unlock()
+
+	for _, data := range pending {
+		m.emitEvent(events.DownloadProgress, data)
+	}
 }
 
 // emitLog emite log com ID do job (para Terminal)

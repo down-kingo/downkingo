@@ -44,13 +44,14 @@ func TestManager_AddJob_CreatesDownload(t *testing.T) {
 
 	// Create manager but don't start the worker loop (we test AddJob logic only)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	opts := youtube.DownloadOptions{
@@ -93,13 +94,14 @@ func TestManager_AddJob_CreatesDownload(t *testing.T) {
 func TestManager_AddJob_PreventsDuplicateURL(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	url := "https://youtube.com/watch?v=dup"
@@ -124,13 +126,14 @@ func TestManager_AddJob_PreventsDuplicateURL(t *testing.T) {
 func TestManager_AddJob_ConcurrentSafety(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	var wg sync.WaitGroup
@@ -172,13 +175,14 @@ func TestManager_AddJob_ConcurrentSafety(t *testing.T) {
 func TestManager_CancelJob_UpdatesStatus(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	download, _ := m.AddJob(youtube.DownloadOptions{URL: "https://youtube.com/watch?v=cancel-test"})
@@ -198,13 +202,14 @@ func TestManager_CancelJob_UpdatesStatus(t *testing.T) {
 func TestManager_CancelJob_CancelsContext(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	download, _ := m.AddJob(youtube.DownloadOptions{URL: "https://youtube.com/watch?v=ctx-cancel"})
@@ -236,13 +241,14 @@ func TestManager_CancelJob_CancelsContext(t *testing.T) {
 func TestManager_CancelJob_NonExistentJob(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	// Should not panic, just update DB status (even if no record)
@@ -260,13 +266,14 @@ func TestManager_CancelJob_NonExistentJob(t *testing.T) {
 func TestManager_GetQueue(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	m.AddJob(youtube.DownloadOptions{URL: "https://youtube.com/watch?v=q1"})
@@ -284,13 +291,14 @@ func TestManager_GetQueue(t *testing.T) {
 func TestManager_GetHistory_Empty(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	history, err := m.GetHistory(50)
@@ -305,13 +313,14 @@ func TestManager_GetHistory_Empty(t *testing.T) {
 func TestManager_ClearHistory(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	// Create and complete a download manually in DB
@@ -367,13 +376,14 @@ func TestNewManager_DefaultsConcurrency(t *testing.T) {
 func TestManager_CleanupJob(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	download, _ := m.AddJob(youtube.DownloadOptions{URL: "https://youtube.com/watch?v=cleanup"})
@@ -413,13 +423,14 @@ func TestManager_RestorePendingJobs(t *testing.T) {
 	repo.Create(d3)
 
 	m := &Manager{
-		ctx:           context.Background(),
-		repo:          repo,
-		maxConcurrent: 3,
-		queue:         make(chan *Job, 100),
-		activeSlots:   make(chan struct{}, 3),
-		jobs:          make(map[string]*Job),
-		quit:          make(chan struct{}),
+		ctx:             context.Background(),
+		repo:            repo,
+		maxConcurrent:   3,
+		queue:           make(chan *Job, 100),
+		activeSlots:     make(chan struct{}, 3),
+		jobs:            make(map[string]*Job),
+		quit:            make(chan struct{}),
+		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
 	m.restorePendingJobs()

@@ -32,12 +32,25 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": ["framer-motion", "@tabler/icons-react"],
-          "utils-vendor": ["i18next", "react-i18next", "zustand"],
+          // Core React — loaded on every page, small and stable
+          "react-core": ["react", "react-dom"],
+          // State & i18n — loaded on every page but separate from React for caching
+          "state-vendor": ["zustand", "i18next", "react-i18next"],
+          // Framer Motion — heavy (~66KB gzip), isolated so lazy pages don't pay upfront
+          "motion-vendor": ["framer-motion"],
+          // Icons — tree-shaken but still heavy, separate chunk for better caching
+          "icons-vendor": ["@tabler/icons-react"],
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
+    // Remove console.log in production builds
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
 });

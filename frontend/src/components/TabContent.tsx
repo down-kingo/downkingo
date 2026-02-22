@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { memo, ReactNode } from "react";
 
 interface TabContentProps {
   children: ReactNode;
-  className?: string; // Classe extra se necessário
+  className?: string;
 }
 
-export const TabContent = ({ children, className }: TabContentProps) => (
+// Memoized to prevent re-renders when sibling tabs update
+export const TabContent = memo(({ children, className }: TabContentProps) => (
   <motion.div
     initial={{ opacity: 0, x: 10 }}
     animate={{ opacity: 1, x: 0 }}
@@ -18,4 +19,4 @@ export const TabContent = ({ children, className }: TabContentProps) => (
   >
     {children}
   </motion.div>
-);
+));

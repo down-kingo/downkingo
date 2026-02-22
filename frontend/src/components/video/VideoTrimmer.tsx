@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -38,7 +38,7 @@ function parseTimeToSeconds(time: string): number {
   return parts[0] || 0;
 }
 
-export default function VideoTrimmer({
+function VideoTrimmerInner({
   videoUrl,
   duration,
   onTrimChange,
@@ -572,3 +572,8 @@ export default function VideoTrimmer({
     </div>
   );
 }
+
+// Memoize to prevent re-renders from parent state changes (quality, mode, etc.)
+// Only re-renders when trimmer-specific props change, keeping scrubbing fluid.
+const VideoTrimmer = memo(VideoTrimmerInner);
+export default VideoTrimmer;

@@ -41,13 +41,28 @@ type VideoHandler struct {
 
 // NewVideoHandler creates a new VideoHandler with dependencies.
 // Uses constructor injection for testability - accepts interfaces, not concrete types.
-func NewVideoHandler(yt YouTubeClientInterface, dm DownloadManagerInterface) *VideoHandler {
-	return &VideoHandler{
+// ctx and emitter can be passed directly to avoid the SetContext/SetConsoleEmitter anti-pattern.
+func NewVideoHandler(yt YouTubeClientInterface, dm DownloadManagerInterface, opts ...func(*VideoHandler)) *VideoHandler {
+	h := &VideoHandler{
 		ctx:             context.Background(),
 		youtube:         yt,
 		downloadManager: dm,
 		consoleEmitter:  func(s string) {}, // no-op default
 	}
+	for _, opt := range opts {
+		opt(h)
+	}
+	return h
+}
+
+// WithContext returns an option that sets the handler context.
+func WithContext(ctx context.Context) func(*VideoHandler) {
+	return func(h *VideoHandler) { h.ctx = ctx }
+}
+
+// WithConsoleEmitter returns an option that sets the console emitter.
+func WithConsoleEmitter(emitter func(string)) func(*VideoHandler) {
+	return func(h *VideoHandler) { h.consoleEmitter = emitter }
 }
 
 // SetContext sets the Wails runtime context.

@@ -18,6 +18,11 @@ import (
 // Device Flow habilitado nas configurações do App
 const ClientID = "Iv23liJjoBb3O4FatgRC"
 
+// authHTTPClient is a shared HTTP client with timeout for all auth requests.
+var authHTTPClient = &http.Client{
+	Timeout: 15 * time.Second,
+}
+
 type AuthService struct {
 	configDir    string
 	Token        string
@@ -68,7 +73,7 @@ func (s *AuthService) StartDeviceFlow() (*DeviceCodeResponse, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := authHTTPClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("network error: %w", err)
 	}
@@ -146,7 +151,7 @@ func (s *AuthService) checkToken(deviceCode string) (string, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := authHTTPClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("network error: %w", err)
 	}
@@ -223,7 +228,7 @@ func (s *AuthService) RefreshAccessToken() (string, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := authHTTPClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("network error during refresh: %w", err)
 	}

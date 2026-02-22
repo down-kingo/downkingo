@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   safeWindowSetDarkTheme,
   safeWindowSetLightTheme,
   safeEventsOn,
 } from "../lib/wailsRuntime";
-import { useDownloadStore, Download } from "../stores/downloadStore";
+import { useDownloadStore } from "../stores/downloadStore";
 import { useDownloadSync } from "../hooks/useDownloadSync";
 import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-import { useDebounce } from "../hooks/useDebounce";
+import { useVideoFetch } from "../hooks/useVideoFetch";
+import { useTrimmer } from "../hooks/useTrimmer";
 import SettingsPanel, { SettingsTab } from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
 import OnboardingModal from "../components/OnboardingModal";
@@ -20,7 +21,6 @@ import { Sidebar, Topbar, TabType } from "../components/navigation";
 import {
   getVideoQualities,
   AUDIO_FORMATS,
-  VideoInfo,
   VideoTrimmer,
 } from "../components/video";
 const Images = lazy(() => import("./Images"));
@@ -31,51 +31,36 @@ const Dashboard = lazy(() => import("./Dashboard"));
 import { HistoryView } from "../components/HistoryView";
 import { Skeleton } from "../components/Skeleton";
 import { TabContent } from "../components/TabContent";
+import { RouteErrorBoundary } from "../components/ErrorBoundary";
 import {
   GetDownloadsPath,
   GetVersion,
-  GetVideoInfo,
-  GetStreamURL,
-  SetStreamURL,
   AddToQueueAdvanced,
   UpdateYtDlp,
   CheckForUpdate,
   InstallAppVersion,
   RestartApp,
-  OpenDownloadFolder,
-  OpenUrl,
-  CheckAria2cStatus,
-  DownloadAria2c,
 } from "../../bindings/kingo/app";
 import {
   IconDownload,
-  IconHistory,
-  IconFolder,
-  IconCheck,
   IconX,
   IconMusic,
   IconVideo,
   IconCloud,
   IconLoader2,
-  IconRefresh,
-  IconDeviceTv,
-  IconDeviceMobile,
-  IconFileMusic,
-  IconBrandApple,
-  IconVinyl,
   IconSearch,
-  IconSettings,
-  IconTrash,
-  IconPhoto,
-  IconHome,
-  IconWorld,
-  IconExternalLink,
   IconList,
-  IconTransform,
   IconRocket,
   IconBolt,
   IconArrowRight,
 } from "@tabler/icons-react";
+
+// Memoized Suspense fallback to avoid recreating on every render
+const SuspenseFallback = (
+  <div className="flex-1 flex items-center justify-center">
+    <IconLoader2 size={32} className="animate-spin text-primary-500" />
+  </div>
+);
 
 export default function Video() {
   const settings = useSettingsStore(
@@ -101,7 +86,6 @@ export default function Video() {
     theme,
     layout,
     primaryColor,
-    language,
     remuxVideo,
     remuxFormat,
     embedThumbnail,
@@ -116,13 +100,37 @@ export default function Video() {
   const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
   const { t } = useTranslation("common");
 
-  const VIDEO_QUALITIES = getVideoQualities(videoCompatibility);
+  const VIDEO_QUALITIES = useMemo(
+    () => getVideoQualities(videoCompatibility),
+    [videoCompatibility],
+  );
 
-  const [url, setUrl] = useState("");
-  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
+  // Custom hooks for isolated state management
+  const {
+    url,
+    setUrl,
+    videoInfo,
+    setVideoInfo,
+    isFetching,
+    error,
+    setError,
+    handlePaste,
+    onPasteEvent,
+    clearUrl: clearUrlState,
+  } = useVideoFetch();
+
+  const {
+    trimEnabled,
+    trimStart,
+    trimEnd,
+    streamUrl,
+    handleTrimToggle,
+    handleStreamError,
+    handleTrimChange,
+    resetTrimmer,
+  } = useTrimmer(videoInfo, url);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState("");
   const [downloadsPath, setDownloadsPath] = useState("");
   const [version, setVersion] = useState("");
 
@@ -140,13 +148,16 @@ export default function Video() {
   };
 
   // Guard: only allow navigation to enabled tabs
-  const setActiveTab = (tab: TabType) => {
-    const requiredFeature = tabToFeature[tab];
-    if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
-      return; // Block navigation to disabled feature
-    }
-    setActiveTabRaw(tab);
-  };
+  const setActiveTab = useCallback(
+    (tab: TabType) => {
+      const requiredFeature = tabToFeature[tab];
+      if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
+        return;
+      }
+      setActiveTabRaw(tab);
+    },
+    [enabledFeatures],
+  );
 
   // Reset to home if current tab was disabled
   useEffect(() => {
@@ -163,13 +174,16 @@ export default function Video() {
     targetId?: string;
   }>({ isOpen: false });
 
-  const openSettings = (tab: SettingsTab = "general", targetId?: string) => {
-    setSettingsState({ isOpen: true, tab, targetId });
-  };
+  const openSettings = useCallback(
+    (tab: SettingsTab = "general", targetId?: string) => {
+      setSettingsState({ isOpen: true, tab, targetId });
+    },
+    [],
+  );
 
-  const closeSettings = () => {
+  const closeSettings = useCallback(() => {
     setSettingsState((prev) => ({ ...prev, isOpen: false }));
-  };
+  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -209,14 +223,6 @@ export default function Video() {
   );
   const [selectedAudioFormat, setSelectedAudioFormat] = useState("mp3");
 
-  // Trimmer state
-  const [trimEnabled, setTrimEnabled] = useState(false);
-  const [trimStart, setTrimStart] = useState("");
-  const [trimEnd, setTrimEnd] = useState("");
-  const [streamUrl, setStreamUrl] = useState("");
-  const [isLoadingStream, setIsLoadingStream] = useState(false);
-  const streamFallbackTriedRef = useRef(false);
-
   // Auto-Update Logic (apenas em produção, rate limited 1x/dia)
   useEffect(() => {
     const isDev =
@@ -242,11 +248,8 @@ export default function Video() {
       CheckForUpdate()
         .then((info) => {
           if (info?.available) {
-            console.log("Update disponível:", info.latestVersion);
             InstallAppVersion(info.latestVersion)
-              .then(() => {
-                RestartApp();
-              })
+              .then(() => RestartApp())
               .catch(() => {});
           }
         })
@@ -254,8 +257,8 @@ export default function Video() {
     }
   }, [autoUpdateYtDlp, ytDlpChannel, autoUpdateApp]);
 
-  const { queue, history } = useDownloadStore();
-  const { cancelDownload, refresh, clearHistory } = useDownloadSync();
+  const { queue } = useDownloadStore();
+  useDownloadSync();
 
   // Apply Theme and Colors
   useEffect(() => {
@@ -264,7 +267,6 @@ export default function Video() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-
     document.documentElement.setAttribute("data-color", primaryColor);
 
     if (theme === "dark") {
@@ -278,79 +280,6 @@ export default function Video() {
     GetDownloadsPath().then(setDownloadsPath);
     GetVersion().then(setVersion);
   }, []);
-  // Debounce for typed input (shorter — 400ms is enough to avoid per-keystroke calls)
-  const debouncedUrl = useDebounce(url, 400);
-
-  // Detect if a URL is a supported video platform link
-  const isSupportedUrl = (u: string) =>
-    u.includes("youtube.com") ||
-    u.includes("youtu.be") ||
-    u.includes("tiktok.com") ||
-    u.includes("instagram.com");
-
-  // Ref to skip debounce when URL was pasted (not typed)
-  const skipDebounceRef = useRef(false);
-
-  const handlePaste = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        setUrl(text);
-        if (error) setError("");
-
-        // Bypass debounce: fetch immediately on paste if valid URL
-        if (isSupportedUrl(text)) {
-          skipDebounceRef.current = true;
-        }
-      }
-    } catch (err) {
-      console.error("Failed to read clipboard:", err);
-    }
-  };
-
-  // Instant fetch when URL is pasted (bypasses debounce)
-  useEffect(() => {
-    if (skipDebounceRef.current) {
-      skipDebounceRef.current = false;
-      fetchVideoInfo();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url]);
-
-  // Debounced fetch for typed URLs
-  useEffect(() => {
-    if (!debouncedUrl.trim()) {
-      setVideoInfo(null);
-      return;
-    }
-    if (!isSupportedUrl(debouncedUrl)) return;
-
-    // Don't double-fetch if paste already triggered it
-    if (isFetching) return;
-
-    fetchVideoInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedUrl]);
-
-  const fetchVideoInfo = async () => {
-    if (!url.trim()) return;
-    setIsFetching(true);
-    setError("");
-    setStreamUrl("");
-    setTrimEnabled(false);
-    setTrimStart("");
-    setTrimEnd("");
-
-    try {
-      const info = await GetVideoInfo(url);
-      setVideoInfo(info as unknown as VideoInfo);
-    } catch (err) {
-      setError(String(err));
-      setVideoInfo(null);
-    } finally {
-      setIsFetching(false);
-    }
-  };
 
   // Auto-select best available quality
   useEffect(() => {
@@ -373,7 +302,7 @@ export default function Video() {
     }
   }, [videoInfo, VIDEO_QUALITIES, selectedQuality]);
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     if (!url.trim() || !videoInfo) return;
     setIsLoading(true);
     setError("");
@@ -400,141 +329,39 @@ export default function Video() {
         startTime: trimEnabled ? trimStart : "",
         endTime: trimEnabled ? trimEnd : "",
       });
-      setUrl("");
-      setVideoInfo(null);
+      clearUrlState();
+      resetTrimmer();
     } catch (err) {
       setError(String(err));
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [
+    url,
+    videoInfo,
+    downloadMode,
+    selectedQuality,
+    selectedAudioFormat,
+    remuxVideo,
+    remuxFormat,
+    embedThumbnail,
+    skipExisting,
+    useAria2c,
+    aria2cConnections,
+    trimEnabled,
+    trimStart,
+    trimEnd,
+    clearUrlState,
+    resetTrimmer,
+    setError,
+  ]);
 
-  // Find best muxed (video+audio) format URL for preview.
-  // Prefers small (360p) MP4 — preview doesn't need HD.
-  const findBestMuxedUrl = (): string | null => {
-    if (!videoInfo?.formats) return null;
-    const muxed = videoInfo.formats.filter(
-      (f) =>
-        f.url &&
-        f.vcodec &&
-        f.vcodec !== "none" &&
-        f.acodec &&
-        f.acodec !== "none",
-    );
-    if (muxed.length === 0) return null;
+  const clearUrl = useCallback(() => {
+    clearUrlState();
+    resetTrimmer();
+  }, [clearUrlState, resetTrimmer]);
 
-    const mp4s = muxed
-      .filter((f) => f.ext === "mp4")
-      .sort((a, b) => (a.height || 0) - (b.height || 0));
-    const best = mp4s.find((f) => (f.height || 0) >= 240) || mp4s[0];
-    return best?.url || muxed[0]?.url || null;
-  };
-
-  // Ref to track blob upgrade abort controller
-  const blobAbortRef = useRef<AbortController | null>(null);
-
-  // Phase 1: Show video via proxy (instant streaming)
-  // Phase 2: Download blob in background, swap src when ready (instant seeking)
-  const handleTrimToggle = async (enabled: boolean) => {
-    setTrimEnabled(enabled);
-    streamFallbackTriedRef.current = false;
-
-    // Abort any pending blob download
-    blobAbortRef.current?.abort();
-    blobAbortRef.current = null;
-
-    if (enabled && url && !streamUrl) {
-      // Phase 1: stream via proxy — video appears immediately
-      const muxedUrl = findBestMuxedUrl();
-      if (muxedUrl) {
-        try {
-          const proxyUrl = await SetStreamURL(muxedUrl);
-          setStreamUrl(proxyUrl);
-
-          // Phase 2: download blob in background for instant seeking
-          const controller = new AbortController();
-          blobAbortRef.current = controller;
-          fetch(proxyUrl, { signal: controller.signal })
-            .then((r) => (r.ok ? r.blob() : Promise.reject()))
-            .then((blob) => {
-              if (!controller.signal.aborted) {
-                const blobUrl = URL.createObjectURL(blob);
-                setStreamUrl((prev) => {
-                  // Revoke old proxy URL is not needed (not a blob)
-                  return blobUrl;
-                });
-              }
-            })
-            .catch(() => {});
-          return;
-        } catch {
-          // Fall through to yt-dlp
-        }
-      }
-
-      // Fallback: yt-dlp extraction → proxy stream → blob upgrade
-      setIsLoadingStream(true);
-      try {
-        const proxyUrl = await GetStreamURL(url, "best[ext=mp4]/best");
-        setStreamUrl(proxyUrl);
-
-        const controller = new AbortController();
-        blobAbortRef.current = controller;
-        fetch(proxyUrl, { signal: controller.signal })
-          .then((r) => (r.ok ? r.blob() : Promise.reject()))
-          .then((blob) => {
-            if (!controller.signal.aborted) {
-              setStreamUrl(URL.createObjectURL(blob));
-            }
-          })
-          .catch(() => {});
-      } catch {
-        setStreamUrl("");
-      } finally {
-        setIsLoadingStream(false);
-      }
-    }
-  };
-
-  // Called by VideoTrimmer when the video fails to load — retry with full yt-dlp
-  const handleStreamError = async () => {
-    if (streamFallbackTriedRef.current || !url) return;
-    streamFallbackTriedRef.current = true;
-
-    if (streamUrl.startsWith("blob:")) URL.revokeObjectURL(streamUrl);
-    blobAbortRef.current?.abort();
-
-    setIsLoadingStream(true);
-    try {
-      const proxyUrl = await GetStreamURL(url, "best[ext=mp4]/best");
-      setStreamUrl(proxyUrl);
-    } catch {
-      setStreamUrl("");
-    } finally {
-      setIsLoadingStream(false);
-    }
-  };
-
-  const handleTrimChange = (start: string, end: string) => {
-    setTrimStart(start);
-    setTrimEnd(end);
-  };
-
-  const clearUrl = () => {
-    setUrl("");
-    setVideoInfo(null);
-    setError("");
-    setTrimEnabled(false);
-    setTrimStart("");
-    setTrimEnd("");
-    blobAbortRef.current?.abort();
-    blobAbortRef.current = null;
-    if (streamUrl.startsWith("blob:")) URL.revokeObjectURL(streamUrl);
-    setStreamUrl("");
-    streamFallbackTriedRef.current = false;
-  };
-
-  const formatDuration = (seconds: number) => {
+  const formatDuration = useCallback((seconds: number) => {
     if (!seconds) return "";
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -545,14 +372,21 @@ export default function Video() {
         .padStart(2, "0")}`;
     }
     return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
+  }, []);
 
-  const formatViews = (count: number) => {
+  const formatViews = useCallback((count: number) => {
     if (!count) return "";
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
-  };
+  }, []);
+
+  // Memoized available qualities based on video info
+  const availableQualities = useMemo(() => {
+    if (!videoInfo?.formats) return VIDEO_QUALITIES;
+    const maxH = Math.max(...videoInfo.formats.map((f) => f.height || 0));
+    return VIDEO_QUALITIES.filter((q) => maxH >= (q.minHeight || 0));
+  }, [videoInfo, VIDEO_QUALITIES]);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-surface-50 dark:bg-surface-50 text-surface-900 transition-colors duration-300">
@@ -586,38 +420,22 @@ export default function Video() {
           <AnimatePresence mode="wait">
             {activeTab === "home" && (
               <TabContent key="home">
-                <Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <IconLoader2
-                        size={32}
-                        className="animate-spin text-primary-500"
-                      />
-                    </div>
-                  }
-                >
-                  <Dashboard onNavigate={setActiveTab} />
-                </Suspense>
+                <RouteErrorBoundary>
+                  <Suspense fallback={SuspenseFallback}>
+                    <Dashboard onNavigate={setActiveTab} />
+                  </Suspense>
+                </RouteErrorBoundary>
               </TabContent>
             )}
 
             {activeTab === "images" && enabledFeatures.includes("images") && (
               <TabContent key="images">
-                <div
-                  className="flex-1 min-h-0 overflow-y-auto p-8 bg-surface-50 dark:bg-surface-950"
-                >
-                  <Suspense
-                    fallback={
-                      <div className="flex-1 flex items-center justify-center">
-                        <IconLoader2
-                          size={32}
-                          className="animate-spin text-primary-500"
-                        />
-                      </div>
-                    }
-                  >
-                    <Images />
-                  </Suspense>
+                <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-surface-50 dark:bg-surface-950">
+                  <RouteErrorBoundary>
+                    <Suspense fallback={SuspenseFallback}>
+                      <Images />
+                    </Suspense>
+                  </RouteErrorBoundary>
                 </div>
               </TabContent>
             )}
@@ -625,53 +443,32 @@ export default function Video() {
             {activeTab === "converter" &&
               enabledFeatures.includes("converter") && (
                 <TabContent key="converter">
-                  <Suspense
-                    fallback={
-                      <div className="flex-1 flex items-center justify-center">
-                        <IconLoader2
-                          size={32}
-                          className="animate-spin text-primary-500"
-                        />
-                      </div>
-                    }
-                  >
-                    <Converter />
-                  </Suspense>
+                  <RouteErrorBoundary>
+                    <Suspense fallback={SuspenseFallback}>
+                      <Converter />
+                    </Suspense>
+                  </RouteErrorBoundary>
                 </TabContent>
               )}
 
             {activeTab === "transcriber" &&
               enabledFeatures.includes("transcriber") && (
                 <TabContent key="transcriber">
-                  <Suspense
-                    fallback={
-                      <div className="flex-1 flex items-center justify-center">
-                        <IconLoader2
-                          size={32}
-                          className="animate-spin text-primary-500"
-                        />
-                      </div>
-                    }
-                  >
-                    <Transcriber />
-                  </Suspense>
+                  <RouteErrorBoundary>
+                    <Suspense fallback={SuspenseFallback}>
+                      <Transcriber />
+                    </Suspense>
+                  </RouteErrorBoundary>
                 </TabContent>
               )}
 
             {activeTab === "roadmap" && (
               <TabContent key="roadmap">
-                <Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <IconLoader2
-                        size={32}
-                        className="animate-spin text-primary-500"
-                      />
-                    </div>
-                  }
-                >
-                  <Roadmap />
-                </Suspense>
+                <RouteErrorBoundary>
+                  <Suspense fallback={SuspenseFallback}>
+                    <Roadmap />
+                  </Suspense>
+                </RouteErrorBoundary>
               </TabContent>
             )}
 
@@ -695,10 +492,7 @@ export default function Video() {
                               if (error) setError("");
                             }}
                             onPaste={(e) => {
-                              const text = e.clipboardData.getData("text");
-                              if (text && isSupportedUrl(text)) {
-                                skipDebounceRef.current = true;
-                              }
+                              onPasteEvent(e.clipboardData.getData("text"));
                             }}
                             placeholder={t("home.paste_url")}
                             className="w-full bg-transparent border-none py-3 pl-12 pr-10 text-surface-900 placeholder:text-surface-400 focus:ring-0 text-base font-medium"
@@ -820,9 +614,7 @@ export default function Video() {
                   </div>
                 </header>
 
-                <div
-                  className="flex-1 min-h-0 overflow-y-auto p-6 custom-scrollbar"
-                >
+                <div className="flex-1 min-h-0 overflow-y-auto p-6 custom-scrollbar">
                   <div className="max-w-4xl mx-auto">
                     {/* Video Content */}
                     <AnimatePresence mode="wait">
@@ -842,6 +634,7 @@ export default function Video() {
                                   src={videoInfo.thumbnail}
                                   alt={videoInfo.title}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
                                   onError={(e) => {
                                     (
                                       e.target as HTMLImageElement
@@ -911,16 +704,7 @@ export default function Video() {
                                 {t("home.quality")}
                               </label>
                               <div className="flex gap-2 overflow-x-auto pb-1">
-                                {VIDEO_QUALITIES.filter((q) => {
-                                  const maxH = videoInfo?.formats
-                                    ? Math.max(
-                                        ...videoInfo.formats.map(
-                                          (f) => f.height || 0,
-                                        ),
-                                      )
-                                    : 0;
-                                  return maxH >= (q.minHeight || 0);
-                                }).map((q) => {
+                                {availableQualities.map((q) => {
                                   const Icon = q.icon;
                                   return (
                                     <button
@@ -993,7 +777,7 @@ export default function Video() {
                             </motion.div>
                           )}
 
-                          {/* Video Trimmer */}
+                          {/* Video Trimmer — isolated state, won't re-render parent */}
                           {videoInfo.duration > 0 && (
                             <div className="mb-5 pt-5 border-t border-surface-100 dark:border-surface-800">
                               <VideoTrimmer
@@ -1110,9 +894,7 @@ export default function Video() {
 
             {activeTab === "history" && (
               <TabContent key="history">
-                <div
-                  className="flex-1 min-h-0 p-6 overflow-y-auto overscroll-y-contain custom-scrollbar"
-                >
+                <div className="flex-1 min-h-0 p-6 overflow-y-auto overscroll-y-contain custom-scrollbar">
                   <HistoryView />
                 </div>
               </TabContent>

@@ -48,12 +48,10 @@ func sanitizeUTF8(s string) string {
 		return s
 	}
 	// Converter byte a byte assumindo CP1252/Latin-1
-	var result []rune
+	// Pré-aloca buffer para evitar realocações O(n²)
+	result := make([]rune, len(s))
 	for i := 0; i < len(s); i++ {
-		b := s[i]
-		// CP1252 bytes 0x80-0x9F têm mapeamento especial
-		// Para simplificar, tratamos como Latin-1 (ISO-8859-1) que é um superset de ASCII
-		result = append(result, rune(b))
+		result[i] = rune(s[i])
 	}
 	return string(result)
 }

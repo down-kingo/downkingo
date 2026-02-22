@@ -7,6 +7,13 @@ import (
 	"github.com/google/uuid"
 )
 
+// downloadColumns is the standard SELECT column list using COALESCE to avoid sql.NullString overhead.
+// This eliminates ~8 NullString allocations per row scanned.
+const downloadColumns = `id, url, COALESCE(title,''), COALESCE(thumbnail,''), duration, COALESCE(uploader,''),
+	COALESCE(format,'best'), audio_only, status, progress, COALESCE(speed,''), COALESCE(eta,''),
+	COALESCE(file_path,''), file_size, COALESCE(error_message,''),
+	created_at, started_at, completed_at`
+
 // DownloadRepository handles download CRUD operations
 type DownloadRepository struct {
 	db *DB
@@ -61,20 +68,14 @@ func (r *DownloadRepository) Update(d *Download) error {
 // ExistsActiveByURL checks if there's already an active download for this URL
 // Returns the existing download if found, nil otherwise
 func (r *DownloadRepository) ExistsActiveByURL(url string) (*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads 
+	query := `SELECT ` + downloadColumns + ` FROM downloads
 		WHERE url = ? AND status NOT IN ('completed', 'failed', 'cancelled')
-		LIMIT 1
-	`
+		LIMIT 1`
 	d := &Download{}
-	var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 	err := r.db.conn.QueryRow(query, url).Scan(
-		&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
-		&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
-		&filePath, &d.FileSize, &errorMessage,
+		&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
+		&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
+		&d.FilePath, &d.FileSize, &d.ErrorMessage,
 		&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 	)
 	if err == sql.ErrNoRows {
@@ -83,14 +84,6 @@ func (r *DownloadRepository) ExistsActiveByURL(url string) (*Download, error) {
 	if err != nil {
 		return nil, err
 	}
-	d.Title = title.String
-	d.Thumbnail = thumbnail.String
-	d.Uploader = uploader.String
-	d.Format = format.String
-	d.Speed = speed.String
-	d.ETA = eta.String
-	d.FilePath = filePath.String
-	d.ErrorMessage = errorMessage.String
 	return d, nil
 }
 
@@ -110,19 +103,13 @@ func (r *DownloadRepository) UpdateProgress(id string, progress float64, speed, 
 
 // GetByID retrieves a download by ID
 func (r *DownloadRepository) GetByID(id string) (*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads WHERE id = ?
-	`
+	query := `SELECT ` + downloadColumns + ` FROM downloads WHERE id = ?`
 
 	d := &Download{}
-	var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 	err := r.db.conn.QueryRow(query, id).Scan(
-		&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
-		&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
-		&filePath, &d.FileSize, &errorMessage,
+		&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
+		&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
+		&d.FilePath, &d.FileSize, &d.ErrorMessage,
 		&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 	)
 
@@ -132,14 +119,6 @@ func (r *DownloadRepository) GetByID(id string) (*Download, error) {
 	if err != nil {
 		return nil, err
 	}
-	d.Title = title.String
-	d.Thumbnail = thumbnail.String
-	d.Uploader = uploader.String
-	d.Format = format.String
-	d.Speed = speed.String
-	d.ETA = eta.String
-	d.FilePath = filePath.String
-	d.ErrorMessage = errorMessage.String
 	return d, nil
 }
 
@@ -150,41 +129,22 @@ func (r *DownloadRepository) GetPending() ([]*Download, error) {
 
 // GetActive retrieves downloads that are currently downloading or merging
 func (r *DownloadRepository) GetActive() ([]*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads 
-		WHERE status IN ('downloading', 'merging')
-		ORDER BY started_at ASC
-	`
+	query := `SELECT ` + downloadColumns + ` FROM downloads
+		WHERE status IN ('downloading', 'merging') ORDER BY started_at ASC`
 	return r.queryDownloads(query)
 }
 
 // GetHistory retrieves completed and failed downloads
 func (r *DownloadRepository) GetHistory(limit int) ([]*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads 
-		WHERE status IN ('completed', 'failed', 'cancelled')
-		ORDER BY completed_at DESC
-		LIMIT ?
-	`
+	query := `SELECT ` + downloadColumns + ` FROM downloads
+		WHERE status IN ('completed', 'failed', 'cancelled') ORDER BY completed_at DESC LIMIT ?`
 	return r.queryDownloadsWithArgs(query, limit)
 }
 
 // GetQueue retrieves all non-completed downloads (pending + active)
 func (r *DownloadRepository) GetQueue() ([]*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads 
-		WHERE status NOT IN ('completed', 'failed', 'cancelled')
-		ORDER BY created_at ASC
-	`
+	query := `SELECT ` + downloadColumns + ` FROM downloads
+		WHERE status NOT IN ('completed', 'failed', 'cancelled') ORDER BY created_at ASC`
 	return r.queryDownloads(query)
 }
 
@@ -202,13 +162,7 @@ func (r *DownloadRepository) ClearHistory() error {
 
 // getByStatus retrieves downloads with a specific status
 func (r *DownloadRepository) getByStatus(status DownloadStatus) ([]*Download, error) {
-	query := `
-		SELECT id, url, title, thumbnail, duration, uploader, format, audio_only,
-			status, progress, speed, eta, file_path, file_size, error_message,
-			created_at, started_at, completed_at
-		FROM downloads WHERE status = ?
-		ORDER BY created_at ASC
-	`
+	query := `SELECT ` + downloadColumns + ` FROM downloads WHERE status = ? ORDER BY created_at ASC`
 	return r.queryDownloadsWithArgs(query, status)
 }
 
@@ -234,30 +188,22 @@ func (r *DownloadRepository) queryDownloadsWithArgs(query string, args ...interf
 	return r.scanDownloads(rows)
 }
 
-// scanDownloads scans rows into Download structs
+// scanDownloads scans rows into Download structs.
+// Uses COALESCE in queries to avoid sql.NullString allocations (~8 per row).
 func (r *DownloadRepository) scanDownloads(rows *sql.Rows) ([]*Download, error) {
 	var downloads []*Download
 
 	for rows.Next() {
 		d := &Download{}
-		var title, thumbnail, uploader, format, speed, eta, filePath, errorMessage sql.NullString
 		err := rows.Scan(
-			&d.ID, &d.URL, &title, &thumbnail, &d.Duration, &uploader,
-			&format, &d.AudioOnly, &d.Status, &d.Progress, &speed, &eta,
-			&filePath, &d.FileSize, &errorMessage,
+			&d.ID, &d.URL, &d.Title, &d.Thumbnail, &d.Duration, &d.Uploader,
+			&d.Format, &d.AudioOnly, &d.Status, &d.Progress, &d.Speed, &d.ETA,
+			&d.FilePath, &d.FileSize, &d.ErrorMessage,
 			&d.CreatedAt, &d.StartedAt, &d.CompletedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		d.Title = title.String
-		d.Thumbnail = thumbnail.String
-		d.Uploader = uploader.String
-		d.Format = format.String
-		d.Speed = speed.String
-		d.ETA = eta.String
-		d.FilePath = filePath.String
-		d.ErrorMessage = errorMessage.String
 		downloads = append(downloads, d)
 	}
 

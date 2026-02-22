@@ -85,6 +85,9 @@ type Service struct {
 	// Cached user login per token (avoids repeated /user API calls)
 	cachedUserLogin string
 	cachedUserToken string
+
+	// Shared HTTP client with connection pooling and timeout
+	httpClient *http.Client
 }
 
 // statusMapping maps GitHub Project column names to internal Status types
@@ -114,6 +117,13 @@ func NewService(owner, name string) *Service {
 		config:        cfg,
 		cdnFetcher:    NewCDNFetcher(cfg),
 		useCDN:        false, // Safe default: use direct GitHub API until config enables CDN
+		httpClient: &http.Client{
+			Timeout: 10 * time.Second,
+			Transport: &http.Transport{
+				MaxIdleConns:    10,
+				IdleConnTimeout: 90 * time.Second,
+			},
+		},
 	}
 }
 
@@ -579,8 +589,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "DownKingo-Desktop/1.0")
 
-	client := &http.Client{Timeout: 15 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("api request failed: %w", err)
 	}
@@ -801,8 +810,7 @@ func (s *Service) deleteReactionByUser(token string, issueID int, reactions []Re
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -824,8 +832,7 @@ func (s *Service) addReactionRaw(token string, issueID int, reaction string) err
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -911,8 +918,7 @@ func (s *Service) getCurrentUserLogin(token string) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -946,8 +952,7 @@ func (s *Service) getIssueReactions(token string, issueID int) ([]Reaction, erro
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.squirrel-girl-preview+json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -979,8 +984,7 @@ func (s *Service) CreateIssue(token, title, body string) error {
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
