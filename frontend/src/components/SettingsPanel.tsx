@@ -11,6 +11,7 @@ import {
   IconKeyboard,
   IconInfoCircle,
   IconTransform,
+  IconMicrophone,
   IconPuzzle,
 } from "@tabler/icons-react";
 import VideoSettings from "./settings/VideoSettings";
@@ -20,6 +21,8 @@ import ShortcutSettings from "./settings/ShortcutSettings";
 import AppearanceSettings from "./settings/AppearanceSettings";
 import AboutSettings from "./settings/AboutSettings";
 import ConverterSettings from "./settings/ConverterSettings";
+import TranscriberSettings from "./settings/TranscriberSettings";
+import { useFeatures } from "../hooks/useFeatures";
 
 export type SettingsTab =
   | "general"
@@ -27,6 +30,7 @@ export type SettingsTab =
   | "video"
   | "images"
   | "converter"
+  | "transcriber"
   | "shortcuts"
   | "about";
 
@@ -58,6 +62,16 @@ export default function SettingsPanel({
   const { t } = useTranslation("settings");
   const [activeTab, setActiveTab] = useState<SettingsTab>(defaultTab);
 
+  // Trazer estados lógicos de visibilidade das lides do store
+  const {
+    showVideos,
+    showImages,
+    showConverter,
+    showTranscriber,
+    showDownloadsCategory,
+    showToolsCategory,
+  } = useFeatures();
+
   // Reset/Set tab when opening
   useEffect(() => {
     if (isOpen) {
@@ -78,13 +92,13 @@ export default function SettingsPanel({
               "ring-primary-500",
               "rounded-xl",
               "transition-all",
-              "duration-1000"
+              "duration-1000",
             );
             setTimeout(() => {
               element.classList.remove(
                 "ring-2",
                 "ring-primary-500",
-                "rounded-xl"
+                "rounded-xl",
               );
             }, 2000);
           }
@@ -101,36 +115,68 @@ export default function SettingsPanel({
           { id: "appearance", label: t("tabs.appearance"), icon: IconPalette },
         ],
       },
-      {
-        id: "downloads",
-        label: t("categories.downloads"),
-        tabs: [
-          {
-            id: "video",
-            label: t("tabs.video"),
-            icon: IconVideo,
-            indent: true,
-          },
-          {
-            id: "images",
-            label: t("tabs.images"),
-            icon: IconPhoto,
-            indent: true,
-          },
-        ],
-      },
-      {
-        id: "conversion",
-        label: t("categories.conversion"),
-        tabs: [
-          {
-            id: "converter",
-            label: t("tabs.converter"),
-            icon: IconTransform,
-            indent: true,
-          },
-        ],
-      },
+      // Download Category (Somente mostra o grupo se tiver vídeos ou imagens e as abas relativas à elas)
+      ...(showDownloadsCategory
+        ? [
+            {
+              id: "downloads",
+              label: t("categories.downloads"),
+              tabs: [
+                ...(showVideos
+                  ? [
+                      {
+                        id: "video" as SettingsTab,
+                        label: t("tabs.video"),
+                        icon: IconVideo,
+                        indent: true,
+                      },
+                    ]
+                  : []),
+                ...(showImages
+                  ? [
+                      {
+                        id: "images" as SettingsTab,
+                        label: t("tabs.images"),
+                        icon: IconPhoto,
+                        indent: true,
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          ]
+        : []),
+      // Conversion Category (Somente mostra se conversor ou transcritor estão ativos)
+      ...(showToolsCategory
+        ? [
+            {
+              id: "conversion",
+              label: t("categories.conversion"),
+              tabs: [
+                ...(showConverter
+                  ? [
+                      {
+                        id: "converter" as SettingsTab,
+                        label: t("tabs.converter"),
+                        icon: IconTransform,
+                        indent: true,
+                      },
+                    ]
+                  : []),
+                ...(showTranscriber
+                  ? [
+                      {
+                        id: "transcriber" as SettingsTab,
+                        label: t("tabs.transcriber", "Transcritor"),
+                        icon: IconMicrophone,
+                        indent: true,
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          ]
+        : []),
       {
         tabs: [
           { id: "shortcuts", label: t("tabs.shortcuts"), icon: IconKeyboard },
@@ -138,10 +184,25 @@ export default function SettingsPanel({
         ],
       },
     ],
-    [t]
+    [
+      t,
+      showDownloadsCategory,
+      showToolsCategory,
+      showVideos,
+      showImages,
+      showConverter,
+      showTranscriber,
+    ],
   );
 
   const allTabs = useMemo(() => tabGroups.flatMap((g) => g.tabs), [tabGroups]);
+
+  // Efeito de segurança: Evitar que force-render caia em uma tab de Feature que já foi desativada no store.
+  useEffect(() => {
+    if (!allTabs.map((t) => t.id).includes(activeTab)) {
+      setActiveTab("general");
+    }
+  }, [allTabs, activeTab]);
 
   return (
     <AnimatePresence>
@@ -183,9 +244,7 @@ export default function SettingsPanel({
               </div>
 
               {/* Tabs with Groups */}
-              <nav
-                className="flex-1 p-2 space-y-3 overflow-y-auto"
-              >
+              <nav className="flex-1 p-2 space-y-3 overflow-y-auto">
                 {tabGroups.map((group, groupIndex) => (
                   <div key={groupIndex}>
                     {/* Group Label */}
@@ -295,6 +354,7 @@ export default function SettingsPanel({
                     {activeTab === "video" && <VideoSettings />}
                     {activeTab === "images" && <ImageSettings />}
                     {activeTab === "converter" && <ConverterSettings />}
+                    {activeTab === "transcriber" && <TranscriberSettings />}
                     {activeTab === "shortcuts" && <ShortcutSettings />}
                     {activeTab === "about" && <AboutSettings />}
                   </motion.div>

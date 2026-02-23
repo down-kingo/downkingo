@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"kingo/internal/app"
 	"kingo/internal/whisper"
@@ -123,6 +124,39 @@ func (h *TranscriberHandler) DeleteWhisperModel(name string) error {
 // IsWhisperInstalled checks if the whisper binary is available.
 func (h *TranscriberHandler) IsWhisperInstalled() bool {
 	return h.whisper.IsBinaryInstalled()
+}
+
+// ExportTranscriptionDOCX opens a save dialog and exports the transcription as a .docx file.
+func (h *TranscriberHandler) ExportTranscriptionDOCX(text string) error {
+	if text == "" {
+		return fmt.Errorf("no transcription text to export")
+	}
+
+	savePath, err := application.Get().Dialog.SaveFile().
+		SetMessage("Export Transcription as DOCX").
+		SetFilename("transcription.docx").
+		AddFilter("Word Document", "*.docx").
+		AddFilter("All Files", "*.*").
+		PromptForSingleSelection()
+
+	if err != nil {
+		return err
+	}
+	if savePath == "" {
+		return nil // user cancelled
+	}
+
+	if !strings.HasSuffix(strings.ToLower(savePath), ".docx") {
+		savePath += ".docx"
+	}
+
+	h.consoleLog(fmt.Sprintf("[Transcriber] Exporting DOCX: %s", filepath.Base(savePath)))
+	if err := whisper.GenerateDOCX(text, savePath); err != nil {
+		return fmt.Errorf("failed to generate DOCX: %w", err)
+	}
+
+	h.consoleLog(fmt.Sprintf("[Transcriber] DOCX exported: %s", filepath.Base(savePath)))
+	return nil
 }
 
 // DownloadWhisperBinary downloads and installs the whisper.cpp binary.

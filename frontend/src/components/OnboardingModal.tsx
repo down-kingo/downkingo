@@ -8,6 +8,10 @@ import {
   IconAlertTriangle,
   IconPalette,
   IconArrowRight,
+  IconPlayerPlay,
+  IconClipboard,
+  IconRefresh,
+  IconEyeOff,
 } from "@tabler/icons-react";
 import {
   useSettingsStore,
@@ -18,35 +22,138 @@ import {
 import { useTranslation, Trans } from "react-i18next";
 import { Logo } from "./Logo";
 
-const LANGUAGES: { code: Language; name: string; country: string }[] = [
-  { code: "en-US", name: "English", country: "US" },
-  { code: "pt-BR", name: "Português", country: "BR" },
-  { code: "es-ES", name: "Español", country: "ES" },
-  { code: "fr-FR", name: "Français", country: "FR" },
-  { code: "de-DE", name: "Deutsch", country: "DE" },
+const LANGUAGES: { code: Language; name: string; flag: string }[] = [
+  { code: "en-US", name: "English", flag: "🇺🇸" },
+  { code: "pt-BR", name: "Português", flag: "🇧🇷" },
+  { code: "es-ES", name: "Español", flag: "🇪🇸" },
+  { code: "fr-FR", name: "Français", flag: "🇫🇷" },
+  { code: "de-DE", name: "Deutsch", flag: "🇩🇪" },
 ];
-
-const FLAG_EMOJI: Record<string, string> = {
-  US: "\u{1F1FA}\u{1F1F8}",
-  BR: "\u{1F1E7}\u{1F1F7}",
-  ES: "\u{1F1EA}\u{1F1F8}",
-  FR: "\u{1F1EB}\u{1F1F7}",
-  DE: "\u{1F1E9}\u{1F1EA}",
-};
 
 const THEMES: { value: Theme; label: string; Icon: typeof IconSun }[] = [
   { value: "light", label: "Light", Icon: IconSun },
   { value: "dark", label: "Dark", Icon: IconMoon },
 ];
 
-const COLORS: AppColor[] = ["red", "blue", "green", "orange", "purple"];
-const COLOR_MAP: Record<AppColor, string> = {
-  red: "bg-red-500",
-  blue: "bg-blue-500",
-  green: "bg-emerald-500",
-  orange: "bg-orange-500",
-  purple: "bg-purple-500",
-};
+const COLORS: { id: AppColor; bg: string; ring: string }[] = [
+  { id: "red", bg: "bg-red-500", ring: "ring-red-400" },
+  { id: "blue", bg: "bg-blue-500", ring: "ring-blue-400" },
+  { id: "green", bg: "bg-emerald-500", ring: "ring-emerald-400" },
+  { id: "orange", bg: "bg-orange-500", ring: "ring-orange-400" },
+  { id: "purple", bg: "bg-purple-500", ring: "ring-purple-400" },
+];
+
+// ── atoms ──────────────────────────────────────────────────────────
+
+function SectionLabel({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <p
+      className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em]
+                  text-surface-400 dark:text-white/45 mb-2.5"
+    >
+      {icon}
+      {children}
+    </p>
+  );
+}
+
+function CheckDot() {
+  return (
+    <motion.div
+      initial={{ scale: 0.5, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.5, opacity: 0 }}
+      transition={{ duration: 0.13 }}
+      className="w-[18px] h-[18px] rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center flex-shrink-0"
+    >
+      <IconCheck size={10} className="text-white" stroke={3.5} />
+    </motion.div>
+  );
+}
+
+function Toggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={(e) => {
+        e.stopPropagation();
+        onChange(!checked);
+      }}
+      className={[
+        "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200",
+        checked
+          ? "bg-primary-600 dark:bg-primary-500"
+          : "bg-surface-200 dark:bg-white/20",
+      ].join(" ")}
+    >
+      <span
+        className={[
+          "pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transform transition-transform duration-200",
+          checked ? "translate-x-4" : "translate-x-0",
+        ].join(" ")}
+      />
+    </button>
+  );
+}
+
+function ToggleRow({
+  icon,
+  label,
+  desc,
+  checked,
+  onChange,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  desc: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div
+      className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer
+                 hover:bg-surface-50 dark:hover:bg-white/[0.04] transition-colors"
+      onClick={() => onChange(!checked)}
+    >
+      <div className="flex items-start gap-2.5">
+        <div className="mt-0.5 text-surface-400 dark:text-white/50 flex-shrink-0">
+          {icon}
+        </div>
+        <div>
+          <p
+            className="text-[12.5px] font-semibold leading-tight
+                        text-surface-800 dark:text-white"
+          >
+            {label}
+          </p>
+          <p
+            className="text-[11px] mt-0.5 leading-snug
+                        text-surface-400 dark:text-white/50"
+          >
+            {desc}
+          </p>
+        </div>
+      </div>
+      <Toggle checked={checked} onChange={onChange} />
+    </div>
+  );
+}
+
+// ── main ───────────────────────────────────────────────────────────
 
 export default function OnboardingModal() {
   const { t } = useTranslation("common");
@@ -54,6 +161,10 @@ export default function OnboardingModal() {
     language,
     theme,
     primaryColor,
+    autoUpdateApp,
+    startWithWindows,
+    clipboardMonitorEnabled,
+    anonymousMode,
     setLanguage,
     setSetting,
     setPrimaryColor,
@@ -61,17 +172,23 @@ export default function OnboardingModal() {
     hasCompletedOnboarding,
   } = useSettingsStore();
 
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(language);
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(theme);
-  const [selectedColor, setSelectedColor] = useState<AppColor>(primaryColor);
-  const [dontShowDisclaimer, setDontShowDisclaimer] = useState(false);
+  const [selLang, setSelLang] = useState<Language>(language);
+  const [selTheme, setSelTheme] = useState<Theme>(theme);
+  const [selColor, setSelColor] = useState<AppColor>(primaryColor);
+  const [autoUpdate, setAutoUpdate] = useState(autoUpdateApp);
+  const [startWin, setStartWin] = useState(startWithWindows);
+  const [clipMonitor, setClipMonitor] = useState(clipboardMonitorEnabled);
+  const [anonMode, setAnonMode] = useState(anonymousMode);
+  const [dontShow, setDontShow] = useState(false);
 
   if (hasCompletedOnboarding) return null;
 
   const handleComplete = () => {
-    if (dontShowDisclaimer) {
-      localStorage.setItem("kingo_disclaimer_accepted", "true");
-    }
+    setSetting("autoUpdateApp", autoUpdate);
+    setSetting("startWithWindows", startWin);
+    setSetting("clipboardMonitorEnabled", clipMonitor);
+    setSetting("anonymousMode", anonMode);
+    if (dontShow) localStorage.setItem("kingo_disclaimer_accepted", "true");
     completeOnboarding();
   };
 
@@ -81,154 +198,142 @@ export default function OnboardingModal() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.96, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="w-full max-w-3xl bg-white dark:bg-[#121214] border border-transparent dark:border-white/5 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          exit={{ opacity: 0, scale: 0.96, y: 16 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[620px] bg-white dark:bg-[#111113] rounded-2xl
+                     shadow-2xl shadow-black/25 overflow-hidden
+                     border border-surface-200 dark:border-white/10"
         >
-          {/* Header */}
-          <div className="p-6 border-b border-surface-100 dark:border-white/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-            <div className="flex items-start gap-4 relative z-10">
-              <Logo size={48} className="shadow-lg shadow-black/20" />
-              <div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-white">
-                  {t("onboarding.title", "Welcome to DownKingo")}
-                </h2>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 font-medium">
-                  {t("onboarding.subtitle", "Let's set up your experience")}
-                </p>
-              </div>
+          {/* ── HEADER ──────────────────────────────────────── */}
+          <div className="px-6 pt-5 pb-4 border-b border-surface-100 dark:border-white/10 flex items-center gap-3.5">
+            <Logo size={40} className="flex-shrink-0" />
+            <div>
+              <h2 className="text-[14.5px] font-bold text-surface-900 dark:text-white">
+                {t("onboarding.title")}
+              </h2>
+              <p className="text-[12.5px] mt-0.5 text-surface-400 dark:text-white/60">
+                {t("onboarding.subtitle")}
+              </p>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Column 1: Language */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-3 flex items-center gap-2">
-                  <IconGlobe size={14} />
-                  {t("onboarding.language", "Language")}
-                </h3>
-                <div className="bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
-                  <div className="divide-y divide-surface-100 dark:divide-white/5">
-                    {LANGUAGES.map((lang) => {
-                      const isActive = selectedLanguage === lang.code;
-                      return (
-                        <button
-                          key={lang.code}
-                          onClick={() => {
-                            setSelectedLanguage(lang.code);
-                            setLanguage(lang.code);
-                          }}
-                          className={`
-                            w-full flex items-center gap-3 p-3.5 text-sm font-medium transition-colors group
-                            ${
-                              isActive
-                                ? "bg-primary-50 dark:bg-primary-500/10 text-surface-900 dark:text-white"
-                                : "text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-200/50"
-                            }
-                          `}
-                        >
-                          <div
-                            className={`
-                              w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0 transition-transform group-hover:scale-105
-                              ${
-                                isActive
-                                  ? "bg-white dark:bg-white/10 border border-primary-200 dark:border-primary-500/20 shadow-sm"
-                                  : "bg-surface-100 dark:bg-white/5 border border-transparent dark:border-white/5"
-                              }
-                            `}
-                          >
-                            {FLAG_EMOJI[lang.country]}
-                          </div>
-                          <span className="flex-1 text-left font-semibold">
-                            {lang.name}
-                          </span>
-                          {isActive && (
-                            <div className="w-5 h-5 rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center">
-                              <IconCheck
-                                size={12}
-                                className="text-white"
-                                stroke={3}
-                              />
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+          {/* ── BODY ────────────────────────────────────────── */}
+          <div className="px-6 pt-5 pb-0 flex flex-col gap-4">
+            {/* ── LINHA 1: Language | Theme + Color ─────────── */}
+            <div
+              className="grid grid-cols-2 gap-5"
+              style={{ alignItems: "stretch" }}
+            >
+              {/* COL 1 — Language */}
+              <div className="flex flex-col">
+                <SectionLabel icon={<IconGlobe size={11} />}>
+                  {t("onboarding.language")}
+                </SectionLabel>
+
+                <div className="flex-1 flex flex-col rounded-xl border border-surface-200 dark:border-white/10 overflow-hidden">
+                  {LANGUAGES.map((lang, i) => {
+                    const active = selLang === lang.code;
+                    return (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setSelLang(lang.code);
+                          setLanguage(lang.code);
+                        }}
+                        className={[
+                          "flex-1 flex items-center gap-3 px-4 text-[13px] font-medium transition-colors",
+                          i > 0 &&
+                            "border-t border-surface-100 dark:border-white/[0.08]",
+                          active
+                            ? "bg-primary-50 dark:bg-primary-500/15 text-surface-900 dark:text-white"
+                            : "text-surface-600 dark:text-white/70 hover:bg-surface-50 dark:hover:bg-white/[0.05]",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                      >
+                        <span className="text-[17px] leading-none flex-shrink-0">
+                          {lang.flag}
+                        </span>
+                        <span className="flex-1 text-left">{lang.name}</span>
+                        <AnimatePresence>
+                          {active && <CheckDot />}
+                        </AnimatePresence>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Column 2: Appearance */}
-              <div className="space-y-6">
+              {/* COL 2 — Theme + Accent Color */}
+              <div className="flex flex-col gap-4">
                 {/* Theme */}
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-3 flex items-center gap-2">
-                    {selectedTheme === "light" ? (
-                      <IconSun size={14} />
-                    ) : (
-                      <IconMoon size={14} />
-                    )}
-                    {t("onboarding.theme", "Theme")}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {THEMES.map((themeOption) => {
-                      const Icon = themeOption.Icon;
-                      const isActive = selectedTheme === themeOption.value;
+                  <SectionLabel
+                    icon={
+                      selTheme === "light" ? (
+                        <IconSun size={11} />
+                      ) : (
+                        <IconMoon size={11} />
+                      )
+                    }
+                  >
+                    {t("onboarding.theme")}
+                  </SectionLabel>
+                  <div className="grid grid-cols-2 gap-2">
+                    {THEMES.map(({ value, label, Icon }) => {
+                      const active = selTheme === value;
                       return (
                         <button
-                          key={themeOption.value}
+                          key={value}
                           onClick={() => {
-                            setSelectedTheme(themeOption.value);
-                            setSetting("theme", themeOption.value);
+                            setSelTheme(value);
+                            setSetting("theme", value);
                           }}
-                          className={`
-                            group relative flex flex-col items-center gap-2 p-5 rounded-2xl border transition-all duration-300 overflow-hidden
-                            ${
-                              isActive
-                                ? "bg-white dark:bg-surface-100 border-surface-200 dark:border-white/10 shadow-sm"
-                                : "bg-surface-50 dark:bg-surface-100/50 border-surface-100 dark:border-white/5 hover:border-surface-200 dark:hover:border-white/10"
-                            }
-                          `}
+                          className={[
+                            "relative flex flex-col items-center gap-2 py-4 rounded-xl border transition-all duration-200",
+                            active
+                              ? "bg-white dark:bg-white/10 border-surface-200 dark:border-white/20 shadow-sm"
+                              : "bg-surface-50 dark:bg-white/[0.05] border-surface-150 dark:border-white/10 hover:bg-surface-100 dark:hover:bg-white/10",
+                          ].join(" ")}
                         >
-                          {isActive && (
-                            <div className="absolute top-2.5 right-2.5">
-                              <div className="w-4 h-4 rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center">
+                          <AnimatePresence>
+                            {active && (
+                              <motion.div
+                                initial={{ scale: 0.5, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.5, opacity: 0 }}
+                                className="absolute top-2 right-2 w-[18px] h-[18px] rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center"
+                              >
                                 <IconCheck
                                   size={10}
                                   className="text-white"
-                                  stroke={3}
+                                  stroke={3.5}
                                 />
-                              </div>
-                            </div>
-                          )}
-                          <div
-                            className={`
-                              p-3 rounded-xl border transition-colors
-                              ${
-                                isActive
-                                  ? "bg-surface-50 dark:bg-white/5 border-surface-100 dark:border-white/5 text-surface-900 dark:text-white"
-                                  : "bg-surface-100 dark:bg-white/5 border-transparent text-surface-400 dark:text-surface-500"
-                              }
-                            `}
-                          >
-                            <Icon size={22} stroke={1.5} />
-                          </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                          <Icon
+                            size={20}
+                            stroke={1.5}
+                            className={
+                              active
+                                ? "text-surface-800 dark:text-white"
+                                : "text-surface-400 dark:text-white/55"
+                            }
+                          />
                           <span
-                            className={`text-sm font-semibold ${
-                              isActive
+                            className={`text-xs font-semibold ${
+                              active
                                 ? "text-surface-900 dark:text-white"
-                                : "text-surface-500 dark:text-surface-500"
+                                : "text-surface-500 dark:text-white/60"
                             }`}
                           >
-                            {themeOption.label}
+                            {label}
                           </span>
                         </button>
                       );
@@ -238,106 +343,173 @@ export default function OnboardingModal() {
 
                 {/* Accent Color */}
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-3 flex items-center gap-2">
-                    <IconPalette size={14} />
-                    {t("onboarding.color", "Accent Color")}
-                  </h3>
-                  <div className="bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-                    <div className="flex items-center justify-between">
-                      {COLORS.map((color) => {
-                        const isActive = selectedColor === color;
-                        return (
-                          <button
-                            key={color}
-                            onClick={() => {
-                              setSelectedColor(color);
-                              setPrimaryColor(color);
-                              document.documentElement.setAttribute(
-                                "data-color",
-                                color
-                              );
-                            }}
-                            className={`
-                              w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
-                              ${COLOR_MAP[color]}
-                              ${
-                                isActive
-                                  ? "ring-2 ring-offset-2 ring-surface-400 dark:ring-surface-500 scale-110"
-                                  : "hover:scale-110 opacity-70 hover:opacity-100 scale-90"
-                              }
-                            `}
-                          >
-                            {isActive && (
-                              <IconCheck
-                                size={16}
-                                className="text-white drop-shadow-sm"
-                                stroke={3}
-                              />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Disclaimer */}
-                <div className="bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/10 rounded-lg flex-shrink-0">
-                      <IconAlertTriangle
-                        size={16}
-                        className="text-amber-600 dark:text-amber-400"
-                        stroke={1.5}
-                      />
-                    </div>
-                    <div className="text-xs text-surface-500 dark:text-surface-400 leading-relaxed">
-                      <p className="mb-1.5">{t("disclaimer.text1")}</p>
-                      <p>
-                        <Trans
-                          i18nKey="disclaimer.text2"
-                          t={t}
-                          components={{
-                            0: (
-                              <strong className="font-bold text-surface-900 dark:text-white" />
-                            ),
+                  <SectionLabel icon={<IconPalette size={11} />}>
+                    {t("onboarding.color")}
+                  </SectionLabel>
+                  <div
+                    className="rounded-xl border border-surface-200 dark:border-white/10
+                                  bg-surface-50/50 dark:bg-white/[0.04]
+                                  px-4 py-3.5 flex items-center justify-between"
+                  >
+                    {COLORS.map(({ id, bg, ring }) => {
+                      const active = selColor === id;
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => {
+                            setSelColor(id);
+                            setPrimaryColor(id);
+                            document.documentElement.setAttribute(
+                              "data-color",
+                              id,
+                            );
                           }}
-                        />
-                      </p>
-                    </div>
+                          className={[
+                            "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200",
+                            bg,
+                            active
+                              ? `ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#111113] ${ring} scale-110`
+                              : "opacity-60 hover:opacity-100 hover:scale-105",
+                          ].join(" ")}
+                        >
+                          <AnimatePresence>
+                            {active && (
+                              <motion.div
+                                initial={{ scale: 0.4, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.4, opacity: 0 }}
+                              >
+                                <IconCheck
+                                  size={14}
+                                  className="text-white"
+                                  stroke={3}
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+            {/* /linha 1 */}
 
-          {/* Footer */}
-          <div className="p-6 bg-surface-50/50 dark:bg-black/20 border-t border-surface-100 dark:border-white/5 flex items-center justify-between">
-            <label className="flex items-center gap-3 cursor-pointer group">
+            {/* ── LINHA 2: Preferences ──────────────────────── */}
+            <div>
+              <SectionLabel icon={<IconPlayerPlay size={11} />}>
+                {t("onboarding.preferences")}
+              </SectionLabel>
+              <div
+                className="rounded-xl border border-surface-200 dark:border-white/10 overflow-hidden
+                              bg-white dark:bg-white/[0.03]"
+              >
+                {/* Row A */}
+                <div className="grid grid-cols-2 divide-x divide-surface-100 dark:divide-white/[0.08]">
+                  <ToggleRow
+                    icon={<IconPlayerPlay size={13} />}
+                    label={t("onboarding.start_with_windows")}
+                    desc={t("onboarding.start_with_windows_desc")}
+                    checked={startWin}
+                    onChange={setStartWin}
+                  />
+                  <ToggleRow
+                    icon={<IconClipboard size={13} />}
+                    label={t("onboarding.clipboard_monitor")}
+                    desc={t("onboarding.clipboard_monitor_desc")}
+                    checked={clipMonitor}
+                    onChange={setClipMonitor}
+                  />
+                </div>
+                {/* Row B */}
+                <div
+                  className="grid grid-cols-2 divide-x divide-surface-100 dark:divide-white/[0.08]
+                                border-t border-surface-100 dark:border-white/[0.08]"
+                >
+                  <ToggleRow
+                    icon={<IconRefresh size={13} />}
+                    label={t("onboarding.auto_update")}
+                    desc={t("onboarding.auto_update_desc")}
+                    checked={autoUpdate}
+                    onChange={setAutoUpdate}
+                  />
+                  <ToggleRow
+                    icon={<IconEyeOff size={13} />}
+                    label={t("onboarding.anonymous_mode")}
+                    desc={t("onboarding.anonymous_mode_desc")}
+                    checked={anonMode}
+                    onChange={setAnonMode}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* ── LINHA 3: Disclaimer ───────────────────────── */}
+            <div
+              className="rounded-xl border border-amber-200 dark:border-amber-400/20
+                            bg-amber-50/70 dark:bg-amber-400/[0.08]
+                            px-4 py-3 flex items-start gap-2.5"
+            >
+              <IconAlertTriangle
+                size={13}
+                className="text-amber-500 dark:text-amber-400 flex-shrink-0 mt-[2px]"
+                stroke={2}
+              />
+              <p className="text-[11.5px] leading-relaxed text-surface-500 dark:text-white/65">
+                {t("disclaimer.text1")}{" "}
+                <Trans
+                  i18nKey="disclaimer.text2"
+                  t={t}
+                  components={{
+                    0: (
+                      <strong className="font-semibold text-surface-700 dark:text-white" />
+                    ),
+                  }}
+                />
+              </p>
+            </div>
+          </div>
+          {/* /body */}
+
+          {/* ── FOOTER ──────────────────────────────────────── */}
+          <div
+            className="px-6 py-4 mt-4 border-t border-surface-100 dark:border-white/10
+                          flex items-center justify-between
+                          bg-surface-50/40 dark:bg-black/20"
+          >
+            <label className="flex items-center gap-2.5 cursor-pointer">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
-                  checked={dontShowDisclaimer}
-                  onChange={(e) => setDontShowDisclaimer(e.target.checked)}
-                  className="peer appearance-none w-5 h-5 rounded border border-surface-300 dark:border-white/20 bg-white dark:bg-white/5 checked:bg-primary-600 checked:border-primary-600 focus:ring-2 focus:ring-primary-500/30 transition-all cursor-pointer"
+                  checked={dontShow}
+                  onChange={(e) => setDontShow(e.target.checked)}
+                  className="peer appearance-none w-[17px] h-[17px] rounded-[5px]
+                             border border-surface-300 dark:border-white/25
+                             bg-white dark:bg-white/10
+                             checked:bg-primary-600 checked:border-primary-600
+                             transition-all cursor-pointer"
                 />
                 <IconCheck
-                  size={12}
+                  size={10}
                   className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                  stroke={3}
+                  stroke={3.5}
                 />
               </div>
-              <span className="text-sm text-surface-600 dark:text-surface-400 font-medium select-none">
+              <span className="text-[12.5px] font-medium select-none text-surface-500 dark:text-white/65">
                 {t("disclaimer.dont_show_again")}
               </span>
             </label>
 
             <button
               onClick={handleComplete}
-              className="px-6 py-2 rounded-lg text-sm font-bold bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-600/20 transition-all active:scale-95 flex items-center gap-2"
+              className="px-5 py-2 rounded-lg text-[13px] font-bold
+                         bg-primary-600 hover:bg-primary-700 active:bg-primary-800
+                         text-white shadow-md shadow-primary-600/20
+                         transition-all active:scale-95 flex items-center gap-1.5"
             >
-              {t("onboarding.get_started", "Get Started")}
-              <IconArrowRight size={18} />
+              {t("onboarding.get_started")}
+              <IconArrowRight size={15} />
             </button>
           </div>
         </motion.div>

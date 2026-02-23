@@ -45,7 +45,7 @@ export default function Topbar({
           onClick={() => setActiveTab("home")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
             activeTab === "home"
-              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              ? "bg-white dark:bg-surface-100 text-surface-900"
               : "text-surface-600 hover:text-surface-900"
           }`}
         >
@@ -54,7 +54,8 @@ export default function Topbar({
         </button>
 
         {/* Downloads group */}
-        {(enabledFeatures.includes("videos") || enabledFeatures.includes("images")) && (
+        {(enabledFeatures.includes("videos") ||
+          enabledFeatures.includes("images")) && (
           <div className="w-px h-4 bg-surface-300 dark:bg-surface-400/30 mx-0.5" />
         )}
         {enabledFeatures.includes("videos") && (
@@ -62,7 +63,7 @@ export default function Topbar({
             onClick={() => setActiveTab("video")}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
               activeTab === "video"
-                ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+                ? "bg-white dark:bg-surface-100 text-surface-900"
                 : "text-surface-600 hover:text-surface-900"
             }`}
           >
@@ -75,7 +76,7 @@ export default function Topbar({
             onClick={() => setActiveTab("images")}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
               activeTab === "images"
-                ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+                ? "bg-white dark:bg-surface-100 text-surface-900"
                 : "text-surface-600 hover:text-surface-900"
             }`}
           >
@@ -87,7 +88,7 @@ export default function Topbar({
           onClick={() => setActiveTab("queue")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
             activeTab === "queue"
-              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              ? "bg-white dark:bg-surface-100 text-surface-900"
               : "text-surface-600 hover:text-surface-900"
           }`}
         >
@@ -101,7 +102,8 @@ export default function Topbar({
         </button>
 
         {/* Tools group */}
-        {(enabledFeatures.includes("converter") || enabledFeatures.includes("transcriber")) && (
+        {(enabledFeatures.includes("converter") ||
+          enabledFeatures.includes("transcriber")) && (
           <div className="w-px h-4 bg-surface-300 dark:bg-surface-400/30 mx-0.5" />
         )}
         {enabledFeatures.includes("converter") && (
@@ -109,7 +111,7 @@ export default function Topbar({
             onClick={() => setActiveTab("converter")}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
               activeTab === "converter"
-                ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+                ? "bg-white dark:bg-surface-100 text-surface-900"
                 : "text-surface-600 hover:text-surface-900"
             }`}
           >
@@ -122,7 +124,7 @@ export default function Topbar({
             onClick={() => setActiveTab("transcriber")}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
               activeTab === "transcriber"
-                ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+                ? "bg-white dark:bg-surface-100 text-surface-900"
                 : "text-surface-600 hover:text-surface-900"
             }`}
           >
@@ -137,7 +139,7 @@ export default function Topbar({
           onClick={() => setActiveTab("history")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
             activeTab === "history"
-              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              ? "bg-white dark:bg-surface-100 text-surface-900"
               : "text-surface-600 hover:text-surface-900"
           }`}
         >
@@ -148,7 +150,7 @@ export default function Topbar({
           onClick={() => setActiveTab("roadmap")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
             activeTab === "roadmap"
-              ? "bg-white dark:bg-surface-100 text-surface-900 shadow-sm"
+              ? "bg-white dark:bg-surface-100 text-surface-900"
               : "text-surface-600 hover:text-surface-900"
           }`}
         >

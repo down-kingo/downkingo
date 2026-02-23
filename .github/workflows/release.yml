@@ -114,6 +114,20 @@ jobs:
           ls -la build/sidecar/linux/
 
       # ============================================================
+      # BUILD UPDATER SIDECAR
+      # ============================================================
+      - name: Build Updater Binary (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
+
+      - name: Build Updater Binary (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
+
+      # ============================================================
       # BUILD APPLICATION
       # ============================================================
       - name: Build Application (Windows - NSIS Installer)

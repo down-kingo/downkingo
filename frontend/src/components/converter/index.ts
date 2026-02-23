@@ -8,6 +8,7 @@ export { ImageToImageOptions } from "./ImageToImageOptions";
 export { CompressVideoOptions } from "./CompressVideoOptions";
 export { CompressImageOptions } from "./CompressImageOptions";
 export { ActionPanel } from "./ActionPanel";
+export { BatchFileList } from "./BatchFileList";
 
 // Types
-export type { ConversionResult, ConversionTab } from "./types";
+export type { ConversionResult, ConversionTab, BatchFileItem } from "./types";

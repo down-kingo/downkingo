@@ -92,6 +92,7 @@
   "home": {
     "active_downloads": "{{count}} Downloads laufen",
     "active_downloads_one": "aktiver Download",
+    "active_downloads_many": "",
     "active_downloads_other": "{{count}} aktive Downloads",
     "add_audio_queue": "Audio hinzufügen",
     "add_queue": "Zur Warteschlange",
@@ -114,7 +115,12 @@
     "queue_title": "Warteschlange",
     "video": "",
     "video_mode": "Video",
-    "views": "Aufrufe"
+    "views": "Aufrufe",
+    "aria2c_active": "Turbo-Modus aktiv",
+    "turbo_tip_title": "Langsame Downloads?",
+    "turbo_tip_desc": "Aktivieren Sie den Turbo-Modus für bis zu 10x schnellere Geschwindigkeit.",
+    "turbo_activate": "Turbo-Modus aktivieren",
+    "turbo_installing": "Turbo wird installiert..."
   },
   "image": "",
   "increase_of": "",
@@ -135,6 +141,29 @@
     "settings": "Einstellungen",
     "transcriber": "Transkriptor",
     "videos": "Videos"
+  },
+  "update_modal": {
+    "title": "Neue Version verfügbar",
+    "whats_new": "Was ist neu",
+    "update_now": "Jetzt aktualisieren",
+    "later": "Vielleicht später"
+  },
+  "onboarding": {
+    "title": "Willkommen bei DownKingo",
+    "subtitle": "Lass uns dein Erlebnis einrichten",
+    "language": "Sprache",
+    "theme": "Design",
+    "color": "Akzentfarbe",
+    "get_started": "Los geht's",
+    "preferences": "Einstellungen",
+    "start_with_windows": "Mit Windows starten",
+    "start_with_windows_desc": "Beim Systemstart automatisch öffnen",
+    "clipboard_monitor": "Zwischenablage überwachen",
+    "clipboard_monitor_desc": "Kopierte Links erkennen und Download vorschlagen",
+    "auto_update": "Automatische Updates",
+    "auto_update_desc": "App automatisch aktuell halten",
+    "anonymous_mode": "Anonymer Modus",
+    "anonymous_mode_desc": "Keine anonymen Nutzungsstatistiken senden"
   },
   "original_folder": "",
   "output_format": "",
@@ -166,7 +195,7 @@
     "retrying": "Erneuter Versuch...",
     "status": {
       "completed": "Fertig",
-      "downloading": "Herunterladen...",
+      "downloading": "Herunterladen... {{percent}}%",
       "error": "Fehler",
       "extracting": "Extrahieren...",
       "installed": "Installiert",
@@ -206,10 +235,17 @@
   "success": "",
   "summary_action": "",
   "terminal": {
+    "cleaning": "Temporäre Dateien werden gelöscht...",
     "clear": "Konsole leeren",
+    "complete": "Download abgeschlossen!",
+    "downloading": "Wird heruntergeladen...",
+    "empty_hint": "Logs erscheinen hier",
     "maximize": "Maximieren",
+    "merging": "Audio und Video werden zusammengeführt...",
     "minimize": "Minimieren",
-    "ready": "Bereit für Ausgabeaufnahme..."
+    "processing_thumb": "Vorschaubild wird verarbeitet...",
+    "ready": "Bereit für Ausgabeaufnahme...",
+    "saving": "Speichern: {{filename}}"
   },
   "trimmer": {
     "title": "Video zuschneiden",

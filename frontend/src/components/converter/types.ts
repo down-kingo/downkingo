@@ -19,3 +19,16 @@ export type ConversionTab =
   | "image-to-image"
   | "compress-video"
   | "compress-image";
+
+/**
+ * Item de arquivo para processamento em batch
+ */
+export interface BatchFileItem {
+  id: string;
+  inputPath: string;
+  fileName: string;
+  customName: string; // Nome de saída customizado (vazio = usar padrão)
+  status: "pending" | "processing" | "done" | "error";
+  result: ConversionResult | null;
+  error: string;
+}

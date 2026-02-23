@@ -115,7 +115,12 @@
     "queue_title": "File d'attente",
     "video": "",
     "video_mode": "Vidéo",
-    "views": "vues"
+    "views": "vues",
+    "aria2c_active": "Mode Turbo actif",
+    "turbo_tip_title": "Téléchargements lents ?",
+    "turbo_tip_desc": "Activez le Mode Turbo pour une vitesse jusqu'à 10x plus rapide.",
+    "turbo_activate": "Activer le Mode Turbo",
+    "turbo_installing": "Installation du Turbo..."
   },
   "image": "",
   "increase_of": "",
@@ -136,6 +141,29 @@
     "settings": "Paramètres",
     "transcriber": "Transcripteur",
     "videos": "Vidéos"
+  },
+  "update_modal": {
+    "title": "Nouvelle version disponible",
+    "whats_new": "Nouveautés",
+    "update_now": "Mettre à jour",
+    "later": "Plus tard"
+  },
+  "onboarding": {
+    "title": "Bienvenue sur DownKingo",
+    "subtitle": "Configurons votre expérience",
+    "language": "Langue",
+    "theme": "Thème",
+    "color": "Couleur d'accent",
+    "get_started": "Commencer",
+    "preferences": "Préférences",
+    "start_with_windows": "Démarrer avec Windows",
+    "start_with_windows_desc": "Ouvrir automatiquement au démarrage",
+    "clipboard_monitor": "Surveiller le presse-papiers",
+    "clipboard_monitor_desc": "Détecter les liens copiés et proposer le téléchargement",
+    "auto_update": "Mises à jour automatiques",
+    "auto_update_desc": "Maintenir l'app à jour automatiquement",
+    "anonymous_mode": "Mode anonyme",
+    "anonymous_mode_desc": "Ne pas envoyer de statistiques d'utilisation anonymes"
   },
   "original_folder": "",
   "output_format": "",
@@ -167,7 +195,7 @@
     "retrying": "Nouvelle tentative...",
     "status": {
       "completed": "Terminé",
-      "downloading": "Téléchargement...",
+      "downloading": "Téléchargement... {{percent}}%",
       "error": "Erreur",
       "extracting": "Extraction...",
       "installed": "Installé",
@@ -207,10 +235,17 @@
   "success": "",
   "summary_action": "",
   "terminal": {
+    "cleaning": "Nettoyage des fichiers temporaires...",
     "clear": "Effacer la console",
+    "complete": "Téléchargement terminé !",
+    "downloading": "Téléchargement...",
+    "empty_hint": "Les logs apparaîtront ici",
     "maximize": "Maximiser",
+    "merging": "Fusion audio et vidéo...",
     "minimize": "Minimiser",
-    "ready": "Prêt à capturer la sortie..."
+    "processing_thumb": "Traitement de la miniature...",
+    "ready": "Prêt à capturer la sortie...",
+    "saving": "Enregistrement : {{filename}}"
   },
   "trimmer": {
     "title": "Découper la vidéo",

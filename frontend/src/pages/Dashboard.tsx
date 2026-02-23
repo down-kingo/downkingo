@@ -1,16 +1,15 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   IconVideo,
   IconPhoto,
   IconHistory,
   IconArrowRight,
-  IconDownload,
   IconSparkles,
   IconTransform,
   IconMicrophone,
 } from "@tabler/icons-react";
 import { useDownloadStore } from "../stores/downloadStore";
-import { useSettingsStore, FeatureId } from "../stores/settingsStore";
+import { useFeatures } from "../hooks/useFeatures";
 import { useTranslation } from "react-i18next";
 import { TabType } from "../components/navigation/Sidebar";
 
@@ -65,22 +64,17 @@ interface DashboardProps {
 export default function Dashboard({ onNavigate }: DashboardProps) {
   const { history } = useDownloadStore();
   const { t } = useTranslation("common");
-  const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
+  const { showVideos, showImages, showConverter, showTranscriber } =
+    useFeatures();
 
   // Recent items limited to 5 for density
   const recentDownloads = history.slice(0, 5);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 },
+  const cardMotionRes = {
+    initial: { opacity: 0, y: 15, scale: 0.98 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.15 } },
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
   };
 
   return (
@@ -101,64 +95,61 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         </motion.div>
 
         {/* Tools Grid - Authentic Glassmorphism */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
-        >
-          {enabledFeatures.includes("videos") && (
-            <motion.div variants={item}>
-              <ToolCard
-                onClick={() => onNavigate("video")}
-                icon={IconVideo}
-                glowColor="bg-primary-600/20 dark:bg-primary-600/40"
-                hoverColor="group-hover:text-primary-600 dark:group-hover:text-primary-600"
-                title={t("dashboard.tools.video_downloader.title")}
-                desc={t("dashboard.tools.video_downloader.desc")}
-              />
-            </motion.div>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <AnimatePresence mode="popLayout">
+            {showVideos && (
+              <motion.div key="card-video" layout {...cardMotionRes}>
+                <ToolCard
+                  onClick={() => onNavigate("video")}
+                  icon={IconVideo}
+                  glowColor="bg-primary-600/20 dark:bg-primary-600/40"
+                  hoverColor="group-hover:text-primary-600 dark:group-hover:text-primary-600"
+                  title={t("dashboard.tools.video_downloader.title")}
+                  desc={t("dashboard.tools.video_downloader.desc")}
+                />
+              </motion.div>
+            )}
 
-          {enabledFeatures.includes("images") && (
-            <motion.div variants={item}>
-              <ToolCard
-                onClick={() => onNavigate("images")}
-                icon={IconPhoto}
-                glowColor="bg-purple-600/20 dark:bg-purple-600/40"
-                hoverColor="group-hover:text-purple-600 dark:group-hover:text-purple-600"
-                title={t("dashboard.tools.image_extractor.title")}
-                desc={t("dashboard.tools.image_extractor.desc")}
-              />
-            </motion.div>
-          )}
+            {showImages && (
+              <motion.div key="card-images" layout {...cardMotionRes}>
+                <ToolCard
+                  onClick={() => onNavigate("images")}
+                  icon={IconPhoto}
+                  glowColor="bg-purple-600/20 dark:bg-purple-600/40"
+                  hoverColor="group-hover:text-purple-600 dark:group-hover:text-purple-600"
+                  title={t("dashboard.tools.image_extractor.title")}
+                  desc={t("dashboard.tools.image_extractor.desc")}
+                />
+              </motion.div>
+            )}
 
-          {enabledFeatures.includes("converter") && (
-            <motion.div variants={item}>
-              <ToolCard
-                onClick={() => onNavigate("converter")}
-                icon={IconTransform}
-                glowColor="bg-blue-600/20 dark:bg-blue-600/40"
-                hoverColor="group-hover:text-blue-600 dark:group-hover:text-blue-600"
-                title={t("dashboard.tools.converter.title")}
-                desc={t("dashboard.tools.converter.desc")}
-              />
-            </motion.div>
-          )}
+            {showConverter && (
+              <motion.div key="card-converter" layout {...cardMotionRes}>
+                <ToolCard
+                  onClick={() => onNavigate("converter")}
+                  icon={IconTransform}
+                  glowColor="bg-blue-600/20 dark:bg-blue-600/40"
+                  hoverColor="group-hover:text-blue-600 dark:group-hover:text-blue-600"
+                  title={t("dashboard.tools.converter.title")}
+                  desc={t("dashboard.tools.converter.desc")}
+                />
+              </motion.div>
+            )}
 
-          {enabledFeatures.includes("transcriber") && (
-            <motion.div variants={item}>
-              <ToolCard
-                onClick={() => onNavigate("transcriber")}
-                icon={IconMicrophone}
-                glowColor="bg-emerald-600/20 dark:bg-emerald-600/40"
-                hoverColor="group-hover:text-emerald-600 dark:group-hover:text-emerald-600"
-                title={t("dashboard.tools.transcriber.title")}
-                desc={t("dashboard.tools.transcriber.desc")}
-              />
-            </motion.div>
-          )}
-        </motion.div>
+            {showTranscriber && (
+              <motion.div key="card-transcriber" layout {...cardMotionRes}>
+                <ToolCard
+                  onClick={() => onNavigate("transcriber")}
+                  icon={IconMicrophone}
+                  glowColor="bg-emerald-600/20 dark:bg-emerald-600/40"
+                  hoverColor="group-hover:text-emerald-600 dark:group-hover:text-emerald-600"
+                  title={t("dashboard.tools.transcriber.title")}
+                  desc={t("dashboard.tools.transcriber.desc")}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Recent Activity Section */}
         <motion.div

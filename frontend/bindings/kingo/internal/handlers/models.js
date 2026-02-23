@@ -98,6 +98,14 @@ export class AudioExtractRequest {
              */
             this["customBitrate"] = 0;
         }
+        if (!("customName" in $$source)) {
+            /**
+             * Custom output filename (without extension)
+             * @member
+             * @type {string}
+             */
+            this["customName"] = "";
+        }
 
         Object.assign(this, $$source);
     }
@@ -234,6 +242,14 @@ export class ImageConvertRequest {
              * @type {number}
              */
             this["height"] = 0;
+        }
+        if (!("customName" in $$source)) {
+            /**
+             * Custom output filename (without extension)
+             * @member
+             * @type {string}
+             */
+            this["customName"] = "";
         }
 
         Object.assign(this, $$source);
@@ -474,6 +490,14 @@ export class VideoConvertRequest {
              * @type {boolean}
              */
             this["keepAudio"] = false;
+        }
+        if (!("customName" in $$source)) {
+            /**
+             * Custom output filename (without extension)
+             * @member
+             * @type {string}
+             */
+            this["customName"] = "";
         }
 
         Object.assign(this, $$source);

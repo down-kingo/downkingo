@@ -9,6 +9,9 @@ kingo.exe
 main
 bin/
 
+# Embedded updater binary (compiled before app build)
+internal/updater/updater.exe
+
 # IDEs & System
 .vscode/
 .idea/

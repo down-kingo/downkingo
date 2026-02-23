@@ -142,6 +142,29 @@
     "transcriber": "Transcriptor",
     "videos": "Videos"
   },
+  "update_modal": {
+    "title": "Nueva versión disponible",
+    "whats_new": "Novedades",
+    "update_now": "Actualizar Ahora",
+    "later": "Quizás más tarde"
+  },
+  "onboarding": {
+    "title": "Bienvenido a DownKingo",
+    "subtitle": "Vamos a configurar tu experiencia",
+    "language": "Idioma",
+    "theme": "Tema",
+    "color": "Color de acento",
+    "get_started": "Empezar",
+    "preferences": "Preferencias",
+    "start_with_windows": "Iniciar con Windows",
+    "start_with_windows_desc": "Abrir automáticamente al iniciar el sistema",
+    "clipboard_monitor": "Monitorear portapapeles",
+    "clipboard_monitor_desc": "Detectar enlaces copiados y sugerir descarga",
+    "auto_update": "Actualizaciones automáticas",
+    "auto_update_desc": "Mantener la app actualizada automáticamente",
+    "anonymous_mode": "Modo anónimo",
+    "anonymous_mode_desc": "No enviar estadísticas de uso anónimas"
+  },
   "original_folder": "",
   "output_format": "",
   "preset": {
@@ -172,7 +195,7 @@
     "retrying": "Reintentando...",
     "status": {
       "completed": "Completado",
-      "downloading": "Descargando...",
+      "downloading": "Descargando... {{percent}}%",
       "error": "Error",
       "extracting": "Extrayendo...",
       "installed": "Instalado",
@@ -212,10 +235,17 @@
   "success": "",
   "summary_action": "",
   "terminal": {
+    "cleaning": "Limpiando archivos temporales...",
     "clear": "Limpiar Consola",
+    "complete": "¡Descarga completa!",
+    "downloading": "Descargando...",
+    "empty_hint": "Los logs aparecerán aquí",
     "maximize": "Maximizar",
+    "merging": "Fusionando audio y video...",
     "minimize": "Minimizar",
-    "ready": "Listo para capturar salida..."
+    "processing_thumb": "Procesando miniatura...",
+    "ready": "Listo para capturar salida...",
+    "saving": "Guardando: {{filename}}"
   },
   "trimmer": {
     "title": "Recortar Vídeo",

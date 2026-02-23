@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   IconVideo,
   IconMusic,
   IconPhoto,
   IconFileZip,
-  IconWand,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
@@ -13,12 +12,16 @@ import { useTranslation } from "react-i18next";
 import {
   SelectVideoFile,
   SelectImageFile,
+  SelectVideoFiles,
+  SelectImageFiles,
   SelectOutputDirectory,
   ConvertVideo,
   CompressVideo,
   ExtractAudio,
   ConvertImage,
   CompressImage,
+  ReadImageThumbnail,
+  GetFileSize,
   OpenUrl,
 } from "../../bindings/kingo/app";
 
@@ -31,9 +34,24 @@ import {
   CompressVideoOptions,
   CompressImageOptions,
   ActionPanel,
+  BatchFileList,
   type ConversionResult,
   type ConversionTab,
+  type BatchFileItem,
 } from "../components/converter";
+import { estimateOutputSize } from "../components/converter/estimateSize";
+
+/**
+ * Grupo semântico de cada aba — abas do mesmo grupo compartilham o arquivo selecionado.
+ * Isso evita o UX frustrante de perder o arquivo ao trocar entre abas relacionadas.
+ */
+const TAB_GROUP: Record<ConversionTab, "video" | "image"> = {
+  "video-to-video": "video",
+  "video-to-audio": "video",
+  "compress-video": "video",
+  "image-to-image": "image",
+  "compress-image": "image",
+};
 
 /**
  * Página de conversão de mídia com suporte a:
@@ -42,7 +60,6 @@ import {
  * - Imagem para Imagem
  * - Compressão de Vídeo
  * - Compressão de Imagem
- * - Remoção de Fundo (IA)
  */
 export default function Converter() {
   const { t } = useTranslation("converter");
@@ -51,8 +68,9 @@ export default function Converter() {
   const [activeTab, setActiveTab] = useState<ConversionTab>("video-to-video");
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // File selection
-  const [inputPath, setInputPath] = useState("");
+  // File selection — separado por grupo semântico
+  const [videoInputPath, setVideoInputPath] = useState("");
+  const [imageInputPath, setImageInputPath] = useState("");
   const [outputDir, setOutputDir] = useState("");
 
   // Video options
@@ -69,10 +87,32 @@ export default function Converter() {
   const [imageFormat, setImageFormat] = useState("webp");
   const [imageQuality, setImageQuality] = useState(85);
 
+  // Image thumbnail preview
+  const [imageThumbnail, setImageThumbnail] = useState("");
+
+  // File size + estimate
+  const [inputFileSize, setInputFileSize] = useState<number | null>(null);
+
+  // Batch mode
+  const [videoFiles, setVideoFiles] = useState<BatchFileItem[]>([]);
+  const [imageFiles, setImageFiles] = useState<BatchFileItem[]>([]);
+
   // Processing state
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [error, setError] = useState("");
+  const [batchProcessedCount, setBatchProcessedCount] = useState(0);
+
+  // O inputPath ativo é derivado do grupo da aba atual
+  const currentGroup = TAB_GROUP[activeTab];
+  const inputPath = currentGroup === "video" ? videoInputPath : imageInputPath;
+  const setInputPath = useCallback(
+    (v: string) => {
+      if (currentGroup === "video") setVideoInputPath(v);
+      else setImageInputPath(v);
+    },
+    [currentGroup],
+  );
 
   // Tab configuration
   const tabs = useMemo(
@@ -82,65 +122,136 @@ export default function Converter() {
         label: t("tabs.video_converter"),
         shortLabel: t("tabs.video_short"),
         icon: IconVideo,
+        group: "video",
       },
       {
         id: "video-to-audio" as ConversionTab,
         label: t("tabs.audio_extractor"),
         shortLabel: t("tabs.audio_short"),
         icon: IconMusic,
+        group: "video",
       },
       {
         id: "image-to-image" as ConversionTab,
         label: t("tabs.image_converter"),
         shortLabel: t("tabs.image_short"),
         icon: IconPhoto,
+        group: "image",
       },
       {
         id: "compress-video" as ConversionTab,
         label: t("tabs.video_compressor"),
         shortLabel: t("tabs.video_comp_short"),
         icon: IconFileZip,
+        group: "video",
       },
       {
         id: "compress-image" as ConversionTab,
         label: t("tabs.image_compressor"),
         shortLabel: t("tabs.image_comp_short"),
         icon: IconFileZip,
+        group: "image",
       },
     ],
-    [t]
+    [t],
   );
 
-  const isVideoTab = activeTab.includes("video");
+  const isVideoTab = currentGroup === "video";
 
-  // Check rembg availability on mount - REMOVIDO
+  // Ao trocar de aba: limpa apenas result/error (o arquivo do mesmo grupo persiste).
+  // Ao trocar de GRUPO: limpa o arquivo do grupo anterior.
   useEffect(() => {
-    // Código removido
-  }, []);
-
-  // Clear state when tab changes
-  useEffect(() => {
-    setInputPath("");
-    setOutputDir("");
     setResult(null);
     setError("");
     setShowAdvanced(false);
   }, [activeTab]);
 
-  // Handlers
+  // Derive batch files for current group
+  const currentFiles = currentGroup === "video" ? videoFiles : imageFiles;
+  const setCurrentFiles = currentGroup === "video" ? setVideoFiles : setImageFiles;
 
+
+  // Load image thumbnail when image input changes
+  useEffect(() => {
+    if (!imageInputPath || currentGroup !== "image") {
+      setImageThumbnail("");
+      return;
+    }
+    let cancelled = false;
+    ReadImageThumbnail(imageInputPath, 96).then((thumb) => {
+      if (!cancelled && thumb) setImageThumbnail(thumb);
+    }).catch(() => {
+      if (!cancelled) setImageThumbnail("");
+    });
+    return () => { cancelled = true; };
+  }, [imageInputPath, currentGroup]);
+
+  // Get file size when input changes
+  useEffect(() => {
+    if (!inputPath) {
+      setInputFileSize(null);
+      return;
+    }
+    let cancelled = false;
+    GetFileSize(inputPath).then((size) => {
+      if (!cancelled) setInputFileSize(Number(size));
+    }).catch(() => {
+      if (!cancelled) setInputFileSize(null);
+    });
+    return () => { cancelled = true; };
+  }, [inputPath]);
+
+  // Compute estimated output size
+  const estimatedSize = useMemo(() => {
+    if (!inputFileSize) return null;
+    const quality = currentGroup === "image" ? imageQuality : videoQuality;
+    const format = currentGroup === "image" ? imageFormat : videoFormat;
+    return estimateOutputSize(inputFileSize, activeTab, format, quality);
+  }, [inputFileSize, activeTab, imageFormat, videoFormat, imageQuality, videoQuality, currentGroup]);
+
+  // Helper to create BatchFileItem from path
+  const createBatchItem = (path: string): BatchFileItem => {
+    const fileName = path.split("\\").pop() || path.split("/").pop() || path;
+    return {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      inputPath: path,
+      fileName,
+      customName: "", // vazio = usa nome padrão
+      status: "pending",
+      result: null,
+      error: "",
+    };
+  };
+
+  // Handlers
   const handleSelectInput = async () => {
     try {
-      const file = isVideoTab
-        ? await SelectVideoFile()
-        : await SelectImageFile();
-      if (file) {
-        setInputPath(file);
+      const files = isVideoTab
+        ? await SelectVideoFiles()
+        : await SelectImageFiles();
+      if (files && files.length > 0) {
+        const items = files.map(createBatchItem);
+        setCurrentFiles(items);
+        // First file becomes the primary input
+        setInputPath(files[0]);
         setResult(null);
         setError("");
       }
-    } catch (err) {
-      setError(String(err));
+    } catch {
+      // User cancelled multi-select — fallback to single
+      try {
+        const file = isVideoTab
+          ? await SelectVideoFile()
+          : await SelectImageFile();
+        if (file) {
+          setCurrentFiles([createBatchItem(file)]);
+          setInputPath(file);
+          setResult(null);
+          setError("");
+        }
+      } catch (err) {
+        setError(String(err));
+      }
     }
   };
 
@@ -155,6 +266,54 @@ export default function Converter() {
     }
   };
 
+  // Convert a single file for the given path
+  const convertSingleFile = async (filePath: string, customName?: string): Promise<ConversionResult | null> => {
+    switch (activeTab) {
+      case "video-to-video":
+        return ConvertVideo({
+          inputPath: filePath,
+          outputDir,
+          format: videoFormat,
+          quality: videoQuality,
+          preset: videoPreset,
+          keepAudio,
+          customCrf: 0,
+          resolution: "",
+          customName: customName || "",
+        });
+
+      case "video-to-audio":
+        return ExtractAudio({
+          inputPath: filePath,
+          outputDir,
+          format: audioFormat,
+          quality: audioQuality,
+          customBitrate: 0,
+          customName: customName || "",
+        });
+
+      case "image-to-image":
+        return ConvertImage({
+          inputPath: filePath,
+          outputDir,
+          format: imageFormat,
+          quality: imageQuality,
+          width: 0,
+          height: 0,
+          customName: customName || "",
+        });
+
+      case "compress-video":
+        return CompressVideo(filePath, videoQuality, videoPreset);
+
+      case "compress-image":
+        return CompressImage(filePath, imageQuality);
+
+      default:
+        throw new Error(t("error_unsupported_type"));
+    }
+  };
+
   const handleConvert = async () => {
     if (!inputPath) {
       setError(t("error_select_input"));
@@ -164,71 +323,66 @@ export default function Converter() {
     setIsProcessing(true);
     setError("");
     setResult(null);
+    setBatchProcessedCount(0);
 
     try {
-      let conversionResult: ConversionResult | null;
+      const filesToProcess = currentFiles.length > 0 ? currentFiles : [createBatchItem(inputPath)];
 
-      switch (activeTab) {
-        case "video-to-video":
-          conversionResult = await ConvertVideo({
-            inputPath,
-            outputDir,
-            format: videoFormat,
-            quality: videoQuality,
-            preset: videoPreset,
-            keepAudio,
-            customCrf: 0,
-            resolution: "",
-          });
-          break;
+      for (let i = 0; i < filesToProcess.length; i++) {
+        const file = filesToProcess[i];
+        setBatchProcessedCount(i);
 
-        case "video-to-audio":
-          conversionResult = await ExtractAudio({
-            inputPath,
-            outputDir,
-            format: audioFormat,
-            quality: audioQuality,
-            customBitrate: 0,
-          });
-          break;
+        // Mark current file as processing
+        setCurrentFiles(prev => prev.map(f =>
+          f.id === file.id ? { ...f, status: "processing" as const } : f
+        ));
 
-        case "image-to-image":
-          conversionResult = await ConvertImage({
-            inputPath,
-            outputDir,
-            format: imageFormat,
-            quality: imageQuality,
-            width: 0,
-            height: 0,
-          });
-          break;
+        try {
+          const result = await convertSingleFile(file.inputPath, file.customName || undefined);
+          setCurrentFiles(prev => prev.map(f =>
+            f.id === file.id
+              ? { ...f, status: (result?.success ? "done" : "error") as "done" | "error", result, error: result?.errorMessage || "" }
+              : f
+          ));
 
-        case "compress-video":
-          conversionResult = await CompressVideo(
-            inputPath,
-            videoQuality,
-            videoPreset
-          );
-          break;
-
-        case "compress-image":
-          conversionResult = await CompressImage(inputPath, imageQuality);
-          break;
-
-        default:
-          throw new Error(t("error_unsupported_type"));
+          // Para single file, manter o resultado no state principal também
+          if (filesToProcess.length === 1) {
+            setResult(result);
+            if (result && !result.success) {
+              setError(result.errorMessage || t("error_unknown"));
+            }
+          }
+        } catch (err) {
+          setCurrentFiles(prev => prev.map(f =>
+            f.id === file.id
+              ? { ...f, status: "error" as const, error: String(err) }
+              : f
+          ));
+          if (filesToProcess.length === 1) {
+            setError(String(err));
+          }
+        }
       }
-
-      setResult(conversionResult);
-      if (conversionResult && !conversionResult.success) {
-        setError(conversionResult.errorMessage || t("error_unknown"));
-      }
+      setBatchProcessedCount(filesToProcess.length);
     } catch (err) {
       setError(String(err));
     } finally {
       setIsProcessing(false);
     }
   };
+
+  // Abre a pasta de destino do arquivo convertido
+  const handleOpenResultFolder = useCallback(async (outputPath: string) => {
+    try {
+      // Extrai o diretório do caminho de saída e abre no Explorer/Finder
+      const dir = outputPath.includes("\\")
+        ? outputPath.substring(0, outputPath.lastIndexOf("\\"))
+        : outputPath.substring(0, outputPath.lastIndexOf("/"));
+      await OpenUrl(dir);
+    } catch (err) {
+      console.error("Falha ao abrir pasta:", err);
+    }
+  }, []);
 
   // Render options based on active tab
   const renderOptions = () => {
@@ -317,6 +471,7 @@ export default function Converter() {
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
+              const isSameGroup = TAB_GROUP[tab.id] === currentGroup;
               return (
                 <motion.button
                   key={tab.id}
@@ -326,7 +481,9 @@ export default function Converter() {
                   className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-surface-900 dark:bg-primary-600 text-white dark:text-white shadow-md shadow-primary-500/20"
-                      : "text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                      : isSameGroup && inputPath
+                        ? "text-surface-700 dark:text-surface-200 bg-surface-100 dark:bg-surface-800 ring-1 ring-primary-500/30"
+                        : "text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800"
                   }`}
                 >
                   <Icon size={16} />
@@ -352,8 +509,43 @@ export default function Converter() {
                 isVideoTab={isVideoTab}
                 isProcessing={isProcessing}
                 onSelectInput={handleSelectInput}
+                onSetInputPath={(path) => {
+                  setInputPath(path);
+                  setCurrentFiles([createBatchItem(path)]);
+                  setResult(null);
+                  setError("");
+                }}
+                onClearInput={() => {
+                  setInputPath("");
+                  setCurrentFiles([]);
+                }}
+                thumbnailUrl={imageThumbnail}
                 t={t}
               />
+
+              {/* Batch File List */}
+              {currentFiles.length > 0 && (
+                <BatchFileList
+                  files={currentFiles}
+                  onRemove={(id) => {
+                    const updated = currentFiles.filter(f => f.id !== id);
+                    setCurrentFiles(updated);
+                    if (updated.length > 0) {
+                      setInputPath(updated[0].inputPath);
+                    } else {
+                      setInputPath("");
+                    }
+                  }}
+                  onUpdateCustomName={(id, name) => {
+                    setCurrentFiles(prev => prev.map(f =>
+                      f.id === id ? { ...f, customName: name } : f
+                    ));
+                  }}
+                  isProcessing={isProcessing}
+                  showCustomName={["video-to-video", "video-to-audio", "image-to-image"].includes(activeTab)}
+                  t={t}
+                />
+              )}
 
               {/* Conversion Options */}
               <motion.div
@@ -387,12 +579,18 @@ export default function Converter() {
           outputDir={outputDir}
           activeTab={activeTab}
           isProcessing={isProcessing}
-          // rembgAvailable removed
           result={result}
           error={error}
           onSelectOutput={handleSelectOutput}
           onConvert={handleConvert}
+          onOpenResultFolder={handleOpenResultFolder}
           t={t}
+          customOutputName=""
+          onCustomOutputNameChange={() => {}}
+          showCustomName={false}
+          estimatedSize={estimatedSize}
+          fileCount={currentFiles.length || 1}
+          processedCount={batchProcessedCount}
         />
       </div>
     </div>

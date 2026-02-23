@@ -92,6 +92,7 @@
   "home": {
     "active_downloads": "{{count}} downloads in progress",
     "active_downloads_one": "",
+    "active_downloads_many": "",
     "active_downloads_other": "",
     "add_audio_queue": "Add Audio",
     "add_queue": "Add to Queue",
@@ -141,12 +142,28 @@
     "transcriber": "Transcriber",
     "videos": "Videos"
   },
+  "update_modal": {
+    "title": "New version available",
+    "whats_new": "What's new",
+    "update_now": "Update Now",
+    "later": "Maybe later"
+  },
   "onboarding": {
     "title": "Welcome to DownKingo",
     "subtitle": "Let's set up your experience",
     "language": "Language",
     "theme": "Theme",
-    "get_started": "Get Started"
+    "color": "Accent Color",
+    "get_started": "Get Started",
+    "preferences": "Preferences",
+    "start_with_windows": "Start with Windows",
+    "start_with_windows_desc": "Open automatically on startup",
+    "clipboard_monitor": "Monitor Clipboard",
+    "clipboard_monitor_desc": "Detect copied links and suggest download",
+    "auto_update": "Automatic Updates",
+    "auto_update_desc": "Keep the app up to date automatically",
+    "anonymous_mode": "Anonymous Mode",
+    "anonymous_mode_desc": "Do not send anonymous usage statistics"
   },
   "original_folder": "",
   "output_format": "",

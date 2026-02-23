@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { IconCopy, IconCheck, IconDownload } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconDownload, IconFileWord } from "@tabler/icons-react";
 import type { TFunction } from "i18next";
+import { ExportTranscriptionDOCX } from "../../../bindings/kingo/app";
 
 interface TranscriptionResultProps {
   text: string;
+  outputFormat?: string;
   t: TFunction;
 }
 
-export default function TranscriptionResult({ text, t }: TranscriptionResultProps) {
+export default function TranscriptionResult({ text, outputFormat = "txt", t }: TranscriptionResultProps) {
   const [copied, setCopied] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(text);
@@ -17,14 +20,28 @@ export default function TranscriptionResult({ text, t }: TranscriptionResultProp
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const ext = outputFormat === "srt" ? "srt" : outputFormat === "vtt" ? "vtt" : "txt";
+  const mimeType = ext === "srt" ? "application/x-subrip" : ext === "vtt" ? "text/vtt" : "text/plain";
+
   const handleSave = () => {
-    const blob = new Blob([text], { type: "text/plain" });
+    const blob = new Blob([text], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.download = "transcription.txt";
+    a.download = `transcription.${ext}`;
     a.href = url;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleExportDOCX = async () => {
+    setExporting(true);
+    try {
+      await ExportTranscriptionDOCX(text);
+    } catch (err) {
+      console.error("DOCX export failed:", err);
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -54,6 +71,14 @@ export default function TranscriptionResult({ text, t }: TranscriptionResultProp
             title={t("save")}
           >
             <IconDownload size={14} />
+          </button>
+          <button
+            onClick={handleExportDOCX}
+            disabled={exporting}
+            className="p-1.5 rounded-lg text-surface-400 hover:text-surface-600 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors disabled:opacity-40"
+            title={t("save_docx")}
+          >
+            <IconFileWord size={14} />
           </button>
         </div>
       </div>

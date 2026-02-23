@@ -142,12 +142,28 @@
     "transcriber": "Transcritor",
     "videos": "Vídeos"
   },
+  "update_modal": {
+    "title": "Nova versão disponível",
+    "whats_new": "O que há de novo",
+    "update_now": "Atualizar Agora",
+    "later": "Talvez mais tarde"
+  },
   "onboarding": {
     "title": "Bem-vindo ao DownKingo",
     "subtitle": "Vamos configurar sua experiência",
     "language": "Idioma",
     "theme": "Tema",
-    "get_started": "Começar"
+    "color": "Cor de destaque",
+    "get_started": "Começar",
+    "preferences": "Preferências",
+    "start_with_windows": "Iniciar com o Windows",
+    "start_with_windows_desc": "Abrir automaticamente ao ligar o computador",
+    "clipboard_monitor": "Monitorar área de transferência",
+    "clipboard_monitor_desc": "Detectar links copiados e sugerir download",
+    "auto_update": "Atualizações automáticas",
+    "auto_update_desc": "Manter o app atualizado automaticamente",
+    "anonymous_mode": "Modo anônimo",
+    "anonymous_mode_desc": "Não enviar estatísticas de uso anônimas"
   },
   "original_folder": "",
   "output_format": "",

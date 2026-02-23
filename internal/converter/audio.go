@@ -39,6 +39,7 @@ type AudioExtractOptions struct {
 	Quality       AudioQuality // Bitrate quality
 	CustomBitrate int          // Custom bitrate in kbps, overrides Quality if > 0
 	FFmpegPath    string
+	CustomName    string // Custom output filename (without extension)
 }
 
 // AudioExtractResult contains the result of audio extraction
@@ -72,7 +73,13 @@ func ExtractAudio(opts AudioExtractOptions) (*AudioExtractResult, error) {
 	if outputDir == "" {
 		outputDir = filepath.Dir(opts.InputPath)
 	}
-	outputPath := filepath.Join(outputDir, baseName+"."+string(opts.Format))
+
+	var outputPath string
+	if opts.CustomName != "" {
+		outputPath = safeOutputPath(outputDir, opts.CustomName, "", string(opts.Format))
+	} else {
+		outputPath = filepath.Join(outputDir, baseName+"."+string(opts.Format))
+	}
 
 	// Build FFmpeg arguments
 	args := []string{"-i", opts.InputPath, "-y", "-vn"} // -vn = no video

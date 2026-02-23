@@ -23,10 +23,16 @@ tasks:
     vars:
       BUILD_FLAGS: '{{if eq .DEV "true"}}-tags dev -ldflags "-X kingo/internal/app.DevMode=true"{{end}}'
 
+  build:updater:
+    desc: Compile the updater sidecar binary
+    cmds:
+      - go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
+
   build:production:
     desc: Full production build (frontend + Go)
     deps:
       - task: frontend:build
+      - task: build:updater
     cmds:
       - go build -ldflags "-s -w" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
 

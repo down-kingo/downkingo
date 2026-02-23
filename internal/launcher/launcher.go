@@ -77,6 +77,14 @@ func getDependencies() []Dependency {
 				ArchiveType:    "zip",
 				ExtractTargets: []string{"ffmpeg.exe", "ffprobe.exe"},
 			},
+			{
+				Name:           "avifenc",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/windows-artifacts.zip",
+				FileName:       "avifenc.zip",
+				IsArchive:      true,
+				ArchiveType:    "zip",
+				ExtractTargets: []string{"avifenc.exe"},
+			},
 		}
 	case "darwin": // macOS
 		return []Dependency{
@@ -93,6 +101,14 @@ func getDependencies() []Dependency {
 				ArchiveType:    "zip",
 				ExtractTargets: []string{"ffmpeg", "ffprobe"},
 			},
+			{
+				Name:           "avifenc",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/macOS-artifacts.zip",
+				FileName:       "avifenc.zip",
+				IsArchive:      true,
+				ArchiveType:    "zip",
+				ExtractTargets: []string{"avifenc"},
+			},
 		}
 	default: // Linux
 		return []Dependency{
@@ -108,6 +124,14 @@ func getDependencies() []Dependency {
 				IsArchive:      true,
 				ArchiveType:    "tar.xz",
 				ExtractTargets: []string{"ffmpeg", "ffprobe"},
+			},
+			{
+				Name:           "avifenc",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/linux-artifacts.zip",
+				FileName:       "avifenc.zip",
+				IsArchive:      true,
+				ArchiveType:    "zip",
+				ExtractTargets: []string{"avifenc"},
 			},
 		}
 	}

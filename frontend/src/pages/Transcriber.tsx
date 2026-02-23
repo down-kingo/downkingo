@@ -22,17 +22,29 @@ import {
   TranscribeFile,
   ListWhisperModels,
   IsWhisperInstalled,
-  DownloadWhisperBinary,
 } from "../../bindings/kingo/app";
 
-import { ModelManager, TranscriptionResult } from "../components/transcriber";
+import {
+  ModelManager,
+  TranscriptionResult,
+  WhisperSetup,
+} from "../components/transcriber";
 import type { ModelInfo, TranscribeResult } from "../components/transcriber";
 
 const LANGUAGES = [
-  "auto", "pt", "en", "es", "fr", "de", "it", "ja", "ko", "zh",
+  "auto",
+  "pt",
+  "en",
+  "es",
+  "fr",
+  "de",
+  "it",
+  "ja",
+  "ko",
+  "zh",
 ] as const;
 
-const OUTPUT_FORMATS = ["txt", "srt", "vtt"] as const;
+const OUTPUT_FORMATS = ["txt", "srt", "vtt", "docx"] as const;
 
 function getFileName(path: string): string {
   return path.split("\\").pop() || path.split("/").pop() || path;
@@ -54,7 +66,6 @@ export default function Transcriber() {
 
   const [whisperInstalled, setWhisperInstalled] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
-  const [isInstalling, setIsInstalling] = useState(false);
 
   const loadModels = useCallback(async () => {
     setIsChecking(true);
@@ -64,8 +75,9 @@ export default function Transcriber() {
       if (installed) {
         const modelList = await ListWhisperModels();
         setModels(modelList || []);
-        if (modelList && modelList.length > 0 && !selectedModel) {
-          setSelectedModel(modelList[0].name);
+        // Só auto-seleciona na primeira carga (selectedModel ainda vazio)
+        if (modelList && modelList.length > 0) {
+          setSelectedModel((prev) => prev || modelList[0].name);
         }
       }
     } catch {
@@ -73,7 +85,9 @@ export default function Transcriber() {
     } finally {
       setIsChecking(false);
     }
-  }, [selectedModel]);
+    // selectedModel intencionalmente excluído das deps para evitar re-render em loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     loadModels();
@@ -93,8 +107,14 @@ export default function Transcriber() {
   };
 
   const handleTranscribe = async () => {
-    if (!filePath) { setError(t("error_no_file")); return; }
-    if (!selectedModel) { setError(t("error_no_model")); return; }
+    if (!filePath) {
+      setError(t("error_no_file"));
+      return;
+    }
+    if (!selectedModel) {
+      setError(t("error_no_model"));
+      return;
+    }
 
     setIsTranscribing(true);
     setError("");
@@ -104,7 +124,8 @@ export default function Transcriber() {
       const res = await TranscribeFile({
         filePath,
         model: selectedModel,
-        language: language === "auto" ? "" : language,
+        // Passa "auto" explicitamente — o backend faz two-pass detection
+        language: language === "auto" ? "auto" : language,
         outputFormat,
       });
       setResult(res);
@@ -115,20 +136,8 @@ export default function Transcriber() {
     }
   };
 
-  const handleInstall = async () => {
-    setIsInstalling(true);
-    setError("");
-    try {
-      await DownloadWhisperBinary();
-      await loadModels();
-    } catch (err) {
-      setError(String(err));
-    } finally {
-      setIsInstalling(false);
-    }
-  };
-
-  const canTranscribe = filePath && selectedModel && whisperInstalled && !isTranscribing;
+  const canTranscribe =
+    filePath && selectedModel && whisperInstalled && !isTranscribing;
 
   // Loading
   if (isChecking) {
@@ -139,62 +148,16 @@ export default function Transcriber() {
     );
   }
 
-  // Whisper Not Installed
+  // Whisper NOT installed → wizard de setup
   if (!whisperInstalled) {
     return (
-      <div className="h-full overflow-y-auto bg-surface-50 dark:bg-surface-50 p-8">
-        <div className="max-w-md mx-auto mt-24">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-8 text-center"
-          >
-            <div className="w-14 h-14 mx-auto mb-5 rounded-xl bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/5 flex items-center justify-center">
-              <IconCpu size={28} className="text-surface-400 dark:text-surface-500 stroke-[1.5]" />
-            </div>
-
-            <h2 className="text-lg font-display font-bold text-surface-900 dark:text-white mb-2">
-              {t("whisper_not_installed")}
-            </h2>
-            <p className="text-sm text-surface-500 dark:text-surface-500 leading-relaxed mb-6">
-              {t("whisper_not_installed_desc")}
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleInstall}
-              disabled={isInstalling}
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 dark:disabled:bg-surface-200 disabled:text-surface-400 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-primary-500/25 disabled:shadow-none flex items-center justify-center gap-2 transition-all text-sm"
-            >
-              {isInstalling ? (
-                <>
-                  <IconLoader2 size={16} className="animate-spin" />
-                  <span>{t("installing_whisper")}</span>
-                </>
-              ) : (
-                <>
-                  <IconDownload size={16} />
-                  <span>{t("install_whisper")}</span>
-                </>
-              )}
-            </motion.button>
-
-            <AnimatePresence>
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="mt-3 text-xs text-red-600 dark:text-red-400 font-medium"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div>
-      </div>
+      <WhisperSetup
+        t={t}
+        onDone={() => {
+          // Recarrega: verifica se binary foi instalado e modelos disponíveis
+          loadModels();
+        }}
+      />
     );
   }
 
@@ -246,7 +209,11 @@ export default function Transcriber() {
                           </p>
                         </div>
                         <button
-                          onClick={() => { setFilePath(""); setResult(null); setError(""); }}
+                          onClick={() => {
+                            setFilePath("");
+                            setResult(null);
+                            setError("");
+                          }}
                           className="p-1.5 text-surface-400 hover:text-surface-600 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
                         >
                           <IconX size={16} />
@@ -301,25 +268,60 @@ export default function Transcriber() {
                         <IconSettings size={10} /> {t("manage")}
                       </button>
                     </div>
-                    <div className="relative">
-                      <select
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        disabled={isTranscribing}
-                        className="w-full appearance-none bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-surface-200 rounded-xl px-3 py-2.5 pr-9 text-sm font-medium text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 disabled:opacity-50 transition-all"
+
+                    {models.length === 0 ? (
+                      /* ── Empty state: sem modelos ─────────────────── */
+                      <button
+                        onClick={() => setShowModelManager(true)}
+                        className="w-full flex items-center gap-3 px-3 py-3 rounded-xl border-2 border-dashed
+                                   border-surface-200 dark:border-white/10
+                                   hover:border-primary-400 dark:hover:border-primary-500/50
+                                   hover:bg-primary-50/50 dark:hover:bg-primary-500/[0.06]
+                                   transition-all group text-left"
                       >
-                        {models.length === 0 && (
-                          <option value="">{t("no_models")}</option>
-                        )}
-                        {models.map((m) => (
-                          <option key={m.name} value={m.name}>{m.name}</option>
-                        ))}
-                      </select>
-                      <IconChevronDown
-                        size={14}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
-                      />
-                    </div>
+                        <div
+                          className="w-8 h-8 rounded-lg bg-surface-100 dark:bg-white/[0.06]
+                                        group-hover:bg-primary-100 dark:group-hover:bg-primary-500/20
+                                        flex items-center justify-center flex-shrink-0 transition-colors"
+                        >
+                          <IconDownload
+                            size={15}
+                            className="text-surface-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="text-[12.5px] font-semibold text-surface-700 dark:text-white/80
+                                        group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                          >
+                            {t("no_models")}
+                          </p>
+                          <p className="text-[11px] text-surface-400 dark:text-white/40 mt-0.5">
+                            {t("manage_models")} →
+                          </p>
+                        </div>
+                      </button>
+                    ) : (
+                      /* ── Dropdown normal ─────────────────────────── */
+                      <div className="relative">
+                        <select
+                          value={selectedModel}
+                          onChange={(e) => setSelectedModel(e.target.value)}
+                          disabled={isTranscribing}
+                          className="w-full appearance-none bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-xl px-3 py-2.5 pr-9 text-sm font-medium text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 disabled:opacity-50 transition-all"
+                        >
+                          {models.map((m) => (
+                            <option key={m.name} value={m.name}>
+                              {m.name}
+                            </option>
+                          ))}
+                        </select>
+                        <IconChevronDown
+                          size={14}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="h-px bg-surface-100 dark:bg-surface-200" />
@@ -337,7 +339,9 @@ export default function Transcriber() {
                         className="w-full appearance-none bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-surface-200 rounded-xl px-3 py-2.5 pr-9 text-sm font-medium text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 disabled:opacity-50 transition-all"
                       >
                         {LANGUAGES.map((lang) => (
-                          <option key={lang} value={lang}>{t(`languages.${lang}`)}</option>
+                          <option key={lang} value={lang}>
+                            {t(`languages.${lang}`)}
+                          </option>
                         ))}
                       </select>
                       <IconChevronDown
@@ -399,7 +403,11 @@ export default function Transcriber() {
                       className="h-full bg-primary-600 rounded-full"
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                     />
                   </div>
                 </div>
@@ -444,10 +452,30 @@ export default function Transcriber() {
               {/* Result Area */}
               <div className="flex-1 min-h-0">
                 {result ? (
-                  <TranscriptionResult text={result.text} t={t} />
+                  <div className="flex flex-col gap-2">
+                    {/* Badge: idioma detectado */}
+                    {result.language && language === "auto" && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700/50 rounded-lg self-start">
+                        <span className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
+                          {t("detected_lang") || "Idioma detectado"}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold text-primary-700 dark:text-primary-300 bg-primary-100 dark:bg-primary-800/50 px-1.5 py-0.5 rounded">
+                          {result.language.toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <TranscriptionResult
+                      text={result.text}
+                      outputFormat={outputFormat}
+                      t={t}
+                    />
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center py-8">
-                    <IconWaveSine size={32} className="text-surface-300 dark:text-surface-600 mb-3" />
+                    <IconWaveSine
+                      size={32}
+                      className="text-surface-300 dark:text-surface-600 mb-3"
+                    />
                     <p className="text-xs text-surface-400 dark:text-surface-500 font-medium leading-relaxed">
                       {isTranscribing
                         ? t("transcribing_desc")

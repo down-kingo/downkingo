@@ -19,7 +19,7 @@ export const CompressImageOptions = memo(function CompressImageOptions({
     <div className="space-y-4">
       <div>
         <div className="flex items-center justify-between mb-2">
-          <SectionHeader>{t("quality")}</SectionHeader>
+          <SectionHeader>{t("quality_label")}</SectionHeader>
           <span className="text-xs font-semibold text-surface-900 dark:text-white">
             {imageQuality}%
           </span>

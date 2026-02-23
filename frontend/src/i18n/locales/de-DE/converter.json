@@ -26,6 +26,7 @@
   },
   "before": "Vorher",
   "better_quality": "Bessere Qualität",
+  "change": "Ändern",
   "compression": {
     "balanced": "Ausgewogen",
     "light": "Leicht",
@@ -42,6 +43,7 @@
   "converting": "Konvertierung...",
   "destination": "Zielort",
   "destination_desc": "Wo die Datei gespeichert wird",
+  "drop_here": "Datei hier ablegen",
   "encoding_preset": "Kodierungsvoreinstellung",
   "encoding_speed": "Kodierungsgeschwindigkeit",
   "error": {
@@ -49,9 +51,9 @@
     "no_file": "Eingabedatei auswählen",
     "unsupported": "Konvertierungstyp nicht unterstützt"
   },
-  "error_select_input": "",
-  "error_unknown": "",
-  "error_unsupported_type": "",
+  "error_select_input": "Eingabedatei auswählen",
+  "error_unknown": "Unbekannter Fehler",
+  "error_unsupported_type": "Konvertierungstyp nicht unterstützt",
   "format_desc": {
     "high_quality": "Hohe Qualität",
     "lossless": "Verlustfrei",
@@ -93,6 +95,7 @@
   "more_options": "Mehr Optionen",
   "open_file": "Datei öffnen",
   "open_folder": "Ordner öffnen",
+  "or_drag_and_drop": "oder Drag & Drop",
   "original_folder": "Originalordner",
   "output_folder": "Ausgabeordner",
   "output_format": "Ausgabeformat",
@@ -104,7 +107,15 @@
     "veryslow": "Sehr Langsam"
   },
   "processing": "Verarbeiten...",
-  "quality": "Qualität",
+  "quality": {
+    "high": "Hoch",
+    "lossless": "Verlustfrei",
+    "low": "Niedrig",
+    "max": "Beste",
+    "medium": "Mittel",
+    "tiny": "Winzig"
+  },
+  "quality_label": "Qualität",
   "quality_bitrate": "Qualität (Bitrate)",
   "quality_crf": "Qualität (CRF)",
   "quality_levels": {
@@ -139,18 +150,18 @@
   "success": "Erfolg!",
   "summary_action": "Zusammenfassung",
   "tabs": {
-    "audio_extractor": "",
-    "audio_short": "",
-    "bg_short": "",
-    "image_comp_short": "",
-    "image_compressor": "",
-    "image_converter": "",
-    "image_short": "",
-    "remove_bg": "",
-    "video_comp_short": "",
-    "video_compressor": "",
-    "video_converter": "",
-    "video_short": ""
+    "audio_extractor": "Audio extrahieren",
+    "audio_short": "Audio",
+    "bg_short": "HG",
+    "image_comp_short": "Bild Komp.",
+    "image_compressor": "Bildkompressor",
+    "image_converter": "Bildkonverter",
+    "image_short": "Bild",
+    "remove_bg": "Hintergrund entfernen",
+    "video_comp_short": "Vid. Komp.",
+    "video_compressor": "Videokompressor",
+    "video_converter": "Videokonverter",
+    "video_short": "Video"
   },
   "title": "Konverter",
   "video": "Video",
@@ -168,5 +179,14 @@
       "name": "WebM"
     }
   },
+  "output_name": "Ausgabename",
+  "output_name_placeholder": "Dateiname ohne Erweiterung",
+  "estimated_size": "Geschätzte Größe",
+  "estimate_disclaimer": "(ungefähr)",
+  "batch_processing": "Verarbeite {{current}} von {{total}}",
+  "batch_add_more": "Mehr hinzufügen",
+  "batch_succeeded": "{{count}} erfolgreich",
+  "batch_failed": "{{count}} fehlgeschlagen",
+  "files_selected": "{{count}} Dateien ausgewählt",
   "wait": "Warten..."
 }

@@ -11,11 +11,9 @@ import {
   IconClipboard,
   IconTerminal2,
   IconPuzzle,
-  IconDownload,
-  IconTransform,
-  IconMicrophone,
 } from "@tabler/icons-react";
-import { useSettingsStore, Language, FeatureId } from "../../stores/settingsStore";
+import { useSettingsStore, Language } from "../../stores/settingsStore";
+import { FEATURE_REGISTRY, ALL_FEATURE_IDS } from "../../lib/features";
 import { supportedLanguages } from "../../i18n";
 import {
   GetVideoDownloadPath,
@@ -48,8 +46,8 @@ const SettingItem = ({
             active === undefined
               ? "text-primary-600 dark:text-primary-500"
               : active
-              ? "text-primary-600 dark:text-primary-500"
-              : "text-surface-400 dark:text-surface-600"
+                ? "text-primary-600 dark:text-primary-500"
+                : "text-surface-400 dark:text-surface-600"
           }`}
         />
       </div>
@@ -106,24 +104,8 @@ export default function GeneralSettings() {
     enabledFeatures,
     setLanguage,
     setSetting,
-    setEnabledFeatures,
+    toggleFeature,
   } = useSettingsStore();
-
-  const featureItems: { id: FeatureId; icon: typeof IconDownload; labelKey: string; descKey: string }[] = [
-    { id: "videos", icon: IconDownload, labelKey: "features.videos", descKey: "features.videos_desc" },
-    { id: "images", icon: IconPhoto, labelKey: "features.images", descKey: "features.images_desc" },
-    { id: "converter", icon: IconTransform, labelKey: "features.converter", descKey: "features.converter_desc" },
-    { id: "transcriber", icon: IconMicrophone, labelKey: "features.transcriber", descKey: "features.transcriber_desc" },
-  ];
-
-  const toggleFeature = (id: FeatureId) => {
-    if (enabledFeatures.includes(id)) {
-      if (enabledFeatures.length <= 1) return;
-      setEnabledFeatures(enabledFeatures.filter((f) => f !== id));
-    } else {
-      setEnabledFeatures([...enabledFeatures, id]);
-    }
-  };
 
   const [videoPath, setVideoPath] = useState("");
   const [imagePath, setImagePath] = useState("");
@@ -187,21 +169,23 @@ export default function GeneralSettings() {
           {t("sections.features")}
         </h3>
         <div className="space-y-3">
-          {featureItems.map((item) => {
-            const isEnabled = enabledFeatures.includes(item.id);
+          {ALL_FEATURE_IDS.map((id) => {
+            const meta = FEATURE_REGISTRY[id];
+            const Icon = meta.icon;
+            const isEnabled = enabledFeatures.includes(id);
             const isLastEnabled = isEnabled && enabledFeatures.length <= 1;
             return (
               <SettingItem
-                key={item.id}
-                icon={item.icon}
-                label={t(item.labelKey)}
-                desc={t(item.descKey)}
+                key={id}
+                icon={Icon}
+                label={t(meta.i18nLabelKey)}
+                desc={t(meta.i18nDescKey)}
                 active={isEnabled}
               >
                 <Switch
                   checked={isEnabled}
                   onChange={() => {
-                    if (!isLastEnabled) toggleFeature(item.id);
+                    if (!isLastEnabled) toggleFeature(id);
                   }}
                 />
               </SettingItem>

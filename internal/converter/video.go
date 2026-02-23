@@ -42,6 +42,7 @@ type VideoConvertOptions struct {
 	Resolution string       // Target resolution e.g. "1920x1080", empty = keep original
 	KeepAudio  bool         // Whether to copy audio stream
 	FFmpegPath string       // Path to FFmpeg binary
+	CustomName string       // Custom output filename (without extension)
 }
 
 // VideoConvertResult contains the result of a video conversion
@@ -75,7 +76,13 @@ func ConvertVideo(opts VideoConvertOptions) (*VideoConvertResult, error) {
 	if outputDir == "" {
 		outputDir = filepath.Dir(opts.InputPath)
 	}
-	outputPath := filepath.Join(outputDir, baseName+"_converted."+string(opts.Format))
+
+	var outputPath string
+	if opts.CustomName != "" {
+		outputPath = safeOutputPath(outputDir, opts.CustomName, "", string(opts.Format))
+	} else {
+		outputPath = filepath.Join(outputDir, baseName+"_converted."+string(opts.Format))
+	}
 
 	// Build FFmpeg arguments
 	args := []string{"-i", opts.InputPath, "-y"} // -y to overwrite

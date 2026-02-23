@@ -1,14 +1,23 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
+	"image"
+	"image/jpeg"
+	_ "image/png"
+	"os"
 	"path/filepath"
+
+	_ "golang.org/x/image/webp"
 
 	"kingo/internal/app"
 	"kingo/internal/converter"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"golang.org/x/image/draw"
 )
 
 // ConverterHandler handles all media conversion operations.
@@ -89,6 +98,99 @@ func (h *ConverterHandler) SelectOutputDirectory() (string, error) {
 }
 
 // =============================================================================
+// FILE UTILITIES
+// =============================================================================
+
+// GetFileSize returns the size in bytes of the file at the given path.
+func (h *ConverterHandler) GetFileSize(path string) (int64, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return 0, err
+	}
+	return info.Size(), nil
+}
+
+// ReadImageThumbnail reads an image file, resizes it to maxSize pixels,
+// and returns a data:image/jpeg;base64,... string for use as a thumbnail.
+func (h *ConverterHandler) ReadImageThumbnail(inputPath string, maxSize int) (string, error) {
+	f, err := os.Open(inputPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open image: %w", err)
+	}
+	defer f.Close()
+
+	src, _, err := image.Decode(f)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode image: %w", err)
+	}
+
+	// Calculate new dimensions maintaining aspect ratio
+	bounds := src.Bounds()
+	imgW, imgH := bounds.Dx(), bounds.Dy()
+	if maxSize <= 0 {
+		maxSize = 96
+	}
+
+	var newW, newH int
+	if imgW >= imgH {
+		newW = maxSize
+		newH = int(float64(imgH) * float64(maxSize) / float64(imgW))
+	} else {
+		newH = maxSize
+		newW = int(float64(imgW) * float64(maxSize) / float64(imgH))
+	}
+	if newW < 1 {
+		newW = 1
+	}
+	if newH < 1 {
+		newH = 1
+	}
+
+	dst := image.NewRGBA(image.Rect(0, 0, newW, newH))
+	draw.ApproxBiLinear.Scale(dst, dst.Bounds(), src, bounds, draw.Over, nil)
+
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, dst, &jpeg.Options{Quality: 80}); err != nil {
+		return "", fmt.Errorf("failed to encode thumbnail: %w", err)
+	}
+
+	b64 := base64.StdEncoding.EncodeToString(buf.Bytes())
+	return "data:image/jpeg;base64," + b64, nil
+}
+
+// =============================================================================
+// MULTI-FILE SELECTION (BATCH)
+// =============================================================================
+
+// SelectVideoFiles opens a dialog to select multiple video files.
+func (h *ConverterHandler) SelectVideoFiles() ([]string, error) {
+	files, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecionar Vídeos").
+		AddFilter("Vídeos", "*.mp4;*.mkv;*.avi;*.mov;*.webm;*.wmv;*.flv").
+		AddFilter("Todos os Arquivos", "*.*").
+		PromptForMultipleSelection()
+
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}
+
+// SelectImageFiles opens a dialog to select multiple image files.
+func (h *ConverterHandler) SelectImageFiles() ([]string, error) {
+	files, err := application.Get().Dialog.OpenFile().
+		SetTitle("Selecionar Imagens").
+		AddFilter("Imagens", "*.jpg;*.jpeg;*.png;*.webp;*.avif;*.bmp;*.tiff;*.gif").
+		AddFilter("Todos os Arquivos", "*.*").
+		PromptForMultipleSelection()
+
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}
+
+// =============================================================================
 // VIDEO CONVERSION
 // =============================================================================
 
@@ -102,6 +204,7 @@ type VideoConvertRequest struct {
 	Preset     string `json:"preset"`     // ultrafast, fast, medium, slow, veryslow
 	Resolution string `json:"resolution"` // e.g. "1920x1080"
 	KeepAudio  bool   `json:"keepAudio"`
+	CustomName string `json:"customName"` // Custom output filename (without extension)
 }
 
 // ConversionResult represents the result of any conversion.
@@ -165,6 +268,7 @@ func (h *ConverterHandler) ConvertVideo(req VideoConvertRequest) (*ConversionRes
 		Resolution: req.Resolution,
 		KeepAudio:  req.KeepAudio,
 		FFmpegPath: ffmpegPath,
+		CustomName: req.CustomName,
 	})
 
 	if err != nil {
@@ -247,6 +351,7 @@ type AudioExtractRequest struct {
 	Format        string `json:"format"`        // mp3, aac, m4a, flac, wav, ogg, opus
 	Quality       string `json:"quality"`       // low, medium, high, best
 	CustomBitrate int    `json:"customBitrate"` // kbps, overrides quality
+	CustomName    string `json:"customName"`    // Custom output filename (without extension)
 }
 
 // ExtractAudio extracts audio from a video file.
@@ -297,6 +402,7 @@ func (h *ConverterHandler) ExtractAudio(req AudioExtractRequest) (*ConversionRes
 		Quality:       quality,
 		CustomBitrate: req.CustomBitrate,
 		FFmpegPath:    ffmpegPath,
+		CustomName:    req.CustomName,
 	})
 
 	if err != nil {
@@ -307,13 +413,20 @@ func (h *ConverterHandler) ExtractAudio(req AudioExtractRequest) (*ConversionRes
 		}, nil
 	}
 
-	h.consoleLog(fmt.Sprintf("[Converter] ✓ Áudio extraído: %s", filepath.Base(result.OutputPath)))
+	// Fix: calcular a economia de tamanho (vídeo → áudio é sempre drástico)
+	compression := 0.0
+	if result.InputSize > 0 {
+		compression = (1.0 - float64(result.OutputSize)/float64(result.InputSize)) * 100
+	}
+
+	h.consoleLog(fmt.Sprintf("[Converter] ✓ Áudio extraído: %s (redução de %.1f%%)", filepath.Base(result.OutputPath), compression))
 
 	return &ConversionResult{
-		OutputPath: result.OutputPath,
-		InputSize:  result.InputSize,
-		OutputSize: result.OutputSize,
-		Success:    true,
+		OutputPath:  result.OutputPath,
+		InputSize:   result.InputSize,
+		OutputSize:  result.OutputSize,
+		Compression: compression,
+		Success:     true,
 	}, nil
 }
 
@@ -323,12 +436,13 @@ func (h *ConverterHandler) ExtractAudio(req AudioExtractRequest) (*ConversionRes
 
 // ImageConvertRequest represents an image conversion request.
 type ImageConvertRequest struct {
-	InputPath string `json:"inputPath"`
-	OutputDir string `json:"outputDir"`
-	Format    string `json:"format"`  // jpg, png, webp, avif, bmp, tiff
-	Quality   int    `json:"quality"` // 0-100
-	Width     int    `json:"width"`   // 0 = keep original
-	Height    int    `json:"height"`  // 0 = keep original
+	InputPath  string `json:"inputPath"`
+	OutputDir  string `json:"outputDir"`
+	Format     string `json:"format"`     // jpg, png, webp, avif, bmp, tiff
+	Quality    int    `json:"quality"`    // 0-100
+	Width      int    `json:"width"`      // 0 = keep original
+	Height     int    `json:"height"`     // 0 = keep original
+	CustomName string `json:"customName"` // Custom output filename (without extension)
 }
 
 // ConvertImage converts an image to another format.
@@ -357,13 +471,15 @@ func (h *ConverterHandler) ConvertImage(req ImageConvertRequest) (*ConversionRes
 	}
 
 	result, err := converter.ConvertImage(converter.ImageConvertOptions{
-		InputPath:  req.InputPath,
-		OutputDir:  req.OutputDir,
-		Format:     format,
-		Quality:    req.Quality,
-		Width:      req.Width,
-		Height:     req.Height,
-		FFmpegPath: ffmpegPath,
+		InputPath:   req.InputPath,
+		OutputDir:   req.OutputDir,
+		Format:      format,
+		Quality:     req.Quality,
+		Width:       req.Width,
+		Height:      req.Height,
+		FFmpegPath:  ffmpegPath,
+		AvifencPath: h.paths.AvifencPath(),
+		CustomName:  req.CustomName,
 	})
 
 	if err != nil {
@@ -396,7 +512,7 @@ func (h *ConverterHandler) CompressImage(inputPath string, quality int) (*Conver
 
 	h.consoleLog(fmt.Sprintf("[Converter] Comprimindo imagem: %s (qualidade: %d%%)", inputName, quality))
 
-	result, err := converter.CompressImage(inputPath, quality, ffmpegPath)
+	result, err := converter.CompressImage(inputPath, quality, ffmpegPath, h.paths.AvifencPath())
 	if err != nil {
 		return &ConversionResult{
 			Success:      false,

@@ -43,6 +43,7 @@
   "converting": "Convertendo...",
   "destination": "Destino",
   "destination_desc": "Onde o arquivo será salvo",
+  "drop_here": "Solte o arquivo aqui",
   "encoding_preset": "Preset de Codificação",
   "encoding_speed": "Velocidade de Codificação",
   "error": {
@@ -94,6 +95,7 @@
   "more_options": "Mais opções",
   "open_file": "Abrir arquivo",
   "open_folder": "Abrir pasta",
+  "or_drag_and_drop": "ou arraste e solte",
   "original_folder": "Pasta original",
   "output_folder": "Pasta de saída",
   "output_format": "Formato de Saída",
@@ -113,6 +115,7 @@
     "medium": "Média",
     "tiny": "Minúscula"
   },
+  "quality_label": "Qualidade",
   "quality_bitrate": "Qualidade (Bitrate)",
   "quality_crf": "Qualidade (CRF)",
   "quality_levels": {
@@ -176,5 +179,14 @@
       "name": "WebM"
     }
   },
+  "output_name": "Nome de Saída",
+  "output_name_placeholder": "Nome do arquivo sem extensão",
+  "estimated_size": "Tamanho estimado",
+  "estimate_disclaimer": "(aproximado)",
+  "batch_processing": "Processando {{current}} de {{total}}",
+  "batch_add_more": "Adicionar mais",
+  "batch_succeeded": "{{count}} com sucesso",
+  "batch_failed": "{{count}} com falha",
+  "files_selected": "{{count}} arquivos selecionados",
   "wait": "Aguarde..."
 }

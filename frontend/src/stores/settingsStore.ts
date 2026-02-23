@@ -69,7 +69,17 @@ interface SettingsState {
   setAnonymousMode: (enabled: boolean) => void;
   setShortcuts: (shortcuts: ShortcutsConfig) => void;
   setSetting: (key: keyof SettingsState, value: any) => void;
+  /**
+   * Substitui a lista inteira de features habilitadas.
+   * Ignora silenciosamente se o array resultante for vazio (mínimo 1).
+   */
   setEnabledFeatures: (features: FeatureId[]) => void;
+  /**
+   * Alterna uma feature individual.
+   * Regra de negócio: não permite desabilitar se for a última ativa.
+   * Esta é a única implementação correta — use-a em vez de reimplementar localmente.
+   */
+  toggleFeature: (id: FeatureId) => void;
   completeOnboarding: () => void;
 }
 
@@ -109,7 +119,12 @@ export const useSettingsStore = create<SettingsState>()(
       startWithWindows: false,
       clipboardMonitorEnabled: true,
       consoleEnabled: false, // Desativado por padrão
-      enabledFeatures: ["videos", "images", "converter", "transcriber"] as FeatureId[],
+      enabledFeatures: [
+        "videos",
+        "images",
+        "converter",
+        "transcriber",
+      ] as FeatureId[],
       hasCompletedOnboarding: false, // Show onboarding on first launch
 
       toggleTheme: () =>
@@ -131,11 +146,28 @@ export const useSettingsStore = create<SettingsState>()(
       setShortcuts: (shortcuts) => set({ shortcuts }),
 
       setSetting: (key, value) => set((state) => ({ ...state, [key]: value })),
-      setEnabledFeatures: (features) => set({ enabledFeatures: features }),
+
+      setEnabledFeatures: (features) => {
+        // Guardrail: nunca aceita array vazio — mínimo 1 feature obrigatória
+        if (features.length === 0) return;
+        set({ enabledFeatures: features });
+      },
+
+      toggleFeature: (id) =>
+        set((state) => {
+          const current = state.enabledFeatures;
+          if (current.includes(id)) {
+            // Regra de negócio: não permite desabilitar a última feature ativa
+            if (current.length <= 1) return state;
+            return { enabledFeatures: current.filter((f) => f !== id) };
+          }
+          return { enabledFeatures: [...current, id] };
+        }),
+
       completeOnboarding: () => set({ hasCompletedOnboarding: true }),
     }),
     {
       name: "kingo-settings-v3", // v3: Light theme default + unified onboarding
-    }
-  )
+    },
+  ),
 );

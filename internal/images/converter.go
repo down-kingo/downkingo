@@ -11,7 +11,7 @@ import (
 // Convert transcodifica a imagem usando FFmpeg.
 // Retorna o caminho do arquivo convertido.
 // Se format for "original", retorna o inputPath.
-func Convert(inputPath string, format string, quality int, ffmpegPath string) (string, error) {
+func Convert(inputPath string, format string, quality int, ffmpegPath string, avifencPath string) (string, error) {
 	if format == "original" || format == "" {
 		return inputPath, nil
 	}
@@ -49,13 +49,28 @@ func Convert(inputPath string, format string, quality int, ffmpegPath string) (s
 		args = append(args, "-q:v", fmt.Sprintf("%d", quality))
 
 	case ".avif":
-		// libaom-av1 -crf 0-63 (lower is better)
-		// Recomendado 20-30. Vamos usar range "safe" 20-50 para speed.
-		// 100 -> 20
-		// 0   -> 50
-		crf := 50 - (quality * 30 / 100)
-		args = append(args, "-c:v", "libaom-av1", "-crf", fmt.Sprintf("%d", crf))
-		args = append(args, "-cpu-used", "4") // Balance speed
+		// AVIF encoding is delegated to avifenc — skip FFmpeg for this format
+		if avifencPath == "" {
+			return "", fmt.Errorf("avifenc path is required for AVIF encoding")
+		}
+		avifArgs := []string{
+			"-q", fmt.Sprintf("%d", quality),
+			"--qalpha", fmt.Sprintf("%d", quality),
+			"-s", "4",
+			inputPath,
+			outputPath,
+		}
+		avifCmd := exec.Command(avifencPath, avifArgs...)
+		avifCmd.SysProcAttr = getSysProcAttr()
+		avifOut, avifErr := avifCmd.CombinedOutput()
+		if avifErr != nil {
+			return "", fmt.Errorf("avifenc error: %v | output: %s", avifErr, string(avifOut))
+		}
+		// Remove original after successful conversion
+		if err := os.Remove(inputPath); err != nil {
+			fmt.Printf("Warning: failed to remove original file: %v\n", err)
+		}
+		return outputPath, nil
 
 	case ".png":
 		// PNG é lossless ou compression level. Ignorar quality parameter.

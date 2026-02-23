@@ -32,6 +32,12 @@ const (
 
 // Eventos do Whisper (Transcrição)
 const (
-	WhisperModelProgress     = "whisper:model-progress"
+	WhisperModelProgress      = "whisper:model-progress"
 	WhisperTranscribeProgress = "whisper:transcribe-progress"
+)
+
+// Eventos do Conversor (FFmpeg)
+const (
+	ConverterProgress = "converter:progress" // payload: { percent float64, stage string }
+	ConverterDone     = "converter:done"     // payload: ConversionResult
 )

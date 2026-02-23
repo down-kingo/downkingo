@@ -35,10 +35,10 @@ import (
 var proxyHTTPClient = &http.Client{
 	Timeout: 60 * time.Second,
 	Transport: &http.Transport{
-		MaxIdleConns:        10,
-		IdleConnTimeout:     90 * time.Second,
-		DisableCompression:  true, // streams are already compressed
-		MaxConnsPerHost:     5,
+		MaxIdleConns:       10,
+		IdleConnTimeout:    90 * time.Second,
+		DisableCompression: true, // streams are already compressed
+		MaxConnsPerHost:    5,
 	},
 }
 
@@ -72,9 +72,9 @@ type App struct {
 	whisperClient      *whisper.Client
 
 	// Stream proxy server for video trimmer preview
-	proxyServer   *http.Server
-	proxyPort     int
-	proxyMu       sync.Mutex
+	proxyServer    *http.Server
+	proxyPort      int
+	proxyMu        sync.Mutex
 	proxyStreamURL string
 }
 
@@ -234,7 +234,7 @@ func (a *App) initializeHandlers(ctx context.Context) {
 	a.converterHandler.SetContext(ctx)
 	a.converterHandler.SetConsoleEmitter(a.consoleLog)
 
-	a.whisperClient = whisper.NewClient(a.paths.WhisperDir())
+	a.whisperClient = whisper.NewClient(a.paths.WhisperDir(), a.paths.FFmpegPath())
 	a.transcriberHandler = handlers.NewTranscriberHandler(a.paths, a.whisperClient)
 	a.transcriberHandler.SetContext(ctx)
 	a.transcriberHandler.SetConsoleEmitter(a.consoleLog)
@@ -436,7 +436,7 @@ func (a *App) DownloadImage(url string, filename string) (string, error) {
 		imagesDir = a.cfg.ImageDownloadPath
 	}
 	imgCfg := a.cfg.GetImageConfig()
-	return a.mediaHandler.DownloadImage(url, filename, imagesDir, a.paths.FFmpegPath(), imgCfg.Format, imgCfg.Quality)
+	return a.mediaHandler.DownloadImage(url, filename, imagesDir, a.paths.FFmpegPath(), a.paths.AvifencPath(), imgCfg.Format, imgCfg.Quality)
 }
 
 func (a *App) GetSettings() config.Config {
@@ -553,6 +553,22 @@ func (a *App) CompressImage(inputPath string, quality int) (*handlers.Conversion
 	return a.converterHandler.CompressImage(inputPath, quality)
 }
 
+func (a *App) ReadImageThumbnail(inputPath string, maxSize int) (string, error) {
+	return a.converterHandler.ReadImageThumbnail(inputPath, maxSize)
+}
+
+func (a *App) GetFileSize(path string) (int64, error) {
+	return a.converterHandler.GetFileSize(path)
+}
+
+func (a *App) SelectVideoFiles() ([]string, error) {
+	return a.converterHandler.SelectVideoFiles()
+}
+
+func (a *App) SelectImageFiles() ([]string, error) {
+	return a.converterHandler.SelectImageFiles()
+}
+
 func (a *App) GetVersion() string {
 	return Version
 }
@@ -589,6 +605,10 @@ func (a *App) IsWhisperInstalled() bool {
 
 func (a *App) DownloadWhisperBinary() error {
 	return a.transcriberHandler.DownloadWhisperBinary()
+}
+
+func (a *App) ExportTranscriptionDOCX(text string) error {
+	return a.transcriberHandler.ExportTranscriptionDOCX(text)
 }
 
 // GetRoadmap fetches roadmap items from the configured source

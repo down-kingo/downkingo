@@ -166,6 +166,15 @@ func (p *Paths) Aria2cPath() string {
 	return p.getBinaryPath("aria2c")
 }
 
+// AvifencPath returns the full path to avifenc executable
+// Checks sidecar location first, then AppData
+func (p *Paths) AvifencPath() string {
+	if runtime.GOOS == "windows" {
+		return p.getBinaryPath("avifenc.exe")
+	}
+	return p.getBinaryPath("avifenc")
+}
+
 // WhisperDir returns the directory for whisper.cpp binary and models
 func (p *Paths) WhisperDir() string {
 	return filepath.Join(p.AppData, "whisper")

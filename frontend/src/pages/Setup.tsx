@@ -8,29 +8,18 @@ import {
   CheckDependencies,
   DownloadDependencies,
   DownloadAndApplyUpdate,
-  RestartApp,
   IsWhisperInstalled,
   DownloadWhisperBinary,
 } from "../../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
+import { FEATURE_REGISTRY, ALL_FEATURE_IDS } from "../lib/features";
 import {
   IconCheck,
   IconX,
   IconLoader2,
   IconDownload,
   IconPackage,
-  IconVideo,
-  IconPhoto,
-  IconTransform,
-  IconMicrophone,
 } from "@tabler/icons-react";
-
-const FEATURES: { id: FeatureId; icon: typeof IconVideo }[] = [
-  { id: "videos", icon: IconVideo },
-  { id: "images", icon: IconPhoto },
-  { id: "converter", icon: IconTransform },
-  { id: "transcriber", icon: IconMicrophone },
-];
 
 export default function Setup() {
   const navigate = useNavigate();
@@ -48,7 +37,8 @@ export default function Setup() {
   ]);
   const setEnabledFeatures = useSettingsStore((s) => s.setEnabledFeatures);
 
-  const toggleFeature = (id: FeatureId) => {
+  // Durante o onboarding, o toggle opera no estado local (antes de confirmar)
+  const toggleLocalFeature = (id: FeatureId) => {
     setSelectedFeatures((prev) => {
       if (prev.includes(id)) {
         if (prev.length <= 1) return prev; // mínimo 1
@@ -59,7 +49,8 @@ export default function Setup() {
   };
 
   const handleContinueFeatures = () => {
-    setEnabledFeatures(selectedFeatures);
+    // NÃO persiste no store aqui: a persistência ocorre apenas após instalação bem-sucedida.
+    // Isso evita estado inválido se o download/install falhar.
     setStep("install");
   };
 
@@ -71,7 +62,7 @@ export default function Setup() {
   const updateUrl = location.state?.downloadUrl || "";
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateStatus, setUpdateStatus] = useState<
-    "downloading" | "applying" | "complete" | "error" | "idle"
+    "downloading" | "applying" | "restarting" | "complete" | "error" | "idle"
   >("idle");
   const [updateError, setUpdateError] = useState("");
 
@@ -136,12 +127,16 @@ export default function Setup() {
         needsWhisperRef.current = wantsTranscriber && !whisperInstalled;
 
         if (allDeps.every((d: { installed: boolean }) => d.installed)) {
+          // Tudo já instalado — persiste features e navega
+          setEnabledFeatures(selectedFeatures);
           navigate("/home");
           return;
         }
 
         // Baixar dependências padrão (yt-dlp, FFmpeg)
-        const standardNeedsDownload = deps.some((d: { installed: boolean }) => !d.installed);
+        const standardNeedsDownload = deps.some(
+          (d: { installed: boolean }) => !d.installed,
+        );
         if (standardNeedsDownload) {
           await DownloadDependencies();
           // launcher:complete será emitido pelo backend → callback faz o whisper se necessário
@@ -194,12 +189,13 @@ export default function Setup() {
               } else if (data.status === "applying") {
                 setUpdateStatus("applying");
                 setUpdateProgress(100);
+              } else if (data.status === "restarting") {
+                setUpdateStatus("restarting");
+                setUpdateProgress(100);
               } else if (data.status === "complete") {
                 setUpdateStatus("complete");
-                // Auto restart after delay
-                setTimeout(() => RestartApp(), 2000);
               }
-            }
+            },
           );
           unsubscribeRef.current.progress = unsubUpdate;
         } else {
@@ -208,7 +204,7 @@ export default function Setup() {
             "launcher:progress",
             (data) => {
               if (mountedRef.current) updateLauncherProgress(data);
-            }
+            },
           );
           if (mountedRef.current)
             unsubscribeRef.current.progress = unsubProgress;
@@ -223,12 +219,14 @@ export default function Setup() {
                 needsWhisperRef.current = false;
                 startWhisperDownload();
               } else {
+                // Todas as deps instaladas com sucesso — agora é seguro persistir
+                setEnabledFeatures(selectedFeatures);
                 setComplete();
                 setTimeout(() => {
                   if (mountedRef.current) navigate("/home");
                 }, 1000);
               }
-            }
+            },
           );
           if (mountedRef.current)
             unsubscribeRef.current.complete = unsubComplete;
@@ -250,16 +248,23 @@ export default function Setup() {
                 downloaded: 0,
                 total: 0,
                 percent,
-                status: status === "complete" ? "complete" : status === "extracting" ? "extracting" : "downloading",
+                status:
+                  status === "complete"
+                    ? "complete"
+                    : status === "extracting"
+                      ? "extracting"
+                      : "downloading",
               });
 
               if (status === "complete") {
+                // Whisper instalado com sucesso — agora é seguro persistir features
+                setEnabledFeatures(selectedFeatures);
                 setComplete();
                 setTimeout(() => {
                   if (mountedRef.current) navigate("/home");
                 }, 1000);
               }
-            }
+            },
           );
           if (mountedRef.current)
             unsubscribeRef.current.whisperProgress = unsubWhisper;
@@ -307,7 +312,8 @@ export default function Setup() {
       if (unsubscribeRef.current.complete) unsubscribeRef.current.complete();
       else if (!isUpdateMode) tryEventsOff("launcher:complete");
 
-      if (unsubscribeRef.current.whisperProgress) unsubscribeRef.current.whisperProgress();
+      if (unsubscribeRef.current.whisperProgress)
+        unsubscribeRef.current.whisperProgress();
       else if (!isUpdateMode) tryEventsOff("whisper:binary-progress");
     };
   }, [isUpdateMode, step]);
@@ -415,9 +421,17 @@ export default function Setup() {
             iconStyle: "text-surface-900 animate-spin",
             spin: true,
           };
-        case "complete":
+        case "restarting":
           return {
             text: "Reiniciando...",
+            icon: IconLoader2,
+            style: "text-surface-900 bg-white border-surface-200 shadow-sm",
+            iconStyle: "text-surface-900 animate-spin",
+            spin: true,
+          };
+        case "complete":
+          return {
+            text: "Concluído",
             icon: IconCheck,
             style: "text-green-900 bg-green-100 border-green-200",
             iconStyle: "text-green-700",
@@ -442,7 +456,10 @@ export default function Setup() {
   };
 
   // Feature Selection Step
-  if ((step === "features" && !isUpdateMode) || (isPreview && step === "features")) {
+  if (
+    (step === "features" && !isUpdateMode) ||
+    (isPreview && step === "features")
+  ) {
     return (
       <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
         {/* Header */}
@@ -480,13 +497,14 @@ export default function Setup() {
           transition={{ delay: 0.3 }}
         >
           <div className="grid grid-cols-2 gap-3 mb-8">
-            {FEATURES.map((feature) => {
-              const Icon = feature.icon;
-              const isSelected = selectedFeatures.includes(feature.id);
+            {ALL_FEATURE_IDS.map((id) => {
+              const meta = FEATURE_REGISTRY[id];
+              const Icon = meta.icon;
+              const isSelected = selectedFeatures.includes(id);
               return (
                 <button
-                  key={feature.id}
-                  onClick={() => toggleFeature(feature.id)}
+                  key={id}
+                  onClick={() => toggleLocalFeature(id)}
                   className={`
                     group relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all duration-200
                     ${
@@ -522,10 +540,10 @@ export default function Setup() {
                         isSelected ? "text-surface-900" : "text-surface-500"
                       }`}
                     >
-                      {t(`setup.features.${feature.id}`)}
+                      {t(`setup.features.${id}`)}
                     </p>
                     <p className="text-xs text-surface-400 mt-1">
-                      {t(`setup.features.${feature.id}_desc`)}
+                      {t(`setup.features.${id}_desc`)}
                     </p>
                   </div>
                 </button>

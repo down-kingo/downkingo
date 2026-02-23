@@ -364,7 +364,7 @@ func (h *MediaHandler) convertVideoInfoToImageInfo(originalURL string, videoInfo
 }
 
 // DownloadImage downloads an image to the specified directory.
-func (h *MediaHandler) DownloadImage(url, filename, imagesDir, ffmpegPath, format string, quality int) (string, error) {
+func (h *MediaHandler) DownloadImage(url, filename, imagesDir, ffmpegPath, avifencPath, format string, quality int) (string, error) {
 	startTime := time.Now()
 	h.consoleLog(fmt.Sprintf("[Download] Baixando imagem: %s", filename))
 
@@ -381,7 +381,7 @@ func (h *MediaHandler) DownloadImage(url, filename, imagesDir, ffmpegPath, forma
 		return "", err
 	}
 
-	finalPath, err := images.Convert(destPath, format, quality, ffmpegPath)
+	finalPath, err := images.Convert(destPath, format, quality, ffmpegPath, avifencPath)
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to convert image")
 		return destPath, nil

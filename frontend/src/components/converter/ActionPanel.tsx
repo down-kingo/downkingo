@@ -7,6 +7,8 @@ import {
   IconLoader2,
   IconAlertCircle,
   IconCheck,
+  IconFolderOpen,
+  IconArrowRight,
 } from "@tabler/icons-react";
 import type { ConversionResult, ConversionTab } from "./types";
 
@@ -37,11 +39,19 @@ interface ActionPanelProps {
   error: string;
   onSelectOutput: () => void;
   onConvert: () => void;
-  t: (key: string) => string;
+  onOpenResultFolder: (outputPath: string) => void;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+  customOutputName?: string;
+  onCustomOutputNameChange?: (name: string) => void;
+  showCustomName?: boolean;
+  estimatedSize?: number | null;
+  fileCount?: number;
+  processedCount?: number;
 }
 
 /**
- * Painel lateral de ações com seleção de destino e botão de conversão.
+ * Painel lateral de ações com seleção de destino, botão de conversão,
+ * barra de progresso honesta e botão "Abrir Pasta" após sucesso.
  */
 export const ActionPanel = memo(function ActionPanel({
   inputPath,
@@ -52,7 +62,14 @@ export const ActionPanel = memo(function ActionPanel({
   error,
   onSelectOutput,
   onConvert,
+  onOpenResultFolder,
   t,
+  customOutputName,
+  onCustomOutputNameChange,
+  showCustomName,
+  estimatedSize,
+  fileCount = 1,
+  processedCount = 0,
 }: ActionPanelProps) {
   const isDisabled = !inputPath || isProcessing;
 
@@ -93,34 +110,76 @@ export const ActionPanel = memo(function ActionPanel({
             </p>
           </div>
 
+          {/* Custom Output Name */}
+          {showCustomName && onCustomOutputNameChange && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-semibold text-surface-400 uppercase tracking-wider">
+                {t("output_name")}
+              </label>
+              <input
+                type="text"
+                value={customOutputName || ""}
+                onChange={(e) => onCustomOutputNameChange(e.target.value)}
+                disabled={isProcessing}
+                placeholder={inputPath ? getFileName(inputPath).replace(/\.[^.]+$/, "") : t("output_name_placeholder")}
+                className="w-full p-2.5 bg-surface-50 dark:bg-black/20 rounded-xl border border-surface-200 dark:border-surface-200 hover:border-primary-500 dark:hover:border-primary-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-xs font-medium text-surface-700 dark:text-surface-300 outline-none"
+              />
+            </div>
+          )}
+
           <div className="h-px bg-surface-100 dark:bg-surface-200 my-2" />
 
-          {/* Main Action Button with Progress */}
+          {/* Estimated Size */}
+          {estimatedSize != null && estimatedSize > 0 && !result && (
+            <div className="text-center text-[10px] text-surface-500 py-1">
+              <span className="font-medium">{t("estimated_size")}:</span>{" "}
+              <span className="font-mono font-semibold text-surface-700 dark:text-surface-300">
+                ~{formatSize(estimatedSize)}
+              </span>{" "}
+              <span className="text-surface-400">{t("estimate_disclaimer")}</span>
+            </div>
+          )}
+
+          {/* Batch info */}
+          {fileCount > 1 && isProcessing && (
+            <div className="text-center text-[10px] font-medium text-primary-600 dark:text-primary-400 py-1">
+              {t("batch_processing", { current: processedCount + 1, total: fileCount })}
+            </div>
+          )}
+
+          {/* Progress — honesta: indeterminate (não simula 100%) */}
           <div className="space-y-3">
-            {isProcessing && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-medium text-primary-600 dark:text-primary-400">
-                  <span>{t("processing")}</span>
-                  <IconLoader2 size={12} className="animate-spin" />
-                </div>
-                <div className="h-1 bg-surface-100 dark:bg-surface-800/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-primary-600 rounded-full"
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {isProcessing && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="space-y-1.5"
+                >
+                  <div className="flex justify-between text-xs font-medium text-primary-600 dark:text-primary-400">
+                    <span>{t("processing")}</span>
+                    <IconLoader2 size={12} className="animate-spin" />
+                  </div>
+                  {/* Barra indeterminada honesta — não simula progresso falso */}
+                  <div className="h-1 bg-surface-100 dark:bg-surface-800/50 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full w-1/3 bg-gradient-to-r from-primary-500 to-primary-400 rounded-full"
+                      animate={{ x: ["0%", "200%", "0%"] }}
+                      transition={{
+                        duration: 1.6,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: isDisabled ? 1 : 1.02 }}
+              whileTap={{ scale: isDisabled ? 1 : 0.98 }}
               onClick={onConvert}
               disabled={isDisabled}
               className="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 dark:disabled:bg-surface-200 disabled:text-surface-400 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-primary-500/25 disabled:shadow-none flex items-center justify-center gap-2 transition-all text-sm"
@@ -137,9 +196,10 @@ export const ActionPanel = memo(function ActionPanel({
           </div>
 
           {/* Feedback Messages */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {error && (
               <motion.div
+                key="error"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -159,6 +219,7 @@ export const ActionPanel = memo(function ActionPanel({
 
             {result && result.success && (
               <motion.div
+                key="success"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -169,6 +230,7 @@ export const ActionPanel = memo(function ActionPanel({
                   <span>{t("success")}</span>
                 </div>
 
+                {/* Tamanho antes/depois */}
                 <div className="grid grid-cols-2 gap-2 text-[10px]">
                   <div className="bg-white/60 dark:bg-black/20 p-1.5 rounded">
                     <span className="block text-surface-500">
@@ -186,6 +248,7 @@ export const ActionPanel = memo(function ActionPanel({
                   </div>
                 </div>
 
+                {/* % de economia — agora também funciona para áudio */}
                 {result.compression !== 0 && (
                   <div className="text-center text-[10px] font-medium text-green-800 dark:text-green-300 pt-0.5">
                     {result.compression > 0
@@ -193,6 +256,21 @@ export const ActionPanel = memo(function ActionPanel({
                       : t("increase_of")}{" "}
                     {Math.abs(result.compression).toFixed(1)}%
                   </div>
+                )}
+
+                {/* Fix #7: Botão "Abrir Pasta" — agora funcional */}
+                {result.outputPath && (
+                  <button
+                    onClick={() => onOpenResultFolder(result.outputPath)}
+                    className="w-full mt-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/40 text-green-800 dark:text-green-300 text-[11px] font-semibold transition-colors group"
+                  >
+                    <IconFolderOpen
+                      size={13}
+                      className="group-hover:scale-110 transition-transform"
+                    />
+                    <span>{t("open_folder") || "Abrir Pasta"}</span>
+                    <IconArrowRight size={11} className="opacity-50" />
+                  </button>
                 )}
               </motion.div>
             )}

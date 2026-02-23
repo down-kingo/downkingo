@@ -7,8 +7,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -101,7 +103,6 @@ func (u *Updater) GetAvailableReleases() ([]Release, error) {
 func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", GitHubOwner, GitHubRepo)
 
-	// Use client with 30s timeout
 	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("network error: %w", err)
@@ -109,7 +110,6 @@ func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		// No releases yet
 		return &UpdateInfo{
 			Available:  false,
 			CurrentVer: u.currentVersion,
@@ -129,9 +129,9 @@ func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 	currentVer := strings.TrimPrefix(u.currentVersion, "v")
 
 	info := &UpdateInfo{
-		Available:  latestVer != currentVer && latestVer > currentVer,
-		CurrentVer: strings.TrimPrefix(u.currentVersion, "v"),
-		LatestVer:  latestVer, // Remove 'v' prefix - frontend will add it
+		Available:  compareVersions(currentVer, latestVer) < 0,
+		CurrentVer: currentVer,
+		LatestVer:  latestVer,
 		Changelog:  cleanChangelog(release.Body),
 	}
 
@@ -146,6 +146,35 @@ func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 	}
 
 	return info, nil
+}
+
+// compareVersions compares two semver strings numerically.
+// Returns -1 if a < b, 0 if a == b, 1 if a > b.
+func compareVersions(a, b string) int {
+	aParts := strings.Split(a, ".")
+	bParts := strings.Split(b, ".")
+
+	maxLen := len(aParts)
+	if len(bParts) > maxLen {
+		maxLen = len(bParts)
+	}
+
+	for i := 0; i < maxLen; i++ {
+		var aNum, bNum int
+		if i < len(aParts) {
+			aNum, _ = strconv.Atoi(aParts[i])
+		}
+		if i < len(bParts) {
+			bNum, _ = strconv.Atoi(bParts[i])
+		}
+		if aNum < bNum {
+			return -1
+		}
+		if aNum > bNum {
+			return 1
+		}
+	}
+	return 0
 }
 
 // getAssetName returns the expected asset name for current OS
@@ -166,27 +195,23 @@ func cleanChangelog(body string) string {
 	var cleaned []string
 
 	for _, line := range lines {
-		// Skip "Full Changelog" lines with compare links
 		if strings.Contains(line, "**Full Changelog**:") ||
 			strings.Contains(line, "Full Changelog:") ||
 			strings.Contains(line, "/compare/") {
 			continue
 		}
-		// Skip empty lines at the start
 		if len(cleaned) == 0 && strings.TrimSpace(line) == "" {
 			continue
 		}
 		cleaned = append(cleaned, line)
 	}
 
-	// Trim trailing empty lines
 	for len(cleaned) > 0 && strings.TrimSpace(cleaned[len(cleaned)-1]) == "" {
 		cleaned = cleaned[:len(cleaned)-1]
 	}
 
 	result := strings.Join(cleaned, "\n")
 
-	// If empty, return a default message
 	if strings.TrimSpace(result) == "" {
 		return "Correções de bugs e melhorias de desempenho."
 	}
@@ -194,27 +219,39 @@ func cleanChangelog(body string) string {
 	return result
 }
 
-// DownloadAndApply downloads and installs the update
+// DownloadAndApply downloads the update and launches the external updater to replace the binary.
 func (u *Updater) DownloadAndApply(downloadURL string) error {
-	u.emitProgress("downloading", 0)
-
-	// Get current executable path
-	execPath, err := os.Executable()
-	if err != nil {
-		return err
+	if len(updaterBinary) == 0 {
+		return fmt.Errorf("updater not available (dev mode)")
 	}
 
-	// Download to temp file with longer timeout
+	u.emitProgress("downloading", 0)
+
+	execPath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("failed to get executable path: %w", err)
+	}
+	execPath, err = filepath.EvalSymlinks(execPath)
+	if err != nil {
+		return fmt.Errorf("failed to resolve executable path: %w", err)
+	}
+
+	// Download new binary to temp
+	ext := ""
+	if runtime.GOOS == "windows" {
+		ext = ".exe"
+	}
+	tempPath := filepath.Join(os.TempDir(), "downkingo-update"+ext)
+
 	resp, err := downloadClient.Get(downloadURL)
 	if err != nil {
 		return fmt.Errorf("network error: %w", err)
 	}
 	defer resp.Body.Close()
 
-	tempPath := filepath.Join(os.TempDir(), "downkingo-update.exe")
 	out, err := os.Create(tempPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create temp file: %w", err)
 	}
 
 	total := resp.ContentLength
@@ -222,45 +259,67 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	buf := make([]byte, 32*1024)
 
 	for {
-		n, err := resp.Body.Read(buf)
+		n, readErr := resp.Body.Read(buf)
 		if n > 0 {
-			out.Write(buf[:n])
+			if _, writeErr := out.Write(buf[:n]); writeErr != nil {
+				out.Close()
+				os.Remove(tempPath)
+				return fmt.Errorf("failed to write update to disk: %w", writeErr)
+			}
 			downloaded += int64(n)
-			percent := float64(downloaded) / float64(total) * 100
-			u.emitProgress("downloading", percent)
+			if total > 0 {
+				percent := float64(downloaded) / float64(total) * 100
+				u.emitProgress("downloading", percent)
+			}
 		}
-		if err == io.EOF {
+		if readErr == io.EOF {
 			break
 		}
-		if err != nil {
+		if readErr != nil {
 			out.Close()
 			os.Remove(tempPath)
-			return err
+			return fmt.Errorf("download interrupted: %w", readErr)
 		}
 	}
 	out.Close()
 
 	u.emitProgress("applying", 100)
 
-	// Atomic replace: rename current to .old, rename new to current
-	oldPath := execPath + ".old"
-	os.Remove(oldPath) // Remove any existing .old file
-
-	if err := os.Rename(execPath, oldPath); err != nil {
-		return fmt.Errorf("failed to backup current executable: %w", err)
+	// Extract the embedded updater binary to temp
+	updaterPath := filepath.Join(os.TempDir(), "downkingo-updater"+ext)
+	if err := os.WriteFile(updaterPath, updaterBinary, 0755); err != nil {
+		os.Remove(tempPath)
+		return fmt.Errorf("failed to extract updater: %w", err)
 	}
 
-	if err := os.Rename(tempPath, execPath); err != nil {
-		// Try to restore the old executable
-		os.Rename(oldPath, execPath)
-		return fmt.Errorf("failed to install update: %w", err)
+	// Launch the external updater process
+	pid := os.Getpid()
+	cmd := exec.Command(updaterPath,
+		"--pid", strconv.Itoa(pid),
+		"--old", execPath,
+		"--new", tempPath,
+		"--cleanup", updaterPath,
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		os.Remove(tempPath)
+		os.Remove(updaterPath)
+		return fmt.Errorf("failed to launch updater: %w", err)
 	}
 
-	u.emitProgress("complete", 100)
+	u.emitProgress("restarting", 100)
+
+	// Quit the app — the external updater will wait for us to exit, then replace the binary and relaunch
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		application.Get().Quit()
+	}()
+
 	return nil
 }
 
-// RestartApp restarts the application using Wails v3 API
+// RestartApp quits the application (kept for interface compatibility).
 func (u *Updater) RestartApp() {
 	application.Get().Quit()
 }
