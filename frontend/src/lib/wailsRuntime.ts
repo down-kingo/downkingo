@@ -3,7 +3,7 @@
  * Usa imports do pacote @wailsio/runtime.
  */
 
-import { Events } from "@wailsio/runtime";
+import { Events, Browser } from "@wailsio/runtime";
 
 // Tipo para o callback de eventos
 type EventCallback<T = unknown> = (data: T) => void;
@@ -33,7 +33,7 @@ export function waitForRuntime(_timeout = 5000): Promise<void> {
  */
 export async function safeEventsOn<T = unknown>(
   eventName: string,
-  callback: EventCallback<T>
+  callback: EventCallback<T>,
 ): Promise<Unsubscribe> {
   // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
   const cancel = Events.On(eventName, (event: { data: T }) => {
@@ -61,7 +61,7 @@ export async function safeEventsOff(
  */
 export function tryEventsOn<T = unknown>(
   eventName: string,
-  callback: EventCallback<T>
+  callback: EventCallback<T>,
 ): Unsubscribe | undefined {
   try {
     // Wails v3: Events.On callback receives a WailsEvent wrapper with { data }
@@ -121,7 +121,10 @@ export function safeWindowSetSystemDefaultTheme(): void {
  * @param url - URL para abrir no navegador
  */
 export function safeBrowserOpenURL(url: string): void {
-  // V3: Use the Go binding App.OpenUrl() which calls application.Get().Browser.OpenURL()
-  // Fallback to window.open if needed
-  window.open(url, "_blank");
+  try {
+    Browser.OpenURL(url);
+  } catch (error) {
+    console.error("[WailsRuntime] Error opening URL:", error);
+    window.open(url, "_blank");
+  }
 }

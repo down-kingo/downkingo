@@ -96,7 +96,7 @@ export const useSettingsStore = create<SettingsState>()(
         openSettings: "Ctrl+,",
         openQueue: "Ctrl+Q",
         openHistory: "Ctrl+H",
-        openDownloads: "Ctrl+D",
+        openDownloads: "Ctrl+J",
         openTerminal: "F12",
       },
 

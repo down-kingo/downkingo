@@ -3,6 +3,32 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./i18n"; // Inicializa react-i18next
 import "./index.css";
+import { safeBrowserOpenURL } from "./lib/wailsRuntime";
+
+// Global click event listener to handle external links
+document.addEventListener(
+  "click",
+  (e) => {
+    const target = e.target as HTMLElement;
+    const anchor = target.closest("a");
+    if (anchor && anchor.href) {
+      try {
+        const url = new URL(anchor.href);
+        // Only intercept external HTTP/HTTPS URLs (different host)
+        if (
+          (url.protocol === "http:" || url.protocol === "https:") &&
+          url.host !== window.location.host
+        ) {
+          e.preventDefault();
+          safeBrowserOpenURL(anchor.href);
+        }
+      } catch {
+        // Invalid URL, do nothing special
+      }
+    }
+  },
+  { capture: true },
+);
 
 class ErrorBoundary extends React.Component<
   any,
@@ -48,7 +74,7 @@ const renderApp = () => {
       <ErrorBoundary>
         <App />
       </ErrorBoundary>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 };
 
