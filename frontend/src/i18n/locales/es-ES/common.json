@@ -18,6 +18,14 @@
   },
   "after": "",
   "audio_format": "",
+  "available_models": "",
+  "batch_failed_one": "",
+  "batch_failed_many": "",
+  "batch_failed_other": "",
+  "batch_processing": "",
+  "batch_succeeded_one": "",
+  "batch_succeeded_many": "",
+  "batch_succeeded_other": "",
   "before": "",
   "better_quality": "",
   "change": "",
@@ -36,26 +44,27 @@
     "strong": ""
   },
   "compression_level": "",
+  "copy": "",
   "dashboard": {
     "manage_tools": "Gestiona tus herramientas y descargas recientes.",
     "overview": "Visión General",
     "recent_activity": "Actividad Reciente",
     "tools": {
-      "image_extractor": {
-        "desc": "Extrae imágenes de enlaces y redes sociales.",
-        "title": "Extractor de Imágenes"
-      },
-      "video_downloader": {
-        "desc": "Descarga videos y audios de YouTube, TikTok y más.",
-        "title": "Descargador de Video"
-      },
       "converter": {
         "desc": "Convierte entre formatos de audio y video rápidamente.",
         "title": "Conversor de Medios"
       },
+      "image_extractor": {
+        "desc": "Extrae imágenes de enlaces y redes sociales.",
+        "title": "Extractor de Imágenes"
+      },
       "transcriber": {
         "desc": "Transcribe audio y video a texto con IA.",
         "title": "Transcriptor"
+      },
+      "video_downloader": {
+        "desc": "Descarga videos y audios de YouTube, TikTok y más.",
+        "title": "Descargador de Video"
       }
     },
     "unknown": "Desconocido",
@@ -70,8 +79,15 @@
     "text2": "Los autores de <0>DownKingo</0> no respaldan ni asumen responsabilidad por el uso de esta aplicación en violación de estas leyes.",
     "title": "Aviso de Derechos de Autor"
   },
+  "download": "",
+  "downloaded_models": "",
+  "downloading": "",
+  "drop_here": "",
   "encoding_preset": "",
   "encoding_speed": "",
+  "error_delete_model": "",
+  "error_download_model": "",
+  "error_transcribe": "",
   "errors": {
     "generic": "Ocurrió un error. Inténtalo de nuevo.",
     "invalid_url": "URL inválida.",
@@ -79,6 +95,11 @@
     "not_found": "Contenido no encontrado.",
     "unsupported": "Plataforma no soportada."
   },
+  "estimate_disclaimer": "",
+  "estimated_size": "",
+  "files_selected_one": "",
+  "files_selected_many": "",
+  "files_selected_other": "",
   "format_desc": {
     "high_quality": "",
     "lossless": "",
@@ -96,6 +117,7 @@
     "active_downloads_other": "{{count}} descargas activas",
     "add_audio_queue": "Añadir Audio",
     "add_queue": "Añadir a la Cola",
+    "aria2c_active": "Modo Turbo Activo",
     "audio": "",
     "audio_mode": "Solo Audio",
     "check_progress": "Ver progreso en la pestaña dedicada.",
@@ -113,25 +135,27 @@
     "placeholder": "Pega la URL del video aquí...",
     "quality": "Calidad",
     "queue_title": "Cola de Descargas",
+    "turbo_activate": "Activar Modo Turbo",
+    "turbo_installing": "Instalando Turbo...",
+    "turbo_tip_desc": "Active el Modo Turbo para descargar hasta 10 veces más rápido.",
+    "turbo_tip_title": "¿Descargas Lentas?",
     "video": "",
     "video_mode": "Video",
-    "views": "vistas",
-    "aria2c_active": "Modo Turbo Activo",
-    "turbo_tip_title": "¿Descargas Lentas?",
-    "turbo_tip_desc": "Active el Modo Turbo para descargar hasta 10 veces más rápido.",
-    "turbo_activate": "Activar Modo Turbo",
-    "turbo_installing": "Instalando Turbo..."
+    "views": "vistas"
   },
   "image": "",
   "increase_of": "",
+  "install_whisper": "",
+  "installing_whisper": "",
   "keep_audio_track": "",
   "max_compression": "",
   "max_quality": "",
+  "models_subtitle": "",
+  "models_title": "",
   "more_options": "",
   "nav": {
     "console": "Consola",
     "converter": "Convertir",
-    "tools": "Herramientas",
     "folder": "Carpeta de Descargas",
     "history": "Historial",
     "home": "Inicio",
@@ -139,34 +163,33 @@
     "queue": "Cola",
     "roadmap": "Roadmap",
     "settings": "Ajustes",
+    "tools": "Herramientas",
     "transcriber": "Transcriptor",
     "videos": "Videos"
   },
-  "update_modal": {
-    "title": "Nueva versión disponible",
-    "whats_new": "Novedades",
-    "update_now": "Actualizar Ahora",
-    "later": "Quizás más tarde"
-  },
   "onboarding": {
-    "title": "Bienvenido a DownKingo",
-    "subtitle": "Vamos a configurar tu experiencia",
-    "language": "Idioma",
-    "theme": "Tema",
+    "anonymous_mode": "Modo anónimo",
+    "anonymous_mode_desc": "No enviar estadísticas de uso anónimas",
+    "auto_update": "Actualizaciones automáticas",
+    "auto_update_desc": "Mantener la app actualizada automáticamente",
+    "clipboard_monitor": "Monitorear portapapeles",
+    "clipboard_monitor_desc": "Detectar enlaces copiados y sugerir descarga",
     "color": "Color de acento",
     "get_started": "Empezar",
+    "language": "Idioma",
     "preferences": "Preferencias",
     "start_with_windows": "Iniciar con Windows",
     "start_with_windows_desc": "Abrir automáticamente al iniciar el sistema",
-    "clipboard_monitor": "Monitorear portapapeles",
-    "clipboard_monitor_desc": "Detectar enlaces copiados y sugerir descarga",
-    "auto_update": "Actualizaciones automáticas",
-    "auto_update_desc": "Mantener la app actualizada automáticamente",
-    "anonymous_mode": "Modo anónimo",
-    "anonymous_mode_desc": "No enviar estadísticas de uso anónimas"
+    "subtitle": "Vamos a configurar tu experiencia",
+    "theme": "Tema",
+    "title": "Bienvenido a DownKingo"
   },
+  "open_folder": "",
+  "or_drag_and_drop": "",
   "original_folder": "",
   "output_format": "",
+  "output_name": "",
+  "output_name_placeholder": "",
   "preset": {
     "fast": "",
     "medium": "",
@@ -185,9 +208,25 @@
   },
   "quality_bitrate": "",
   "quality_crf": "",
+  "quality_label": "",
+  "result": "",
+  "save": "",
+  "save_docx": "",
   "savings_of": "",
   "select_file_prefix": "",
   "setup": {
+    "features": {
+      "continue": "Continuar",
+      "converter": "Convertir Medios",
+      "converter_desc": "Convierte entre formatos de audio y video",
+      "images": "Descargar Imágenes",
+      "images_desc": "Extrae imágenes de enlaces y redes sociales",
+      "title": "¿Qué quieres usar?",
+      "transcriber": "Transcripción",
+      "transcriber_desc": "Transcribe audio y video a texto",
+      "videos": "Descargar Videos",
+      "videos_desc": "YouTube, TikTok, Instagram y más"
+    },
     "installation_error": "Error en la instalación",
     "overall_progress": "Progreso general",
     "ready_redirecting": "¡Todo listo! Redirigiendo...",
@@ -202,20 +241,18 @@
       "verifying": "Verificando...",
       "waiting": "Esperando..."
     },
-    "title": "Preparando componentes esenciales...",
-    "features": {
-      "title": "¿Qué quieres usar?",
-      "videos": "Descargar Videos",
-      "videos_desc": "YouTube, TikTok, Instagram y más",
-      "images": "Descargar Imágenes",
-      "images_desc": "Extrae imágenes de enlaces y redes sociales",
-      "converter": "Convertir Medios",
-      "converter_desc": "Convierte entre formatos de audio y video",
-      "transcriber": "Transcripción",
-      "transcriber_desc": "Transcribe audio y video a texto",
-      "continue": "Continuar"
-    }
+    "title": "Preparando componentes esenciales..."
   },
+  "setup_binary_done": "",
+  "setup_downloading_binary": "",
+  "setup_extracting": "",
+  "setup_model_done": "",
+  "setup_model_downloading": "",
+  "setup_recommended": "",
+  "setup_skip_model": "",
+  "setup_step1_title": "",
+  "setup_step2_desc": "",
+  "setup_step2_title": "",
   "smaller_file": "",
   "start": "",
   "status": {
@@ -248,15 +285,22 @@
     "saving": "Guardando: {{filename}}"
   },
   "trimmer": {
-    "title": "Recortar Vídeo",
     "description": "Selecciona un fragmento para descargar solo la parte deseada",
-    "start": "Inicio",
     "end": "Fin",
-    "selected_duration": "Duración seleccionada",
+    "manual_fallback": "Usa los campos de tiempo para definir el fragmento manualmente.",
     "preview": "Vista previa",
     "preview_unavailable": "Vista previa no disponible",
-    "manual_fallback": "Usa los campos de tiempo para definir el fragmento manualmente."
+    "selected_duration": "Duración seleccionada",
+    "start": "Inicio",
+    "title": "Recortar Vídeo"
+  },
+  "update_modal": {
+    "later": "Quizás más tarde",
+    "title": "Nueva versión disponible",
+    "update_now": "Actualizar Ahora",
+    "whats_new": "Novedades"
   },
   "video": "",
-  "wait": ""
+  "wait": "",
+  "whisper_not_installed_desc": ""
 }

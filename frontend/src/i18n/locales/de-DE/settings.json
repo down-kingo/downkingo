@@ -68,6 +68,16 @@
     "thumbnail": "Thumbnail einbetten",
     "title": "Download-Optionen"
   },
+  "features": {
+    "converter": "Medien konvertieren",
+    "converter_desc": "Medienkonverter-Tab anzeigen",
+    "images": "Bilder herunterladen",
+    "images_desc": "Bild-Download-Tab anzeigen",
+    "transcriber": "Transkription",
+    "transcriber_desc": "Transkriptions-Tab anzeigen",
+    "videos": "Videos herunterladen",
+    "videos_desc": "Video-Download-Tab anzeigen"
+  },
   "image_settings": {
     "conversion_desc": "Bilder beim Herunterladen automatisch konvertieren",
     "conversion_format": "Konvertierungsformat",
@@ -122,24 +132,14 @@
     "about": "Über",
     "appearance": "Aussehen",
     "converter": "Konvertierung",
+    "features": "Funktionen",
     "image": "Bild",
     "privacy": "Datenschutz",
     "regional": "Regional",
     "shortcuts": "Tastenkombinationen",
-    "features": "Funktionen",
     "storage": "Speicher",
     "system": "System",
     "video": "Video"
-  },
-  "features": {
-    "videos": "Videos herunterladen",
-    "videos_desc": "Video-Download-Tab anzeigen",
-    "images": "Bilder herunterladen",
-    "images_desc": "Bild-Download-Tab anzeigen",
-    "converter": "Medien konvertieren",
-    "converter_desc": "Medienkonverter-Tab anzeigen",
-    "transcriber": "Transkription",
-    "transcriber_desc": "Transkriptions-Tab anzeigen"
   },
   "shortcuts": {
     "desc": "Tastenkombinationen anpassen.",
@@ -178,9 +178,17 @@
     "general": "Allgemein",
     "images": "Bilder",
     "shortcuts": "Verknüpfungen",
+    "transcriber": "Transcritor",
     "video": "Videos"
   },
   "title": "Einstellungen",
+  "transcriber_settings": {
+    "language": "Idioma Padrão",
+    "language_desc": "Forçar um idioma pode melhorar a precisão, 'Automático' tentará detectar.",
+    "model_quality": "Qualidade do Modelo Whisper",
+    "model_quality_desc": "Modelos maiores tem mais precisão mas consomem mais CPU e RAM.",
+    "title": "Configurações do Transcritor"
+  },
   "video_settings": {
     "compatibility": "Videokompatibilität",
     "compatibility_modern": "🚀 Modern (VP9/Opus)",

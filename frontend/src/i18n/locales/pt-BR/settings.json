@@ -68,6 +68,16 @@
     "thumbnail": "Incorporar Miniatura",
     "title": "Opções de Download"
   },
+  "features": {
+    "converter": "Converter Mídia",
+    "converter_desc": "Mostrar aba do conversor de mídia",
+    "images": "Baixar Fotos",
+    "images_desc": "Mostrar aba de download de imagens",
+    "transcriber": "Transcrição",
+    "transcriber_desc": "Mostrar aba de transcrição",
+    "videos": "Baixar Vídeos",
+    "videos_desc": "Mostrar aba de download de vídeos"
+  },
   "image_settings": {
     "conversion_desc": "Converter imagens automaticamente ao baixar",
     "conversion_format": "Formato de Conversão",
@@ -122,24 +132,14 @@
     "about": "Sobre",
     "appearance": "Aparência",
     "converter": "Conversão",
+    "features": "Funcionalidades",
     "image": "Imagem",
     "privacy": "Privacidade",
     "regional": "Regional",
     "shortcuts": "Atalhos",
-    "features": "Funcionalidades",
     "storage": "Armazenamento",
     "system": "Sistema",
     "video": "Vídeo"
-  },
-  "features": {
-    "videos": "Baixar Vídeos",
-    "videos_desc": "Mostrar aba de download de vídeos",
-    "images": "Baixar Fotos",
-    "images_desc": "Mostrar aba de download de imagens",
-    "converter": "Converter Mídia",
-    "converter_desc": "Mostrar aba do conversor de mídia",
-    "transcriber": "Transcrição",
-    "transcriber_desc": "Mostrar aba de transcrição"
   },
   "shortcuts": {
     "desc": "Personalize os atalhos do teclado.",
@@ -178,9 +178,17 @@
     "general": "Geral",
     "images": "Imagens",
     "shortcuts": "Atalhos",
+    "transcriber": "Transcritor",
     "video": "Vídeos"
   },
   "title": "Configurações",
+  "transcriber_settings": {
+    "language": "Idioma Padrão",
+    "language_desc": "Forçar um idioma pode melhorar a precisão, 'Automático' tentará detectar.",
+    "model_quality": "Qualidade do Modelo Whisper",
+    "model_quality_desc": "Modelos maiores tem mais precisão mas consomem mais CPU e RAM.",
+    "title": "Configurações do Transcritor"
+  },
   "video_settings": {
     "compatibility": "Compatibilidade de Vídeo",
     "compatibility_modern": "🚀 Modern (VP9/Opus)",

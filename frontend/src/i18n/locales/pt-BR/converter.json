@@ -24,6 +24,10 @@
       "name": "WAV"
     }
   },
+  "batch_add_more": "Adicionar mais",
+  "batch_failed": "{{count}} com falha",
+  "batch_processing": "Processando {{current}} de {{total}}",
+  "batch_succeeded": "{{count}} com sucesso",
   "before": "Antes",
   "better_quality": "Melhor qualidade",
   "change": "Alterar",
@@ -54,6 +58,9 @@
   "error_select_input": "Selecione um arquivo de entrada",
   "error_unknown": "Erro desconhecido",
   "error_unsupported_type": "Tipo de conversão não suportado",
+  "estimate_disclaimer": "(aproximado)",
+  "estimated_size": "Tamanho estimado",
+  "files_selected": "{{count}} arquivos selecionados",
   "format_desc": {
     "high_quality": "Alta Qualidade",
     "lossless": "Sem perdas",
@@ -99,6 +106,8 @@
   "original_folder": "Pasta original",
   "output_folder": "Pasta de saída",
   "output_format": "Formato de Saída",
+  "output_name": "Nome de Saída",
+  "output_name_placeholder": "Nome do arquivo sem extensão",
   "preset": {
     "fast": "Rápido",
     "medium": "Médio",
@@ -115,9 +124,9 @@
     "medium": "Média",
     "tiny": "Minúscula"
   },
-  "quality_label": "Qualidade",
   "quality_bitrate": "Qualidade (Bitrate)",
   "quality_crf": "Qualidade (CRF)",
+  "quality_label": "Qualidade",
   "quality_levels": {
     "high": "Alta",
     "lossless": "Sem perdas",
@@ -179,14 +188,5 @@
       "name": "WebM"
     }
   },
-  "output_name": "Nome de Saída",
-  "output_name_placeholder": "Nome do arquivo sem extensão",
-  "estimated_size": "Tamanho estimado",
-  "estimate_disclaimer": "(aproximado)",
-  "batch_processing": "Processando {{current}} de {{total}}",
-  "batch_add_more": "Adicionar mais",
-  "batch_succeeded": "{{count}} com sucesso",
-  "batch_failed": "{{count}} com falha",
-  "files_selected": "{{count}} arquivos selecionados",
   "wait": "Aguarde..."
 }

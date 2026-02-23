@@ -68,6 +68,16 @@
     "thumbnail": "Embed Thumbnail",
     "title": "Download Options"
   },
+  "features": {
+    "converter": "Convert Media",
+    "converter_desc": "Show media converter tab",
+    "images": "Download Images",
+    "images_desc": "Show image download tab",
+    "transcriber": "Transcription",
+    "transcriber_desc": "Show transcription tab",
+    "videos": "Download Videos",
+    "videos_desc": "Show video download tab"
+  },
   "image_settings": {
     "conversion_desc": "Automatically convert images when downloading",
     "conversion_format": "Conversion Format",
@@ -122,24 +132,14 @@
     "about": "About",
     "appearance": "Appearance",
     "converter": "Conversion",
+    "features": "Features",
     "image": "Image",
     "privacy": "Privacy",
     "regional": "Regional",
     "shortcuts": "Shortcuts",
-    "features": "Features",
     "storage": "Storage",
     "system": "System",
     "video": "Video"
-  },
-  "features": {
-    "videos": "Download Videos",
-    "videos_desc": "Show video download tab",
-    "images": "Download Images",
-    "images_desc": "Show image download tab",
-    "converter": "Convert Media",
-    "converter_desc": "Show media converter tab",
-    "transcriber": "Transcription",
-    "transcriber_desc": "Show transcription tab"
   },
   "shortcuts": {
     "desc": "Customize keyboard shortcuts.",
@@ -178,9 +178,17 @@
     "general": "General",
     "images": "Images",
     "shortcuts": "Shortcuts",
+    "transcriber": "Transcritor",
     "video": "Videos"
   },
   "title": "Settings",
+  "transcriber_settings": {
+    "language": "Idioma Padrão",
+    "language_desc": "Forçar um idioma pode melhorar a precisão, 'Automático' tentará detectar.",
+    "model_quality": "Qualidade do Modelo Whisper",
+    "model_quality_desc": "Modelos maiores tem mais precisão mas consomem mais CPU e RAM.",
+    "title": "Configurações do Transcritor"
+  },
   "video_settings": {
     "compatibility": "Video Compatibility",
     "compatibility_modern": "🚀 Modern (VP9/Opus)",

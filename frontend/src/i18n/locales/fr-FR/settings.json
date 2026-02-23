@@ -68,6 +68,16 @@
     "thumbnail": "Intégrer Miniature",
     "title": "Options de Téléchargement"
   },
+  "features": {
+    "converter": "Convertir des Médias",
+    "converter_desc": "Afficher l'onglet du convertisseur de médias",
+    "images": "Télécharger des Images",
+    "images_desc": "Afficher l'onglet de téléchargement d'images",
+    "transcriber": "Transcription",
+    "transcriber_desc": "Afficher l'onglet de transcription",
+    "videos": "Télécharger des Vidéos",
+    "videos_desc": "Afficher l'onglet de téléchargement de vidéos"
+  },
   "image_settings": {
     "conversion_desc": "Convertir automatiquement les images lors du téléchargement",
     "conversion_format": "Format de conversion",
@@ -122,24 +132,14 @@
     "about": "À propos",
     "appearance": "Apparence",
     "converter": "Conversion",
+    "features": "Fonctionnalités",
     "image": "Image",
     "privacy": "Confidentialité",
     "regional": "Régional",
     "shortcuts": "Raccourcis",
-    "features": "Fonctionnalités",
     "storage": "Stockage",
     "system": "Système",
     "video": "Vidéo"
-  },
-  "features": {
-    "videos": "Télécharger des Vidéos",
-    "videos_desc": "Afficher l'onglet de téléchargement de vidéos",
-    "images": "Télécharger des Images",
-    "images_desc": "Afficher l'onglet de téléchargement d'images",
-    "converter": "Convertir des Médias",
-    "converter_desc": "Afficher l'onglet du convertisseur de médias",
-    "transcriber": "Transcription",
-    "transcriber_desc": "Afficher l'onglet de transcription"
   },
   "shortcuts": {
     "desc": "Personnaliser raccourcis clavier.",
@@ -178,9 +178,17 @@
     "general": "Général",
     "images": "Images",
     "shortcuts": "Raccourcis",
+    "transcriber": "Transcritor",
     "video": "Vidéos"
   },
   "title": "Paramètres",
+  "transcriber_settings": {
+    "language": "Idioma Padrão",
+    "language_desc": "Forçar um idioma pode melhorar a precisão, 'Automático' tentará detectar.",
+    "model_quality": "Qualidade do Modelo Whisper",
+    "model_quality_desc": "Modelos maiores tem mais precisão mas consomem mais CPU e RAM.",
+    "title": "Configurações do Transcritor"
+  },
   "video_settings": {
     "compatibility": "Compatibilité vidéo",
     "compatibility_modern": "🚀 Moderne (VP9/Opus)",

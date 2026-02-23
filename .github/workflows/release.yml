@@ -13,17 +13,8 @@ env:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            platform: windows/amd64
-            artifact: DownKingo.exe
-          - os: ubuntu-latest
-            platform: linux/amd64
-            artifact: DownKingo.AppImage
-
-    runs-on: ${{ matrix.os }}
+    name: Build (Windows)
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
@@ -39,29 +30,11 @@ jobs:
         with:
           node-version: "20"
 
-      # ============================================================
-      # WINDOWS DEPENDENCIES
-      # ============================================================
-      - name: Install NSIS (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Install NSIS
         shell: powershell
         run: |
           choco install nsis -y
           echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
-
-      # ============================================================
-      # LINUX DEPENDENCIES
-      # ============================================================
-      - name: Install Linux Dependencies
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
-          # AppImage tools
-          sudo apt-get install -y libfuse2
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          chmod +x linuxdeploy-x86_64.AppImage
-          sudo mv linuxdeploy-x86_64.AppImage /usr/local/bin/linuxdeploy
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -80,12 +53,9 @@ jobs:
         run: bun run build
 
       # ============================================================
-      # SIDECAR BINARIES: Download para empacotamento no instalador
+      # SIDECAR BINARIES
       # ============================================================
-
-      # Windows Sidecar
-      - name: Download Sidecar Binaries (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Download Sidecar Binaries
         shell: bash
         run: |
           mkdir -p build/sidecar/windows
@@ -99,42 +69,18 @@ jobs:
           echo "Sidecar binaries ready:"
           ls -la build/sidecar/windows/
 
-      # Linux Sidecar
-      - name: Download Sidecar Binaries (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          mkdir -p build/sidecar/linux
-          echo "Downloading yt-dlp..."
-          curl -L -o build/sidecar/linux/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp
-          chmod +x build/sidecar/linux/yt-dlp
-          echo "Downloading FFmpeg..."
-          curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-          tar -xf ffmpeg.tar.xz
-          mv ffmpeg-*-static/ffmpeg build/sidecar/linux/
-          rm -rf ffmpeg-*-static ffmpeg.tar.xz
-          chmod +x build/sidecar/linux/ffmpeg
-          echo "Sidecar binaries ready:"
-          ls -la build/sidecar/linux/
-
       # ============================================================
       # BUILD UPDATER SIDECAR
       # ============================================================
-      - name: Build Updater Binary (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build Updater Binary
         shell: bash
         run: |
           GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
 
-      - name: Build Updater Binary (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
-
       # ============================================================
-      # BUILD APPLICATION (Wails v3: go build with //go:embed)
+      # BUILD APPLICATION
       # ============================================================
-      - name: Build Application (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build Application
         shell: bash
         env:
           APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
@@ -144,31 +90,18 @@ jobs:
           mkdir -p build/bin
           go build -ldflags "-s -w -H windowsgui -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo.exe .
 
-      - name: Build Application (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
-          CGO_ENABLED: "1"
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p build/bin
-          go build -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo .
-
       # ============================================================
-      # PACKAGE: Create professional installers
+      # PACKAGE: NSIS Installer
       # ============================================================
-
-      # Windows: Build NSIS installer manually (Wails v3 does not auto-generate it)
-      - name: Package (Windows - NSIS)
-        if: matrix.os == 'windows-latest'
+      - name: Package (NSIS Installer)
         shell: bash
         run: |
           VERSION=${GITHUB_REF_NAME#v}
 
-          # Update version in wails_tools.nsh for NSIS
+          # Update version in wails_tools.nsh
           sed -i "s/!define INFO_PRODUCTVERSION \".*\"/!define INFO_PRODUCTVERSION \"${VERSION}\"/" build/windows/installer/wails_tools.nsh
 
-          # Run NSIS with the binary path
+          # Run NSIS
           cd build/windows/installer
           makensis -DARG_WAILS_AMD64_BINARY="..\\..\\bin\\downkingo.exe" project.nsi
 
@@ -180,76 +113,22 @@ jobs:
           INSTALLER=$(find build/bin -name "*-installer.exe" | head -1)
           if [ -n "$INSTALLER" ]; then
             echo "Found installer: $INSTALLER"
-            mv "$INSTALLER" build/bin/${{ matrix.artifact }}
+            mv "$INSTALLER" build/bin/DownKingo.exe
           else
             echo "No installer found, packaging binary directly"
-            cp build/bin/downkingo.exe build/bin/${{ matrix.artifact }}
+            cp build/bin/downkingo.exe build/bin/DownKingo.exe
           fi
           echo "Windows package ready:"
-          ls -la build/bin/${{ matrix.artifact }}
-
-      # Linux: Create AppImage
-      - name: Package (Linux - AppImage)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          echo "Contents of build/bin:"
-          ls -la build/bin/
-
-          # Create AppDir structure
-          mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/applications
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-
-          # Copy main binary
-          cp build/bin/downkingo AppDir/usr/bin/downkingo
-          chmod +x AppDir/usr/bin/downkingo
-
-          # Copy sidecar binaries
-          cp build/sidecar/linux/yt-dlp AppDir/usr/bin/
-          cp build/sidecar/linux/ffmpeg AppDir/usr/bin/
-
-          # Copy icon
-          cp build/appicon.png AppDir/usr/share/icons/hicolor/256x256/apps/downkingo.png
-
-          # Create .desktop file
-          cat > AppDir/usr/share/applications/downkingo.desktop << EOF
-          [Desktop Entry]
-          Name=DownKingo
-          Exec=downkingo
-          Icon=downkingo
-          Type=Application
-          Categories=AudioVideo;Video;
-          Comment=Download videos from YouTube and other platforms
-          EOF
-
-          # Create AppRun
-          cat > AppDir/AppRun << 'EOF'
-          #!/bin/bash
-          SELF=$(readlink -f "$0")
-          HERE=${SELF%/*}
-          export PATH="${HERE}/usr/bin:${PATH}"
-          exec "${HERE}/usr/bin/downkingo" "$@"
-          EOF
-          chmod +x AppDir/AppRun
-
-          # Link desktop file and icon to root
-          ln -sf usr/share/applications/downkingo.desktop AppDir/downkingo.desktop
-          ln -sf usr/share/icons/hicolor/256x256/apps/downkingo.png AppDir/downkingo.png
-
-          # Create AppImage
-          linuxdeploy --appdir AppDir --output appimage
-          mv DownKingo*.AppImage build/bin/${{ matrix.artifact }}
-          echo "Linux AppImage ready:"
-          ls -la build/bin/
+          ls -la build/bin/DownKingo.exe
 
       # ============================================================
-      # UPLOAD ARTIFACTS
+      # UPLOAD ARTIFACT
       # ============================================================
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: build/bin/${{ matrix.artifact }}
+          name: DownKingo.exe
+          path: build/bin/DownKingo.exe
 
   release:
     needs: build
@@ -259,7 +138,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Important to get tag history for changelog
+          fetch-depth: 0
 
       - name: Download All Artifacts
         uses: actions/download-artifact@v4

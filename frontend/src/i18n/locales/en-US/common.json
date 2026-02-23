@@ -18,6 +18,12 @@
   },
   "after": "",
   "audio_format": "",
+  "available_models": "",
+  "batch_failed_one": "",
+  "batch_failed_other": "",
+  "batch_processing": "",
+  "batch_succeeded_one": "",
+  "batch_succeeded_other": "",
   "before": "",
   "better_quality": "",
   "change": "",
@@ -36,26 +42,27 @@
     "strong": ""
   },
   "compression_level": "",
+  "copy": "",
   "dashboard": {
     "manage_tools": "Manage your tools and recent downloads.",
     "overview": "Overview",
     "recent_activity": "Recent Activity",
     "tools": {
-      "image_extractor": {
-        "desc": "Extract images from links and social networks.",
-        "title": "Image Extractor"
-      },
-      "video_downloader": {
-        "desc": "Download videos and audio from YouTube, TikTok, and more.",
-        "title": "Video Downloader"
-      },
       "converter": {
         "desc": "Convert between audio and video formats quickly.",
         "title": "Media Converter"
       },
+      "image_extractor": {
+        "desc": "Extract images from links and social networks.",
+        "title": "Image Extractor"
+      },
       "transcriber": {
         "desc": "Transcribe audio and video to text with AI.",
         "title": "Transcriber"
+      },
+      "video_downloader": {
+        "desc": "Download videos and audio from YouTube, TikTok, and more.",
+        "title": "Video Downloader"
       }
     },
     "unknown": "Unknown",
@@ -70,8 +77,15 @@
     "text2": "The authors of <0>DownKingo</0> do not endorse or take responsibility for the use of this application in violation of these laws.",
     "title": "Copyright Disclaimer"
   },
+  "download": "",
+  "downloaded_models": "",
+  "downloading": "",
+  "drop_here": "",
   "encoding_preset": "",
   "encoding_speed": "",
+  "error_delete_model": "",
+  "error_download_model": "",
+  "error_transcribe": "",
   "errors": {
     "generic": "An error occurred. Please try again.",
     "invalid_url": "Invalid URL.",
@@ -79,6 +93,10 @@
     "not_found": "Content not found.",
     "unsupported": "Platform not supported."
   },
+  "estimate_disclaimer": "",
+  "estimated_size": "",
+  "files_selected_one": "",
+  "files_selected_other": "",
   "format_desc": {
     "high_quality": "",
     "lossless": "",
@@ -96,6 +114,7 @@
     "active_downloads_other": "",
     "add_audio_queue": "Add Audio",
     "add_queue": "Add to Queue",
+    "aria2c_active": "Turbo Mode Active",
     "audio": "",
     "audio_mode": "Audio Only",
     "check_progress": "Track progress in the dedicated tab.",
@@ -113,25 +132,27 @@
     "placeholder": "Paste video URL here...",
     "quality": "Quality",
     "queue_title": "Download Queue",
+    "turbo_activate": "Enable Turbo Mode",
+    "turbo_installing": "Installing Turbo...",
+    "turbo_tip_desc": "Enable Turbo Mode for up to 10x faster speeds.",
+    "turbo_tip_title": "Slow Downloads?",
     "video": "",
     "video_mode": "Video",
-    "views": "views",
-    "aria2c_active": "Turbo Mode Active",
-    "turbo_tip_title": "Slow Downloads?",
-    "turbo_tip_desc": "Enable Turbo Mode for up to 10x faster speeds.",
-    "turbo_activate": "Enable Turbo Mode",
-    "turbo_installing": "Installing Turbo..."
+    "views": "views"
   },
   "image": "",
   "increase_of": "",
+  "install_whisper": "",
+  "installing_whisper": "",
   "keep_audio_track": "",
   "max_compression": "",
   "max_quality": "",
+  "models_subtitle": "",
+  "models_title": "",
   "more_options": "",
   "nav": {
     "console": "Console",
     "converter": "Convert",
-    "tools": "Tools",
     "folder": "Downloads Folder",
     "history": "History",
     "home": "Home",
@@ -139,34 +160,33 @@
     "queue": "Queue",
     "roadmap": "Roadmap",
     "settings": "Settings",
+    "tools": "Tools",
     "transcriber": "Transcriber",
     "videos": "Videos"
   },
-  "update_modal": {
-    "title": "New version available",
-    "whats_new": "What's new",
-    "update_now": "Update Now",
-    "later": "Maybe later"
-  },
   "onboarding": {
-    "title": "Welcome to DownKingo",
-    "subtitle": "Let's set up your experience",
-    "language": "Language",
-    "theme": "Theme",
+    "anonymous_mode": "Anonymous Mode",
+    "anonymous_mode_desc": "Do not send anonymous usage statistics",
+    "auto_update": "Automatic Updates",
+    "auto_update_desc": "Keep the app up to date automatically",
+    "clipboard_monitor": "Monitor Clipboard",
+    "clipboard_monitor_desc": "Detect copied links and suggest download",
     "color": "Accent Color",
     "get_started": "Get Started",
+    "language": "Language",
     "preferences": "Preferences",
     "start_with_windows": "Start with Windows",
     "start_with_windows_desc": "Open automatically on startup",
-    "clipboard_monitor": "Monitor Clipboard",
-    "clipboard_monitor_desc": "Detect copied links and suggest download",
-    "auto_update": "Automatic Updates",
-    "auto_update_desc": "Keep the app up to date automatically",
-    "anonymous_mode": "Anonymous Mode",
-    "anonymous_mode_desc": "Do not send anonymous usage statistics"
+    "subtitle": "Let's set up your experience",
+    "theme": "Theme",
+    "title": "Welcome to DownKingo"
   },
+  "open_folder": "",
+  "or_drag_and_drop": "",
   "original_folder": "",
   "output_format": "",
+  "output_name": "",
+  "output_name_placeholder": "",
   "preset": {
     "fast": "",
     "medium": "",
@@ -185,9 +205,25 @@
   },
   "quality_bitrate": "",
   "quality_crf": "",
+  "quality_label": "",
+  "result": "",
+  "save": "",
+  "save_docx": "",
   "savings_of": "",
   "select_file_prefix": "",
   "setup": {
+    "features": {
+      "continue": "Continue",
+      "converter": "Convert Media",
+      "converter_desc": "Convert between audio and video formats",
+      "images": "Download Images",
+      "images_desc": "Extract photos from links and social networks",
+      "title": "What do you want to use?",
+      "transcriber": "Transcription",
+      "transcriber_desc": "Transcribe audio and video to text",
+      "videos": "Download Videos",
+      "videos_desc": "YouTube, TikTok, Instagram and more"
+    },
     "installation_error": "Installation error",
     "overall_progress": "Overall progress",
     "ready_redirecting": "All set! Redirecting...",
@@ -202,20 +238,18 @@
       "verifying": "Verifying...",
       "waiting": "Waiting..."
     },
-    "title": "Setting up essential components...",
-    "features": {
-      "title": "What do you want to use?",
-      "videos": "Download Videos",
-      "videos_desc": "YouTube, TikTok, Instagram and more",
-      "images": "Download Images",
-      "images_desc": "Extract photos from links and social networks",
-      "converter": "Convert Media",
-      "converter_desc": "Convert between audio and video formats",
-      "transcriber": "Transcription",
-      "transcriber_desc": "Transcribe audio and video to text",
-      "continue": "Continue"
-    }
+    "title": "Setting up essential components..."
   },
+  "setup_binary_done": "",
+  "setup_downloading_binary": "",
+  "setup_extracting": "",
+  "setup_model_done": "",
+  "setup_model_downloading": "",
+  "setup_recommended": "",
+  "setup_skip_model": "",
+  "setup_step1_title": "",
+  "setup_step2_desc": "",
+  "setup_step2_title": "",
   "smaller_file": "",
   "start": "",
   "status": {
@@ -248,15 +282,22 @@
     "saving": "Saving: {{filename}}"
   },
   "trimmer": {
-    "title": "Trim Video",
     "description": "Select a section to download only the desired part",
-    "start": "Start",
     "end": "End",
-    "selected_duration": "Selected duration",
+    "manual_fallback": "Use the time fields to define the section manually.",
     "preview": "Preview",
     "preview_unavailable": "Preview unavailable",
-    "manual_fallback": "Use the time fields to define the section manually."
+    "selected_duration": "Selected duration",
+    "start": "Start",
+    "title": "Trim Video"
+  },
+  "update_modal": {
+    "later": "Maybe later",
+    "title": "New version available",
+    "update_now": "Update Now",
+    "whats_new": "What's new"
   },
   "video": "",
-  "wait": ""
+  "wait": "",
+  "whisper_not_installed_desc": ""
 }

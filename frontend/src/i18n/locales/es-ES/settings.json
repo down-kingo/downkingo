@@ -68,6 +68,16 @@
     "thumbnail": "Incrustar Miniatura",
     "title": "Opciones de Descarga"
   },
+  "features": {
+    "converter": "Convertir Medios",
+    "converter_desc": "Mostrar pestaña del conversor de medios",
+    "images": "Descargar Imágenes",
+    "images_desc": "Mostrar pestaña de descarga de imágenes",
+    "transcriber": "Transcripción",
+    "transcriber_desc": "Mostrar pestaña de transcripción",
+    "videos": "Descargar Videos",
+    "videos_desc": "Mostrar pestaña de descarga de videos"
+  },
   "image_settings": {
     "conversion_desc": "Convertir imágenes automáticamente al descargar",
     "conversion_format": "Formato de conversión",
@@ -122,24 +132,14 @@
     "about": "Acerca de",
     "appearance": "Apariencia",
     "converter": "Conversión",
+    "features": "Funcionalidades",
     "image": "Imagen",
     "privacy": "Privacidad",
     "regional": "Regional",
     "shortcuts": "Atajos",
-    "features": "Funcionalidades",
     "storage": "Almacenamiento",
     "system": "Sistema",
     "video": "Video"
-  },
-  "features": {
-    "videos": "Descargar Videos",
-    "videos_desc": "Mostrar pestaña de descarga de videos",
-    "images": "Descargar Imágenes",
-    "images_desc": "Mostrar pestaña de descarga de imágenes",
-    "converter": "Convertir Medios",
-    "converter_desc": "Mostrar pestaña del conversor de medios",
-    "transcriber": "Transcripción",
-    "transcriber_desc": "Mostrar pestaña de transcripción"
   },
   "shortcuts": {
     "desc": "Personalizar atajos de teclado.",
@@ -178,9 +178,17 @@
     "general": "General",
     "images": "Imágenes",
     "shortcuts": "Atajos",
+    "transcriber": "Transcritor",
     "video": "Vídeos"
   },
   "title": "Configuración",
+  "transcriber_settings": {
+    "language": "Idioma Padrão",
+    "language_desc": "Forçar um idioma pode melhorar a precisão, 'Automático' tentará detectar.",
+    "model_quality": "Qualidade do Modelo Whisper",
+    "model_quality_desc": "Modelos maiores tem mais precisão mas consomem mais CPU e RAM.",
+    "title": "Configurações do Transcritor"
+  },
   "video_settings": {
     "compatibility": "Compatibilidad de vídeo",
     "compatibility_modern": "🚀 Moderno (VP9/Opus)",

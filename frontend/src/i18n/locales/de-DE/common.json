@@ -18,6 +18,12 @@
   },
   "after": "",
   "audio_format": "",
+  "available_models": "",
+  "batch_failed_one": "",
+  "batch_failed_other": "",
+  "batch_processing": "",
+  "batch_succeeded_one": "",
+  "batch_succeeded_other": "",
   "before": "",
   "better_quality": "",
   "change": "",
@@ -36,26 +42,27 @@
     "strong": ""
   },
   "compression_level": "",
+  "copy": "",
   "dashboard": {
     "manage_tools": "Verwalten Sie Tools und aktuelle Downloads.",
     "overview": "Übersicht",
     "recent_activity": "Aktuelle Aktivität",
     "tools": {
-      "image_extractor": {
-        "desc": "Extrahieren Sie Bilder aus Links und sozialen Netzwerken.",
-        "title": "Bild-Extraktor"
-      },
-      "video_downloader": {
-        "desc": "Laden Sie Videos und Audios von YouTube, TikTok und mehr herunter.",
-        "title": "Video Downloader"
-      },
       "converter": {
         "desc": "Schnell zwischen Audio- und Videoformaten konvertieren.",
         "title": "Medienkonverter"
       },
+      "image_extractor": {
+        "desc": "Extrahieren Sie Bilder aus Links und sozialen Netzwerken.",
+        "title": "Bild-Extraktor"
+      },
       "transcriber": {
         "desc": "Audio und Video mit KI in Text transkribieren.",
         "title": "Transkriptor"
+      },
+      "video_downloader": {
+        "desc": "Laden Sie Videos und Audios von YouTube, TikTok und mehr herunter.",
+        "title": "Video Downloader"
       }
     },
     "unknown": "Unbekannt",
@@ -70,8 +77,15 @@
     "text2": "Die Autoren von <0>DownKingo</0> sind nicht verantwortlich für die Nutzung dieser Anwendung unter Verletzung dieser Gesetze.",
     "title": "Urheberrechtshinweis"
   },
+  "download": "",
+  "downloaded_models": "",
+  "downloading": "",
+  "drop_here": "",
   "encoding_preset": "",
   "encoding_speed": "",
+  "error_delete_model": "",
+  "error_download_model": "",
+  "error_transcribe": "",
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
     "invalid_url": "Ungültige URL.",
@@ -79,6 +93,10 @@
     "not_found": "Inhalt nicht gefunden.",
     "unsupported": "Plattform nicht unterstützt."
   },
+  "estimate_disclaimer": "",
+  "estimated_size": "",
+  "files_selected_one": "",
+  "files_selected_other": "",
   "format_desc": {
     "high_quality": "",
     "lossless": "",
@@ -96,6 +114,7 @@
     "active_downloads_other": "{{count}} aktive Downloads",
     "add_audio_queue": "Audio hinzufügen",
     "add_queue": "Zur Warteschlange",
+    "aria2c_active": "Turbo-Modus aktiv",
     "audio": "",
     "audio_mode": "Nur Audio",
     "check_progress": "Fortschritt im dedizierten Tab prüfen.",
@@ -113,25 +132,27 @@
     "placeholder": "Video-URL hier einfügen...",
     "quality": "Qualität",
     "queue_title": "Warteschlange",
+    "turbo_activate": "Turbo-Modus aktivieren",
+    "turbo_installing": "Turbo wird installiert...",
+    "turbo_tip_desc": "Aktivieren Sie den Turbo-Modus für bis zu 10x schnellere Geschwindigkeit.",
+    "turbo_tip_title": "Langsame Downloads?",
     "video": "",
     "video_mode": "Video",
-    "views": "Aufrufe",
-    "aria2c_active": "Turbo-Modus aktiv",
-    "turbo_tip_title": "Langsame Downloads?",
-    "turbo_tip_desc": "Aktivieren Sie den Turbo-Modus für bis zu 10x schnellere Geschwindigkeit.",
-    "turbo_activate": "Turbo-Modus aktivieren",
-    "turbo_installing": "Turbo wird installiert..."
+    "views": "Aufrufe"
   },
   "image": "",
   "increase_of": "",
+  "install_whisper": "",
+  "installing_whisper": "",
   "keep_audio_track": "",
   "max_compression": "",
   "max_quality": "",
+  "models_subtitle": "",
+  "models_title": "",
   "more_options": "",
   "nav": {
     "console": "Konsole",
     "converter": "Konvertieren",
-    "tools": "Werkzeuge",
     "folder": "Download-Ordner",
     "history": "Verlauf",
     "home": "Startseite",
@@ -139,34 +160,33 @@
     "queue": "Warteschlange",
     "roadmap": "Roadmap",
     "settings": "Einstellungen",
+    "tools": "Werkzeuge",
     "transcriber": "Transkriptor",
     "videos": "Videos"
   },
-  "update_modal": {
-    "title": "Neue Version verfügbar",
-    "whats_new": "Was ist neu",
-    "update_now": "Jetzt aktualisieren",
-    "later": "Vielleicht später"
-  },
   "onboarding": {
-    "title": "Willkommen bei DownKingo",
-    "subtitle": "Lass uns dein Erlebnis einrichten",
-    "language": "Sprache",
-    "theme": "Design",
+    "anonymous_mode": "Anonymer Modus",
+    "anonymous_mode_desc": "Keine anonymen Nutzungsstatistiken senden",
+    "auto_update": "Automatische Updates",
+    "auto_update_desc": "App automatisch aktuell halten",
+    "clipboard_monitor": "Zwischenablage überwachen",
+    "clipboard_monitor_desc": "Kopierte Links erkennen und Download vorschlagen",
     "color": "Akzentfarbe",
     "get_started": "Los geht's",
+    "language": "Sprache",
     "preferences": "Einstellungen",
     "start_with_windows": "Mit Windows starten",
     "start_with_windows_desc": "Beim Systemstart automatisch öffnen",
-    "clipboard_monitor": "Zwischenablage überwachen",
-    "clipboard_monitor_desc": "Kopierte Links erkennen und Download vorschlagen",
-    "auto_update": "Automatische Updates",
-    "auto_update_desc": "App automatisch aktuell halten",
-    "anonymous_mode": "Anonymer Modus",
-    "anonymous_mode_desc": "Keine anonymen Nutzungsstatistiken senden"
+    "subtitle": "Lass uns dein Erlebnis einrichten",
+    "theme": "Design",
+    "title": "Willkommen bei DownKingo"
   },
+  "open_folder": "",
+  "or_drag_and_drop": "",
   "original_folder": "",
   "output_format": "",
+  "output_name": "",
+  "output_name_placeholder": "",
   "preset": {
     "fast": "",
     "medium": "",
@@ -185,9 +205,25 @@
   },
   "quality_bitrate": "",
   "quality_crf": "",
+  "quality_label": "",
+  "result": "",
+  "save": "",
+  "save_docx": "",
   "savings_of": "",
   "select_file_prefix": "",
   "setup": {
+    "features": {
+      "continue": "Weiter",
+      "converter": "Medien konvertieren",
+      "converter_desc": "Zwischen Audio- und Videoformaten konvertieren",
+      "images": "Bilder herunterladen",
+      "images_desc": "Bilder aus Links und sozialen Netzwerken extrahieren",
+      "title": "Was möchten Sie verwenden?",
+      "transcriber": "Transkription",
+      "transcriber_desc": "Audio und Video in Text transkribieren",
+      "videos": "Videos herunterladen",
+      "videos_desc": "YouTube, TikTok, Instagram und mehr"
+    },
     "installation_error": "Installationsfehler",
     "overall_progress": "Gesamtfortschritt",
     "ready_redirecting": "Alles bereit! Weiterleitung...",
@@ -202,20 +238,18 @@
       "verifying": "Verifizieren...",
       "waiting": "Warten..."
     },
-    "title": "Wichtige Komponenten werden vorbereitet...",
-    "features": {
-      "title": "Was möchten Sie verwenden?",
-      "videos": "Videos herunterladen",
-      "videos_desc": "YouTube, TikTok, Instagram und mehr",
-      "images": "Bilder herunterladen",
-      "images_desc": "Bilder aus Links und sozialen Netzwerken extrahieren",
-      "converter": "Medien konvertieren",
-      "converter_desc": "Zwischen Audio- und Videoformaten konvertieren",
-      "transcriber": "Transkription",
-      "transcriber_desc": "Audio und Video in Text transkribieren",
-      "continue": "Weiter"
-    }
+    "title": "Wichtige Komponenten werden vorbereitet..."
   },
+  "setup_binary_done": "",
+  "setup_downloading_binary": "",
+  "setup_extracting": "",
+  "setup_model_done": "",
+  "setup_model_downloading": "",
+  "setup_recommended": "",
+  "setup_skip_model": "",
+  "setup_step1_title": "",
+  "setup_step2_desc": "",
+  "setup_step2_title": "",
   "smaller_file": "",
   "start": "",
   "status": {
@@ -248,15 +282,22 @@
     "saving": "Speichern: {{filename}}"
   },
   "trimmer": {
-    "title": "Video zuschneiden",
     "description": "Wählen Sie einen Abschnitt aus, um nur den gewünschten Teil herunterzuladen",
-    "start": "Start",
     "end": "Ende",
-    "selected_duration": "Ausgewählte Dauer",
+    "manual_fallback": "Verwenden Sie die Zeitfelder, um den Abschnitt manuell festzulegen.",
     "preview": "Vorschau",
     "preview_unavailable": "Vorschau nicht verfügbar",
-    "manual_fallback": "Verwenden Sie die Zeitfelder, um den Abschnitt manuell festzulegen."
+    "selected_duration": "Ausgewählte Dauer",
+    "start": "Start",
+    "title": "Video zuschneiden"
+  },
+  "update_modal": {
+    "later": "Vielleicht später",
+    "title": "Neue Version verfügbar",
+    "update_now": "Jetzt aktualisieren",
+    "whats_new": "Was ist neu"
   },
   "video": "",
-  "wait": ""
+  "wait": "",
+  "whisper_not_installed_desc": ""
 }

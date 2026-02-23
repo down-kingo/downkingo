@@ -19,7 +19,8 @@
     "dislike": "Je n'aime pas",
     "id": "ID",
     "like": "J'aime",
-    "url": "URL"
+    "url": "URL",
+    "voted": ""
   },
   "columns": {
     "idea": {
