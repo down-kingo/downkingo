@@ -3,11 +3,15 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Sidebar, { TabType } from "./Sidebar";
 
-// Mock the settings store
+// Mock the settings store — must return enabledFeatures as array via selector
 vi.mock("../../stores/settingsStore", () => ({
-  useSettingsStore: () => ({
-    language: "pt-BR",
-  }),
+  useSettingsStore: (selector?: (state: any) => any) => {
+    const state = {
+      language: "pt-BR",
+      enabledFeatures: ["videos", "images", "converter", "transcriber"],
+    };
+    return selector ? selector(state) : state;
+  },
 }));
 
 // Mock translations with consistent debug keys
@@ -20,6 +24,8 @@ vi.mock("react-i18next", () => ({
         "nav.videos": "TEXT_VIDEOS",
         "nav.images": "TEXT_IMAGES",
         "nav.converter": "TEXT_CONVERTER",
+        "nav.transcriber": "TEXT_TRANSCRIBER",
+        "nav.tools": "TEXT_TOOLS",
         "nav.history": "TEXT_HISTORY",
         "nav.roadmap": "TEXT_ROADMAP",
         "nav.settings": "TEXT_SETTINGS",
@@ -34,7 +40,7 @@ describe("Sidebar", () => {
     activeTab: "home" as TabType,
     setActiveTab: vi.fn(),
     queueCount: 0,
-    version: "2.0.0",
+    version: "3.0.0",
     onOpenSettings: vi.fn(),
   };
 
@@ -44,8 +50,8 @@ describe("Sidebar", () => {
   });
 
   it("renders the version number", () => {
-    render(<Sidebar {...defaultProps} version="1.5.0" />);
-    expect(screen.getByText("v1.5.0")).toBeInTheDocument();
+    render(<Sidebar {...defaultProps} version="3.0.0" />);
+    expect(screen.getByText("v3.0.0")).toBeInTheDocument();
   });
 
   it("shows queue count badge when queueCount > 0", () => {
@@ -74,14 +80,10 @@ describe("Sidebar", () => {
     fireEvent.click(screen.getByText("TEXT_IMAGES"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("images");
 
-    const converters = screen.getAllByText("TEXT_CONVERTER");
-    const converterButton = converters.find((el) => el.closest("button"));
-    if (converterButton) fireEvent.click(converterButton);
+    fireEvent.click(screen.getByText("TEXT_CONVERTER"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("converter");
 
-    const histories = screen.getAllByText("TEXT_HISTORY");
-    const historyButton = histories.find((el) => el.closest("button"));
-    if (historyButton) fireEvent.click(historyButton);
+    fireEvent.click(screen.getByText("TEXT_HISTORY"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("history");
   });
 
@@ -100,8 +102,8 @@ describe("Sidebar", () => {
     render(<Sidebar {...defaultProps} />);
 
     expect(screen.getByText("Downloads")).toBeInTheDocument();
-    expect(screen.getAllByText("TEXT_CONVERTER").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("TEXT_HISTORY").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("TEXT_ROADMAP").length).toBeGreaterThan(0);
+    expect(screen.getByText("TEXT_TOOLS")).toBeInTheDocument();
+    expect(screen.getByText("TEXT_HISTORY")).toBeInTheDocument();
+    expect(screen.getByText("TEXT_ROADMAP")).toBeInTheDocument();
   });
 });

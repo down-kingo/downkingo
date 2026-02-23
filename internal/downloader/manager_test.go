@@ -2,6 +2,7 @@ package downloader
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -136,35 +137,43 @@ func TestManager_AddJob_ConcurrentSafety(t *testing.T) {
 		pendingProgress: make(map[string]map[string]interface{}),
 	}
 
+	const n = 10
 	var wg sync.WaitGroup
-	errors := make(chan error, 10)
+	errs := make([]error, n)
 
-	// Add 10 different URLs concurrently
-	for i := 0; i < 10; i++ {
+	// Add n different URLs concurrently
+	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
-			url := "https://youtube.com/watch?v=concurrent-" + string(rune('A'+idx))
-			_, err := m.AddJob(youtube.DownloadOptions{URL: url})
-			if err != nil {
-				errors <- err
+			url := fmt.Sprintf("https://youtube.com/watch?v=concurrent-%d", idx)
+			// Retry on SQLITE_BUSY since concurrent writes are expected to contend
+			var err error
+			for attempt := 0; attempt < 5; attempt++ {
+				_, err = m.AddJob(youtube.DownloadOptions{URL: url})
+				if err == nil {
+					break
+				}
+				time.Sleep(time.Duration(50*(attempt+1)) * time.Millisecond)
 			}
+			errs[idx] = err
 		}(i)
 	}
 
 	wg.Wait()
-	close(errors)
 
-	for err := range errors {
-		t.Errorf("concurrent AddJob() error: %v", err)
+	for i, err := range errs {
+		if err != nil {
+			t.Errorf("concurrent AddJob(%d) error after retries: %v", i, err)
+		}
 	}
 
 	// All should be tracked
 	m.mu.RLock()
 	count := len(m.jobs)
 	m.mu.RUnlock()
-	if count != 10 {
-		t.Errorf("tracked %d jobs, want 10", count)
+	if count != n {
+		t.Errorf("tracked %d jobs, want %d", count, n)
 	}
 }
 

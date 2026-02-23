@@ -35,11 +35,16 @@ vi.mock("react-i18next", () => ({
 
 // Mock settings store for components using useSettingsStore
 vi.mock("../stores/settingsStore", () => ({
-  useSettingsStore: () => ({
-    consoleEnabled: true,
-    theme: "dark",
-    hasCompletedOnboarding: true,
-  }),
+  useSettingsStore: (selector?: (state: any) => any) => {
+    const state = {
+      consoleEnabled: true,
+      theme: "dark",
+      hasCompletedOnboarding: true,
+      enabledFeatures: ["videos", "images", "converter", "transcriber"],
+      language: "en-US",
+    };
+    return selector ? selector(state) : state;
+  },
 }));
 
 // Mock @wailsio/runtime for tests

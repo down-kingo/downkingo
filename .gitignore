@@ -22,3 +22,7 @@ Thumbs.db
 frontend/vite.config.ts.timestamp-*
 *.mjs
 *.js.map
+
+# Temp debug files
+git_diff*.txt
+git_status*.txt

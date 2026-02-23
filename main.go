@@ -44,8 +44,8 @@ func main() {
 		Width:                  1280,
 		Height:                 800,
 		BackgroundColour:       application.NewRGB(255, 255, 255),
-		DevToolsEnabled:        true,
-		OpenInspectorOnStartup: true,
+		DevToolsEnabled:        devTools,
+		OpenInspectorOnStartup: devTools,
 	})
 
 	if err := app.Run(); err != nil {

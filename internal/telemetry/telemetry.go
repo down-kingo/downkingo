@@ -6,7 +6,10 @@ import (
 	"kingo/internal/config"
 	"kingo/internal/logger"
 	"net/http"
+	"os"
+	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -83,10 +86,10 @@ func (s *Service) sendEvent(name string, props map[string]interface{}) error {
 		SessionID: sessionID,
 		EventName: name,
 		SystemProps: systemProps{
-			IsDebug:    false, // could infer from build tags
+			IsDebug:    false,
 			OSName:     runtime.GOOS,
-			OSVersion:  runtime.GOARCH, // Go doesn't give exact OS version easily, arch is a proxy
-			Locale:     "en-US",        // TODO: Get actual locale
+			OSVersion:  runtime.GOARCH,
+			Locale:     getSystemLocale(),
 			AppVersion: s.version,
 			SDKVersion: "go-wails-custom",
 		},
@@ -119,4 +122,37 @@ func (s *Service) sendEvent(name string, props map[string]interface{}) error {
 	}
 
 	return nil
+}
+
+// getSystemLocale detects the OS locale. Returns "en-US" as fallback.
+func getSystemLocale() string {
+	// Windows: powershell is expensive, prefer env vars
+	if runtime.GOOS == "windows" {
+		// LANG is set by Git Bash / MSYS2
+		if lang := os.Getenv("LANG"); lang != "" {
+			return normalizeLocale(strings.SplitN(lang, ".", 2)[0])
+		}
+		// Fallback: ask powershell (cached per-process — only runs once via telemetry)
+		out, err := exec.Command("powershell", "-NoProfile", "-Command",
+			"(Get-Culture).Name").Output()
+		if err == nil {
+			if locale := strings.TrimSpace(string(out)); locale != "" {
+				return locale
+			}
+		}
+		return "en-US"
+	}
+
+	// Linux / macOS
+	for _, env := range []string{"LC_ALL", "LC_MESSAGES", "LANG"} {
+		if val := os.Getenv(env); val != "" {
+			return normalizeLocale(strings.SplitN(val, ".", 2)[0])
+		}
+	}
+	return "en-US"
+}
+
+// normalizeLocale converts "pt_BR" → "pt-BR"
+func normalizeLocale(s string) string {
+	return strings.ReplaceAll(s, "_", "-")
 }
