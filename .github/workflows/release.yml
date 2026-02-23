@@ -39,9 +39,6 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Wails CLI
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
-
       # ============================================================
       # WINDOWS DEPENDENCIES
       # ============================================================
@@ -59,7 +56,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          # Ubuntu 24.04 usa libwebkit2gtk-4.1-dev (não 4.0)
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
           # AppImage tools
           sudo apt-get install -y libfuse2
@@ -72,9 +68,16 @@ jobs:
         with:
           bun-version: latest
 
+      # ============================================================
+      # BUILD FRONTEND
+      # ============================================================
       - name: Install Frontend Dependencies
         working-directory: frontend
         run: bun install
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: bun run build
 
       # ============================================================
       # SIDECAR BINARIES: Download para empacotamento no instalador
@@ -128,49 +131,67 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
 
       # ============================================================
-      # BUILD APPLICATION
+      # BUILD APPLICATION (Wails v3: go build with //go:embed)
       # ============================================================
-      - name: Build Application (Windows - NSIS Installer)
+      - name: Build Application (Windows)
         if: matrix.os == 'windows-latest'
         shell: bash
         env:
           APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+          CGO_ENABLED: "1"
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          wails build -clean -platform ${{ matrix.platform }} --nsis -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'"
+          mkdir -p build/bin
+          go build -ldflags "-s -w -H windowsgui -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo.exe .
 
       - name: Build Application (Linux)
         if: matrix.os == 'ubuntu-latest'
         env:
           APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+          CGO_ENABLED: "1"
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          # Ubuntu 24.04 requer webkit2gtk-4.1, usar flag especial do Wails
-          wails build -clean -platform ${{ matrix.platform }} -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'"
+          mkdir -p build/bin
+          go build -tags webkit2_41 -ldflags "-s -w -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo .
 
       # ============================================================
       # PACKAGE: Create professional installers
       # ============================================================
 
-      # Windows: NSIS installer already created by wails --nsis
+      # Windows: Build NSIS installer manually (Wails v3 does not auto-generate it)
       - name: Package (Windows - NSIS)
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
+          VERSION=${GITHUB_REF_NAME#v}
+
+          # Update version in wails_tools.nsh for NSIS
+          sed -i "s/!define INFO_PRODUCTVERSION \".*\"/!define INFO_PRODUCTVERSION \"${VERSION}\"/" build/windows/installer/wails_tools.nsh
+
+          # Run NSIS with the binary path
+          cd build/windows/installer
+          makensis -DARG_WAILS_AMD64_BINARY="..\\..\\bin\\downkingo.exe" project.nsi
+
+          cd ../../..
           echo "Contents of build/bin:"
           ls -la build/bin/
-          # Find the installer (can be 'baixar-midia-*-installer.exe' or similar)
+
+          # Find and rename the installer
           INSTALLER=$(find build/bin -name "*-installer.exe" | head -1)
-          echo "Found installer: $INSTALLER"
-          mv "$INSTALLER" build/bin/${{ matrix.artifact }}
-          echo "Windows installer ready:"
-          ls -la build/bin/
+          if [ -n "$INSTALLER" ]; then
+            echo "Found installer: $INSTALLER"
+            mv "$INSTALLER" build/bin/${{ matrix.artifact }}
+          else
+            echo "No installer found, packaging binary directly"
+            cp build/bin/downkingo.exe build/bin/${{ matrix.artifact }}
+          fi
+          echo "Windows package ready:"
+          ls -la build/bin/${{ matrix.artifact }}
 
       # Linux: Create AppImage
       - name: Package (Linux - AppImage)
         if: matrix.os == 'ubuntu-latest'
         run: |
-          # Debug: ver o que foi gerado
           echo "Contents of build/bin:"
           ls -la build/bin/
 
@@ -179,10 +200,8 @@ jobs:
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
-          # Copy main binary (pode ser 'kinematic' ou 'baixar-midia')
-          BINARY=$(find build/bin -type f -executable | head -1)
-          echo "Found binary: $BINARY"
-          cp "$BINARY" AppDir/usr/bin/downkingo
+          # Copy main binary
+          cp build/bin/downkingo AppDir/usr/bin/downkingo
           chmod +x AppDir/usr/bin/downkingo
 
           # Copy sidecar binaries
