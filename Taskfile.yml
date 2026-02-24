@@ -18,7 +18,7 @@ tasks:
         ignore_error: true
       - cmd: cd frontend && bun install
         silent: true
-      - wails3 generate syso -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
+      - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
       - go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
     vars:
       BUILD_FLAGS: '{{if eq .DEV "true"}}-tags dev -ldflags "-X kingo/internal/app.DevMode=true"{{end}}'
@@ -34,7 +34,8 @@ tasks:
       - task: frontend:build
       - task: build:updater
     cmds:
-      - go build -ldflags "-s -w" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
+      - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
+      - go build -ldflags "-s -w -H windowsgui" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
 
   run:
     desc: Run the built application

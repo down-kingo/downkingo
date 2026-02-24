@@ -80,6 +80,15 @@ jobs:
       # ============================================================
       # BUILD APPLICATION
       # ============================================================
+      - name: Install Wails CLI
+        shell: bash
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+
+      - name: Generate Windows Resources (.syso)
+        shell: bash
+        run: |
+          wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
+
       - name: Build Application
         shell: bash
         env:

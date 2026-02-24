@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "{{.Info.ProductVersion}}"
+		"file_version": "3.0.0"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "{{.Info.ProductVersion}}",
-			"CompanyName": "{{.Info.CompanyName}}",
-			"FileDescription": "{{.Info.ProductName}}",
-			"LegalCopyright": "{{.Info.Copyright}}",
-			"ProductName": "{{.Info.ProductName}}",
-			"Comments": "{{.Info.Comments}}"
+			"ProductVersion": "3.0.0",
+			"CompanyName": "DownKingo",
+			"FileDescription": "DownKingo",
+			"LegalCopyright": "Copyright 2025 DownKingo",
+			"ProductName": "DownKingo",
+			"Comments": "Open Source Downloader"
 		}
 	}
 }
