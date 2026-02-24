@@ -62,6 +62,17 @@ export const FEATURE_REGISTRY: Record<FeatureId, FeatureMeta> = {
   },
 } as const;
 
+/**
+ * Mapeamento feature → dependências necessárias (binários).
+ * Whisper é tratado separadamente no fluxo de Setup.
+ */
+export const FEATURE_DEPS: Record<FeatureId, string[]> = {
+  videos: ["yt-dlp", "FFmpeg"],
+  images: ["yt-dlp", "avifenc"],
+  converter: ["FFmpeg", "avifenc"],
+  transcriber: ["FFmpeg"], // Whisper tratado separadamente
+};
+
 /** Lista ordenada de todas as FeatureIds para iteração consistente. */
 export const ALL_FEATURE_IDS: FeatureId[] = [
   "videos",

@@ -9,11 +9,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import {
-  Call as $Call,
-  CancellablePromise as $CancellablePromise,
-  Create as $Create,
-} from "@wailsio/runtime";
+import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
@@ -53,13 +49,9 @@ import * as youtube$0 from "./internal/youtube/models.js";
  * @returns {$CancellablePromise<storage$0.Download | null>}
  */
 export function AddToQueue(url, format, audioOnly) {
-  return $Call.ByID(2602362584, url, format, audioOnly).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2602362584, url, format, audioOnly).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType1($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -67,13 +59,9 @@ export function AddToQueue(url, format, audioOnly) {
  * @returns {$CancellablePromise<storage$0.Download | null>}
  */
 export function AddToQueueAdvanced(opts) {
-  return $Call.ByID(788105866, opts).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(788105866, opts).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType1($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -81,53 +69,41 @@ export function AddToQueueAdvanced(opts) {
  * @returns {$CancellablePromise<void>}
  */
 export function CancelDownload(id) {
-  return $Call.ByID(2532515671, id);
+    return $Call.ByID(2532515671, id);
 }
 
 /**
  * @returns {$CancellablePromise<handlers$0.Aria2cStatus>}
  */
 export function CheckAria2cStatus() {
-  return $Call.ByID(1529744055).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(1529744055).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType2($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<launcher$0.DependencyStatus[]>}
  */
 export function CheckDependencies() {
-  return $Call.ByID(494838570).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(494838570).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType4($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<updater$0.UpdateInfo | null>}
  */
 export function CheckForUpdate() {
-  return $Call.ByID(2347956003).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2347956003).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType6($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function ClearDownloadHistory() {
-  return $Call.ByID(3929121706);
+    return $Call.ByID(3929121706);
 }
 
 /**
@@ -136,13 +112,9 @@ export function ClearDownloadHistory() {
  * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
  */
 export function CompressImage(inputPath, quality) {
-  return $Call.ByID(2469861642, inputPath, quality).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2469861642, inputPath, quality).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType8($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -152,13 +124,9 @@ export function CompressImage(inputPath, quality) {
  * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
  */
 export function CompressVideo(inputPath, quality, preset) {
-  return $Call.ByID(2079159196, inputPath, quality, preset).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2079159196, inputPath, quality, preset).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType8($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -166,13 +134,9 @@ export function CompressVideo(inputPath, quality, preset) {
  * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
  */
 export function ConvertImage(req) {
-  return $Call.ByID(108711885, req).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(108711885, req).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType8($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -180,20 +144,16 @@ export function ConvertImage(req) {
  * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
  */
 export function ConvertVideo(req) {
-  return $Call.ByID(224996083, req).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(224996083, req).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType8($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function DeleteAria2c() {
-  return $Call.ByID(3140778760);
+    return $Call.ByID(3140778760);
 }
 
 /**
@@ -201,7 +161,7 @@ export function DeleteAria2c() {
  * @returns {$CancellablePromise<void>}
  */
 export function DeleteWhisperModel(name) {
-  return $Call.ByID(111941057, name);
+    return $Call.ByID(111941057, name);
 }
 
 /**
@@ -209,7 +169,7 @@ export function DeleteWhisperModel(name) {
  * @returns {$CancellablePromise<void>}
  */
 export function Download(opts) {
-  return $Call.ByID(2709798689, opts);
+    return $Call.ByID(2709798689, opts);
 }
 
 /**
@@ -217,21 +177,21 @@ export function Download(opts) {
  * @returns {$CancellablePromise<void>}
  */
 export function DownloadAndApplyUpdate(downloadURL) {
-  return $Call.ByID(714979995, downloadURL);
+    return $Call.ByID(714979995, downloadURL);
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function DownloadAria2c() {
-  return $Call.ByID(2716593299);
+    return $Call.ByID(2716593299);
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function DownloadDependencies() {
-  return $Call.ByID(1006649596);
+    return $Call.ByID(1006649596);
 }
 
 /**
@@ -240,14 +200,22 @@ export function DownloadDependencies() {
  * @returns {$CancellablePromise<string>}
  */
 export function DownloadImage(url, filename) {
-  return $Call.ByID(1200166230, url, filename);
+    return $Call.ByID(1200166230, url, filename);
+}
+
+/**
+ * @param {string[]} names
+ * @returns {$CancellablePromise<void>}
+ */
+export function DownloadSelectedDependencies(names) {
+    return $Call.ByID(2644591053, names);
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function DownloadWhisperBinary() {
-  return $Call.ByID(4064086400);
+    return $Call.ByID(4064086400);
 }
 
 /**
@@ -255,21 +223,7 @@ export function DownloadWhisperBinary() {
  * @returns {$CancellablePromise<void>}
  */
 export function DownloadWhisperModel(name) {
-  return $Call.ByID(250633958, name);
-}
-
-/**
- * @param {handlers$0.AudioExtractRequest} req
- * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
- */
-export function ExtractAudio(req) {
-  return $Call.ByID(150980096, req).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
-        return $$createType8($result);
-      }
-    ),
-  );
+    return $Call.ByID(250633958, name);
 }
 
 /**
@@ -277,33 +231,35 @@ export function ExtractAudio(req) {
  * @returns {$CancellablePromise<void>}
  */
 export function ExportTranscriptionDOCX(text) {
-  return $Call.ByName("main.App.ExportTranscriptionDOCX", text);
+    return $Call.ByID(3857031767, text);
+}
+
+/**
+ * @param {handlers$0.AudioExtractRequest} req
+ * @returns {$CancellablePromise<handlers$0.ConversionResult | null>}
+ */
+export function ExtractAudio(req) {
+    return $Call.ByID(150980096, req).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType8($result);
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<updater$0.Release[]>}
  */
 export function GetAvailableAppVersions() {
-  return $Call.ByID(2485740604).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2485740604).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType10($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<whisper$0.AvailableModel[]>}
  */
 export function GetAvailableWhisperModels() {
-  return $Call.ByID(1348308402).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(1348308402).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType12($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -311,47 +267,47 @@ export function GetAvailableWhisperModels() {
  * @returns {$CancellablePromise<(storage$0.Download | null)[]>}
  */
 export function GetDownloadHistory(limit) {
-  return $Call.ByID(863967493, limit).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(863967493, limit).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType13($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<(storage$0.Download | null)[]>}
  */
 export function GetDownloadQueue() {
-  return $Call.ByID(2432386474).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2432386474).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType13($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<string>}
  */
 export function GetDownloadsPath() {
-  return $Call.ByID(3773782479);
+    return $Call.ByID(3773782479);
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<number>}
+ */
+export function GetFileSize(path) {
+    return $Call.ByID(309896144, path);
 }
 
 /**
  * @returns {$CancellablePromise<string>}
  */
 export function GetGitHubToken() {
-  return $Call.ByID(2176877497);
+    return $Call.ByID(2176877497);
 }
 
 /**
  * @returns {$CancellablePromise<string>}
  */
 export function GetImageDownloadPath() {
-  return $Call.ByID(1710355803);
+    return $Call.ByID(1710355803);
 }
 
 /**
@@ -359,13 +315,9 @@ export function GetImageDownloadPath() {
  * @returns {$CancellablePromise<images$0.ImageInfo | null>}
  */
 export function GetImageInfo(url) {
-  return $Call.ByID(3625829128, url).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(3625829128, url).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType15($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -373,13 +325,9 @@ export function GetImageInfo(url) {
  * @returns {$CancellablePromise<handlers$0.MediaInfo | null>}
  */
 export function GetInstagramCarousel(url) {
-  return $Call.ByID(881087455, url).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(881087455, url).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType17($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -388,65 +336,18 @@ export function GetInstagramCarousel(url) {
  * @returns {$CancellablePromise<roadmap$0.RoadmapItem[]>}
  */
 export function GetRoadmap(lang) {
-  return $Call.ByID(3740686969, lang).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(3740686969, lang).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType19($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<config$0.Config>}
  */
 export function GetSettings() {
-  return $Call.ByID(2554697378).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(2554697378).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType20($result);
-      }
-    ),
-  );
-}
-
-/**
- * GetUserReaction returns the user's current reaction on a specific issue
- * Returns "+1" for thumbs up, "-1" for thumbs down, or "" for no reaction
- * @param {number} issueID
- * @returns {$CancellablePromise<string>}
- */
-export function GetUserReaction(issueID) {
-  return $Call.ByID(3424788871, issueID);
-}
-
-/**
- * GetUserReactions returns a map of issue IDs to user's reaction for syncing with frontend
- * This fetches reactions for all roadmap items at once
- * @returns {$CancellablePromise<{ [_ in `${number}`]?: string }>}
- */
-export function GetUserReactions() {
-  return $Call.ByID(1304130332).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
-        return $$createType21($result);
-      }
-    ),
-  );
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function GetVersion() {
-  return $Call.ByID(1049863377);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function GetVideoDownloadPath() {
-  return $Call.ByID(336675393);
+    }));
 }
 
 /**
@@ -457,17 +358,42 @@ export function GetVideoDownloadPath() {
  * @returns {$CancellablePromise<string>}
  */
 export function GetStreamURL(url, format) {
-  return $Call.ByName("main.App.GetStreamURL", url, format);
+    return $Call.ByID(17770440, url, format);
 }
 
 /**
- * SetStreamURL registers a direct stream URL in the proxy without invoking yt-dlp.
- * Instant alternative to GetStreamURL when the frontend already has the stream URL.
- * @param {string} directURL
+ * GetUserReaction returns the user's current reaction on a specific issue
+ * Returns "+1" for thumbs up, "-1" for thumbs down, or "" for no reaction
+ * @param {number} issueID
  * @returns {$CancellablePromise<string>}
  */
-export function SetStreamURL(directURL) {
-  return $Call.ByName("main.App.SetStreamURL", directURL);
+export function GetUserReaction(issueID) {
+    return $Call.ByID(3424788871, issueID);
+}
+
+/**
+ * GetUserReactions returns a map of issue IDs to user's reaction for syncing with frontend
+ * This fetches reactions for all roadmap items at once
+ * @returns {$CancellablePromise<{ [_ in `${number}`]?: string }>}
+ */
+export function GetUserReactions() {
+    return $Call.ByID(1304130332).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType21($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetVersion() {
+    return $Call.ByID(1049863377);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetVideoDownloadPath() {
+    return $Call.ByID(336675393);
 }
 
 /**
@@ -476,13 +402,9 @@ export function SetStreamURL(directURL) {
  * @returns {$CancellablePromise<youtube$0.VideoInfo | null>}
  */
 export function GetVideoInfo(url) {
-  return $Call.ByID(545710026, url).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(545710026, url).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType23($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
@@ -490,41 +412,37 @@ export function GetVideoInfo(url) {
  * @returns {$CancellablePromise<void>}
  */
 export function InstallAppVersion(tag) {
-  return $Call.ByID(3982740749, tag);
+    return $Call.ByID(3982740749, tag);
 }
 
 /**
  * @returns {$CancellablePromise<boolean>}
  */
 export function IsWhisperInstalled() {
-  return $Call.ByID(444764833);
+    return $Call.ByID(444764833);
 }
 
 /**
  * @returns {$CancellablePromise<whisper$0.ModelInfo[]>}
  */
 export function ListWhisperModels() {
-  return $Call.ByID(1479260439).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
+    return $Call.ByID(1479260439).then(/** @type {($result: any) => any} */(($result) => {
         return $$createType25($result);
-      }
-    ),
-  );
+    }));
 }
 
 /**
  * @returns {$CancellablePromise<void>}
  */
 export function LogoutGitHub() {
-  return $Call.ByID(2536661304);
+    return $Call.ByID(2536661304);
 }
 
 /**
  * @returns {$CancellablePromise<boolean>}
  */
 export function NeedsDependencies() {
-  return $Call.ByID(4002180015);
+    return $Call.ByID(4002180015);
 }
 
 /**
@@ -532,7 +450,7 @@ export function NeedsDependencies() {
  * @returns {$CancellablePromise<void>}
  */
 export function OpenDownloadFolder(id) {
-  return $Call.ByID(4103450229, id);
+    return $Call.ByID(4103450229, id);
 }
 
 /**
@@ -540,7 +458,7 @@ export function OpenDownloadFolder(id) {
  * @returns {$CancellablePromise<void>}
  */
 export function OpenUrl(url) {
-  return $Call.ByID(4116595874, url);
+    return $Call.ByID(4116595874, url);
 }
 
 /**
@@ -549,85 +467,7 @@ export function OpenUrl(url) {
  * @returns {$CancellablePromise<string>}
  */
 export function PollGitHubAuth(deviceCode) {
-  return $Call.ByID(1729214153, deviceCode);
-}
-
-/**
- * @returns {$CancellablePromise<void>}
- */
-export function RestartApp() {
-  return $Call.ByID(4246341431);
-}
-
-/**
- * @param {config$0.Config | null} newCfg
- * @returns {$CancellablePromise<void>}
- */
-export function SaveSettings(newCfg) {
-  return $Call.ByID(1949631069, newCfg);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectDirectory() {
-  return $Call.ByID(1735672136);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectImageDirectory() {
-  return $Call.ByID(4161598873);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectImageFile() {
-  return $Call.ByID(4262026332);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectMediaFile() {
-  return $Call.ByID(2449334365);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectOutputDirectory() {
-  return $Call.ByID(2051919695);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectVideoDirectory() {
-  return $Call.ByID(945514935);
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function SelectVideoFile() {
-  return $Call.ByID(532478010);
-}
-
-/**
- * @returns {$CancellablePromise<string[]>}
- */
-export function SelectVideoFiles() {
-  return $Call.ByName("main.App.SelectVideoFiles");
-}
-
-/**
- * @returns {$CancellablePromise<string[]>}
- */
-export function SelectImageFiles() {
-  return $Call.ByName("main.App.SelectImageFiles");
+    return $Call.ByID(1729214153, deviceCode);
 }
 
 /**
@@ -636,15 +476,89 @@ export function SelectImageFiles() {
  * @returns {$CancellablePromise<string>}
  */
 export function ReadImageThumbnail(inputPath, maxSize) {
-  return $Call.ByName("main.App.ReadImageThumbnail", inputPath, maxSize);
+    return $Call.ByID(2179601562, inputPath, maxSize);
 }
 
 /**
- * @param {string} path
- * @returns {$CancellablePromise<number>}
+ * @returns {$CancellablePromise<void>}
  */
-export function GetFileSize(path) {
-  return $Call.ByName("main.App.GetFileSize", path);
+export function RestartApp() {
+    return $Call.ByID(4246341431);
+}
+
+/**
+ * @param {config$0.Config | null} newCfg
+ * @returns {$CancellablePromise<void>}
+ */
+export function SaveSettings(newCfg) {
+    return $Call.ByID(1949631069, newCfg);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectDirectory() {
+    return $Call.ByID(1735672136);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectImageDirectory() {
+    return $Call.ByID(4161598873);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectImageFile() {
+    return $Call.ByID(4262026332);
+}
+
+/**
+ * @returns {$CancellablePromise<string[]>}
+ */
+export function SelectImageFiles() {
+    return $Call.ByID(398204413).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType26($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectMediaFile() {
+    return $Call.ByID(2449334365);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectOutputDirectory() {
+    return $Call.ByID(2051919695);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectVideoDirectory() {
+    return $Call.ByID(945514935);
+}
+
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function SelectVideoFile() {
+    return $Call.ByID(532478010);
+}
+
+/**
+ * @returns {$CancellablePromise<string[]>}
+ */
+export function SelectVideoFiles() {
+    return $Call.ByID(1065016043).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType26($result);
+    }));
 }
 
 /**
@@ -653,7 +567,18 @@ export function GetFileSize(path) {
  * @returns {$CancellablePromise<void>}
  */
 export function SetClipboardMonitor(enabled) {
-  return $Call.ByID(2247635427, enabled);
+    return $Call.ByID(2247635427, enabled);
+}
+
+/**
+ * SetStreamURL registers a direct stream URL in the proxy without invoking yt-dlp.
+ * Used when the frontend already has a valid stream URL (e.g., from videoInfo.formats).
+ * This is instant because it skips the yt-dlp extraction step entirely.
+ * @param {string} directURL
+ * @returns {$CancellablePromise<string>}
+ */
+export function SetStreamURL(directURL) {
+    return $Call.ByID(3617779268, directURL);
 }
 
 /**
@@ -661,13 +586,9 @@ export function SetClipboardMonitor(enabled) {
  * @returns {$CancellablePromise<auth$0.DeviceCodeResponse | null>}
  */
 export function StartGitHubAuth() {
-  return $Call.ByID(4217852034).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
-        return $$createType27($result);
-      }
-    ),
-  );
+    return $Call.ByID(4217852034).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType28($result);
+    }));
 }
 
 /**
@@ -676,7 +597,7 @@ export function StartGitHubAuth() {
  * @returns {$CancellablePromise<void>}
  */
 export function SuggestFeature(title, desc) {
-  return $Call.ByID(2695915429, title, desc);
+    return $Call.ByID(2695915429, title, desc);
 }
 
 /**
@@ -684,13 +605,9 @@ export function SuggestFeature(title, desc) {
  * @returns {$CancellablePromise<whisper$0.TranscribeResult | null>}
  */
 export function TranscribeFile(req) {
-  return $Call.ByID(1827659560, req).then(
-    /** @type {($result: any) => any} */ (
-      ($result) => {
-        return $$createType29($result);
-      }
-    ),
-  );
+    return $Call.ByID(1827659560, req).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType30($result);
+    }));
 }
 
 /**
@@ -698,7 +615,7 @@ export function TranscribeFile(req) {
  * @returns {$CancellablePromise<string>}
  */
 export function UpdateYtDlp(channel) {
-  return $Call.ByID(461922123, channel);
+    return $Call.ByID(461922123, channel);
 }
 
 /**
@@ -706,7 +623,7 @@ export function UpdateYtDlp(channel) {
  * @returns {$CancellablePromise<void>}
  */
 export function VoteDownFeature(issueID) {
-  return $Call.ByID(1033779589, issueID);
+    return $Call.ByID(1033779589, issueID);
 }
 
 /**
@@ -714,7 +631,7 @@ export function VoteDownFeature(issueID) {
  * @returns {$CancellablePromise<void>}
  */
 export function VoteFeature(issueID) {
-  return $Call.ByID(210585845, issueID);
+    return $Call.ByID(210585845, issueID);
 }
 
 // Private type creation functions
@@ -744,7 +661,8 @@ const $$createType22 = youtube$0.VideoInfo.createFrom;
 const $$createType23 = $Create.Nullable($$createType22);
 const $$createType24 = whisper$0.ModelInfo.createFrom;
 const $$createType25 = $Create.Array($$createType24);
-const $$createType26 = auth$0.DeviceCodeResponse.createFrom;
-const $$createType27 = $Create.Nullable($$createType26);
-const $$createType28 = whisper$0.TranscribeResult.createFrom;
-const $$createType29 = $Create.Nullable($$createType28);
+const $$createType26 = $Create.Array($Create.Any);
+const $$createType27 = auth$0.DeviceCodeResponse.createFrom;
+const $$createType28 = $Create.Nullable($$createType27);
+const $$createType29 = whisper$0.TranscribeResult.createFrom;
+const $$createType30 = $Create.Nullable($$createType29);

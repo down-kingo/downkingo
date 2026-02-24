@@ -184,11 +184,24 @@ export default function OnboardingModal() {
   if (hasCompletedOnboarding) return null;
 
   const handleComplete = () => {
+    setSetting("theme", selTheme);
     setSetting("autoUpdateApp", autoUpdate);
     setSetting("startWithWindows", startWin);
     setSetting("clipboardMonitorEnabled", clipMonitor);
     setSetting("anonymousMode", anonMode);
+    setPrimaryColor(selColor);
     if (dontShow) localStorage.setItem("kingo_disclaimer_accepted", "true");
+
+    // Apply theme to DOM immediately before navigating
+    if (selTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+    document.documentElement.setAttribute("data-color", selColor);
+
     completeOnboarding();
   };
 

@@ -261,6 +261,50 @@ func (l *Launcher) DownloadDependencies() error {
 	return nil
 }
 
+// DownloadSelectedDependencies downloads only the dependencies whose names match the provided list
+func (l *Launcher) DownloadSelectedDependencies(names []string) error {
+	nameSet := make(map[string]bool, len(names))
+	for _, n := range names {
+		nameSet[n] = true
+	}
+
+	for _, dep := range l.deps {
+		if !nameSet[dep.Name] {
+			continue
+		}
+
+		installed := true
+		if dep.IsArchive {
+			for _, target := range dep.ExtractTargets {
+				targetFile := filepath.Join(l.binDir, target)
+				if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
+					installed = false
+					break
+				}
+			}
+		} else {
+			targetFile := filepath.Join(l.binDir, dep.FileName)
+			if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
+				installed = false
+			}
+		}
+
+		if installed {
+			l.emitProgress(dep.Name, 100, 100, 100, "complete")
+			continue
+		}
+
+		if err := l.downloadDependency(dep); err != nil {
+			l.emitProgress(dep.Name, 0, 0, 0, "error")
+			return fmt.Errorf("failed to download %s: %w", dep.Name, err)
+		}
+	}
+
+	l.emitEvent(events.LauncherComplete, nil)
+	logger.Log.Info().Msg("selected dependencies installed successfully")
+	return nil
+}
+
 // DownloadAria2c baixa e instala o aria2c (download opcional, sob demanda)
 func (l *Launcher) DownloadAria2c() error {
 	var dep Dependency

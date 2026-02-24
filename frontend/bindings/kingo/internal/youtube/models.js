@@ -153,7 +153,8 @@ export class DownloadOptions {
         }
         if (!("startTime" in $$source)) {
             /**
-             * Trimmer: HH:MM:SS or MM:SS (início do corte)
+             * Trimmer: cortar trecho do vídeo
+             * HH:MM:SS or MM:SS (início do corte)
              * @member
              * @type {string}
              */
@@ -161,7 +162,7 @@ export class DownloadOptions {
         }
         if (!("endTime" in $$source)) {
             /**
-             * Trimmer: HH:MM:SS or MM:SS (fim do corte)
+             * HH:MM:SS or MM:SS (fim do corte)
              * @member
              * @type {string}
              */

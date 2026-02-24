@@ -79,6 +79,18 @@ func (h *SystemHandler) DownloadDependencies() error {
 	return err
 }
 
+// DownloadSelectedDependencies downloads only the named dependencies.
+func (h *SystemHandler) DownloadSelectedDependencies(names []string) error {
+	h.consoleLog("[Sistema] Baixando dependências selecionadas...")
+	err := h.launcher.DownloadSelectedDependencies(names)
+	if err == nil {
+		h.consoleLog("[Sistema] Dependências selecionadas instaladas com sucesso!")
+	} else {
+		h.consoleLog("[Sistema] Erro ao instalar dependências selecionadas")
+	}
+	return err
+}
+
 // === Aria2c Management ===
 
 // CheckAria2cStatus verifica se aria2c está instalado.

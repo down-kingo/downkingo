@@ -489,6 +489,10 @@ func (a *App) DownloadDependencies() error {
 	return a.systemHandler.DownloadDependencies()
 }
 
+func (a *App) DownloadSelectedDependencies(names []string) error {
+	return a.systemHandler.DownloadSelectedDependencies(names)
+}
+
 func (a *App) CheckAria2cStatus() handlers.Aria2cStatus {
 	return a.systemHandler.CheckAria2cStatus()
 }

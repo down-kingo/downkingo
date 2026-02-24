@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   IconLanguage,
   IconFolder,
@@ -12,8 +13,8 @@ import {
   IconTerminal2,
   IconPuzzle,
 } from "@tabler/icons-react";
-import { useSettingsStore, Language } from "../../stores/settingsStore";
-import { FEATURE_REGISTRY, ALL_FEATURE_IDS } from "../../lib/features";
+import { useSettingsStore, Language, FeatureId } from "../../stores/settingsStore";
+import { FEATURE_REGISTRY, ALL_FEATURE_IDS, FEATURE_DEPS } from "../../lib/features";
 import { supportedLanguages } from "../../i18n";
 import {
   GetVideoDownloadPath,
@@ -21,6 +22,8 @@ import {
   SelectVideoDirectory,
   SelectImageDirectory,
   SetClipboardMonitor,
+  CheckDependencies,
+  IsWhisperInstalled,
 } from "../../../bindings/kingo/app";
 
 // Components locais
@@ -95,6 +98,7 @@ const Switch = ({
 
 export default function GeneralSettings() {
   const { t } = useTranslation("settings");
+  const navigate = useNavigate();
   const {
     language,
     anonymousMode,
@@ -109,6 +113,52 @@ export default function GeneralSettings() {
 
   const [videoPath, setVideoPath] = useState("");
   const [imagePath, setImagePath] = useState("");
+  const [checkingDeps, setCheckingDeps] = useState(false);
+
+  const handleToggleFeature = async (id: FeatureId) => {
+    const isEnabled = enabledFeatures.includes(id);
+
+    // Desabilitar: sem verificação necessária
+    if (isEnabled) {
+      toggleFeature(id);
+      return;
+    }
+
+    // Habilitar: verificar se deps estão instaladas
+    setCheckingDeps(true);
+    try {
+      const requiredDepNames = FEATURE_DEPS[id];
+      const statuses = await CheckDependencies();
+
+      // Verificar deps padrão
+      const missingStandard = requiredDepNames.some((name) => {
+        const dep = statuses.find((s: { name: string }) => s.name === name);
+        return !dep || !dep.installed;
+      });
+
+      // Verificar Whisper para transcriber
+      let missingWhisper = false;
+      if (id === "transcriber") {
+        try {
+          missingWhisper = !(await IsWhisperInstalled());
+        } catch {
+          missingWhisper = true;
+        }
+      }
+
+      if (missingStandard || missingWhisper) {
+        // Redirecionar para Setup com a feature pré-selecionada
+        navigate("/setup", { state: { preselected: [id] } });
+      } else {
+        toggleFeature(id);
+      }
+    } catch {
+      // Em caso de erro na verificação, permitir toggle normal
+      toggleFeature(id);
+    } finally {
+      setCheckingDeps(false);
+    }
+  };
 
   useEffect(() => {
     GetVideoDownloadPath().then(setVideoPath);
@@ -185,7 +235,7 @@ export default function GeneralSettings() {
                 <Switch
                   checked={isEnabled}
                   onChange={() => {
-                    if (!isLastEnabled) toggleFeature(id);
+                    if (!isLastEnabled && !checkingDeps) handleToggleFeature(id);
                   }}
                 />
               </SettingItem>

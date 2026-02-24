@@ -7,12 +7,13 @@ import { useTranslation } from "react-i18next";
 import {
   CheckDependencies,
   DownloadDependencies,
+  DownloadSelectedDependencies,
   DownloadAndApplyUpdate,
   IsWhisperInstalled,
   DownloadWhisperBinary,
 } from "../../bindings/kingo/app";
 import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
-import { FEATURE_REGISTRY, ALL_FEATURE_IDS } from "../lib/features";
+import { FEATURE_REGISTRY, ALL_FEATURE_IDS, FEATURE_DEPS } from "../lib/features";
 import {
   IconCheck,
   IconX,
@@ -27,14 +28,17 @@ export default function Setup() {
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
 
+  // Se vindo de Settings com features pré-selecionadas, pular direto para install
+  const preselected: FeatureId[] | undefined = location.state?.preselected;
+  const isFromSettings = !!preselected;
+
   // Feature selection step
-  const [step, setStep] = useState<"features" | "install">("features");
-  const [selectedFeatures, setSelectedFeatures] = useState<FeatureId[]>([
-    "videos",
-    "images",
-    "converter",
-    "transcriber",
-  ]);
+  const [step, setStep] = useState<"features" | "install">(
+    isFromSettings ? "install" : "features",
+  );
+  const [selectedFeatures, setSelectedFeatures] = useState<FeatureId[]>(
+    preselected ?? ["videos", "images", "converter", "transcriber"],
+  );
   const setEnabledFeatures = useSettingsStore((s) => s.setEnabledFeatures);
 
   // Durante o onboarding, o toggle opera no estado local (antes de confirmar)
@@ -100,7 +104,17 @@ export default function Setup() {
         setIsRetrying(false);
         needsWhisperRef.current = false;
 
-        const deps = await CheckDependencies();
+        // Calcular dependências necessárias com base nas features selecionadas
+        const requiredDepNames = [
+          ...new Set(selectedFeatures.flatMap((f) => FEATURE_DEPS[f])),
+        ];
+
+        const allStatuses = await CheckDependencies();
+
+        // Filtrar apenas as deps necessárias para as features selecionadas
+        const filteredDeps = allStatuses.filter((d: { name: string }) =>
+          requiredDepNames.includes(d.name),
+        );
 
         // Se transcriber foi selecionado, verificar se whisper está instalado
         const wantsTranscriber = selectedFeatures.includes("transcriber");
@@ -114,7 +128,7 @@ export default function Setup() {
         }
 
         // Adicionar Whisper à lista de dependências se necessário
-        const allDeps = [...deps];
+        const allDeps = [...filteredDeps];
         if (wantsTranscriber) {
           allDeps.push({
             name: "Whisper",
@@ -133,12 +147,12 @@ export default function Setup() {
           return;
         }
 
-        // Baixar dependências padrão (yt-dlp, FFmpeg)
-        const standardNeedsDownload = deps.some(
+        // Baixar apenas as dependências necessárias (filtradas por features)
+        const standardNeedsDownload = filteredDeps.some(
           (d: { installed: boolean }) => !d.installed,
         );
         if (standardNeedsDownload) {
-          await DownloadDependencies();
+          await DownloadSelectedDependencies(requiredDepNames);
           // launcher:complete será emitido pelo backend → callback faz o whisper se necessário
         } else if (needsWhisperRef.current) {
           // Dependências padrão já OK, mas whisper precisa ser baixado
