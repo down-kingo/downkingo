@@ -28,6 +28,20 @@ export default function Setup() {
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
 
+  // Setup deve ser sempre claro — remove dark mode enquanto montado
+  useEffect(() => {
+    const html = document.documentElement;
+    const wasDark = html.classList.contains("dark");
+    html.classList.remove("dark");
+    html.classList.add("light");
+    return () => {
+      if (wasDark) {
+        html.classList.add("dark");
+        html.classList.remove("light");
+      }
+    };
+  }, []);
+
   // Se vindo de Settings com features pré-selecionadas, pular direto para install
   const preselected: FeatureId[] | undefined = location.state?.preselected;
   const isFromSettings = !!preselected;
