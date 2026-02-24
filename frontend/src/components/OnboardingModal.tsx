@@ -306,6 +306,13 @@ export default function OnboardingModal() {
                           onClick={() => {
                             setSelTheme(value);
                             setSetting("theme", value);
+                            if (value === "dark") {
+                              document.documentElement.classList.add("dark");
+                              document.documentElement.classList.remove("light");
+                            } else {
+                              document.documentElement.classList.add("light");
+                              document.documentElement.classList.remove("dark");
+                            }
                           }}
                           className={[
                             "relative flex flex-col items-center gap-2 py-4 rounded-xl border transition-all duration-200",
