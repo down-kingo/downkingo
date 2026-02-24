@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
@@ -28,14 +28,15 @@ export default function Setup() {
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
 
-  // Setup deve ser sempre claro — remove dark mode enquanto montado
-  useEffect(() => {
+  // Setup deve ser SEMPRE claro — força light mode antes do paint
+  const wasDarkRef = useRef(false);
+  useLayoutEffect(() => {
     const html = document.documentElement;
-    const wasDark = html.classList.contains("dark");
+    wasDarkRef.current = html.classList.contains("dark");
     html.classList.remove("dark");
     html.classList.add("light");
     return () => {
-      if (wasDark) {
+      if (wasDarkRef.current) {
         html.classList.add("dark");
         html.classList.remove("light");
       }
