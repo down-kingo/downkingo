@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
@@ -28,20 +28,19 @@ export default function Setup() {
   const { t } = useTranslation("common");
   const [isRetrying, setIsRetrying] = useState(false);
 
-  // Setup deve ser SEMPRE claro — força light mode antes do paint
-  const wasDarkRef = useRef(false);
-  useLayoutEffect(() => {
-    const html = document.documentElement;
-    wasDarkRef.current = html.classList.contains("dark");
-    html.classList.remove("dark");
-    html.classList.add("light");
-    return () => {
-      if (wasDarkRef.current) {
-        html.classList.add("dark");
-        html.classList.remove("light");
-      }
-    };
-  }, []);
+  // Variáveis CSS light mode forçadas — imune ao dark mode global
+  const lightVars: React.CSSProperties = {
+    "--surface-50": "#ffffff",
+    "--surface-100": "#fafafa",
+    "--surface-200": "#e4e4e7",
+    "--surface-300": "#d4d4d8",
+    "--surface-400": "#a1a1aa",
+    "--surface-500": "#71717a",
+    "--surface-600": "#52525b",
+    "--surface-700": "#3f3f46",
+    "--surface-800": "#27272a",
+    "--surface-900": "#18181b",
+  } as React.CSSProperties;
 
   // Se vindo de Settings com features pré-selecionadas, pular direto para install
   const preselected: FeatureId[] | undefined = location.state?.preselected;
@@ -490,7 +489,7 @@ export default function Setup() {
     (isPreview && step === "features")
   ) {
     return (
-      <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
+      <div style={lightVars} className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
         {/* Header */}
         <div className="w-full max-w-4xl text-center mb-16 space-y-4">
           <motion.h1
