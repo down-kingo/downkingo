@@ -13,9 +13,8 @@ tasks:
   build:
     desc: Build the Go application
     cmds:
-      - cmd: mkdir -p frontend/dist
+      - cmd: "bun -e \"require('node:fs').mkdirSync('frontend/dist', { recursive: true })\""
         silent: true
-        ignore_error: true
       - cmd: cd frontend && bun install
         silent: true
       - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
@@ -82,7 +81,7 @@ tasks:
     desc: Run frontend dev server (used by wails3 dev)
     dir: frontend
     cmds:
-      - bun run dev -- --port {{.VITE_PORT | default "9245"}} --strictPort
+      - bun run dev -- --host 127.0.0.1 --port {{.VITE_PORT | default "9245"}} --strictPort
 
   frontend:dev:
     desc: Run frontend dev server (standalone)

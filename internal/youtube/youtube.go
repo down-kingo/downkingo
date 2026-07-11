@@ -218,6 +218,7 @@ func (c *Client) UpdateYtDlp(channel string) (string, error) {
 	}
 
 	cmd := exec.CommandContext(context.Background(), c.ytDlpPath, args...)
+	setSysProcAttr(cmd)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return string(output), err

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -143,6 +143,11 @@ export default function Roadmap() {
   // Suggestion State
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const checkAuth = useCallback(async () => {
+    const token = await GetGitHubToken();
+    setIsAuthenticated(!!token && token.length > 0);
+  }, []);
+
   useEffect(() => {
     // Initial setup with subscription
     const cleanup = initialize(i18n.language);
@@ -159,11 +164,6 @@ export default function Roadmap() {
       refetch(i18n.language);
     }
   }, [i18n.language, refetch]);
-
-  const checkAuth = async () => {
-    const token = await GetGitHubToken();
-    setIsAuthenticated(!!token && token.length > 0);
-  };
 
   // --- Auth Flow (Device Flow) ---
 
@@ -467,7 +467,7 @@ function AuthModal({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="w-full max-w-sm bg-surface-900 text-white rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden"
+        className="w-full max-w-sm bg-surface-900 dark:bg-surface-100 text-white rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden"
       >
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl" />
 

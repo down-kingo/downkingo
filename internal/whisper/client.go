@@ -161,9 +161,9 @@ func whisperBinaryURL() (string, string, error) {
 	switch runtime.GOOS {
 	case "windows":
 		if runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64" {
-			return "https://github.com/ggml-org/whisper.cpp/releases/download/v1.8.3/whisper-bin-x64.zip", "zip", nil
+			return "https://github.com/ggml-org/whisper.cpp/releases/latest/download/whisper-bin-x64.zip", "zip", nil
 		}
-		return "https://github.com/ggml-org/whisper.cpp/releases/download/v1.8.3/whisper-bin-Win32.zip", "zip", nil
+		return "https://github.com/ggml-org/whisper.cpp/releases/latest/download/whisper-bin-Win32.zip", "zip", nil
 	default:
 		return "", "", fmt.Errorf("automatic whisper download is not available for %s, please compile from source: https://github.com/ggml-org/whisper.cpp", runtime.GOOS)
 	}
@@ -535,6 +535,7 @@ func (c *Client) convertToWav(inputPath string) (string, error) {
 		Msg("converting audio to 16-bit WAV for whisper")
 
 	cmd := exec.CommandContext(c.ctx, c.ffmpegPath, args...)
+	hideWindow(cmd)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("ffmpeg conversion failed: %w\n%s", err, string(output))
@@ -565,6 +566,7 @@ func (c *Client) detectLanguage(binaryPath, modelPath, wavPath string) string {
 		"-f", wavPath,
 		"-dl", // detect-language: sai após detectar o idioma
 	)
+	hideWindow(cmd)
 
 	// whisper pode escrever a detecção tanto em stdout quanto em stderr
 	output, _ := cmd.CombinedOutput()
@@ -676,6 +678,7 @@ func (c *Client) TranscribeFile(filePath, modelName, language, outputFormat stri
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, binaryPath, args...)
+	hideWindow(cmd)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

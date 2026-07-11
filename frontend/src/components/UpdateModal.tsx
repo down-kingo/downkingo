@@ -13,9 +13,21 @@ export default function UpdateModal() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const checkUpdate = useCallback(async () => {
+    try {
+      const info = await CheckForUpdate();
+      if (info && info.available) {
+        setUpdateInfo(info);
+        setIsOpen(true);
+      }
+    } catch (err) {
+      console.error("Failed to check for updates:", err);
+    }
+  }, []);
+
   useEffect(() => {
     checkUpdate();
-  }, []);
+  }, [checkUpdate]);
 
   // [DEV ONLY] Ctrl+Shift+F10
   const openDevPreview = useCallback(() => {
@@ -49,18 +61,6 @@ export default function UpdateModal() {
     window.addEventListener("dev:open-update-modal", handler);
     return () => window.removeEventListener("dev:open-update-modal", handler);
   }, [openDevPreview]);
-
-  const checkUpdate = async () => {
-    try {
-      const info = await CheckForUpdate();
-      if (info && info.available) {
-        setUpdateInfo(info);
-        setIsOpen(true);
-      }
-    } catch (err) {
-      console.error("Failed to check for updates:", err);
-    }
-  };
 
   const handleUpdate = () => {
     if (!updateInfo?.downloadUrl) return;

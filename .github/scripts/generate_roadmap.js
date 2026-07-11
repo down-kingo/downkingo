@@ -61,6 +61,15 @@ const STATUS_MAPPING = {
   completed: "shipped",
 };
 
+function resolveStatus(projectStatus, issueState) {
+  // A closed issue is delivered even if the Project v2 field was not moved yet.
+  // This keeps GitHub Issues and the public roadmap consistent.
+  if (issueState === "CLOSED") return "shipped";
+
+  const normalized = projectStatus?.toLowerCase() || "idea";
+  return STATUS_MAPPING[normalized] || "idea";
+}
+
 // --- Helpers ---
 
 async function graphql(query, variables) {
@@ -218,8 +227,7 @@ async function main() {
     const c = node.content;
     if (!c || !c.number) continue;
 
-    const statusName = node.fieldValueByName?.name?.toLowerCase() || "idea";
-    const status = STATUS_MAPPING[statusName] || "idea";
+    const status = resolveStatus(node.fieldValueByName?.name, c.state);
 
     // Check Cache - now requires both title AND description translations
     const cached = translationCache[c.number];
@@ -431,7 +439,11 @@ async function main() {
   fs.writeFileSync("roadmap.meta.json", JSON.stringify(meta, null, 2));
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+module.exports = { resolveStatus };

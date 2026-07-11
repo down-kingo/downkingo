@@ -7,7 +7,6 @@ import (
 	"kingo/internal/logger"
 	"net/http"
 	"os"
-	"os/exec"
 	"runtime"
 	"strings"
 	"time"
@@ -126,29 +125,18 @@ func (s *Service) sendEvent(name string, props map[string]interface{}) error {
 
 // getSystemLocale detects the OS locale. Returns "en-US" as fallback.
 func getSystemLocale() string {
-	// Windows: powershell is expensive, prefer env vars
-	if runtime.GOOS == "windows" {
-		// LANG is set by Git Bash / MSYS2
-		if lang := os.Getenv("LANG"); lang != "" {
-			return normalizeLocale(strings.SplitN(lang, ".", 2)[0])
-		}
-		// Fallback: ask powershell (cached per-process — only runs once via telemetry)
-		out, err := exec.Command("powershell", "-NoProfile", "-Command",
-			"(Get-Culture).Name").Output()
-		if err == nil {
-			if locale := strings.TrimSpace(string(out)); locale != "" {
-				return locale
-			}
-		}
-		return "en-US"
-	}
-
-	// Linux / macOS
-	for _, env := range []string{"LC_ALL", "LC_MESSAGES", "LANG"} {
+	// Try env vars first (works on all platforms, no subprocess needed)
+	for _, env := range []string{"LANG", "LC_ALL", "LC_MESSAGES"} {
 		if val := os.Getenv(env); val != "" {
 			return normalizeLocale(strings.SplitN(val, ".", 2)[0])
 		}
 	}
+
+	// Platform-specific detection (uses syscall on Windows, env on Unix)
+	if locale := getOSLocale(); locale != "" {
+		return locale
+	}
+
 	return "en-US"
 }
 

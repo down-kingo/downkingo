@@ -6,10 +6,6 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: Unused imports
-import * as time$0 from "../../../time/models.js";
-
 /**
  * Download represents a download record in the database
  */
@@ -127,21 +123,21 @@ export class Download {
         if (!("createdAt" in $$source)) {
             /**
              * @member
-             * @type {time$0.Time}
+             * @type {string}
              */
-            this["createdAt"] = null;
+            this["createdAt"] = "0001-01-01T00:00:00.000Z";
         }
         if (!("startedAt" in $$source)) {
             /**
              * @member
-             * @type {time$0.Time | null}
+             * @type {string | null}
              */
             this["startedAt"] = null;
         }
         if (!("completedAt" in $$source)) {
             /**
              * @member
-             * @type {time$0.Time | null}
+             * @type {string | null}
              */
             this["completedAt"] = null;
         }

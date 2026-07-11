@@ -111,6 +111,7 @@ func (h *SystemHandler) CheckAria2cStatus() Aria2cStatus {
 	// Get actual version from binary
 	version := "unknown"
 	cmd := exec.Command(path, "--version")
+	hideWindow(cmd)
 	if output, err := cmd.Output(); err == nil {
 		lines := strings.Split(string(output), "\n")
 		if len(lines) > 0 {

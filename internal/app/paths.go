@@ -54,16 +54,17 @@ func GetPaths() (*Paths, error) {
 	var downloads string
 	var images string
 
+	appName := getAppDirName()
 	switch runtime.GOOS {
 	case "windows":
-		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Videos", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	case "darwin":
-		downloads = filepath.Join(homeDir, "Movies", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Movies", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	default:
-		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Videos", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	}
 
 	return &Paths{

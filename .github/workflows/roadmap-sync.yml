@@ -4,6 +4,11 @@ on:
   # Manual trigger
   workflow_dispatch:
 
+  # Project v2 item field changes do not trigger repository Actions events.
+  # Poll periodically so manual status moves always reach the CDN.
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+
   # Fix Race Condition: Wait for issue to be added to project first
   workflow_run:
     workflows: ["Add Suggestions to Project"]
@@ -13,9 +18,6 @@ on:
   # Trigger on updates (opened/labeled handled by workflow_run above)
   issues:
     types: [edited, closed, reopened, unlabeled]
-
-  project:
-    types: [closed, edited, reopened]
 
 # Prevent concurrent syncs
 concurrency:

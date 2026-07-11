@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
 @layer base {
   :root {
@@ -318,7 +316,7 @@
 
   /* === Video Card === */
   .video-card {
-    @apply card overflow-hidden hover:border-surface-300 dark:hover:border-surface-700 transition-colors;
+    @apply p-4 rounded-lg border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-100 overflow-hidden hover:border-surface-300 dark:hover:border-surface-700 transition-colors;
   }
   .video-thumbnail {
     @apply w-full h-full object-cover;

@@ -79,7 +79,7 @@ func getDependencies() []Dependency {
 			},
 			{
 				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/windows-artifacts.zip",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/latest/download/windows-artifacts.zip",
 				FileName:       "avifenc.zip",
 				IsArchive:      true,
 				ArchiveType:    "zip",
@@ -103,7 +103,7 @@ func getDependencies() []Dependency {
 			},
 			{
 				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/macOS-artifacts.zip",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/latest/download/macOS-artifacts.zip",
 				FileName:       "avifenc.zip",
 				IsArchive:      true,
 				ArchiveType:    "zip",
@@ -127,7 +127,7 @@ func getDependencies() []Dependency {
 			},
 			{
 				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/linux-artifacts.zip",
+				URL:            "https://github.com/AOMediaCodec/libavif/releases/latest/download/linux-artifacts.zip",
 				FileName:       "avifenc.zip",
 				IsArchive:      true,
 				ArchiveType:    "zip",

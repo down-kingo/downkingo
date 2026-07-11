@@ -1,12 +1,11 @@
 # 🌐 Internacionalização (i18n) do DownKingo
 
-Este projeto utiliza um fluxo de tradução profissional ("Sênior Level") automatizado para garantir que a interface esteja sempre traduzida e consistente, sem edição manual de arquivos JSON propensa a erros.
+Este projeto utiliza um fluxo estruturado de tradução para manter a interface traduzida e consistente.
 
 ## 🛠️ Stack Tecnológica
 
 - **Core**: `i18next` + `react-i18next`
 - **Extração**: `i18next-parser` (Varre o código e cria os JSONs)
-- **Automação**: Script customizado com `@iamtraction/google-translate`
 - **Qualidade**: `eslint-plugin-i18next` (Impede texto hardcoded no código)
 
 ---
@@ -22,7 +21,6 @@ Nós usamos **namespaces** para organizar melhor as strings:
 - `roadmap.json`, `images.json`, etc.
 
 **Idioma Base (Source of Truth):** 🇧🇷 `pt-BR` (Português Brasileiro).
-O script de tradução usa o português como base para gerar os outros idiomas.
 
 ---
 
@@ -60,22 +58,7 @@ bun run i18n:extract
 - Cria/Atualiza os arquivos JSON em `src/i18n/locales` para **todos** os idiomas.
 - Se a chave for nova, ela entra vazia (`""`) nos outros idiomas, pronta para ser traduzida.
 
-### 3. Traduzindo (Automático) 🤖
-
-Para não perder tempo com Google Tradutor na mão, use nosso robô tradutor:
-
-```bash
-bun run i18n:translate
-```
-
-🔹 **O que isso faz?**
-
-- Lê os arquivos `pt-BR` como base.
-- Varre os arquivos dos outros idiomas (`en-US`, `es-ES`, `de-DE`, `fr-FR`).
-- Se encontrar uma chave vazia ou faltando, ele **traduz automaticamente** e preenche o arquivo.
-- Salva o arquivo atualizado.
-
-### 4. Validando (CI/CD)
+### 3. Validando (CI/CD)
 
 No nosso pipeline de CI (Github Actions), rodamos:
 

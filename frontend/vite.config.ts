@@ -1,11 +1,12 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -31,15 +32,19 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React — loaded on every page, small and stable
-          "react-core": ["react", "react-dom"],
-          // State & i18n — loaded on every page but separate from React for caching
-          "state-vendor": ["zustand", "i18next", "react-i18next"],
-          // Framer Motion — heavy (~66KB gzip), isolated so lazy pages don't pay upfront
-          "motion-vendor": ["framer-motion"],
-          // Icons — tree-shaken but still heavy, separate chunk for better caching
-          "icons-vendor": ["@tabler/icons-react"],
+        codeSplitting: {
+          groups: [
+            { name: "react-core", test: /node_modules[\\/]react(?:-dom)?[\\/]/ },
+            {
+              name: "state-vendor",
+              test: /node_modules[\\/](?:zustand|i18next|react-i18next)[\\/]/,
+            },
+            { name: "motion-vendor", test: /node_modules[\\/]framer-motion[\\/]/ },
+            {
+              name: "icons-vendor",
+              test: /node_modules[\\/]@tabler[\\/]icons-react[\\/]/,
+            },
+          ],
         },
       },
     },

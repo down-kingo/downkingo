@@ -300,8 +300,7 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 		"--new", tempPath,
 		"--cleanup", updaterPath,
 	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	hideUpdaterWindow(cmd)
 	if err := cmd.Start(); err != nil {
 		os.Remove(tempPath)
 		os.Remove(updaterPath)

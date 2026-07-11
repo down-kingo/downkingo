@@ -157,6 +157,7 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 		application.Get().Event.Emit(eventName, data)
 	})
 	a.roadmap.ApplyConfig(cfg.GetRoadmapConfig()) // Apply CDN settings from config/env
+	a.roadmap.StartPeriodicSync(ctx)
 
 	// Initialize internal services
 	a.launcher = launcher.NewLauncher(paths.Bin)
@@ -622,6 +623,11 @@ func (a *App) GetRoadmap(lang string) ([]roadmap.RoadmapItem, error) {
 
 // ServiceShutdown is called when the app shuts down (Wails v3 lifecycle)
 func (a *App) ServiceShutdown() error {
+	// Stop roadmap synchronization before closing its SQLite cache.
+	if a.roadmap != nil {
+		a.roadmap.StopPeriodicSync()
+	}
+
 	// Stop download manager gracefully
 	if a.downloadManager != nil {
 		a.downloadManager.Stop()

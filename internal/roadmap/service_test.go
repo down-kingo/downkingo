@@ -1,6 +1,9 @@
 package roadmap
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -240,6 +243,50 @@ func TestStatusMapping(t *testing.T) {
 	}
 }
 
+func TestResolveStatus(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		projectStatus string
+		issueState    string
+		expected      Status
+	}{
+		{"closed overrides in progress", "Em Produção", "CLOSED", StatusShipped},
+		{"closed without project status", "", "closed", StatusShipped},
+		{"open uses project status", "Em Pauta", "OPEN", StatusPlanned},
+		{"unknown defaults to idea", "Unknown", "OPEN", StatusIdeia},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := resolveStatus(tt.projectStatus, tt.issueState); got != tt.expected {
+				t.Errorf("resolveStatus(%q, %q) = %q, want %q", tt.projectStatus, tt.issueState, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestCDNItemToRoadmapItemClosedOverridesLegacyStatus(t *testing.T) {
+	t.Parallel()
+
+	closedAt := "2026-02-14T06:00:17Z"
+	cdnItem := CDNItem{
+		ID:        6,
+		Title:     "Closed feature",
+		Status:    StatusInProgress,
+		ShippedAt: &closedAt,
+	}
+	item := cdnItem.ToRoadmapItem()
+
+	if item.Status != StatusShipped {
+		t.Fatalf("closed CDN item status = %q, want %q", item.Status, StatusShipped)
+	}
+	if item.ShippedAt != closedAt {
+		t.Fatalf("shipped_at = %q, want %q", item.ShippedAt, closedAt)
+	}
+}
+
 // =============================================================================
 // Service Tests
 // =============================================================================
@@ -309,6 +356,44 @@ func TestService_LoadFromMemoryCache(t *testing.T) {
 			t.Error("expected nil for expired cache")
 		}
 	})
+}
+
+func TestService_BackgroundSyncEmitsChangedCDNData(t *testing.T) {
+	t.Parallel()
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{
+			"version":"2.1.0",
+			"generated_at":"2026-07-11T12:00:00Z",
+			"lang":"",
+			"source":{"owner":"down-kingo","repo":"downkingo","project_number":2},
+			"items":[{"id":1,"title":"New","description":"","status":"shipped","votes_up":0,"votes_down":0,"comments":0,"url":"","labels":[],"author":"","author_avatar":"","created_at":""}]
+		}`)
+	}))
+	defer server.Close()
+
+	s := NewService("down-kingo", "downkingo")
+	s.useCDN = true
+	s.config.CDNURL = server.URL
+	s.config.JSONUrl = server.URL
+	s.cdnFetcher = NewCDNFetcher(s.config)
+	s.cache = []RoadmapItem{{ID: 1, Title: "Old", Status: StatusInProgress}}
+	s.cacheLang = ""
+	s.lastFetch = time.Now()
+
+	var emitted []RoadmapItem
+	s.SetEventEmitter(func(eventName string, data interface{}) {
+		if eventName == "roadmap:update" {
+			emitted, _ = data.([]RoadmapItem)
+		}
+	})
+
+	s.syncInBackground("manual", "")
+
+	if len(emitted) != 1 || emitted[0].Title != "New" || emitted[0].Status != StatusShipped {
+		t.Fatalf("expected changed roadmap event, got %#v", emitted)
+	}
 }
 
 func TestParseDate(t *testing.T) {

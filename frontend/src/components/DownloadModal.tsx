@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GetVideoInfo } from "../../bindings/kingo/app";
 import {
@@ -156,13 +156,7 @@ export default function DownloadModal({
   const [downloadSubtitles, setDownloadSubtitles] = useState(false);
   const [subtitleLanguage, setSubtitleLanguage] = useState("pt-BR");
 
-  useEffect(() => {
-    if (isOpen && url) {
-      fetchVideoInfo();
-    }
-  }, [isOpen, url]);
-
-  const fetchVideoInfo = async () => {
+  const fetchVideoInfo = useCallback(async () => {
     setIsLoading(true);
     setError("");
     setVideoInfo(null);
@@ -175,7 +169,13 @@ export default function DownloadModal({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [url]);
+
+  useEffect(() => {
+    if (isOpen && url) {
+      fetchVideoInfo();
+    }
+  }, [fetchVideoInfo, isOpen, url]);
 
   const handleDownload = () => {
     const options: DownloadOptions = {
