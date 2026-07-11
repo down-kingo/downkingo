@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-11T17:32:53.817Z",
+  "generated_at": "2026-07-11T18:29:33.849Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary **Multi-window** support, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the System Tray and menus",
+      "description": "## Context\nKingo has matured and its current architecture in Wails v2 is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the System Tray and menus",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -568,7 +568,7 @@
     {
       "id": 27,
       "title": "feat(settings): Configurações Gerais",
-      "description": "### Description\nCentralized panel for controlling the application's behavior.\n\n### Technical Details\n- **Directories:** Definition of the default download and temp folders.\n- **Language:** Manual language selector for the interface.\n- **Behavior:** Options like \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual update check.\n\n### Status\n✅ Delivered in v2.0.0",
+      "description": "### Description\nCentralized panel for controlling application behavior.\n\n### Technical Details\n- **Directories:** Definition of the default download and temp folders.\n- **Language:** Manual interface language selector.\n- **Behavior:** Options such as \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual check for updates.\n\n### Status\n✅ Delivered in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
