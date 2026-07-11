@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-11T21:36:36.954Z",
+  "generated_at": "2026-07-11T21:44:49.867Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -606,6 +606,225 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Image Settings"
+    },
+    {
+      "id": 6,
+      "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
+      "description": "## Contexto\nO ecossistema Kingo precisa de uma integração mais fluida com o navegador. Atualmente, o usuário depende do monitor de clipboard ou de copiar/colar manualmente. O esquema de protocolo `kingo://` já existe no código, mas o comportamento de \"instância única\" ainda não foi refinado.\n## Motivação\nPermitir que o usuário envie vídeos para o Kingo com apenas um clique diretamente do YouTube/Instagram, sem a necessidade de copiar links para a área de transferência. Isso torna o fluxo de trabalho muito mais rápido e profissional.\n## Problema\n1. **Falta de Bridge:** Não há uma extensão oficial que facilite o envio de URLs.\n2. **Redundância de Janelas:** Ao clicar em um link `kingo://` com o app já aberto, o Windows tenta abrir uma segunda instância do Kingo, resultando em duas janelas e erro de concorrência no banco de dados.\n## Proposta Técnica\n### 1. Extensão de Navegador (Kingo Bridge)\n* Criar uma extensão (Manifest v3) compatível com Chrome, Edge e Brave.\n* Adicionar um botão \"Baixar com Kingo\" abaixo dos vídeos ou um item no menu de contexto (botão direito).\n* A extensão chamará o protocolo: `kingo://open?url=[URL_VÍDEO]`.\n### 2. Implementação de SingleInstanceLock (Backend)\n* Utilizar a API nativa do **Wails v2** (`options.SingleInstanceLock`) no [main.go](cci:7://file:///c:/Downkingo/main.go:0:0-0:0).\n* Configurar um `UniqueId` para o projeto.\n* Implementar o callback `OnSecondInstanceLaunch` para:\n    * Trazer a janela existente para o primeiro plano (`WindowShow`).\n    * Capturar os argumentos da segunda instância.\n    * Emitir o evento `deep-link` para o frontend processar a URL na instância já aberta.\n## Dependências\n* Nenhuma (o Wails v2.11.0 já suporta SingleInstanceLock nativamente).\n## Tarefas\n- [ ] Criar projeto da extensão (HTML/JS básico para Manifest v3).\n- [ ] Implementar `SingleInstanceLock` no [main.go](cci:7://file:///c:/Downkingo/main.go:0:0-0:0).\n- [ ] Criar listener no [app.go](cci:7://file:///c:/Downkingo/app.go:0:0-0:0) para processar argumentos de segunda instância.\n- [ ] Validar se a URL recebida é segura antes de emitir o evento.\n- [ ] Testar fluxo: App aberto -> Clique na extensão -> URL preenchida automaticamente na janela existente.\n## Referências\n- Documentação Wails v2: [Single Instance Lock](https://wails.io/docs/guides/single-instance-lock)\n- Implementação inicial de Deep Link (Cold Start): `app.go:151-158`",
+      "status": "shipped",
+      "votes": 1,
+      "votes_up": 1,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/6",
+      "labels": [],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-01-04T20:43:35Z",
+      "shipped_at": "2026-02-14T06:00:17Z",
+      "friendly_title": "Extensão Oficial e Refinamento de Deep Links (Warm Start)"
+    },
+    {
+      "id": 35,
+      "title": "feat(transcrição): atualizar Whisper.cpp para 1.9.1 e gerenciar runtime com integridade",
+      "description": "## Goal\nUpdate the local transcription engine to Whisper.cpp 1.9.1 without depending on `latest` releases or legacy installations.\n\n## Scope\n- Pin version, URL, and SHA-256 for the Windows x64 package.\n- Install via staging, validation, and atomic replacement with rollback.\n- Validate mandatory files and `whisper-cli --version`.\n- Keep models outside the runtime directory.\n- Validate catalog, size, and SHA-256 of models.\n- Offer quantized models: `small`, `medium`, and `large-v3-turbo`.\n\n## Acceptance Criteria\n- [ ] Invalid, incomplete, or legacy runtime is not activated.\n- [ ] Update does not remove existing models.\n- [ ] Installation and models have unit and opt-in integration tests.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/35",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:29:59Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Update Whisper.cpp to 1.9.1 and manage runtime integrity"
+    },
+    {
+      "id": 36,
+      "title": "feat(transcrição): usar JSON oficial, detecção em uma execução e VAD opcional",
+      "description": "## Objective\nMake local transcription more stable, efficient, and independent of the text displayed in the terminal.\n\n## Scope\n- Normalize audio/video to WAV PCM 16-bit mono 16 kHz with FFmpeg.\n- Run detection and transcription together with `-l auto -oj`.\n- Interpret language, offsets, and segments via the official JSON.\n- Generate TXT, SRT, VTT, and DOCX in Go.\n- Add optional Silero VAD v6.2.0 with validated download.\n- Use exclusive temporary files.\n\n## Acceptance Criteria\n- [ ] Model is loaded only once per transcription.\n- [ ] Parser does not depend on CLI text output.\n- [ ] UTF-8, timestamps, and detected language are preserved.\n- [ ] VAD remains disabled by default and can be configured in the interface.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/36",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:00Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Official JSON transcription, single-run detection and optional VAD"
+    },
+    {
+      "id": 37,
+      "title": "feat(download): gerenciar aria2c 1.37.0 com isolamento entre dev e produção",
+      "description": "## Goal\nProvide Turbo Mode with a verifiable and environment-isolated aria2c runtime.\n\n## Scope\n- Pin aria2c 1.37.0 package, size, and SHA-256 hashes.\n- Validate executable, version, and execution capability.\n- Download to temporary, extract to staging, and activate atomically.\n- Share the same validation between launcher, status, and yt-dlp client.\n- Separate `%AppData%/DownKingo-dev` from `%AppData%/DownKingo`.\n- Prevent silent fallback when enabled Turbo is unavailable.\n\n## Acceptance Criteria\n- [ ] Dev installation does not alter production.\n- [ ] Empty, tampered, or incompatible files are rejected.\n- [ ] Validation failure produces an explicit error.\n- [ ] Pinned runtime has an opt-in real test.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/37",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:01Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Manage aria2c 1.37.0 with isolation between dev and prod"
+    },
+    {
+      "id": 38,
+      "title": "perf(download): otimizar yt-dlp/aria2c e corrigir telemetria de velocidade",
+      "description": "## Objective\nImprove local download throughput and present consistent speed to the user.\n\n## Scope\n- Configure 16 aria2c connections and 1 MiB minimum parts.\n- Allow adjustment of connections and DASH/HLS fragments.\n- Configure native buffer and URL renewal during throttling.\n- Keep HTTPS validation active.\n- Calculate average speed by percentage and total size when available.\n- Reset the measurement window when changing destination/format.\n\n## Acceptance Criteria\n- [ ] aria2c receives the parameters configured by the user.\n- [ ] Progress reports speed, ETA, and percentage without mixing distinct phases.\n- [ ] Absence of calculable data uses the downloader's speed.\n- [ ] Tests cover parsing and real aria2c invocation.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/38",
+      "labels": [
+        "bug",
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:02Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Optimize yt-dlp/aria2c and fix speed telemetry"
+    },
+    {
+      "id": 39,
+      "title": "fix(instagram): detectar carrosséis e baixar imagens na resolução original",
+      "description": "## Problem\nCarousel posts could be treated as a single cover and the download might use a reduced preview thumbnail, causing loss of resolution and quality.\n\n## Scope\n- Treat a single OpenGraph image as a provisional result.\n- Query yt-dlp with `--ignore-no-formats-error` for image-only carousels.\n- Deduplicate items while preserving order.\n- Evaluate all thumbnails and choose the highest resolution candidate.\n- Prioritize Instagram URLs without `stp` resize/crop parameters.\n- Respect `img_index` as the initial selection.\n\n## Acceptance Criteria\n- [ ] Post with multiple images returns all items.\n- [ ] Download source is not the reduced preview image.\n- [ ] Type, size, and resolution displayed match the source URL.\n- [ ] The regression post with eight images passes the integration test.\n\n> Local fix in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/39",
+      "labels": [
+        "bug",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:02Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Detect carousels and download images in original resolution"
+    },
+    {
+      "id": 40,
+      "title": "feat(imagens): adicionar download em lote, conversão, qualidade e escala",
+      "description": "## Objective\nProvide output control for individual images and carousels without sacrificing the original file.\n\n## Scope\n- Download selected item or all items from the carousel.\n- Support Original, JPG, PNG, WEBP, and AVIF.\n- Allow scales from 25% to 200%.\n- Apply Lanczos resizing via FFmpeg.\n- Expose quality for lossy formats.\n- Preserve original bytes in Original + 100%.\n- Forward videos from mixed carousels to the existing queue.\n\n## Acceptance Criteria\n- [ ] Original + 100% does not perform conversion.\n- [ ] Options are applied equally to individual and batch actions.\n- [ ] Upscaling is not described as detail recovery.\n- [ ] Mixed carousel processes images and videos in the same action.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/40",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:03Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Batch download, conversion, quality, and image scaling"
+    },
+    {
+      "id": 41,
+      "title": "feat(ui): unificar vídeos e imagens na experiência de Downloads",
+      "description": "## Objective\nUse the robust video download interface as a single entry point for videos, images, and carousels.\n\n## Scope\n- Replace separate Video/Image entries with Downloads in the menu and dashboard.\n- Maintain URL field, header, Turbo, and visual structure of the original video screen.\n- Route YouTube, TikTok, Vimeo, and direct videos to the existing flow.\n- Render Instagram, X/Twitter, and direct image inspectors in the results area.\n- Reuse queue, progress, speed, ETA, cancellation, and history for found videos.\n\n## Acceptance criteria\n- [ ] No competing image page exists in the main flow.\n- [ ] A single field accepts all supported types.\n- [ ] Specific results do not duplicate header or form.\n- [ ] Old internal states remain for compatibility only.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/41",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:04Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Unify video and image download experience"
+    },
+    {
+      "id": 42,
+      "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
+      "description": "## Problem\nThe gallery wasted space, controls could truncate text, the quick panel lacked clear hierarchy, and some highlights remained blue instead of following the selected palette.\n\n## Scope\n- Make the gallery responsive and remove fixed heights tied to the viewport.\n- Remove false values like `0 Bytes` and internal debug badges.\n- Style format/scale selectors according to the app design.\n- Give the gear icon a minimum area of 40×40 px and separate Paste/Clear.\n- Add header, close, focus, `Esc`, and grouping to the quick panel.\n- Apply `theme` and `data-color` globally before the first paint.\n- Make \"View full history\" and \"Downloader\" use semantic tokens `surface-*`, without assuming the primary color.\n\n## Acceptance Criteria\n- [ ] Layout properly fits large and small windows.\n- [ ] Translations are not truncated in selectors.\n- [ ] Quick panel works via mouse and keyboard.\n- [ ] Highlight actions follow the primary color; auxiliary texts",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/42",
+      "labels": [
+        "bug",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:04Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Gallery layout, quick settings, and theme inheritance"
+    },
+    {
+      "id": 43,
+      "title": "i18n: traduzir novos fluxos de downloads, imagens, Turbo e transcrição",
+      "description": "## Objective\nKeep all new features available in the five supported languages.\n\n## Scope\n- Update `pt-BR`, `en-US`, `es-ES`, `fr-FR`, and `de-DE`.\n- Cover unified Downloads, carousel, batch, format, scale, and quality.\n- Cover Turbo installation/status and quick settings.\n- Cover Whisper 1.9.1, VAD, and quantized models.\n- Use flexible text for different translation lengths.\n\n## Acceptance Criteria\n- [ ] No raw keys appear in the interface.\n- [ ] JSON files are valid.\n- [ ] Controls support the longest translations without clipping.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/43",
+      "labels": [
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:05Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Translate new download, image, and transcription flows"
+    },
+    {
+      "id": 44,
+      "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
+      "description": "## Objective\nRecord technical decisions and protect new flows against regressions.\n\n## Scope\n- Document versions, hashes, directories, parameters, and limitations.\n- Document dev/production isolation and update checklist.\n- Add unit tests for runtime, parsing, conversion, routing, and thumbnails.\n- Add opt-in integrations for Whisper, aria2c, yt-dlp, FFmpeg, and Instagram.\n- Regenerate Wails bindings after Go contract changes.\n\n## Acceptance criteria\n- [ ] `go test ./...` passes without network dependency.\n- [ ] Frontend build, lint, and tests pass.\n- [ ] Real integrations use temporary directories.\n- [ ] Documentation contains reproducible commands and does not confuse local app with intermediate server.\n\n> Local implementation in development for the next version.",
+      "status": "shipped",
+      "votes": 0,
+      "votes_up": 0,
+      "votes_down": 0,
+      "comments": 0,
+      "url": "https://github.com/down-kingo/downkingo/issues/44",
+      "labels": [
+        "documentation",
+        "enhancement",
+        "em desenvolvimento"
+      ],
+      "author": "Capman002",
+      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
+      "created_at": "2026-07-11T21:30:06Z",
+      "shipped_at": "2026-07-11T21:40:08Z",
+      "friendly_title": "Runtime coverage and transcription architecture docs"
     }
   ]
 }
