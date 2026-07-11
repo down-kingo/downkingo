@@ -2,14 +2,14 @@ name: i18n Check
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, v3]
     paths:
       - "frontend/src/i18n/**"
       - "frontend/src/**/*.tsx"
       - "frontend/src/**/*.ts"
       - "frontend/i18next-parser.config.js"
   pull_request:
-    branches: [main, master]
+    branches: [main, master, v3]
     paths:
       - "frontend/src/i18n/**"
       - "frontend/src/**/*.tsx"
