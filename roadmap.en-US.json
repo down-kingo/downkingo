@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-02-14T06:00:28.715Z",
+  "generated_at": "2026-07-11T15:30:08.858Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,8 +11,8 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Context\nKingo has matured and its current architecture in Wails v2 is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust and cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. In addition, the new Wails v3 API is much closer to the native capabilities of the OS (Windows/Mac/Linux), allowing for deep integration with the system that v2 does not achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** The control of Single Instance and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus of",
-      "status": "in-progress",
+      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification system and overlays. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as sleep/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus d",
+      "status": "shipped",
       "votes": 1,
       "votes_up": 1,
       "votes_down": 0,
@@ -148,21 +148,23 @@
       "friendly_title": "Local Sharing via QR Code (Magic Share)"
     },
     {
-      "id": 6,
-      "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
-      "description": "## Context\nThe Kingo ecosystem needs a more seamless integration with the browser. Currently, the user relies on the clipboard monitor or manual copy/paste. The `kingo://` protocol scheme already exists in the code, but the \"single instance\" behavior has not yet been refined.\n## Motivation\nAllow the user to send videos to Kingo with just one click directly from YouTube/Instagram, without the need to copy links to the clipboard. This makes the workflow much faster and more professional.\n## Problem\n1. **Lack of Bridge:** There is no official extension to facilitate sending URLs.\n2. **Window Redundancy:** When clicking a `kingo://` link with the app already open, Windows tries to open a second instance of Kingo, resulting in two windows and a database concurrency error.\n## Technical Proposal\n### 1. Browser Extension (Kingo Bridge)\n* Create an extension (Manifest v3) compatible with Chrome, Edge, and Brave.\n* Add a \"Ba",
-      "status": "in-progress",
+      "id": 34,
+      "title": "Spotify Download Support",
+      "description": "### Type\n\nfeat: New functionality\n\n### Scope\n\ndownload\n\n### Short Description\n\nAdd native Spotify track (and optionally playlist/album) download support to DownKingo, enabling users to fetch audio files with full metadata directly from Spotify URLs.\n\n### Context\n\nDownKingo currently supports downloading media from YouTube, but it does not yet support Spotify as a source. Providing support for Spotify URLs would expand the utility of the app beyond video downloads to include streaming audio downloads from one of the most widely used music services.\n\n### Problem / Motivation\n\nMany users would benefit from being able to download Spotify tracks, playlists, and albums in addition to YouTube content. Right now, users must rely on separate tools to extract audio from Spotify, which fragments the workflow. Integrating Spotify support directly into DownKingo would unify media downloading into a single, user-friendly tool and reduce friction for users who regularly work with both YouTube and Spo",
+      "status": "shipped",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
       "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/6",
-      "labels": [],
-      "author": "Capman002",
-      "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
-      "created_at": "2026-01-04T20:43:35Z",
-      "shipped_at": "2026-02-14T06:00:17Z",
-      "friendly_title": "Browser Extension and Deep Link Refinement (Warm Start)"
+      "url": "https://github.com/down-kingo/downkingo/issues/34",
+      "labels": [
+        "enhancement"
+      ],
+      "author": "ehsanpo2",
+      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
+      "created_at": "2026-01-10T10:52:42Z",
+      "shipped_at": "2026-02-08T18:03:53Z",
+      "friendly_title": "Spotify Download Support"
     },
     {
       "id": 9,
@@ -604,25 +606,6 @@
       "created_at": "2026-01-08T15:03:58Z",
       "shipped_at": "2026-01-08T15:04:15Z",
       "friendly_title": "Image Settings"
-    },
-    {
-      "id": 34,
-      "title": "Spotify Download Support",
-      "description": "### Type\n\nfeat: New functionality\n\n### Scope\n\ndownload\n\n### Short Description\n\nAdd native Spotify track (and optionally playlist/album) download support to DownKingo, enabling users to fetch audio files with full metadata directly from Spotify URLs.\n\n### Context\n\nDownKingo currently supports downloading media from YouTube, but it does not yet support Spotify as a source. Providing support for Spotify URLs would expand the utility of the app beyond video downloads to include streaming audio downloads from one of the most widely used music services.\n\n### Problem / Motivation\n\nMany users would benefit from being able to download Spotify tracks, playlists, and albums in addition to YouTube content. Right now, users must rely on separate tools to extract audio from Spotify, which fragments the workflow. Integrating Spotify support directly into DownKingo would unify media downloading into a single, user-friendly tool and reduce friction for users who regularly work with both YouTube and Spo",
-      "status": "in-progress",
-      "votes": 0,
-      "votes_up": 0,
-      "votes_down": 0,
-      "comments": 0,
-      "url": "https://github.com/down-kingo/downkingo/issues/34",
-      "labels": [
-        "enhancement"
-      ],
-      "author": "ehsanpo2",
-      "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
-      "created_at": "2026-01-10T10:52:42Z",
-      "shipped_at": "2026-02-08T18:03:53Z",
-      "friendly_title": "Spotify Download Support"
     }
   ]
 }
