@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-11T21:44:49.867Z",
+  "generated_at": "2026-07-11T22:26:42.500Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problème\nLa galerie gaspillait de l'espace, les contrôles pouvaient tronquer le texte, le panneau rapide manquait de hiérarchie claire et certains points forts restaient bleus au lieu de suivre la palette sélectionnée.\n\n## Portée\n- Rendre la galerie responsive et supprimer les hauteurs fixes liées au viewport.\n- Supprimer les fausses valeurs comme `0 Bytes` et les badges de débogage internes.\n- Styliser les sélecteurs de format/échelle selon le design de l'application.\n- Donner une zone minimale de 40×40 px à l'engrenage et séparer Coller/Effacer.\n- Ajouter un en-tête, une fermeture, le focus, `Esc` et un groupement au panneau rapide.\n- Appliquer `theme` et `data-color` globalement avant le premier rendu (first paint).\n- Faire en sorte que \"Voir l'historique complet\" et \"Downloader\" utilisent des jetons sémantiques `surface-*`, sans assumer la couleur primaire.\n\n## Critères d'acceptation\n- [ ] La mise en page s'adapte correctement aux grandes et petites fenêtres.\n- [ ] Les traductions ne sont pas tronquées dans les sélecteurs.\n- [ ] Le panneau rapide fonctionne à la souris et au clavier.\n- [ ] Les actions de mise en évidence suivent la couleur primaire ; textes auxiliaires",
+      "description": "## Problème\nLa galerie gaspillait de l'espace, les contrôles pouvaient tronquer les textes, le panneau rapide manquait de hiérarchie claire et certains points forts restaient bleus au lieu de suivre la palette sélectionnée.\n\n## Portée\n- Rendre la galerie responsive et supprimer les hauteurs fixes liées au viewport.\n- Supprimer les fausses valeurs comme `0 Bytes` et les badges de débogage internes.\n- Styliser les sélecteurs de format/échelle selon le design de l'application.\n- Donner une zone minimale de 40×40 px à l'engrenage et séparer Coller/Effacer.\n- Ajouter un en-tête, une fermeture, le focus, `Esc` et un groupement au panneau rapide.\n- Appliquer `theme` et `data-color` globalement avant le premier rendu.\n- Faire en sorte que « Voir l'historique complet » et « Downloader » utilisent des jetons sémantiques `surface-*`, sans assumer la couleur primaire.\n\n## Critères d'acceptation\n- [ ] La mise en page occupe correctement les grandes et petites fenêtres.\n- [ ] Les traductions ne sont pas tronquées dans les sélecteurs.\n- [ ] Le panneau rapide fonctionne à la souris et au clavier.\n- [ ] Les actions de mise en évidence suivent la couleur primaire ; textes auxiliaires",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Mise en page galerie, réglages rapides et héritage thème"
+      "friendly_title": "Mise en page de la galerie, réglages rapides et thème"
     },
     {
       "id": 43,
