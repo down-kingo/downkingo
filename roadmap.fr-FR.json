@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T01:07:57.150Z",
+  "generated_at": "2026-07-13T04:50:16.241Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexte\nKingo a mûri et son architecture actuelle sous Wails v2 commence à limiter l'expérience \"App Native\". La migration vers la v3 Alpha/Beta est l'étape nécessaire pour transformer Kingo en un utilitaire système robuste et multiplateforme.\n## Motivation\nLa v3 apporte un support natif pour le **Multi-window**, ce qui est crucial pour notre système de notifications et d'overlays. De plus, la nouvelle API de Wails v3 est beaucoup plus proche des capacités natives de l'OS (Windows/Mac/Linux), permettant une intégration profonde avec le système que la v2 ne peut atteindre sans \"hacks\".\n## Problème Actuel (Limitations de la v2)\n1. **Notifications Limitées :** Actuellement, nos Toasts (comme celui du Clipboard) vivent \"à l'intérieur\" de la fenêtre principale. Si l'application est réduite, l'utilisateur ne voit rien.\n2. **Cycle de Vie :** Le contrôle de Single Instance et les événements système (comme la mise en veille/reprise) sont moins élégants dans la v2.\n3. **Tray et Menus :** La v3 offre un contrôle bien supérieur sur la zone de notification (System Tray) et les menus de",
+      "description": "## Contexte\nKingo a mûri et son architecture actuelle sous Wails v2 commence à limiter l'expérience \"App Native\". La migration vers la v3 Alpha/Beta est l'étape nécessaire pour transformer Kingo en un utilitaire système robuste et multiplateforme.\n## Motivation\nLa v3 apporte un support natif pour le **Multi-window**, ce qui est crucial pour notre système de notifications et d'overlays. De plus, la nouvelle API de Wails v3 est beaucoup plus proche des capacités natives de l'OS (Windows/Mac/Linux), permettant une intégration système profonde que la v2 ne peut atteindre sans \"hacks\".\n## Problème Actuel (Limitations de la v2)\n1. **Notifications Limitées :** Actuellement, nos Toasts (comme celui du Presse-papiers) vivent \"à l'intérieur\" de la fenêtre principale. Si l'application est réduite, l'utilisateur ne voit rien.\n2. **Cycle de Vie :** Le contrôle d'Instance Unique et les événements système (comme la mise en veille/reprise) sont moins élégants dans la v2.\n3. **Tray et Menus :** La v3 offre un contrôle bien supérieur sur la barre d'état système (System Tray) et les menus.",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
