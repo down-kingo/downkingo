@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T19:53:20.237Z",
+  "generated_at": "2026-07-13T21:07:36.974Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like Clipboard) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus",
+      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (like suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus d",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -442,7 +442,7 @@
     {
       "id": 24,
       "title": "feat(ui): Customização de Aparência",
-      "description": "### Description\nAdvanced options to customize the application's appearance beyond basic themes.\n\n### Technical Details\n- **Accent Color:** Choice of the main highlight color (Primary Color).\n- **Density:** Interface spacing adjustment (Compact, Comfortable).\n- **Transparency:** Enable/disable blur/Mica effects (Windows 11).\n- **Borders:** Control of the rounding (Border Radius) of elements.\n\n### Status\n✅ Delivered in v2.0.0",
+      "description": "### Description\nAdvanced options to customize the application's appearance beyond basic themes.\n\n### Technical Details\n- **Accent Color:** Choice of the main highlight color (Primary Color).\n- **Density:** Interface spacing adjustment (Compact, Comfortable).\n- **Transparency:** Enable/disable blur/Mica effects (Windows 11).\n- **Borders:** Control of element rounding (Border Radius).\n\n### Status\n✅ Delivered in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares acompanham apenas o modo claro/escuro.\n\n> Correções locais em desenvolvimento para a próxima versão.",
+      "description": "## Problem\nThe gallery wasted space, controls could truncate text, the quick panel lacked a clear hierarchy, and some highlights remained blue instead of following the selected palette.\n\n## Scope\n- Make the gallery responsive and remove fixed heights tied to the viewport.\n- Remove false values like `0 Bytes` and internal debug badges.\n- Style format/scale selectors according to the app design.\n- Give the gear icon a minimum area of 40×40 px and separate Paste/Clear.\n- Add header, close button, focus, `Esc` support, and grouping to the quick panel.\n- Apply `theme` and `data-color` globally before the first paint.\n- Make \"View full history\" and \"Downloader\" use semantic `surface-*` tokens, without assuming the primary color.\n\n## Acceptance Criteria\n- [ ] Layout properly fits large and small windows.\n- [ ] Translations are not truncated in selectors.\n- [ ] Quick panel works with mouse and keyboard.\n- [ ] Highlight actions follow the primary color; auxiliary texts",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "corrigir layout da galeria, configurações rápidas e herança de tema"
+      "friendly_title": "Fix gallery layout, quick settings, and theme inheritance"
     },
     {
       "id": 43,

@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T19:53:20.237Z",
+  "generated_at": "2026-07-13T21:07:36.974Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant gelöst.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
+      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3-API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs d",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -442,7 +442,7 @@
     {
       "id": 24,
       "title": "feat(ui): Customização de Aparência",
-      "description": "### Beschreibung\nErweiterte Optionen zur Anpassung des Erscheinungsbilds der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung der Benutzeroberflächenabstände (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Blur/Mica-Effekten (Windows 11).\n- **Ränder:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Geliefert in v2.0.0",
+      "description": "### Beschreibung\nErweiterte Optionen zur Anpassung des Erscheinungsbilds der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung der Schnittstellenabstände (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Blur/Mica-Effekten (Windows 11).\n- **Ränder:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Geliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares acompanham apenas o modo claro/escuro.\n\n> Correções locais em desenvolvimento para a próxima versão.",
+      "description": "## Problem\nDie Galerie verschwendete Platz, Steuerelemente konnten Texte abschneiden, das Schnellpanel hatte keine klare Hierarchie und einige Highlights blieben blau, anstatt der ausgewählten Palette zu folgen.\n\n## Umfang\n- Galerie responsiv gestalten und feste Höhen entfernen, die an den Viewport gebunden sind.\n- Falsche Werte wie `0 Bytes` und interne Debug-Badges entfernen.\n- Format-/Skalierungswähler gemäß dem App-Design stylen.\n- Dem Zahnrad einen Mindestbereich von 40×40 px geben und Einfügen/Löschen trennen.\n- Kopfzeile, Schließen, Fokus, `Esc` und Gruppierung zum Schnellpanel hinzufügen.\n- `theme` und `data-color` global vor dem ersten Paint anwenden.\n- \"Vollständigen Verlauf anzeigen\" und \"Downloader\" dazu bringen, semantische `surface-*` Tokens zu verwenden, ohne die Primärfarbe vorauszusetzen.\n\n## Abnahmekriterien\n- [ ] Layout füllt große und kleine Fenster angemessen aus.\n- [ ] Übersetzungen werden in den Wählern nicht abgeschnitten.\n- [ ] Schnellpanel funktioniert mit Maus und Tastatur.\n- [ ] Highlight-Aktionen folgen der Primärfarbe; Hilfstexte",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "corrigir layout da galeria, configurações rápidas e herança de tema"
+      "friendly_title": "Galerie-Layout, Schnelleinstellungen und Theme-Vererbung"
     },
     {
       "id": 43,

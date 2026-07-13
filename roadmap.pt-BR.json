@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T19:53:20.237Z",
+  "generated_at": "2026-07-13T21:07:36.974Z",
   "lang": "pt-BR",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexto\nO Kingo amadureceu e sua arquitetura atual em Wails v2 começa a limitar a experiência de \"App Nativo\". A migração para a v3 Alpha/Beta é o passo necessário para transformar o Kingo em um utilitário de sistema robusto e multiplataforma.\n## Motivação\nA v3 traz suporte primário a **Multi-window**, o que é crucial para nosso sistema de notificações e overlays. Além disso, a nova API do Wails v3 é muito mais próxima das capacidades nativas do SO (Windows/Mac/Linux), permitindo uma integração profunda com o sistema que a v2 não alcança sem \"hacks\".\n## Problema Atual (Limitações da v2)\n1. **Notificaciones Limitadas:** Atualmente nossos Toasts (como o de Clipboard) vivem \"dentro\" da janela principal. Se o app estiver minimizado, o usuário não vê nada.\n2. **Ciclo de Vida:** O controle de Single Instance e eventos de sistema (como suspensão/resumo) são menos elegantes na v2.\n3. **Tray e Menus:** A v3 oferece um controle muito superior sobre a bandeja do sistema (System Tray) e menus",
+      "description": "## Contexto\nO Kingo amadureceu e sua arquitetura atual em Wails v2 começa a limitar a experiência de \"App Nativo\". A migração para a v3 Alpha/Beta é o passo necessário para transformar o Kingo em um utilitário de sistema robusto e multiplataforma.\n## Motivação\nA v3 traz suporte primário a **Multi-window**, o que é crucial para nosso sistema de notificações e overlays. Além disso, a nova API do Wails v3 é muito mais próxima das capacidades nativas do SO (Windows/Mac/Linux), permitindo uma integração profunda com o sistema que a v2 não alcança sem \"hacks\".\n## Problema Atual (Limitações da v2)\n1. **Notificações Limitadas:** Atualmente nossos Toasts (como o de Clipboard) vivem \"dentro\" da janela principal. Se o app estiver minimizado, o usuário não vê nada.\n2. **Ciclo de Vida:** O controle de Single Instance e eventos de sistema (como suspensão/resumo) são menos elegantes na v2.\n3. **Tray e Menus:** A v3 oferece um controle muito superior sobre a bandeja do sistema (System Tray) e menus d",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares acompanham apenas o modo claro/escuro.\n\n> Correções locais em desenvolvimento para a próxima versão.",
+      "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "corrigir layout da galeria, configurações rápidas e herança de tema"
+      "friendly_title": "Corrigir layout da galeria, configurações rápidas e herança de tema"
     },
     {
       "id": 43,
