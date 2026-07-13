@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T21:07:36.974Z",
+  "generated_at": "2026-07-13T22:05:52.570Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3-API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs d",
+      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das Erlebnis einer „nativen App“ einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne „Hacks“ nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) „innerhalb“ des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problem\nDie Galerie verschwendete Platz, Steuerelemente konnten Texte abschneiden, das Schnellpanel hatte keine klare Hierarchie und einige Highlights blieben blau, anstatt der ausgewählten Palette zu folgen.\n\n## Umfang\n- Galerie responsiv gestalten und feste Höhen entfernen, die an den Viewport gebunden sind.\n- Falsche Werte wie `0 Bytes` und interne Debug-Badges entfernen.\n- Format-/Skalierungswähler gemäß dem App-Design stylen.\n- Dem Zahnrad einen Mindestbereich von 40×40 px geben und Einfügen/Löschen trennen.\n- Kopfzeile, Schließen, Fokus, `Esc` und Gruppierung zum Schnellpanel hinzufügen.\n- `theme` und `data-color` global vor dem ersten Paint anwenden.\n- \"Vollständigen Verlauf anzeigen\" und \"Downloader\" dazu bringen, semantische `surface-*` Tokens zu verwenden, ohne die Primärfarbe vorauszusetzen.\n\n## Abnahmekriterien\n- [ ] Layout füllt große und kleine Fenster angemessen aus.\n- [ ] Übersetzungen werden in den Wählern nicht abgeschnitten.\n- [ ] Schnellpanel funktioniert mit Maus und Tastatur.\n- [ ] Highlight-Aktionen folgen der Primärfarbe; Hilfstexte",
+      "description": "## Problem\nDie Galerie verschwendete Platz, Steuerelemente konnten Texte abschneiden, dem Schnellpanel fehlte eine klare Hierarchie und einige Highlights blieben blau, anstatt der ausgewählten Palette zu folgen.\n\n## Umfang\n- Galerie responsiv gestalten und feste Höhen entfernen, die an den Viewport gebunden sind.\n- Falsche Werte wie `0 Bytes` und interne Debug-Badges entfernen.\n- Format-/Skalierungswähler gemäß dem App-Design gestalten.\n- Mindestfläche von 40×40 px für das Zahnrad bereitstellen und Einfügen/Löschen trennen.\n- Header, Schließen, Fokus, `Esc` und Gruppierung zum Schnellpanel hinzufügen.\n- `theme` und `data-color` global vor dem ersten Rendering anwenden.\n- „Vollständigen Verlauf anzeigen“ und „Downloader“ so anpassen, dass sie semantische `surface-*` Tokens verwenden, ohne die Primärfarbe vorauszusetzen.\n\n## Akzeptanzkriterien\n- [ ] Layout füllt große und kleine Fenster angemessen aus.\n- [ ] Übersetzungen werden in den Wählern nicht abgeschnitten.\n- [ ] Schnellpanel funktioniert mit Maus und Tastatur.\n- [ ] Highlight-Aktionen folgen der Primärfarbe; Hilfstexte",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Galerie-Layout, Schnelleinstellungen und Theme-Vererbung"
+      "friendly_title": "Galerie-Layout, Schnelleinstellungen und Theme korrigieren"
     },
     {
       "id": 43,

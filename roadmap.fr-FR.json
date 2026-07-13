@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T21:07:36.974Z",
+  "generated_at": "2026-07-13T22:05:52.570Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexte\nKingo a mûri et son architecture actuelle sous Wails v2 commence à limiter l'expérience \"App Native\". La migration vers la v3 Alpha/Beta est l'étape nécessaire pour transformer Kingo en un utilitaire système robuste et multiplateforme.\n## Motivation\nLa v3 apporte un support natif pour le **Multi-window**, ce qui est crucial pour notre système de notifications et d'overlays. De plus, la nouvelle API de Wails v3 est beaucoup plus proche des capacités natives de l'OS (Windows/Mac/Linux), permettant une intégration profonde avec le système que la v2 ne peut atteindre sans \"hacks\".\n## Problème Actuel (Limitations de la v2)\n1. **Notifications Limitées :** Actuellement, nos Toasts (comme celui du Presse-papiers) vivent \"à l'intérieur\" de la fenêtre principale. Si l'application est réduite, l'utilisateur ne voit rien.\n2. **Cycle de Vie :** Le contrôle de l'instance unique (Single Instance) et les événements système (comme la mise en veille/reprise) sont moins élégants dans la v2.\n3. **Tray et Menus :** La v3 offre un contrôle bien supérieur sur la barre d'état système (System Tray) et les menus d",
+      "description": "## Contexte\nKingo a mûri et son architecture actuelle sous Wails v2 commence à limiter l'expérience \"App Native\". La migration vers la v3 Alpha/Beta est l'étape nécessaire pour transformer Kingo en un utilitaire système robuste et multiplateforme.\n## Motivation\nLa v3 apporte un support natif du **Multi-window**, ce qui est crucial pour notre système de notifications et d'overlays. De plus, la nouvelle API de Wails v3 est beaucoup plus proche des capacités natives de l'OS (Windows/Mac/Linux), permettant une intégration profonde avec le système que la v2 ne peut atteindre sans \"hacks\".\n## Problème Actuel (Limitations de la v2)\n1. **Notifications Limitées :** Actuellement, nos Toasts (comme celui du Presse-papiers) vivent \"à l'intérieur\" de la fenêtre principale. Si l'application est minimisée, l'utilisateur ne voit rien.\n2. **Cycle de Vie :** Le contrôle de Single Instance et les événements système (comme la mise en veille/reprise) sont moins élégants dans la v2.\n3. **Tray et Menus :** La v3 offre un contrôle bien supérieur sur la barre d'état système (System Tray) et les menus",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problème\nLa galerie gaspillait de l'espace, les contrôles pouvaient tronquer les textes, le panneau rapide manquait de hiérarchie claire et certains points forts restaient bleus au lieu de suivre la palette sélectionnée.\n\n## Portée\n- Rendre la galerie responsive et supprimer les hauteurs fixes liées au viewport.\n- Supprimer les fausses valeurs comme `0 Bytes` et les badges de débogage internes.\n- Styliser les sélecteurs de format/échelle selon le design de l'application.\n- Donner une zone minimale de 40×40 px à l'engrenage et séparer Coller/Effacer.\n- Ajouter un en-tête, une fermeture, le focus, `Esc` et un groupement au panneau rapide.\n- Appliquer `theme` et `data-color` globalement avant le premier rendu.\n- Faire en sorte que \"Voir l'historique complet\" et \"Downloader\" utilisent des jetons sémantiques `surface-*`, sans assumer la couleur primaire.\n\n## Critères d'acceptation\n- [ ] La mise en page occupe correctement les grandes et petites fenêtres.\n- [ ] Les traductions ne sont pas tronquées dans les sélecteurs.\n- [ ] Le panneau rapide fonctionne à la souris et au clavier.\n- [ ] Les actions de mise en évidence suivent la couleur primaire ; textes auxiliaires",
+      "description": "## Problème\nLa galerie gaspillait de l'espace, les contrôles pouvaient tronquer les textes, le panneau rapide manquait de hiérarchie claire et certains points forts restaient bleus au lieu de suivre la palette sélectionnée.\n\n## Portée\n- Rendre la galerie responsive et supprimer les hauteurs fixes liées au viewport.\n- Supprimer les fausses valeurs comme `0 Bytes` et les badges de débogage internes.\n- Styliser les sélecteurs de format/échelle selon le design de l'application.\n- Donner une zone minimale de 40×40 px à l'engrenage et séparer Coller/Effacer.\n- Ajouter un en-tête, une fermeture, le focus, `Esc` et un groupement au panneau rapide.\n- Appliquer `theme` et `data-color` globalement avant le premier rendu.\n- Faire en sorte que « Voir l'historique complet » et « Downloader » utilisent les jetons sémantiques `surface-*`, sans assumer la couleur primaire.\n\n## Critères d'acceptation\n- [ ] La mise en page occupe correctement les grandes et petites fenêtres.\n- [ ] Les traductions ne sont pas tronquées dans les sélecteurs.\n- [ ] Le panneau rapide fonctionne à la souris et au clavier.\n- [ ] Les actions de mise en évidence suivent la couleur primaire ; textes auxiliaires",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Corriger le layout de la galerie et l'héritage du thème"
+      "friendly_title": "Corriger le layout de la galerie et les réglages rapides"
     },
     {
       "id": 43,
