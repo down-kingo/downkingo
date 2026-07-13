@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-13T18:12:12.614Z",
+  "generated_at": "2026-07-13T19:53:20.237Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungssystem und Overlays entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Suspend/Resume) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs d",
+      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant gelöst.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -442,7 +442,7 @@
     {
       "id": 24,
       "title": "feat(ui): Customização de Aparência",
-      "description": "### Beschreibung\nErweiterte Optionen zur Anpassung des Aussehens der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung des Abstands der Benutzeroberfläche (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Unschärfe-/Mica-Effekten (Windows 11).\n- **Rahmen:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nErweiterte Optionen zur Anpassung des Erscheinungsbilds der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung der Benutzeroberflächenabstände (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Blur/Mica-Effekten (Windows 11).\n- **Ränder:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Geliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -458,7 +458,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:36Z",
       "shipped_at": "2026-01-08T15:03:52Z",
-      "friendly_title": "Anpassung des Aussehens"
+      "friendly_title": "Anpassung des Erscheinungsbilds"
     },
     {
       "id": 25,
