@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T05:42:35.265Z",
+  "generated_at": "2026-07-14T07:30:07.228Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das Erlebnis einer „nativen App“ einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne „Hacks“ nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) „innerhalb“ des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
+      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen OS-Funktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Steuerung von Single Instance und Systemereignissen (wie Suspend/Resume) ist in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
