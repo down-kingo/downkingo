@@ -361,20 +361,20 @@
   },
   "27": {
     "original_title": "feat(settings): Configurações Gerais",
-    "original_desc_hash": "###Descriç��oPainelcentralizadoparacontroledocomportamentodoaplicativo.###DetalhesTécni_391",
+    "original_desc_hash": "###DescriçãoPainelcentralizadoparacontroledocomportamentodoaplicativo.###DetalhesTécnic_390",
     "title_i18n": {
       "pt-BR": "Configurações Gerais",
       "en-US": "General Settings",
-      "es-ES": "Ajustes Generales",
+      "es-ES": "Configuraciones Generales",
       "fr-FR": "Paramètres Généraux",
       "de-DE": "Allgemeine Einstellungen"
     },
     "description_i18n": {
       "pt-BR": "### Descrição\nPainel centralizado para controle do comportamento do aplicativo.\n\n### Detalhes Técnicos\n- **Diretórios:** Definição da pasta padrão de downloads e temp.\n- **Idioma:** Seletor manual de idioma da interface.\n- **Comportamento:** Opções como \"Iniciar com o sistema\", \"Minimizar para a bandeja\".\n- **Updates:** Verificação manual de atualizações.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nCentralized panel for controlling application behavior.\n\n### Technical Details\n- **Directories:** Definition of the default download and temp folders.\n- **Language:** Manual interface language selector.\n- **Behavior:** Options such as \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual check for updates.\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nPanel centralizado para el control del comportamiento de la aplicación.\n\n### Detalles Técnicos\n- **Directorios:** Definición de la carpeta predeterminada de descargas y temp.\n- **Idioma:** Selector manual de idioma de la interfaz.\n- **Comportamiento:** Opciones como \"Iniciar con el sistema\", \"Minimizar a la bandeja\".\n- **Actualizaciones:** Verificación manual de actualizaciones.\n\n### Estado\n✅ Entregado en la v2.0.0",
-      "fr-FR": "### Description\nPanneau centralisé pour le contrôle du comportement de l'application.\n\n### Détails Techniques\n- **Répertoires :** Définition du dossier par défaut pour les téléchargements et les fichiers temporaires.\n- **Langue :** Sélecteur manuel de la langue de l'interface.\n- **Comportement :** Options telles que \"Démarrer avec le système\", \"Réduire dans la zone de notification\".\n- **Mises à jour :** Vérification manuelle des mises à jour.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nZentralisiertes Panel zur Steuerung des Anwendungsverhaltens.\n\n### Technische Details\n- **Verzeichnisse:** Festlegung des Standardordners für Downloads und Temp.\n- **Sprache:** Manueller Sprachwähler für die Benutzeroberfläche.\n- **Verhalten:** Optionen wie „Mit dem System starten“, „In die Taskleiste minimieren“.\n- **Updates:** Manuelle Suche nach Updates.\n\n### Status\n✅ Geliefert in v2.0.0"
+      "en-US": "### Description\nCentralized panel for controlling application behavior.\n\n### Technical Details\n- **Directories:** Definition of the default downloads and temp folder.\n- **Language:** Manual interface language selector.\n- **Behavior:** Options such as \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual check for updates.\n\n### Status\n✅ Delivered in v2.0.0",
+      "es-ES": "### Descripción\nPanel centralizado para controlar el comportamiento de la aplicación.\n\n### Detalles Técnicos\n- **Directorios:** Definición de la carpeta predeterminada de descargas y temp.\n- **Idioma:** Selector manual de idioma de la interfaz.\n- **Comportamiento:** Opciones como \"Iniciar con el sistema\", \"Minimizar a la bandeja\".\n- **Actualizaciones:** Verificación manual de actualizaciones.\n\n### Estado\n✅ Entregado en la v2.0.0",
+      "fr-FR": "### Description\nPanneau centralisé pour contrôler le comportement de l'application.\n\n### Détails Techniques\n- **Répertoires :** Définition du dossier par défaut pour les téléchargements et les fichiers temporaires.\n- **Langue :** Sélecteur manuel de langue de l'interface.\n- **Comportement :** Options telles que \"Lancer avec le système\", \"Réduire dans la zone de notification\".\n- **Mises à jour :** Vérification manuelle des mises à jour.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "de-DE": "### Beschreibung\nZentrales Panel zur Steuerung des Anwendungsverhaltens.\n\n### Technische Details\n- **Verzeichnisse:** Festlegung des Standardordners für Downloads und Temp.\n- **Sprache:** Manueller Sprachwähler für die Benutzeroberfläche.\n- **Verhalten:** Optionen wie \"Mit dem System starten\", \"In die Taskleiste minimieren\".\n- **Updates:** Manuelle Suche nach Updates.\n\n### Status\n✅ Geliefert in v2.0.0"
     }
   },
   "28": {

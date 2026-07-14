@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T09:28:23.744Z",
+  "generated_at": "2026-07-14T11:10:08.102Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -568,7 +568,7 @@
     {
       "id": 27,
       "title": "feat(settings): Configurações Gerais",
-      "description": "### Description\nPanneau centralisé pour le contrôle du comportement de l'application.\n\n### Détails Techniques\n- **Répertoires :** Définition du dossier par défaut pour les téléchargements et les fichiers temporaires.\n- **Langue :** Sélecteur manuel de la langue de l'interface.\n- **Comportement :** Options telles que \"Démarrer avec le système\", \"Réduire dans la zone de notification\".\n- **Mises à jour :** Vérification manuelle des mises à jour.\n\n### Statut\n✅ Livré dans la v2.0.0",
+      "description": "### Description\nPanneau centralisé pour contrôler le comportement de l'application.\n\n### Détails Techniques\n- **Répertoires :** Définition du dossier par défaut pour les téléchargements et les fichiers temporaires.\n- **Langue :** Sélecteur manuel de langue de l'interface.\n- **Comportement :** Options telles que \"Lancer avec le système\", \"Réduire dans la zone de notification\".\n- **Mises à jour :** Vérification manuelle des mises à jour.\n\n### Statut\n✅ Livré dans la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

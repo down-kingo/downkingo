@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T09:28:23.744Z",
+  "generated_at": "2026-07-14T11:10:08.102Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -568,7 +568,7 @@
     {
       "id": 27,
       "title": "feat(settings): Configurações Gerais",
-      "description": "### Beschreibung\nZentralisiertes Panel zur Steuerung des Anwendungsverhaltens.\n\n### Technische Details\n- **Verzeichnisse:** Festlegung des Standardordners für Downloads und Temp.\n- **Sprache:** Manueller Sprachwähler für die Benutzeroberfläche.\n- **Verhalten:** Optionen wie „Mit dem System starten“, „In die Taskleiste minimieren“.\n- **Updates:** Manuelle Suche nach Updates.\n\n### Status\n✅ Geliefert in v2.0.0",
+      "description": "### Beschreibung\nZentrales Panel zur Steuerung des Anwendungsverhaltens.\n\n### Technische Details\n- **Verzeichnisse:** Festlegung des Standardordners für Downloads und Temp.\n- **Sprache:** Manueller Sprachwähler für die Benutzeroberfläche.\n- **Verhalten:** Optionen wie \"Mit dem System starten\", \"In die Taskleiste minimieren\".\n- **Updates:** Manuelle Suche nach Updates.\n\n### Status\n✅ Geliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

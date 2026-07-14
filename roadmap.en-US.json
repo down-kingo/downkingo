@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T09:28:23.744Z",
+  "generated_at": "2026-07-14T11:10:08.102Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -568,7 +568,7 @@
     {
       "id": 27,
       "title": "feat(settings): Configurações Gerais",
-      "description": "### Description\nCentralized panel for controlling application behavior.\n\n### Technical Details\n- **Directories:** Definition of the default download and temp folders.\n- **Language:** Manual interface language selector.\n- **Behavior:** Options such as \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual check for updates.\n\n### Status\n✅ Delivered in v2.0.0",
+      "description": "### Description\nCentralized panel for controlling application behavior.\n\n### Technical Details\n- **Directories:** Definition of the default downloads and temp folder.\n- **Language:** Manual interface language selector.\n- **Behavior:** Options such as \"Start with system\", \"Minimize to tray\".\n- **Updates:** Manual check for updates.\n\n### Status\n✅ Delivered in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
