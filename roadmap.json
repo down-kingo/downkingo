@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T07:30:07.228Z",
+  "generated_at": "2026-07-14T09:28:23.744Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -10,7 +10,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexto\nO Kingo amadureceu e sua arquitetura atual em Wails v2 começa a limitar a experiência de \"App Nativo\". A migração para a v3 Alpha/Beta é o passo necessário para transformar o Kingo em um utilitário de sistema robusto e multiplataforma.\n## Motivação\nA v3 traz suporte primário a **Multi-window**, o que é crucial para nosso sistema de notificações e overlays. Além disso, a nova API do Wails v3 é muito mais próxima das capacidades nativas do SO (Windows/Mac/Linux), permitindo uma integração profunda com o sistema que a v2 não alcança sem \"hacks\".\n## Problema Atual (Limitações da v2)\n1. **Notificações Limitadas:** Atualmente nossos Toasts (como o de Clipboard) vivem \"dentro\" da janela principal. Se o app estiver minimizado, o usuário não vê nada.\n2. **Ciclo de Vida:** O controle de Single Instance e eventos de sistema (como suspensão/resumo) são menos elegantes na v2.\n3. **Tray e Menus:** A v3 oferece um controle muito superior sobre a bandeja do sistema (System Tray) e menus",
+      "description": "## Contexto\nO Kingo amadureceu e sua arquitetura atual em Wails v2 começa a limitar a experiência de \"App Nativo\". A migração para a v3 Alpha/Beta é o passo necessário para transformar o Kingo em um utilitário de sistema robusto e multiplataforma.\n## Motivação\nA v3 traz suporte primário a **Multi-window**, o que é crucial para nosso sistema de notificações e overlays. Além disso, a nova API do Wails v3 é muito mais próxima das capacidades nativas do SO (Windows/Mac/Linux), permitindo uma integração profunda com o sistema que a v2 não alcança sem \"hacks\".\n## Problema Atual (Limitações da v2)\n1. **Notificações Limitadas:** Atualmente nossos Toasts (como o de Clipboard) vivem \"dentro\" da janela principal. Se o app estiver minimizado, o usuário não vê nada.\n2. **Ciclo de Vida:** O controle de Single Instance e eventos de sistema (como suspensão/resumo) são menos elegantes na v2.\n3. **Tray e Menus:** A v3 oferece um controle muito superior sobre a bandeja do sistema (System Tray) e menus de",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,

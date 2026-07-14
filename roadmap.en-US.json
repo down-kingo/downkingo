@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T07:30:07.228Z",
+  "generated_at": "2026-07-14T09:28:23.744Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray (System Tray) and menus",
+      "description": "## Context\nKingo has matured and its current architecture in Wails v2 is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
