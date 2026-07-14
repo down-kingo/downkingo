@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T14:30:11.425Z",
+  "generated_at": "2026-07-14T16:01:09.329Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problem\nThe gallery wasted space, controls could truncate text, the quick panel lacked a clear hierarchy, and some highlights remained blue instead of following the selected palette.\n\n## Scope\n- Make the gallery responsive and remove fixed heights tied to the viewport.\n- Remove false values like `0 Bytes` and internal debug badges.\n- Style format/scale selectors according to the app design.\n- Provide a minimum area of 40×40 px for the gear icon and separate Paste/Clear.\n- Add header, close button, focus, `Esc` support, and grouping to the quick panel.\n- Apply `theme` and `data-color` globally before the first paint.\n- Make “View full history” and “Downloader” use `surface-*` semantic tokens, without assuming the primary color.\n\n## Acceptance Criteria\n- [ ] Layout properly fits large and small windows.\n- [ ] Translations are not truncated in selectors.\n- [ ] Quick panel works via mouse and keyboard.\n- [ ] Highlight actions follow the primary color; auxiliary texts",
+      "description": "## Problem\nThe gallery wasted space, controls could truncate text, the quick panel lacked a clear hierarchy, and some highlights remained blue instead of following the selected palette.\n\n## Scope\n- Make the gallery responsive and remove fixed heights tied to the viewport.\n- Remove false values like `0 Bytes` and internal debug badges.\n- Style format/scale selectors according to the app design.\n- Provide a minimum area of 40×40 px for the gear icon and separate Paste/Clear.\n- Add header, close, focus, `Esc`, and grouping to the quick panel.\n- Apply `theme` and `data-color` globally before the first paint.\n- Make “View full history” and “Downloader” use semantic tokens `surface-*`, without assuming the primary color.\n\n## Acceptance criteria\n- [ ] Layout properly fits large and small windows.\n- [ ] Translations are not truncated in selectors.\n- [ ] Quick panel works via mouse and keyboard.\n- [ ] Highlight actions follow the primary color; auxiliary texts",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Fix gallery layout, quick settings, and theme inheritance"
+      "friendly_title": "Fix gallery layout, quick settings and theme inheritance"
     },
     {
       "id": 43,

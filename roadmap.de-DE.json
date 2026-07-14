@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-14T14:30:11.425Z",
+  "generated_at": "2026-07-14T16:01:09.329Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -768,7 +768,7 @@
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
-      "description": "## Problem\nDie Galerie verschwendete Platz, Steuerelemente konnten Texte abschneiden, dem Schnellpanel fehlte eine klare Hierarchie und einige Highlights blieben blau, anstatt der ausgewählten Palette zu folgen.\n\n## Umfang\n- Galerie responsiv gestalten und feste Höhen entfernen, die an den Viewport gebunden sind.\n- Falsche Werte wie `0 Bytes` und interne Debug-Badges entfernen.\n- Format-/Skalierungswähler gemäß dem App-Design gestalten.\n- Mindestfläche von 40×40 px für das Zahnrad bereitstellen und Einfügen/Löschen trennen.\n- Header, Schließen, Fokus, `Esc` und Gruppierung zum Schnellpanel hinzufügen.\n- `theme` und `data-color` global vor dem ersten Rendering anwenden.\n- „Vollständigen Verlauf anzeigen“ und „Downloader“ so anpassen, dass sie semantische `surface-*` Tokens verwenden, ohne die Primärfarbe vorauszusetzen.\n\n## Akzeptanzkriterien\n- [ ] Layout füllt große und kleine Fenster angemessen aus.\n- [ ] Übersetzungen werden in den Wählern nicht abgeschnitten.\n- [ ] Schnellpanel funktioniert mit Maus und Tastatur.\n- [ ] Highlight-Aktionen folgen der Primärfarbe; Hilfstexte",
+      "description": "## Problem\nDie Galerie verschwendete Platz, Steuerelemente konnten Texte abschneiden, das Schnellpanel hatte keine klare Hierarchie und einige Highlights blieben blau, anstatt der ausgewählten Palette zu folgen.\n\n## Umfang\n- Galerie responsiv gestalten und feste Höhen entfernen, die an den Viewport gebunden sind.\n- Falsche Werte wie `0 Bytes` und interne Debug-Badges entfernen.\n- Format-/Skalierungswähler gemäß dem App-Design gestalten.\n- Mindestfläche von 40×40 px für das Zahnrad bereitstellen und Einfügen/Löschen trennen.\n- Header, Schließen, Fokus, `Esc` und Gruppierung zum Schnellpanel hinzufügen.\n- `theme` und `data-color` global vor dem ersten Paint anwenden.\n- „Vollständigen Verlauf anzeigen“ und „Downloader“ dazu bringen, semantische Tokens `surface-*` zu verwenden, ohne die Primärfarbe vorauszusetzen.\n\n## Akzeptanzkriterien\n- [ ] Layout passt sich großen und kleinen Fenstern angemessen an.\n- [ ] Übersetzungen werden in den Wählern nicht abgeschnitten.\n- [ ] Schnellpanel funktioniert mit Maus und Tastatur.\n- [ ] Highlight-Aktionen folgen der Primärfarbe; Hilfstexte",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -783,7 +783,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Galerie-Layout, Schnelleinstellungen und Theme korrigieren"
+      "friendly_title": "Galerie-Layout, Schnelleinstellungen und Theme-Vererbung"
     },
     {
       "id": 43,
