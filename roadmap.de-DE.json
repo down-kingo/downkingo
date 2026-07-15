@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T20:44:36.052Z",
+  "generated_at": "2026-07-15T21:42:11.988Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -190,7 +190,7 @@
     {
       "id": 10,
       "title": "feat(core): Sistema de Erros Tipados",
-      "description": "### Beschreibung\nImplementierung eines neuen robusten und typisierten Fehlerbehandlungssystems.\n\n### Technische Details\n- **Struktur:** Einführung der `appError`-Struct, die Code, Nachricht und ursprüngliche Ursache kapselt.\n- **Kategorisierung:** Definition klarer Fehlertypen (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Automatisches Mapping von Backend-Fehlern auf benutzerfreundliche Meldungen (i18n) im Frontend.\n- **Logs:** Detaillierte Stack-Traces und zusätzlicher Kontext in den Logs zur Erleichterung des Debuggings.\n\n### Status\n✅ Ausgeliefert in v2.0.0",
+      "description": "### Beschreibung\nImplementierung eines neuen robusten und typisierten Fehlerbehandlungssystems.\n\n### Technische Details\n- **Struktur:** Einführung der `appError`-Struct, die Code, Nachricht und ursprüngliche Ursache kapselt.\n- **Kategorisierung:** Definition klarer Fehlertypen (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Automatisches Mapping von Backend-Fehlern auf benutzerfreundliche Nachrichten (i18n) im Frontend.\n- **Logs:** Detaillierte Stack-Traces und zusätzlicher Kontext in den Logs zur Erleichterung des Debuggings.\n\n### Status\n✅ Geliefert in v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
