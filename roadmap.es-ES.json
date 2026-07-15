@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T22:43:19.462Z",
+  "generated_at": "2026-07-15T23:43:31.430Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objetivo\nRegistrar decisiones técnicas y proteger los nuevos flujos contra regresiones.\n\n## Alcance\n- Documentar versiones, hashes, directorios, parámetros y limitaciones.\n- Documentar aislamiento dev/producción y checklist de actualización.\n- Añadir pruebas unitarias de runtime, parsing, conversión, enrutamiento y miniaturas.\n- Añadir integraciones opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings de Wails tras cambios en los contratos de Go.\n\n## Criterios de aceptación\n- [ ] `go test ./...` pasa sin depender de la red.\n- [ ] El build, lint y las pruebas del frontend pasan.\n- [ ] Las integraciones reales utilizan directorios temporales.\n- [ ] La documentación contiene comandos reproducibles y no confunde la app local con el servidor intermedio.\n\n> Implementación local en desarrollo para la próxima versión.",
+      "description": "## Objetivo\nRegistrar decisiones técnicas y proteger los nuevos flujos contra regresiones.\n\n## Alcance\n- Documentar versiones, hashes, directorios, parámetros y limitaciones.\n- Documentar aislamiento dev/producción y checklist de actualización.\n- Agregar pruebas unitarias de runtime, parsing, conversión, enrutamiento y miniaturas.\n- Agregar integraciones opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings de Wails tras cambios en los contratos de Go.\n\n## Criterios de aceptación\n- [ ] `go test ./...` pasa sin depender de la red.\n- [ ] El build, lint y las pruebas del frontend pasan.\n- [ ] Las integraciones reales utilizan directorios temporales.\n- [ ] La documentación contiene comandos reproducibles y no confunde la aplicación local con un servidor intermedio.\n\n> Implementación local en desarrollo para la próxima versión.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
