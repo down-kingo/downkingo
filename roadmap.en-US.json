@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T21:42:11.988Z",
+  "generated_at": "2026-07-15T22:43:19.462Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Context\nKingo has matured and its current architecture in Wails v2 is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification system and overlays. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (such as suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the System Tray and menus.",
+      "description": "## Context\nKingo has matured and its current Wails v2 architecture is starting to limit the \"Native App\" experience. Migrating to v3 Alpha/Beta is the necessary step to transform Kingo into a robust, cross-platform system utility.\n## Motivation\nv3 brings primary support for **Multi-window**, which is crucial for our notification and overlay system. Additionally, the new Wails v3 API is much closer to native OS capabilities (Windows/Mac/Linux), allowing for deep system integration that v2 cannot achieve without \"hacks\".\n## Current Problem (v2 Limitations)\n1. **Limited Notifications:** Currently our Toasts (like the Clipboard one) live \"inside\" the main window. If the app is minimized, the user sees nothing.\n2. **Lifecycle:** Single Instance control and system events (like suspend/resume) are less elegant in v2.\n3. **Tray and Menus:** v3 offers much superior control over the system tray and menus",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objective\nRecord technical decisions and protect new flows against regressions.\n\n## Scope\n- Document versions, hashes, directories, parameters, and limitations.\n- Document dev/production isolation and update checklist.\n- Add unit tests for runtime, parsing, conversion, routing, and thumbnails.\n- Add opt-in integrations for Whisper, aria2c, yt-dlp, FFmpeg, and Instagram.\n- Regenerate Wails bindings after Go contract changes.\n\n## Acceptance criteria\n- [ ] `go test ./...` passes without network dependency.\n- [ ] Frontend build, lint, and tests pass.\n- [ ] Real integrations use temporary directories.\n- [ ] Documentation contains reproducible commands and does not confuse local app with intermediate server.\n\n> Local implementation in development for the next version.",
+      "description": "## Objective\nRecord technical decisions and protect new flows against regressions.\n\n## Scope\n- Document versions, hashes, directories, parameters, and limitations.\n- Document dev/production isolation and update checklist.\n- Add unit tests for runtime, parsing, conversion, routing, and thumbnails.\n- Add opt-in integrations for Whisper, aria2c, yt-dlp, FFmpeg, and Instagram.\n- Regenerate Wails bindings after changes to Go contracts.\n\n## Acceptance criteria\n- [ ] `go test ./...` passes without network dependency.\n- [ ] Frontend build, lint, and tests pass.\n- [ ] Real integrations use temporary directories.\n- [ ] Documentation contains reproducible commands and does not confuse local app with intermediate server.\n\n> Local implementation in development for the next version.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Runtime coverage and transcription architecture docs"
+      "friendly_title": "Cover runtimes and document transcription architecture"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T21:42:11.988Z",
+  "generated_at": "2026-07-15T22:43:19.462Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Contexto\nKingo ha madurado y su arquitectura actual en Wails v2 comienza a limitar la experiencia de \"App Nativa\". La migración a la v3 Alpha/Beta es el paso necesario para transformar Kingo en una utilidad de sistema robusta y multiplataforma.\n## Motivación\nLa v3 trae soporte primario para **Multi-window**, lo cual es crucial para nuestro sistema de notificaciones y superposiciones (overlays). Además, la nueva API de Wails v3 está mucho más cerca de las capacidades nativas del SO (Windows/Mac/Linux), permitiendo una integración profunda con el sistema que la v2 no alcanza sin \"hacks\".\n## Problema Actual (Limitaciones de la v2)\n1. **Notificaciones Limitadas:** Actualmente nuestros Toasts (como el de Clipboard) viven \"dentro\" de la ventana principal. Si la app está minimizada, el usuario no ve nada.\n2. **Ciclo de Vida:** El control de Single Instance y los eventos del sistema (como suspensión/reanudación) son menos elegantes en la v2.\n3. **Tray y Menús:** La v3 ofrece un control muy superior sobre la bandeja del sistema (System Tray) y los menús.",
+      "description": "## Contexto\nKingo ha madurado y su arquitectura actual en Wails v2 comienza a limitar la experiencia de \"App Nativa\". La migración a la v3 Alpha/Beta es el paso necesario para transformar Kingo en una utilidad de sistema robusta y multiplataforma.\n## Motivación\nLa v3 trae soporte primario para **Multi-window**, lo cual es crucial para nuestro sistema de notificaciones y overlays. Además, la nueva API de Wails v3 está mucho más cerca de las capacidades nativas del SO (Windows/Mac/Linux), permitiendo una integración profunda con el sistema que la v2 no alcanza sin \"hacks\".\n## Problema Actual (Limitaciones de la v2)\n1. **Notificaciones Limitadas:** Actualmente nuestros Toasts (como el de Clipboard) viven \"dentro\" de la ventana principal. Si la app está minimizada, el usuario no ve nada.\n2. **Ciclo de Vida:** El control de Single Instance y los eventos del sistema (como suspensión/reanudación) son menos elegantes en la v2.\n3. **Tray y Menús:** La v3 ofrece un control muy superior sobre la bandeja del sistema (System Tray) y los menús",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Cobertura de runtimes y arquitectura de transcripción"
+      "friendly_title": "Cubrir runtimes y documentar arquitectura de transcripción"
     }
   ]
 }

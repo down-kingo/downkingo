@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T21:42:11.988Z",
+  "generated_at": "2026-07-15T22:43:19.462Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -11,7 +11,7 @@
     {
       "id": 7,
       "title": "feat(core): Migração Arquitetural para Wails v3",
-      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungssystem und Overlays entscheidend ist. Darüber hinaus liegt die neue Wails v3-API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit befinden sich unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Steuerung der Single Instance und Systemereignisse (wie Ruhezustand/Fortsetzen) sind in v2 weniger elegant gelöst.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs.",
+      "description": "## Kontext\nKingo ist gereift und seine aktuelle Architektur in Wails v2 beginnt, das \"Native App\"-Erlebnis einzuschränken. Die Migration auf v3 Alpha/Beta ist der notwendige Schritt, um Kingo in ein robustes, plattformübergreifendes System-Utility zu verwandeln.\n## Motivation\nv3 bietet primäre Unterstützung für **Multi-window**, was für unser Benachrichtigungs- und Overlay-System entscheidend ist. Darüber hinaus liegt die neue Wails v3 API viel näher an den nativen Betriebssystemfunktionen (Windows/Mac/Linux) und ermöglicht eine tiefe Systemintegration, die v2 ohne \"Hacks\" nicht erreicht.\n## Aktuelles Problem (Einschränkungen von v2)\n1. **Eingeschränkte Benachrichtigungen:** Derzeit leben unsere Toasts (wie der für die Zwischenablage) \"innerhalb\" des Hauptfensters. Wenn die App minimiert ist, sieht der Benutzer nichts.\n2. **Lebenszyklus:** Die Single-Instance-Steuerung und Systemereignisse (wie Suspend/Resume) sind in v2 weniger elegant.\n3. **Tray und Menüs:** v3 bietet eine weitaus bessere Kontrolle über das System-Tray und die Menüs",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Ziel\nTechnische Entscheidungen festhalten und neue Abläufe vor Regressionen schützen.\n\n## Umfang\n- Dokumentation von Versionen, Hashes, Verzeichnissen, Parametern und Einschränkungen.\n- Dokumentation der Dev/Produktions-Isolierung und Update-Checkliste.\n- Hinzufügen von Unit-Tests für Runtime, Parsing, Konvertierung, Routing und Thumbnails.\n- Hinzufügen von Opt-in-Integrationen für Whisper, aria2c, yt-dlp, FFmpeg und Instagram.\n- Wails-Bindings nach Änderungen der Go-Verträge neu generieren.\n\n## Abnahmekriterien\n- [ ] `go test ./...` besteht ohne Netzwerkabhängigkeit.\n- [ ] Frontend-Build, Lint und Tests bestehen.\n- [ ] Reale Integrationen verwenden temporäre Verzeichnisse.\n- [ ] Dokumentation enthält reproduzierbare Befehle und verwechselt die lokale App nicht mit dem Zwischenserver.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
+      "description": "## Ziel\nTechnische Entscheidungen festhalten und neue Abläufe vor Regressionen schützen.\n\n## Umfang\n- Dokumentation von Versionen, Hashes, Verzeichnissen, Parametern und Einschränkungen.\n- Dokumentation der Trennung von Entwicklung/Produktion und Update-Checkliste.\n- Hinzufügen von Unit-Tests für Runtime, Parsing, Konvertierung, Routing und Thumbnails.\n- Hinzufügen von Opt-in-Integrationen für Whisper, aria2c, yt-dlp, FFmpeg und Instagram.\n- Wails-Bindings nach Änderungen an Go-Verträgen neu generieren.\n\n## Abnahmekriterien\n- [ ] `go test ./...` besteht ohne Netzwerkabhängigkeit.\n- [ ] Frontend-Build, Lint und Tests bestehen.\n- [ ] Reale Integrationen verwenden temporäre Verzeichnisse.\n- [ ] Die Dokumentation enthält reproduzierbare Befehle und verwechselt die lokale App nicht mit dem Zwischenserver.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Runtime-Abdeckung und Transkriptionsarchitektur"
+      "friendly_title": "Runtimes abdecken und Transkriptionsarchitektur dokumentieren"
     }
   ]
 }
