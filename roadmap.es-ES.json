@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T19:38:31.102Z",
+  "generated_at": "2026-07-15T20:44:36.052Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -190,7 +190,7 @@
     {
       "id": 10,
       "title": "feat(core): Sistema de Erros Tipados",
-      "description": "### Descripción\nImplementación de un nuevo sistema de manejo de errores robusto y tipado.\n\n### Detalles Técnicos\n- **Estructura:** Introducción de la struct `appError` que encapsula código, mensaje y causa original.\n- **Categorización:** Definición de tipos de error claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeo automático de errores del backend a mensajes amigables (i18n) en el frontend.\n- **Logs:** Stack traces detallados y contexto adicional en los logs para facilitar la depuración.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descripción\nImplementación de un nuevo sistema de manejo de errores robusto y tipado.\n\n### Detalles Técnicos\n- **Estructura:** Introducción de la struct `appError` que encapsula código, mensaje y causa original.\n- **Categorización:** Definición de tipos de error claros (`NetworkError`, `ValidationError`, `SystemError`, `DownloadError`).\n- **Frontend:** Mapeo automático de errores del backend a mensajes amigables (i18n) en el frontend.\n- **Logs:** Stack traces detallados y contexto adicional en los logs para facilitar el debugging.\n\n### Estado\n✅ Entregado en la v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
