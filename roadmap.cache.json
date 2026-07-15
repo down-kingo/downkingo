@@ -121,14 +121,14 @@
   },
   "12": {
     "original_title": "feat(download): Melhorias no Downloader de Vídeo",
-    "original_desc_hash": "###DescriçãoMelhoriassignificativasnaestabilidadeeperformancedodownloaderdevídeos(basead_521",
+    "original_desc_hash": "###DescriçãoMelhoriassignificativasnaestabilidadeeperformancedodownloaderdevídeos(basead_520",
     "title_i18n": {
       "en-US": "Melhorias no Downloader de Vídeo",
       "pt-BR": "Melhorias no Downloader de Vídeo"
     },
     "description_i18n": {
-      "en-US": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolu��ão de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
-      "pt-BR": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolu��ão de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0"
+      "en-US": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "13": {
