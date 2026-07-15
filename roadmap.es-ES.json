@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-15T10:23:36.433Z",
+  "generated_at": "2026-07-15T12:03:16.631Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -112,7 +112,7 @@
     {
       "id": 12,
       "title": "feat(download): Melhorias no Downloader de Vídeo",
-      "description": "### Descripción\nMejoras significativas en la estabilidad y el rendimiento del descargador de vídeos (basado en yt-dlp).\n\n### Detalles Técnicos\n- **Actualización:** Mecanismo para mantener yt-dlp siempre actualizado.\n- **Formatos:** Lógica mejorada para la selección automática del mejor formato de vídeo/audio.\n- **Metadatos:** Mejor extracción y tratamiento de metadatos (título, miniatura, duración).\n- **Manejo de Errores:** Resolución de problemas comunes (throttling, cookies, restricciones regionales).\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolu��ão de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -128,7 +128,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:39Z",
       "shipped_at": "2026-01-08T15:02:52Z",
-      "friendly_title": "Mejoras en el Descargador de Vídeos"
+      "friendly_title": "Melhorias no Downloader de Vídeo"
     },
     {
       "id": 5,
