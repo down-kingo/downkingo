@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-16T09:23:05.262Z",
+  "generated_at": "2026-07-16T11:19:14.792Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objectif\nEnregistrer les décisions techniques et protéger les nouveaux flux contre les régressions.\n\n## Portée\n- Documenter les versions, les hachages, les répertoires, les paramètres et les limitations.\n- Documenter l'isolement dev/production et la checklist de mise à jour.\n- Ajouter des tests unitaires de runtime, parsing, conversion, routage et miniatures.\n- Ajouter des intégrations opt-in pour Whisper, aria2c, yt-dlp, FFmpeg et Instagram.\n- Régénérer les bindings Wails après les modifications des contrats Go.\n\n## Critères d'acceptation\n- [ ] `go test ./...` passe sans dépendance réseau.\n- [ ] Le build, le lint et les tests du frontend passent.\n- [ ] Les intégrations réelles utilisent des répertoires temporaires.\n- [ ] La documentation contient des commandes reproductibles et ne confond pas l'application locale avec un serveur intermédiaire.\n\n> Mise en œuvre locale en cours de développement pour la prochaine version.",
+      "description": "## Objectif\nEnregistrer les décisions techniques et protéger les nouveaux flux contre les régressions.\n\n## Portée\n- Documenter les versions, les hachages, les répertoires, les paramètres et les limitations.\n- Documenter l'isolation dev/production et la checklist de mise à jour.\n- Ajouter des tests unitaires de runtime, parsing, conversion, routage et miniatures.\n- Ajouter des intégrations opt-in pour Whisper, aria2c, yt-dlp, FFmpeg et Instagram.\n- Régénérer les bindings Wails après les modifications des contrats Go.\n\n## Critères d'acceptation\n- [ ] `go test ./...` passe sans dépendre du réseau.\n- [ ] Le build, le lint et les tests du frontend passent.\n- [ ] Les intégrations réelles utilisent des répertoires temporaires.\n- [ ] La documentation contient des commandes reproductibles et ne confond pas l'application locale avec le serveur intermédiaire.\n\n> Mise en œuvre locale en cours de développement pour la prochaine version.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

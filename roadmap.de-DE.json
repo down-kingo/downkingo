@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-16T09:23:05.262Z",
+  "generated_at": "2026-07-16T11:19:14.792Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Ziel\nTechnische Entscheidungen festhalten und neue Abläufe vor Regressionen schützen.\n\n## Umfang\n- Dokumentation von Versionen, Hashes, Verzeichnissen, Parametern und Einschränkungen.\n- Dokumentation der Dev/Produktions-Isolierung und Update-Checkliste.\n- Hinzufügen von Unit-Tests für Runtime, Parsing, Konvertierung, Routing und Thumbnails.\n- Hinzufügen von Opt-in-Integrationen für Whisper, aria2c, yt-dlp, FFmpeg und Instagram.\n- Wails-Bindings nach Änderungen an Go-Verträgen regenerieren.\n\n## Akzeptanzkriterien\n- [ ] `go test ./...` besteht ohne Netzwerkabhängigkeit.\n- [ ] Frontend-Build, Lint und Tests bestehen.\n- [ ] Reale Integrationen verwenden temporäre Verzeichnisse.\n- [ ] Die Dokumentation enthält reproduzierbare Befehle und verwechselt die lokale App nicht mit einem Zwischenserver.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
+      "description": "## Ziel\nTechnische Entscheidungen festhalten und neue Abläufe vor Regressionen schützen.\n\n## Umfang\n- Dokumentation von Versionen, Hashes, Verzeichnissen, Parametern und Einschränkungen.\n- Dokumentation der Isolation von Entwicklung/Produktion und Update-Checkliste.\n- Hinzufügen von Unit-Tests für Runtime, Parsing, Konvertierung, Routing und Thumbnails.\n- Hinzufügen von Opt-in-Integrationen für Whisper, aria2c, yt-dlp, FFmpeg und Instagram.\n- Wails-Bindings nach Änderungen an Go-Verträgen neu generieren.\n\n## Akzeptanzkriterien\n- [ ] `go test ./...` besteht ohne Netzwerkabhängigkeit.\n- [ ] Frontend-Build, Lint und Tests bestehen.\n- [ ] Reale Integrationen verwenden temporäre Verzeichnisse.\n- [ ] Die Dokumentation enthält reproduzierbare Befehle und verwechselt die lokale App nicht mit dem Zwischenserver.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Runtimes abdecken und Architektur dokumentieren"
+      "friendly_title": "Runtimes abdecken und Transkriptionsarchitektur dokumentieren"
     }
   ]
 }
