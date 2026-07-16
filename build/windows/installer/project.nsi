@@ -1,5 +1,10 @@
 Unicode true
 
+; Solid LZMA significantly reduces the release download without affecting the
+; application's runtime CPU or memory usage after installation.
+SetCompressor /SOLID lzma
+SetDatablockOptimize on
+
 ####
 ## Please note: Template replacements don't work in this file. They are provided with default defines like
 ## mentioned underneath.
@@ -103,6 +108,7 @@ Section
     File "..\..\sidecar\windows\yt-dlp.exe"
     File "..\..\sidecar\windows\ffmpeg.exe"
     File "..\..\sidecar\windows\ffprobe.exe"
+    File "..\..\sidecar\windows\*.dll"
     
     ; Volta para o diretório principal
     SetOutPath $INSTDIR

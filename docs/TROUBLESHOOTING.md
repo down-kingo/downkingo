@@ -176,7 +176,7 @@ sudo pacman -S fuse2
 Os logs sao em formato JSON estruturado (zerolog):
 
 ```json
-{"level":"info","time":"2025-01-15T10:00:00Z","version":"3.1.0","message":"kingo starting up"}
+{"level":"info","time":"2025-01-15T10:00:00Z","version":"3.1.1","message":"kingo starting up"}
 {"level":"error","time":"2025-01-15T10:00:05Z","error":"network timeout","message":"download failed"}
 ```
 

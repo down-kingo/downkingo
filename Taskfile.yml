@@ -25,7 +25,7 @@ tasks:
   build:updater:
     desc: Compile the updater sidecar binary
     cmds:
-      - go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
+      - go build -trimpath -buildvcs=false -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
 
   build:production:
     desc: Full production build (frontend + Go)
@@ -34,7 +34,7 @@ tasks:
       - task: build:updater
     cmds:
       - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows.syso
-      - go build -ldflags "-s -w -H windowsgui" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
+      - go build -trimpath -buildvcs=false -ldflags "-s -w -H windowsgui" -o {{.BIN_DIR}}/{{.APP_NAME}}{{exeExt}} .
 
   run:
     desc: Run the built application

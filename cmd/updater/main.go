@@ -14,11 +14,12 @@ func main() {
 	pid := flag.Int("pid", 0, "PID of the running app to wait for")
 	oldPath := flag.String("old", "", "Path to the current executable")
 	newPath := flag.String("new", "", "Path to the downloaded update binary")
+	installerPath := flag.String("installer", "", "Path to the downloaded installer")
 	cleanup := flag.String("cleanup", "", "Path to this updater binary (self-cleanup)")
 	flag.Parse()
 
-	if *pid == 0 || *oldPath == "" || *newPath == "" {
-		fmt.Fprintln(os.Stderr, "Usage: updater --pid <PID> --old <exe> --new <update> [--cleanup <self>]")
+	if *pid == 0 || (*installerPath == "" && (*oldPath == "" || *newPath == "")) {
+		fmt.Fprintln(os.Stderr, "Usage: updater --pid <PID> (--installer <setup> | --old <exe> --new <update>) [--cleanup <self>]")
 		os.Exit(1)
 	}
 
@@ -30,6 +31,18 @@ func main() {
 
 	// Small grace period to ensure file handles are released
 	time.Sleep(500 * time.Millisecond)
+
+	// Windows installations live under Program Files and must be upgraded by
+	// the NSIS installer with elevation. Never replace the application binary
+	// with the installer itself.
+	if *installerPath != "" {
+		if err := launchInstaller(*installerPath); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to launch installer: %v\n", err)
+			os.Exit(1)
+		}
+		selfCleanup(*cleanup, *installerPath)
+		return
+	}
 
 	// 2. Remove stale .old backup if it exists
 	backupPath := *oldPath + ".old"
@@ -67,18 +80,30 @@ func main() {
 
 	// 7. Self-cleanup: on Windows we cannot delete our own running exe,
 	// so we spawn a detached cmd.exe that waits briefly then deletes us.
-	if *cleanup != "" {
-		selfCleanup(*cleanup)
-	}
+	selfCleanup(*cleanup)
 }
 
 // selfCleanup removes the given file.
 // On Windows, a process cannot delete its own running executable, so we
 // spawn a detached cmd.exe with a short delay to do the removal after we exit.
-func selfCleanup(path string) {
+func selfCleanup(paths ...string) {
 	if runtime.GOOS == "windows" {
-		// Use cmd /c with a timeout then del — runs detached from our process
-		script := fmt.Sprintf(`timeout /t 2 /nobreak > NUL & del /f /q "%s"`, path)
+		hasPaths := false
+		for _, path := range paths {
+			hasPaths = hasPaths || path != ""
+		}
+		if !hasPaths {
+			return
+		}
+
+		// Give the installer enough time to finish reading itself before deleting
+		// both temporary files. Empty paths are ignored.
+		script := `timeout /t 300 /nobreak > NUL`
+		for _, path := range paths {
+			if path != "" {
+				script += fmt.Sprintf(` & del /f /q "%s"`, path)
+			}
+		}
 		cmd := exec.Command("cmd", "/c", script)
 		cmd.SysProcAttr = &syscall.SysProcAttr{
 			CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
@@ -89,10 +114,14 @@ func selfCleanup(path string) {
 		}
 		return
 	}
-	// On Unix, removing a running executable unlinks the directory entry but
-	// the file stays accessible via its open file descriptor until we exit.
-	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Warning: could not remove updater binary: %v\n", err)
+	for _, path := range paths {
+		// On Unix, removing a running executable unlinks the directory entry but
+		// the file stays accessible via its open file descriptor until we exit.
+		if path != "" {
+			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+				fmt.Fprintf(os.Stderr, "Warning: could not remove temporary file: %v\n", err)
+			}
+		}
 	}
 }
 

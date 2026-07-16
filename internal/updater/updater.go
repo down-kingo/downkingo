@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,8 +19,9 @@ import (
 )
 
 const (
-	GitHubOwner = "down-kingo"
-	GitHubRepo  = "downkingo"
+	GitHubOwner   = "down-kingo"
+	GitHubRepo    = "downkingo"
+	maxUpdateSize = 1024 * 1024 * 1024 // 1 GiB safety limit
 )
 
 // HTTP client with timeout for API calls
@@ -135,14 +137,12 @@ func (u *Updater) CheckForUpdate() (*UpdateInfo, error) {
 		Changelog:  cleanChangelog(release.Body),
 	}
 
-	// Find appropriate asset for current OS
-	assetName := u.getAssetName()
-	for _, asset := range release.Assets {
-		if strings.Contains(strings.ToLower(asset.Name), assetName) {
-			info.DownloadURL = asset.BrowserDownloadURL
-			info.Size = asset.Size
-			break
-		}
+	// Find the installer/binary published for the current OS. Windows releases
+	// historically use the generic DownKingo.exe name, so matching only the
+	// word "windows" makes the modal open with an empty URL and a dead button.
+	if asset, ok := selectAssetForOS(release.Assets, runtime.GOOS); ok {
+		info.DownloadURL = asset.BrowserDownloadURL
+		info.Size = asset.Size
 	}
 
 	return info, nil
@@ -177,16 +177,49 @@ func compareVersions(a, b string) int {
 	return 0
 }
 
-// getAssetName returns the expected asset name for current OS
-func (u *Updater) getAssetName() string {
-	switch runtime.GOOS {
-	case "windows":
-		return "windows"
-	case "darwin":
-		return "darwin"
-	default:
-		return "linux"
+// selectAssetForOS returns the best compatible release artifact. The exact
+// Windows installer name is preferred so the updater never mistakes an
+// arbitrary executable attached to the release for the application update.
+func selectAssetForOS(assets []Asset, goos string) (Asset, bool) {
+	if goos == "windows" {
+		for _, asset := range assets {
+			if strings.EqualFold(asset.Name, "DownKingo.exe") {
+				return asset, true
+			}
+		}
+
+		for _, asset := range assets {
+			name := strings.ToLower(asset.Name)
+			if strings.HasSuffix(name, ".exe") &&
+				(strings.Contains(name, "installer") || strings.Contains(name, "setup")) {
+				return asset, true
+			}
+		}
+
+		return Asset{}, false
 	}
+
+	wanted := "linux"
+	if goos == "darwin" {
+		wanted = "darwin"
+	}
+	for _, asset := range assets {
+		if strings.Contains(strings.ToLower(asset.Name), wanted) {
+			return asset, true
+		}
+	}
+
+	return Asset{}, false
+}
+
+func isTrustedUpdateURL(rawURL string) bool {
+	parsed, err := url.Parse(rawURL)
+	if err != nil || parsed.Scheme != "https" || !strings.EqualFold(parsed.Hostname(), "github.com") {
+		return false
+	}
+
+	prefix := fmt.Sprintf("/%s/%s/releases/download/", GitHubOwner, GitHubRepo)
+	return strings.HasPrefix(parsed.EscapedPath(), prefix)
 }
 
 // cleanChangelog removes unnecessary GitHub compare links and cleans up the changelog
@@ -219,10 +252,13 @@ func cleanChangelog(body string) string {
 	return result
 }
 
-// DownloadAndApply downloads the update and launches the external updater to replace the binary.
+// DownloadAndApply downloads the update and launches the external updater.
 func (u *Updater) DownloadAndApply(downloadURL string) error {
 	if len(updaterBinary) == 0 {
 		return fmt.Errorf("updater not available (dev mode)")
+	}
+	if !isTrustedUpdateURL(downloadURL) {
+		return fmt.Errorf("untrusted update URL")
 	}
 
 	u.emitProgress("downloading", 0)
@@ -236,12 +272,23 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 		return fmt.Errorf("failed to resolve executable path: %w", err)
 	}
 
-	// Download new binary to temp
+	// Download the installer/binary to a unique file in the user's temp folder.
 	ext := ""
 	if runtime.GOOS == "windows" {
 		ext = ".exe"
 	}
-	tempPath := filepath.Join(os.TempDir(), "downkingo-update"+ext)
+	tempFile, err := os.CreateTemp("", "downkingo-update-*"+ext)
+	if err != nil {
+		return fmt.Errorf("failed to create temp file: %w", err)
+	}
+	tempPath := tempFile.Name()
+	keepTemp := false
+	defer func() {
+		_ = tempFile.Close()
+		if !keepTemp {
+			_ = os.Remove(tempPath)
+		}
+	}()
 
 	resp, err := downloadClient.Get(downloadURL)
 	if err != nil {
@@ -249,9 +296,11 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	}
 	defer resp.Body.Close()
 
-	out, err := os.Create(tempPath)
-	if err != nil {
-		return fmt.Errorf("failed to create temp file: %w", err)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("update download returned HTTP %d", resp.StatusCode)
+	}
+	if resp.ContentLength > maxUpdateSize {
+		return fmt.Errorf("update file is larger than the allowed limit")
 	}
 
 	total := resp.ContentLength
@@ -261,12 +310,13 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 	for {
 		n, readErr := resp.Body.Read(buf)
 		if n > 0 {
-			if _, writeErr := out.Write(buf[:n]); writeErr != nil {
-				out.Close()
-				os.Remove(tempPath)
+			downloaded += int64(n)
+			if downloaded > maxUpdateSize {
+				return fmt.Errorf("update file is larger than the allowed limit")
+			}
+			if _, writeErr := tempFile.Write(buf[:n]); writeErr != nil {
 				return fmt.Errorf("failed to write update to disk: %w", writeErr)
 			}
-			downloaded += int64(n)
 			if total > 0 {
 				percent := float64(downloaded) / float64(total) * 100
 				u.emitProgress("downloading", percent)
@@ -276,40 +326,59 @@ func (u *Updater) DownloadAndApply(downloadURL string) error {
 			break
 		}
 		if readErr != nil {
-			out.Close()
-			os.Remove(tempPath)
 			return fmt.Errorf("download interrupted: %w", readErr)
 		}
 	}
-	out.Close()
+	if err := tempFile.Close(); err != nil {
+		return fmt.Errorf("failed to finish update download: %w", err)
+	}
 
 	u.emitProgress("applying", 100)
 
-	// Extract the embedded updater binary to temp
-	updaterPath := filepath.Join(os.TempDir(), "downkingo-updater"+ext)
-	if err := os.WriteFile(updaterPath, updaterBinary, 0755); err != nil {
-		os.Remove(tempPath)
+	// Extract the embedded updater to a unique path. A fixed filename can still
+	// be locked by a previous update attempt on Windows.
+	updaterFile, err := os.CreateTemp("", "downkingo-updater-*"+ext)
+	if err != nil {
+		return fmt.Errorf("failed to create updater helper: %w", err)
+	}
+	updaterPath := updaterFile.Name()
+	if _, err := updaterFile.Write(updaterBinary); err != nil {
+		_ = updaterFile.Close()
+		_ = os.Remove(updaterPath)
 		return fmt.Errorf("failed to extract updater: %w", err)
 	}
+	if err := updaterFile.Close(); err != nil {
+		_ = os.Remove(updaterPath)
+		return fmt.Errorf("failed to finish updater helper: %w", err)
+	}
+	if err := os.Chmod(updaterPath, 0755); err != nil {
+		_ = os.Remove(updaterPath)
+		return fmt.Errorf("failed to prepare updater helper: %w", err)
+	}
 
-	// Launch the external updater process
+	// Launch the external updater process. On Windows the published artifact is
+	// an NSIS installer. The helper waits for this app to exit and then opens the
+	// installer with UAC elevation, avoiding writes to Program Files from the
+	// unelevated application process.
 	pid := os.Getpid()
-	cmd := exec.Command(updaterPath,
-		"--pid", strconv.Itoa(pid),
-		"--old", execPath,
-		"--new", tempPath,
-		"--cleanup", updaterPath,
-	)
+	args := []string{"--pid", strconv.Itoa(pid), "--cleanup", updaterPath}
+	if runtime.GOOS == "windows" {
+		args = append(args, "--installer", tempPath)
+	} else {
+		args = append(args, "--old", execPath, "--new", tempPath)
+	}
+	cmd := exec.Command(updaterPath, args...)
 	hideUpdaterWindow(cmd)
 	if err := cmd.Start(); err != nil {
-		os.Remove(tempPath)
 		os.Remove(updaterPath)
 		return fmt.Errorf("failed to launch updater: %w", err)
 	}
+	keepTemp = true
 
 	u.emitProgress("restarting", 100)
 
-	// Quit the app — the external updater will wait for us to exit, then replace the binary and relaunch
+	// Quit the app. The helper waits for the process to release its files before
+	// starting the installer or replacing a portable binary.
 	go func() {
 		time.Sleep(500 * time.Millisecond)
 		application.Get().Quit()
@@ -342,20 +411,12 @@ func (u *Updater) InstallVersion(tag string) error {
 		return fmt.Errorf("version %s not found", tag)
 	}
 
-	assetName := u.getAssetName()
-	var downloadURL string
-	for _, asset := range targetRelease.Assets {
-		if strings.Contains(strings.ToLower(asset.Name), assetName) {
-			downloadURL = asset.BrowserDownloadURL
-			break
-		}
-	}
-
-	if downloadURL == "" {
+	asset, ok := selectAssetForOS(targetRelease.Assets, runtime.GOOS)
+	if !ok {
 		return fmt.Errorf("no compatible asset found for %s", tag)
 	}
 
-	return u.DownloadAndApply(downloadURL)
+	return u.DownloadAndApply(asset.BrowserDownloadURL)
 }
 
 func (u *Updater) emitProgress(status string, percent float64) {

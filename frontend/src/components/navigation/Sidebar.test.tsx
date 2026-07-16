@@ -39,7 +39,7 @@ describe("Sidebar", () => {
     activeTab: "home" as TabType,
     setActiveTab: vi.fn(),
     queueCount: 0,
-    version: "3.1.0",
+    version: "3.1.1",
     onOpenSettings: vi.fn(),
   };
 
@@ -49,8 +49,8 @@ describe("Sidebar", () => {
   });
 
   it("renders the version number", () => {
-    render(<Sidebar {...defaultProps} version="3.1.0" />);
-    expect(screen.getByText("v3.1.0")).toBeInTheDocument();
+    render(<Sidebar {...defaultProps} version="3.1.1" />);
+    expect(screen.getByText("v3.1.1")).toBeInTheDocument();
   });
 
   it("shows queue count badge when queueCount > 0", () => {

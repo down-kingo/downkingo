@@ -62,12 +62,16 @@ jobs:
           mkdir -p build/sidecar/windows
           echo "Downloading yt-dlp..."
           curl -L -o build/sidecar/windows/yt-dlp.exe https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe
-          echo "Downloading FFmpeg..."
-          curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip
+          echo "Downloading FFmpeg shared build..."
+          curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip
           unzip -q ffmpeg.zip
-          mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe build/sidecar/windows/
-          mv ffmpeg-master-latest-win64-gpl/bin/ffprobe.exe build/sidecar/windows/
-          rm -rf ffmpeg-master-latest-win64-gpl ffmpeg.zip
+          mv ffmpeg-master-latest-win64-gpl-shared/bin/ffmpeg.exe build/sidecar/windows/
+          mv ffmpeg-master-latest-win64-gpl-shared/bin/ffprobe.exe build/sidecar/windows/
+          mv ffmpeg-master-latest-win64-gpl-shared/bin/*.dll build/sidecar/windows/
+          rm -rf ffmpeg-master-latest-win64-gpl-shared ffmpeg.zip
+          test -s build/sidecar/windows/ffmpeg.exe
+          test -s build/sidecar/windows/ffprobe.exe
+          test -n "$(find build/sidecar/windows -maxdepth 1 -name '*.dll' -print -quit)"
           echo "Sidecar binaries ready:"
           ls -la build/sidecar/windows/
 
@@ -77,7 +81,7 @@ jobs:
       - name: Build Updater Binary
         shell: bash
         run: |
-          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
+          GOOS=windows GOARCH=amd64 go build -trimpath -buildvcs=false -ldflags "-s -w" -o internal/updater/updater.exe ./cmd/updater
 
       # ============================================================
       # BUILD APPLICATION
@@ -99,7 +103,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           mkdir -p build/bin
-          go build -ldflags "-s -w -H windowsgui -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo.exe .
+          go build -trimpath -buildvcs=false -ldflags "-s -w -H windowsgui -X main.Version=${VERSION} -X 'kingo/internal/telemetry.AptabaseKey=${APTABASE_KEY}'" -o build/bin/downkingo.exe .
 
       # ============================================================
       # PACKAGE: NSIS Installer
@@ -114,7 +118,7 @@ jobs:
 
           # Run NSIS
           cd build/windows/installer
-          makensis -DARG_WAILS_AMD64_BINARY="..\\..\\bin\\downkingo.exe" project.nsi
+          makensis -INPUTCHARSET UTF8 -DARG_WAILS_AMD64_BINARY="..\\..\\bin\\downkingo.exe" project.nsi
 
           cd ../../..
           echo "Contents of build/bin:"
@@ -151,6 +155,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install AI SDK Dependencies
+        run: npm install @google/generative-ai --no-save
+
+      - name: Generate Release Notes (AI-Powered)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node .github/scripts/generate_release_notes.js
+
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -159,6 +176,6 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          generate_release_notes: true
+          body_path: RELEASE_NOTES.md
           files: |
             artifacts/**/*

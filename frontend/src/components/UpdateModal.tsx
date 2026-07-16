@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { IconDownload, IconX, IconArrowRight } from "@tabler/icons-react";
 import { useState, useEffect, useCallback } from "react";
-import { CheckForUpdate } from "../../bindings/kingo/app";
+import { CheckForUpdate, OpenUrl } from "../../bindings/kingo/app";
 import { UpdateInfo } from "../../bindings/kingo/internal/updater/models.js";
 import { Logo } from "./Logo";
 import { useTranslation } from "react-i18next";
@@ -33,7 +33,7 @@ export default function UpdateModal() {
   const openDevPreview = useCallback(() => {
     const mockInfo: UpdateInfo = {
       available: true,
-      currentVersion: "3.1.0",
+      currentVersion: "3.1.1",
       latestVersion: "v3.2.0",
       downloadUrl:
         "https://github.com/org/kingo/releases/download/v3.2.0/kingo-setup.exe",
@@ -62,8 +62,14 @@ export default function UpdateModal() {
     return () => window.removeEventListener("dev:open-update-modal", handler);
   }, [openDevPreview]);
 
-  const handleUpdate = () => {
-    if (!updateInfo?.downloadUrl) return;
+  const handleUpdate = async () => {
+    if (!updateInfo?.downloadUrl) {
+      setIsOpen(false);
+      await OpenUrl(
+        "https://github.com/down-kingo/downkingo/releases/latest",
+      );
+      return;
+    }
     setIsOpen(false);
     navigate("/setup", {
       state: { isUpdate: true, downloadUrl: updateInfo.downloadUrl },
