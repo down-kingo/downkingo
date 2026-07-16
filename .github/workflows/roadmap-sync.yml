@@ -63,7 +63,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Test Roadmap Status Mapping
+      - name: Test Roadmap Generation Rules
         working-directory: script-source
         run: node --test .github/scripts/generate_roadmap.test.js
 

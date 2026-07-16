@@ -1,10 +1,10 @@
 {
 	"fixed": {
-		"file_version": "3.1.1"
+		"file_version": "3.1.2"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "3.1.1",
+			"ProductVersion": "3.1.2",
 			"CompanyName": "DownKingo",
 			"FileDescription": "DownKingo",
 			"LegalCopyright": "Copyright 2025 DownKingo",

@@ -37,6 +37,13 @@
   "saved": "Enregistré!",
   "saved_all": "{{count}} éléments traités !",
   "search": "Rechercher",
+  "story_auth": {
+    "description": "Connectez-vous à Instagram dans l'un des navigateurs ci-dessous, puis autorisez DownKingo à utiliser cette session pour charger les Stories actives.",
+    "failed": "La session {{browser}} n'a pas pu être utilisée. Vérifiez la connexion à Instagram, fermez temporairement le navigateur et réessayez.",
+    "privacy": "Les cookies sont lus directement par yt-dlp uniquement pour cette opération et ne sont pas stockés par DownKingo.",
+    "title": "Les Stories Instagram nécessitent une session",
+    "use_browser": "Utiliser {{browser}}"
+  },
   "size": "Taille",
   "subtitle": "Vidéos, images, audio et carrousels avec détection automatique.",
   "title": "Téléchargements",

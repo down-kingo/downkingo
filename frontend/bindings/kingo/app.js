@@ -337,6 +337,17 @@ export function GetInstagramCarousel(url) {
 }
 
 /**
+ * @param {string} url
+ * @param {string} browser
+ * @returns {$CancellablePromise<handlers$0.MediaInfo | null>}
+ */
+export function GetInstagramCarouselWithCookies(url, browser) {
+    return $Call.ByID(2976651454, url, browser).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType17($result);
+    }));
+}
+
+/**
  * GetRoadmap fetches roadmap items from the configured source
  * @param {string} lang
  * @returns {$CancellablePromise<roadmap$0.RoadmapItem[]>}

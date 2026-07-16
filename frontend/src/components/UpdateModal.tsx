@@ -33,7 +33,7 @@ export default function UpdateModal() {
   const openDevPreview = useCallback(() => {
     const mockInfo: UpdateInfo = {
       available: true,
-      currentVersion: "3.1.1",
+      currentVersion: "3.1.2",
       latestVersion: "v3.2.0",
       downloadUrl:
         "https://github.com/org/kingo/releases/download/v3.2.0/kingo-setup.exe",

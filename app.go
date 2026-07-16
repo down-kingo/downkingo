@@ -484,6 +484,10 @@ func (a *App) GetInstagramCarousel(url string) (*handlers.MediaInfo, error) {
 	return a.mediaHandler.GetInstagramCarousel(url)
 }
 
+func (a *App) GetInstagramCarouselWithCookies(url, browser string) (*handlers.MediaInfo, error) {
+	return a.mediaHandler.GetInstagramCarouselWithCookies(url, browser)
+}
+
 func (a *App) GetImageInfo(url string) (*images.ImageInfo, error) {
 	return a.mediaHandler.GetImageInfo(url)
 }

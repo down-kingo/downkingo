@@ -139,7 +139,7 @@ downkingo/
 ├── main.go                 # Wails v3 application bootstrap
 ├── app.go                  # App facade — all methods exposed to frontend
 ├── Taskfile.yml            # Task runner (replaces wails CLI)
-├── VERSION                 # Semantic version (3.1.1)
+├── VERSION                 # Semantic version (3.1.2)
 ├── internal/               # Backend logic (Go)
 │   ├── app/                # Application paths and lifecycle
 │   ├── auth/               # GitHub OAuth2 Device Flow

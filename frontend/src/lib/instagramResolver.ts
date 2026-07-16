@@ -272,7 +272,45 @@ async function tryOEmbedAPI(url: string): Promise<InstagramResolverResult> {
 
 // Função auxiliar para verificar se é URL do Instagram
 export function isInstagramUrl(url: string): boolean {
-  return /instagram\.com\/(p|reel|reels)\//.test(url);
+  const parsed = parseInstagramUrl(url);
+  if (!parsed) return false;
+  return /^(?:p|reel|reels|stories)\//i.test(
+    parsed.pathname.replace(/^\/+/, ""),
+  );
+}
+
+export function isInstagramStoryUrl(url: string): boolean {
+  const parsed = parseInstagramUrl(url);
+  if (!parsed) return false;
+  return /^stories\/[^/]+(?:\/|$)/i.test(parsed.pathname.replace(/^\/+/, ""));
+}
+
+export function isInstagramAuthenticationError(error: unknown): boolean {
+  const message = String(error).toLowerCase();
+  return (
+    message.includes("instagram_auth_required") ||
+    message.includes("instagram_auth_failed") ||
+    message.includes("sessão autenticada") ||
+    message.includes("use --cookies-from-browser") ||
+    message.includes("need to log in") ||
+    message.includes("authentication required")
+  );
+}
+
+function parseInstagramUrl(rawUrl: string): URL | null {
+  try {
+    const parsed = new URL(rawUrl.trim());
+    const hostname = parsed.hostname.toLowerCase().replace(/\.$/, "");
+    if (
+      (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+      (hostname !== "instagram.com" && !hostname.endsWith(".instagram.com"))
+    ) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 // Função auxiliar para verificar se é URL direta de CDN

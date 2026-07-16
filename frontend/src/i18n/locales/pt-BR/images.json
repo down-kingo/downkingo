@@ -37,6 +37,13 @@
   "saved": "Salvo!",
   "saved_all": "{{count}} itens processados!",
   "search": "Buscar",
+  "story_auth": {
+    "description": "Entre no Instagram em um dos navegadores abaixo e permita que o DownKingo use essa sessão para carregar os Stories ativos.",
+    "failed": "Não foi possível usar a sessão do {{browser}}. Confirme o login no Instagram, feche o navegador temporariamente e tente novamente.",
+    "privacy": "Os cookies são lidos diretamente pelo yt-dlp somente para esta operação e não são armazenados pelo DownKingo.",
+    "title": "Stories do Instagram exigem uma sessão",
+    "use_browser": "Usar {{browser}}"
+  },
   "size": "Tamanho",
   "subtitle": "Vídeos, imagens, áudios e carrosséis com detecção automática.",
   "title": "Downloads",

@@ -354,6 +354,13 @@ export class MediaItemDTO {
              */
             this["height"] = 0;
         }
+        if (/** @type {any} */(false)) {
+            /**
+             * @member
+             * @type {string | undefined}
+             */
+            this["cookieBrowser"] = undefined;
+        }
 
         Object.assign(this, $$source);
     }

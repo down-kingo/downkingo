@@ -13,6 +13,7 @@ import {
   IconExternalLink,
   IconAdjustments,
   IconChevronDown,
+  IconShieldLock,
 } from "@tabler/icons-react";
 import {
   GetImageInfo,
@@ -23,7 +24,10 @@ import { useSettingsStore } from "../stores/settingsStore";
 import {
   isInstagramUrl,
   isInstagramCDN,
+  isInstagramStoryUrl,
+  isInstagramAuthenticationError,
 } from "../lib/instagramResolver";
+import type { CookieBrowser } from "../lib/videoErrors";
 import {
   resolveTwitter,
   isTwitterUrl,
@@ -44,7 +48,18 @@ interface MediaItem {
   type: "image" | "video";
   width?: number;
   height?: number;
+  cookieBrowser?: CookieBrowser;
 }
+
+const storyBrowserChoices: Array<{
+  value: CookieBrowser;
+  label: string;
+}> = [
+  { value: "chrome", label: "Chrome" },
+  { value: "edge", label: "Edge" },
+  { value: "firefox", label: "Firefox" },
+  { value: "brave", label: "Brave" },
+];
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return "0 Bytes";
@@ -209,6 +224,11 @@ export default function Images({
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]); // Para carrossel
   const [selectedIndex, setSelectedIndex] = useState(0); // Índice da imagem selecionada
   const [error, setError] = useState<string | null>(null);
+  const [storyAuthRequired, setStoryAuthRequired] = useState(false);
+  const [activeStoryBrowser, setActiveStoryBrowser] =
+    useState<CookieBrowser | null>(null);
+  const [failedStoryBrowser, setFailedStoryBrowser] =
+    useState<CookieBrowser | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadPath, setDownloadPath] = useState<string | null>(null);
   const [batchProgress, setBatchProgress] = useState<{
@@ -230,7 +250,7 @@ export default function Images({
       url: item.url,
       title: `video_${index + 1}_de_${total}`,
       thumbnail: "",
-      cookieBrowser: "",
+      cookieBrowser: item.cookieBrowser || "",
       format: "best",
       audioOnly: false,
       audioFormat: "",
@@ -318,12 +338,41 @@ export default function Images({
     }
   };
 
+  const showInstagramMedia = async (carouselResult: {
+    mediaItems?: Array<{
+      url: string;
+      type: string;
+      width?: number;
+      height?: number;
+      cookieBrowser?: string;
+    }>;
+  } | null) => {
+    if (!carouselResult?.mediaItems?.length) return false;
+
+    const convertedMedia: MediaItem[] = carouselResult.mediaItems.map(
+      (item) => ({
+        url: item.url,
+        type: item.type as "image" | "video",
+        width: item.width,
+        height: item.height,
+        cookieBrowser: item.cookieBrowser as CookieBrowser | undefined,
+      }),
+    );
+    const initialIndex = getRequestedMediaIndex(url, convertedMedia.length);
+    setMediaItems(convertedMedia);
+    await selectMedia(convertedMedia, initialIndex);
+    return true;
+  };
+
   const handleSearch = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!url.trim()) return;
 
     setLoading(true);
     setError(null);
+    setStoryAuthRequired(false);
+    setActiveStoryBrowser(null);
+    setFailedStoryBrowser(null);
     setInfo(null);
     setMediaItems([]);
     setSelectedIndex(0);
@@ -335,6 +384,7 @@ export default function Images({
     try {
       // Verificar se é URL de rede social (não CDN direto)
       const isIGPost = isInstagramUrl(url) && !isInstagramCDN(url);
+      const isIGStory = isInstagramStoryUrl(url);
       const isTWPost = isTwitterUrl(url) && !isTwitterCDN(url);
 
       if (isIGPost) {
@@ -344,36 +394,18 @@ export default function Images({
             "../../bindings/kingo/app"
           );
           const carouselResult = await GetInstagramCarousel(url);
-          if (
-            carouselResult &&
-            carouselResult.mediaItems &&
-            carouselResult.mediaItems.length > 0
-          ) {
-            // Converter para o formato esperado pelo frontend
-            const convertedMedia: MediaItem[] = carouselResult.mediaItems.map(
-              (item: {
-                url: string;
-                type: string;
-                width?: number;
-                height?: number;
-              }) => ({
-                url: item.url,
-                type: item.type as "image" | "video",
-                width: item.width,
-                height: item.height,
-              })
-            );
-
-            const initialIndex = getRequestedMediaIndex(
-              url,
-              convertedMedia.length,
-            );
-            setMediaItems(convertedMedia);
-            await selectMedia(convertedMedia, initialIndex);
+          if (await showInstagramMedia(carouselResult)) {
             setLoading(false);
             return;
           }
-        } catch {
+        } catch (instagramError) {
+          if (
+            isIGStory &&
+            isInstagramAuthenticationError(instagramError)
+          ) {
+            setStoryAuthRequired(true);
+            return;
+          }
           // Fallback para próxima estratégia
         }
       }
@@ -472,6 +504,31 @@ export default function Images({
       setError(t("error.download", { message: String(err) }));
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const retryStoryWithBrowser = async (browser: CookieBrowser) => {
+    if (!url.trim()) return;
+    setLoading(true);
+    setError(null);
+    setActiveStoryBrowser(browser);
+    setFailedStoryBrowser(null);
+
+    try {
+      const { GetInstagramCarouselWithCookies } = await import(
+        "../../bindings/kingo/app"
+      );
+      const result = await GetInstagramCarouselWithCookies(url, browser);
+      if (!(await showInstagramMedia(result))) {
+        throw new Error("instagram_auth_failed");
+      }
+      setStoryAuthRequired(false);
+    } catch {
+      setStoryAuthRequired(true);
+      setFailedStoryBrowser(browser);
+    } finally {
+      setActiveStoryBrowser(null);
+      setLoading(false);
     }
   };
 
@@ -594,6 +651,68 @@ export default function Images({
         <div className="card flex items-center justify-center gap-3 p-8 text-sm text-surface-500">
           <IconLoader2 size={20} className="animate-spin text-primary-600" />
           <span>{t("loading_content")}</span>
+        </div>
+      )}
+
+      {storyAuthRequired && (
+        <div
+          role="alert"
+          aria-live="polite"
+          className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-4 text-left dark:border-amber-500/35 dark:bg-amber-500/10"
+        >
+          <div className="flex items-start gap-3">
+            <IconShieldLock
+              size={22}
+              aria-hidden="true"
+              className="mt-0.5 shrink-0 text-amber-700 dark:text-amber-300"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-amber-950 dark:text-amber-100">
+                {t("story_auth.title")}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-amber-900 dark:text-amber-200">
+                {t("story_auth.description")}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {storyBrowserChoices.map((browser) => {
+                  const isActive = activeStoryBrowser === browser.value;
+                  return (
+                    <button
+                      key={browser.value}
+                      type="button"
+                      disabled={activeStoryBrowser !== null}
+                      onClick={() => retryStoryWithBrowser(browser.value)}
+                      className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-amber-400 bg-white px-3 py-2 text-sm font-semibold text-amber-950 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60 dark:border-amber-400/50 dark:bg-surface-200 dark:text-amber-100 dark:hover:bg-surface-300 dark:focus-visible:ring-offset-surface-50"
+                    >
+                      {isActive && (
+                        <IconLoader2
+                          size={16}
+                          aria-hidden="true"
+                          className="animate-spin"
+                        />
+                      )}
+                      {t("story_auth.use_browser", {
+                        browser: browser.label,
+                      })}
+                    </button>
+                  );
+                })}
+              </div>
+              {failedStoryBrowser && !activeStoryBrowser && (
+                <p className="mt-3 text-sm font-medium text-red-700 dark:text-red-300">
+                  {t("story_auth.failed", {
+                    browser:
+                      storyBrowserChoices.find(
+                        (browser) => browser.value === failedStoryBrowser,
+                      )?.label ?? failedStoryBrowser,
+                  })}
+                </p>
+              )}
+              <p className="mt-3 text-xs leading-relaxed text-amber-800 dark:text-amber-300">
+                {t("story_auth.privacy")}
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -929,7 +1048,7 @@ export default function Images({
                     className={`w-full py-2.5 px-4 rounded-md font-medium text-sm flex items-center justify-center gap-2 transition-colors ${
                       downloadPath && batchSavedCount === 0
                         ? "bg-green-600 hover:bg-green-700 text-white"
-                        : "bg-surface-900 dark:bg-white text-surface-50 dark:text-surface-900 hover:bg-surface-800 dark:hover:bg-surface-200"
+                        : "bg-surface-900 text-surface-50 hover:bg-surface-800"
                     } disabled:opacity-70 disabled:cursor-not-allowed`}
                   >
                     {downloading ? (

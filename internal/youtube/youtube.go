@@ -534,6 +534,30 @@ func (c *Client) GetVideoInfoWithCookies(ctx context.Context, url string, browse
 
 // GetPlaylistInfo fetches metadata for a playlist URL (or carousel)
 func (c *Client) GetPlaylistInfo(ctx context.Context, url string) ([]VideoInfo, error) {
+	return c.getPlaylistInfo(ctx, url, "")
+}
+
+// GetPlaylistInfoWithCookies fetches playlist metadata using the browser
+// session explicitly selected by the user. Instagram Stories always require an
+// authenticated session, even when the account itself is public.
+func (c *Client) GetPlaylistInfoWithCookies(ctx context.Context, url, browser string) ([]VideoInfo, error) {
+	normalizedBrowser, err := NormalizeCookieBrowser(browser)
+	if err != nil {
+		return nil, err
+	}
+
+	results, err := c.getPlaylistInfo(ctx, url, normalizedBrowser)
+	if err != nil {
+		return nil, err
+	}
+	for index := range results {
+		results[index].CookieBrowser = normalizedBrowser
+	}
+	c.rememberAuthBrowser(url, normalizedBrowser)
+	return results, nil
+}
+
+func playlistInfoArgs(url, browser string) []string {
 	args := []string{
 		"--dump-json",
 		// Instagram carousels may contain images only. yt-dlp exposes those
@@ -547,16 +571,28 @@ func (c *Client) GetPlaylistInfo(ctx context.Context, url string) ([]VideoInfo, 
 		"--extractor-retries", "1",
 		"--socket-timeout", "15",
 		"--ignore-errors",
-		url,
 	}
+	if browser != "" {
+		args = append(args, "--cookies-from-browser", browser)
+	}
+	return append(args, url)
+}
+
+func (c *Client) getPlaylistInfo(ctx context.Context, url, browser string) ([]VideoInfo, error) {
+	args := playlistInfoArgs(url, browser)
 
 	// Use createCommandWithContext for proper setup (DRY)
 	cmd, err := c.createCommandWithContext(ctx, args)
 	if err != nil {
 		return nil, err
 	}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	output, err := cmd.Output()
 	if err != nil {
+		if detail := strings.TrimSpace(stderr.String()); detail != "" {
+			return nil, fmt.Errorf("yt-dlp error: %s", detail)
+		}
 		return nil, fmt.Errorf("yt-dlp error: %w", err)
 	}
 

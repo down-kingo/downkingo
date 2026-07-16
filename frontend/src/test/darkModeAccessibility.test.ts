@@ -63,4 +63,24 @@ describe("dark mode accessibility conventions", () => {
       expect(contrastAgainstWhite(primary600!)).toBeGreaterThanOrEqual(4.5);
     }
   });
+
+  it("does not pair a white dark background with the white dark surface foreground", async () => {
+    const files = await glob("**/*.tsx", {
+      cwd: srcDir,
+      absolute: true,
+      windowsPathsNoEscape: true,
+    });
+    const conflictingPair =
+      /dark:bg-white(?!\/)[^"\n]*dark:text-surface-900\b|dark:text-surface-900\b[^"\n]*dark:bg-white(?!\/)/g;
+    const violations: string[] = [];
+
+    for (const file of files) {
+      const source = await readFile(file, "utf8");
+      for (const match of source.matchAll(conflictingPair)) {
+        violations.push(`${file}:${match[0]}`);
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
 });

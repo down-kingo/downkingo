@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -51,6 +52,21 @@ func ExtractShortcode(url string) (string, error) {
 		return "", errors.New("shortcode não encontrado na URL")
 	}
 	return matches[1], nil
+}
+
+// IsStoryURL reports whether rawURL points to Instagram's authenticated Story
+// surface (for example /stories/neymarjr/ or /stories/neymarjr/123456/).
+func IsStoryURL(rawURL string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil {
+		return false
+	}
+	host := strings.ToLower(strings.TrimSuffix(parsed.Hostname(), "."))
+	if host != "instagram.com" && !strings.HasSuffix(host, ".instagram.com") {
+		return false
+	}
+	segments := strings.Split(strings.Trim(parsed.Path, "/"), "/")
+	return len(segments) >= 2 && strings.EqualFold(segments[0], "stories") && segments[1] != ""
 }
 
 // GetPostInfo extrai informações de um post do Instagram

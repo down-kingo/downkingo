@@ -28,22 +28,33 @@ type MediaInfo struct {
 
 // MediaItemDTO representa uma mídia individual.
 type MediaItemDTO struct {
-	URL    string `json:"url"`
-	Type   string `json:"type"` // "image" ou "video"
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
+	URL           string `json:"url"`
+	Type          string `json:"type"` // "image" ou "video"
+	Width         int    `json:"width"`
+	Height        int    `json:"height"`
+	CookieBrowser string `json:"cookieBrowser,omitempty"`
+}
+
+// MediaExtractor contains the yt-dlp metadata operations used by MediaHandler.
+// Keeping this boundary narrow also lets Story authentication be tested without
+// launching a real browser or subprocess.
+type MediaExtractor interface {
+	GetPlaylistInfo(ctx context.Context, url string) ([]youtube.VideoInfo, error)
+	GetPlaylistInfoWithCookies(ctx context.Context, url, browser string) ([]youtube.VideoInfo, error)
+	GetVideoInfo(ctx context.Context, url string) (*youtube.VideoInfo, error)
+	GetVideoInfoWithCookies(ctx context.Context, url, browser string) (*youtube.VideoInfo, error)
 }
 
 // MediaHandler encapsulates all media-related operations (images, Instagram, Twitter).
 type MediaHandler struct {
 	ctx            context.Context
 	imageClient    *images.Client
-	youtube        *youtube.Client
+	youtube        MediaExtractor
 	consoleEmitter func(string)
 }
 
 // NewMediaHandler creates a new MediaHandler with dependencies.
-func NewMediaHandler(imgClient *images.Client, yt *youtube.Client) *MediaHandler {
+func NewMediaHandler(imgClient *images.Client, yt MediaExtractor) *MediaHandler {
 	return &MediaHandler{
 		ctx:            context.Background(),
 		imageClient:    imgClient,
@@ -100,6 +111,21 @@ func IsSocialMediaURL(url string) bool {
 // Validates URL and applies rate limiting to prevent API abuse.
 func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 	const op = "MediaHandler.GetInstagramCarousel"
+	return h.getInstagramMedia(op, url, "")
+}
+
+// GetInstagramCarouselWithCookies retries Instagram media extraction with the
+// browser session selected by the user. This is required for Stories.
+func (h *MediaHandler) GetInstagramCarouselWithCookies(url, browser string) (*MediaInfo, error) {
+	const op = "MediaHandler.GetInstagramCarouselWithCookies"
+	normalizedBrowser, err := youtube.NormalizeCookieBrowser(browser)
+	if err != nil {
+		return nil, apperr.WrapWithMessage(op, apperr.ErrInvalidURL, "Navegador não suportado para autenticação")
+	}
+	return h.getInstagramMedia(op, url, normalizedBrowser)
+}
+
+func (h *MediaHandler) getInstagramMedia(op, url, browser string) (*MediaInfo, error) {
 	startTime := time.Now()
 
 	// Validate URL
@@ -124,38 +150,50 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 	var items []MediaItemDTO
 	var nativeItems []MediaItemDTO
 
-	// ESTRATÉGIA 1: Scraper Nativo
-	if info, err := instagram.GetPostInfo(url); err == nil && len(info.MediaItems) > 0 {
-		for _, item := range info.MediaItems {
-			u := item.DisplayURL
-			if u == "" {
-				u = item.URL
-			}
-			if u == "" {
-				continue
-			}
-			nativeItems = append(nativeItems, MediaItemDTO{
-				URL:    u,
-				Type:   item.Type,
-				Width:  item.Width,
-				Height: item.Height,
-			})
-		}
+	isStory := instagram.IsStoryURL(url)
 
-		// Multiple distinct items are enough to confirm a carousel. A single
-		// item may only be the OpenGraph cover, so continue to yt-dlp before
-		// deciding that the post is not a carousel.
-		if result := h.finalizeCarousel(url, nativeItems); len(result.MediaItems) > 1 {
-			elapsed := time.Since(startTime).Seconds()
-			logger.Log.Info().Int("count", len(result.MediaItems)).Msg("native scraper carousel success")
-			h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via Scraper", len(result.MediaItems), elapsed))
-			return result, nil
+	// ESTRATÉGIA 1: Scraper Nativo. Stories are intentionally excluded because
+	// Instagram never exposes them to anonymous HTML requests.
+	if !isStory {
+		if info, err := instagram.GetPostInfo(url); err == nil && len(info.MediaItems) > 0 {
+			for _, item := range info.MediaItems {
+				u := item.DisplayURL
+				if u == "" {
+					u = item.URL
+				}
+				if u == "" {
+					continue
+				}
+				nativeItems = append(nativeItems, MediaItemDTO{
+					URL:    u,
+					Type:   item.Type,
+					Width:  item.Width,
+					Height: item.Height,
+				})
+			}
+
+			// Multiple distinct items are enough to confirm a carousel. A single
+			// item may only be the OpenGraph cover, so continue to yt-dlp before
+			// deciding that the post is not a carousel.
+			if result := h.finalizeCarousel(url, nativeItems); len(result.MediaItems) > 1 {
+				elapsed := time.Since(startTime).Seconds()
+				logger.Log.Info().Int("count", len(result.MediaItems)).Msg("native scraper carousel success")
+				h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via Scraper", len(result.MediaItems), elapsed))
+				return result, nil
+			}
 		}
 	}
 
 	// ESTRATÉGIA 2: yt-dlp (fallback robusto)
+	var extractorErr error
 	if h.youtube != nil {
-		if videoInfos, err := h.youtube.GetPlaylistInfo(context.Background(), url); err == nil && len(videoInfos) > 0 {
+		var videoInfos []youtube.VideoInfo
+		if browser != "" {
+			videoInfos, extractorErr = h.youtube.GetPlaylistInfoWithCookies(h.ctx, url, browser)
+		} else {
+			videoInfos, extractorErr = h.youtube.GetPlaylistInfo(h.ctx, url)
+		}
+		if extractorErr == nil && len(videoInfos) > 0 {
 			for _, info := range videoInfos {
 				itemUrl := info.URL
 				if itemUrl == "" && len(info.Formats) > 0 {
@@ -179,10 +217,11 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 				}
 
 				items = append(items, MediaItemDTO{
-					URL:    itemUrl,
-					Type:   tipo,
-					Width:  width,
-					Height: height,
+					URL:           itemUrl,
+					Type:          tipo,
+					Width:         width,
+					Height:        height,
+					CookieBrowser: info.CookieBrowser,
 				})
 			}
 			if result := h.finalizeCarousel(url, items); len(result.MediaItems) > 0 {
@@ -192,6 +231,26 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 				return result, nil
 			}
 		}
+	}
+
+	if isStory {
+		if browser == "" {
+			return nil, apperr.NewWithCode(
+				op,
+				apperr.ErrAuthRequired,
+				"instagram_auth_required",
+				"O Instagram exige uma sessão autenticada para acessar Stories. Escolha um navegador em que você esteja conectado.",
+			)
+		}
+		if extractorErr != nil {
+			logger.Log.Warn().Err(extractorErr).Str("browser", browser).Msg("authenticated Instagram Story extraction failed")
+		}
+		return nil, apperr.NewWithCode(
+			op,
+			apperr.ErrAuthRequired,
+			"instagram_auth_failed",
+			"Não foi possível ler uma sessão válida do Instagram no navegador selecionado. Confirme o login, feche o navegador temporariamente e tente novamente.",
+		)
 	}
 
 	// The native scraper may still have a valid image for a genuinely single
