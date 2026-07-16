@@ -102,6 +102,7 @@ Section
     ; Estes arquivos devem estar presentes em build/sidecar/windows/ antes do build
     File "..\..\sidecar\windows\yt-dlp.exe"
     File "..\..\sidecar\windows\ffmpeg.exe"
+    File "..\..\sidecar\windows\ffprobe.exe"
     
     ; Volta para o diretório principal
     SetOutPath $INSTDIR

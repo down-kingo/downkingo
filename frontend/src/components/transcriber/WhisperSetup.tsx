@@ -88,8 +88,11 @@ const MODEL_META: Record<
   tiny: { icon: IconBolt, color: "text-emerald-500" },
   base: { icon: IconBolt, color: "text-blue-500", recommended: true },
   small: { icon: IconBrain, color: "text-purple-500" },
+  "small-q5_1": { icon: IconBrain, color: "text-purple-500" },
   medium: { icon: IconBrain, color: "text-orange-500" },
+  "medium-q5_0": { icon: IconBrain, color: "text-orange-500" },
   "large-v3-turbo": { icon: IconBrain, color: "text-red-500" },
+  "large-v3-turbo-q5_0": { icon: IconBrain, color: "text-red-500" },
 };
 
 // ── Step 1: instalar binário ──────────────────────────────────────

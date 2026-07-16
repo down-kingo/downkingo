@@ -29,6 +29,7 @@ interface SettingsState {
   theme: Theme;
   layout: AppLayout;
   primaryColor: AppColor;
+  showDonationBanners: boolean;
 
   language: Language;
 
@@ -46,6 +47,7 @@ interface SettingsState {
   videoCompatibility: VideoCompatibility;
   useAria2c: boolean;
   aria2cConnections: number; // Número de conexões simultâneas (padrão 16)
+  concurrentFragments: number; // Fragmentos DASH/HLS simultâneos (padrão 8)
 
   // Image Options
   imageFormat: ImageFormat;
@@ -89,6 +91,7 @@ export const useSettingsStore = create<SettingsState>()(
       theme: "light",
       layout: "sidebar",
       primaryColor: "red",
+      showDonationBanners: true,
       language: "en-US", // English as default
 
       shortcuts: {
@@ -109,6 +112,7 @@ export const useSettingsStore = create<SettingsState>()(
       videoCompatibility: "universal",
       useAria2c: false,
       aria2cConnections: 16, // Padrão: 16 conexões simultâneas
+      concurrentFragments: 8,
 
       imageFormat: "original",
       imageQuality: 100,

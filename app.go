@@ -14,6 +14,7 @@ import (
 	"kingo/internal/images"
 	"kingo/internal/launcher"
 	"kingo/internal/logger"
+	"kingo/internal/pot"
 	"kingo/internal/roadmap"
 	"kingo/internal/storage"
 	"kingo/internal/telemetry"
@@ -54,6 +55,7 @@ type App struct {
 	cfg          *config.Config
 
 	launcher         *launcher.Launcher
+	potProvider      *pot.Manager
 	youtube          *youtube.Client
 	downloadManager  *downloader.Manager
 	updater          *updater.Updater
@@ -162,10 +164,44 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 	// Initialize internal services
 	a.launcher = launcher.NewLauncher(paths.Bin)
 	a.launcher.SetContext(ctx)
+	a.launcher.SetSearchDirs(paths.BinarySearchDirs()...)
+	a.potProvider = pot.NewManager(ctx, paths.POTProviderPath(), paths.POTPluginPath(), paths.POTCacheDir())
+	a.potProvider.SetLogCallback(a.consoleLog)
+
+	a.whisperClient = whisper.NewClient(a.paths.WhisperDir(), a.paths.FFmpegPath())
+	a.whisperClient.SetContext(ctx)
 
 	a.youtube = youtube.NewClient(paths.YtDlpPath(), paths.FFmpegPath(), paths.Downloads)
 	a.youtube.SetContext(ctx)
+	a.youtube.SetOptionsProvider(a.potProvider)
 	a.youtube.SetAria2Path(paths.Aria2cPath())
+	a.youtube.SetSubtitleTranscriber(func(jobCtx context.Context, mediaPath, model, language string) ([]youtube.SubtitleCue, error) {
+		if model == "" {
+			models, err := a.whisperClient.ListModels()
+			if err != nil {
+				return nil, err
+			}
+			if len(models) == 0 {
+				return nil, fmt.Errorf("nenhum modelo Whisper está instalado; instale um modelo na aba Transcritor")
+			}
+			model = models[0].Name
+			for _, installed := range models {
+				if installed.Name == "base" {
+					model = installed.Name
+					break
+				}
+			}
+		}
+		result, err := a.whisperClient.TranscribeFileContext(jobCtx, mediaPath, model, language, "srt", false)
+		if err != nil {
+			return nil, err
+		}
+		cues := make([]youtube.SubtitleCue, 0, len(result.Segments))
+		for _, segment := range result.Segments {
+			cues = append(cues, youtube.SubtitleCue{Start: segment.Start, End: segment.End, Text: segment.Text})
+		}
+		return cues, nil
+	})
 
 	a.downloadManager = downloader.NewManager(a.downloadRepo, a.youtube, 3)
 	a.downloadManager.SetContext(ctx)
@@ -197,12 +233,9 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 		}
 	}
 
-	// Emit app:ready event to frontend with setup status
-	needsSetup := a.NeedsDependencies()
-	application.Get().Event.Emit("app:ready", map[string]interface{}{
-		"needsSetup": needsSetup,
-	})
-	logger.Log.Info().Bool("needsSetup", needsSetup).Msg("app:ready event emitted")
+	// The frontend evaluates only dependencies required by enabled modules.
+	application.Get().Event.Emit("app:ready", nil)
+	logger.Log.Info().Msg("app:ready event emitted")
 
 	return nil
 }
@@ -235,7 +268,6 @@ func (a *App) initializeHandlers(ctx context.Context) {
 	a.converterHandler.SetContext(ctx)
 	a.converterHandler.SetConsoleEmitter(a.consoleLog)
 
-	a.whisperClient = whisper.NewClient(a.paths.WhisperDir(), a.paths.FFmpegPath())
 	a.transcriberHandler = handlers.NewTranscriberHandler(a.paths, a.whisperClient)
 	a.transcriberHandler.SetContext(ctx)
 	a.transcriberHandler.SetConsoleEmitter(a.consoleLog)
@@ -243,17 +275,19 @@ func (a *App) initializeHandlers(ctx context.Context) {
 
 // consoleLog emits a user-friendly message to the frontend console.
 func (a *App) consoleLog(message string) {
-	application.Get().Event.Emit(events.ConsoleLog, message)
+	if app := application.Get(); app != nil {
+		app.Event.Emit(events.ConsoleLog, message)
+	}
 }
 
 // startProxyServer starts a local HTTP proxy server for streaming video to the frontend trimmer.
 // It proxies the direct stream URL (from yt-dlp) to avoid CORS/Referer issues in WebView.
-func (a *App) startProxyServer() {
+func (a *App) startProxyServer() error {
 	a.proxyMu.Lock()
 	defer a.proxyMu.Unlock()
 
 	if a.proxyServer != nil {
-		return // Already running
+		return nil // Already running
 	}
 
 	mux := http.NewServeMux()
@@ -298,14 +332,16 @@ func (a *App) startProxyServer() {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		w.WriteHeader(resp.StatusCode)
-		io.Copy(w, resp.Body)
+		if _, err := io.Copy(w, resp.Body); err != nil && r.Context().Err() == nil {
+			logger.Log.Debug().Err(err).Msg("stream proxy copy interrupted")
+		}
 	})
 
 	// Find available port
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to start proxy server")
-		return
+		return err
 	}
 
 	a.proxyPort = listener.Addr().(*net.TCPAddr).Port
@@ -318,6 +354,7 @@ func (a *App) startProxyServer() {
 	}()
 
 	logger.Log.Info().Int("port", a.proxyPort).Msg("stream proxy server started")
+	return nil
 }
 
 // GetStreamURL extracts the stream URL and returns a local proxy URL for the frontend.
@@ -329,7 +366,9 @@ func (a *App) GetStreamURL(url string, format string) (string, error) {
 	}
 
 	// Start proxy server if not running
-	a.startProxyServer()
+	if err := a.startProxyServer(); err != nil {
+		return "", fmt.Errorf("start stream proxy: %w", err)
+	}
 
 	// Store the stream URL for the proxy to use
 	a.proxyMu.Lock()
@@ -349,7 +388,9 @@ func (a *App) SetStreamURL(directURL string) (string, error) {
 	}
 
 	// Start proxy server if not running
-	a.startProxyServer()
+	if err := a.startProxyServer(); err != nil {
+		return "", fmt.Errorf("start stream proxy: %w", err)
+	}
 
 	// Store the stream URL for the proxy to use
 	a.proxyMu.Lock()
@@ -363,6 +404,16 @@ func (a *App) SetStreamURL(directURL string) (string, error) {
 // GetVideoInfo delegates to videoHandler
 func (a *App) GetVideoInfo(url string) (*youtube.VideoInfo, error) {
 	return a.videoHandler.GetVideoInfo(url)
+}
+
+// GetVideoInfoWithCookies retries extraction with a browser session explicitly
+// chosen by the user. Cookie contents are handled only by yt-dlp.
+func (a *App) GetVideoInfoWithCookies(url string, browser string) (*youtube.VideoInfo, error) {
+	return a.videoHandler.GetVideoInfoWithCookies(url, browser)
+}
+
+func (a *App) GetVideoSubtitles(url string, language string) (*youtube.SubtitleResult, error) {
+	return a.videoHandler.GetVideoSubtitles(url, language)
 }
 
 func (a *App) UpdateYtDlp(channel string) (string, error) {
@@ -398,7 +449,11 @@ func (a *App) CancelDownload(id string) error {
 }
 
 func (a *App) OpenUrl(url string) {
-	application.Get().Browser.OpenURL(url)
+	if app := application.Get(); app != nil {
+		if err := app.Browser.OpenURL(url); err != nil {
+			logger.Log.Warn().Err(err).Str("url", url).Msg("failed to open URL")
+		}
+	}
 }
 
 // SetClipboardMonitor enables or disables the clipboard monitoring
@@ -413,7 +468,9 @@ func (a *App) SetClipboardMonitor(enabled bool) {
 		a.clipboardMonitor.Stop()
 	}
 	// Persist Config
-	a.cfg.ClipboardMonitorEnabled = enabled
+	a.cfg.Update(func(cfg *config.Config) {
+		cfg.ClipboardMonitorEnabled = enabled
+	})
 	if err := a.cfg.Save(); err != nil {
 		logger.Log.Error().Err(err).Msg("failed to save config in SetClipboardMonitor")
 	}
@@ -438,6 +495,15 @@ func (a *App) DownloadImage(url string, filename string) (string, error) {
 	}
 	imgCfg := a.cfg.GetImageConfig()
 	return a.mediaHandler.DownloadImage(url, filename, imagesDir, a.paths.FFmpegPath(), a.paths.AvifencPath(), imgCfg.Format, imgCfg.Quality)
+}
+
+// DownloadImageAdvanced downloads an image with per-download conversion and scaling.
+func (a *App) DownloadImageAdvanced(url, filename, format string, quality, scalePercent int) (string, error) {
+	imagesDir := a.paths.Images
+	if a.cfg.ImageDownloadPath != "" {
+		imagesDir = a.cfg.ImageDownloadPath
+	}
+	return a.mediaHandler.DownloadImageAdvanced(url, filename, imagesDir, a.paths.FFmpegPath(), a.paths.AvifencPath(), format, quality, scalePercent)
 }
 
 func (a *App) GetSettings() config.Config {
@@ -477,17 +543,6 @@ func (a *App) CheckDependencies() []launcher.DependencyStatus {
 		return nil
 	}
 	return a.systemHandler.CheckDependencies()
-}
-
-func (a *App) NeedsDependencies() bool {
-	if a.systemHandler == nil {
-		return true
-	}
-	return a.systemHandler.NeedsDependencies()
-}
-
-func (a *App) DownloadDependencies() error {
-	return a.systemHandler.DownloadDependencies()
 }
 
 func (a *App) DownloadSelectedDependencies(names []string) error {
@@ -641,6 +696,11 @@ func (a *App) ServiceShutdown() error {
 	// Stop proxy server
 	if a.proxyServer != nil {
 		a.proxyServer.Close()
+	}
+
+	// Stop the local YouTube attestation provider.
+	if a.potProvider != nil {
+		a.potProvider.Stop()
 	}
 
 	// Close database connection

@@ -249,25 +249,25 @@ func TestResolveStatus(t *testing.T) {
 	tests := []struct {
 		name          string
 		projectStatus string
-		issueState    string
 		expected      Status
 	}{
-		{"closed overrides in progress", "Em Produção", "CLOSED", StatusShipped},
-		{"closed without project status", "", "closed", StatusShipped},
-		{"open uses project status", "Em Pauta", "OPEN", StatusPlanned},
-		{"unknown defaults to idea", "Unknown", "OPEN", StatusIdeia},
+		{"production follows project status", "Em Produção", StatusInProgress},
+		{"missing project status defaults to idea", "", StatusIdeia},
+		{"planned follows project status", "Em Pauta", StatusPlanned},
+		{"normalizes whitespace and case", "  NO AR  ", StatusShipped},
+		{"unknown defaults to idea", "Unknown", StatusIdeia},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := resolveStatus(tt.projectStatus, tt.issueState); got != tt.expected {
-				t.Errorf("resolveStatus(%q, %q) = %q, want %q", tt.projectStatus, tt.issueState, got, tt.expected)
+			if got := resolveStatus(tt.projectStatus); got != tt.expected {
+				t.Errorf("resolveStatus(%q) = %q, want %q", tt.projectStatus, got, tt.expected)
 			}
 		})
 	}
 }
 
-func TestCDNItemToRoadmapItemClosedOverridesLegacyStatus(t *testing.T) {
+func TestCDNItemToRoadmapItemPreservesProjectStatus(t *testing.T) {
 	t.Parallel()
 
 	closedAt := "2026-02-14T06:00:17Z"
@@ -279,11 +279,11 @@ func TestCDNItemToRoadmapItemClosedOverridesLegacyStatus(t *testing.T) {
 	}
 	item := cdnItem.ToRoadmapItem()
 
-	if item.Status != StatusShipped {
-		t.Fatalf("closed CDN item status = %q, want %q", item.Status, StatusShipped)
+	if item.Status != StatusInProgress {
+		t.Fatalf("CDN item status = %q, want %q", item.Status, StatusInProgress)
 	}
-	if item.ShippedAt != closedAt {
-		t.Fatalf("shipped_at = %q, want %q", item.ShippedAt, closedAt)
+	if item.ShippedAt != "" {
+		t.Fatalf("non-shipped CDN item should not expose shipped_at, got %q", item.ShippedAt)
 	}
 }
 

@@ -5,10 +5,10 @@ import {
   IconChevronUp,
   IconChevronDown,
   IconTrash,
+  IconCopy,
   IconMaximize,
   IconDownload,
   IconFileMusic,
-  IconMovie,
   IconPhoto,
   IconCheck,
   IconAlertTriangle,
@@ -48,9 +48,20 @@ interface ParsedLog {
   size?: { current: string; total: string };
   raw: string;
   timestamp: Date;
+  jobId?: string;
+  phase?: string;
 }
 
-type LogData = { id: string; line: string } | string;
+type DownloadLogData = { id: string; line: string };
+type DownloadProgressData = {
+  id: string;
+  status: string;
+  progress: number;
+  speed?: string;
+  eta?: string;
+  title?: string;
+  error?: string;
+};
 
 const MAX_LOGS = 200;
 
@@ -95,10 +106,10 @@ const useTerminalLogs = () => {
   const [logs, setLogs] = useState<ParsedLog[]>([]);
   const logIdRef = useRef(0);
 
-  const parseLog = (line: string): ParsedLog => {
+  const parseLog = (line: string, jobId?: string): ParsedLog => {
     const id = logIdRef.current++;
     const timestamp = new Date();
-    const base = { id, raw: line, timestamp };
+    const base = { id, raw: line, timestamp, jobId };
 
     // Teste padrões em ordem de especificidade
 
@@ -113,6 +124,7 @@ const useTerminalLogs = () => {
         percent: parseInt(aria2Match[3]),
         speed: aria2Match[4],
         eta: aria2Match[5] || "",
+        phase: "transfer",
       };
     }
 
@@ -122,6 +134,7 @@ const useTerminalLogs = () => {
         ...base,
         type: "success",
         message: "✅ Download concluído com sucesso!",
+        phase: "transfer",
       };
     }
 
@@ -135,6 +148,7 @@ const useTerminalLogs = () => {
         percent: parseFloat(ytdlpMatch[1]),
         speed: ytdlpMatch[2],
         eta: ytdlpMatch[3],
+        phase: "transfer",
       };
     }
 
@@ -159,7 +173,12 @@ const useTerminalLogs = () => {
     // Merger
     const mergerMatch = line.match(PATTERNS.merger);
     if (mergerMatch) {
-      return { ...base, type: "merge", message: "Mesclando áudio e vídeo..." };
+      return {
+        ...base,
+        type: "merge",
+        message: "Mesclando áudio e vídeo...",
+        phase: "merge",
+      };
     }
 
     // Thumbnail
@@ -184,7 +203,7 @@ const useTerminalLogs = () => {
         type: "warning",
         message: line.replace(
           /Deleting original file.+/,
-          "Limpando arquivos temporários..."
+          "Limpando arquivos temporários...",
         ),
       };
     }
@@ -204,19 +223,94 @@ const useTerminalLogs = () => {
     return { ...base, type: "system", message: line };
   };
 
+  const parseProgress = (data: DownloadProgressData): ParsedLog => {
+    const id = logIdRef.current++;
+    const timestamp = new Date();
+    const percent = Math.min(100, Math.max(0, Number(data.progress) || 0));
+    const title = data.title?.trim();
+    const raw = JSON.stringify(data);
+    const base = { id, raw, timestamp, jobId: data.id };
+
+    switch (data.status) {
+      case "downloading":
+        return {
+          ...base,
+          type: "download",
+          message: title ? `Baixando: ${title}` : "Preparando download...",
+          percent,
+          speed: data.speed,
+          eta: data.eta,
+          phase: "transfer",
+        };
+      case "merging":
+        return {
+          ...base,
+          type: "merge",
+          message: "Mesclando e finalizando a mídia...",
+          percent,
+          phase: "merge",
+        };
+      case "completed":
+        return {
+          ...base,
+          type: "success",
+          message: title
+            ? `Download concluído: ${title}`
+            : "Download concluído.",
+          percent: 100,
+          phase: "completed",
+        };
+      case "failed":
+        return {
+          ...base,
+          type: "error",
+          message: data.error
+            ? `Download falhou: ${data.error}`
+            : title
+              ? `Download falhou: ${title}`
+              : "Download falhou.",
+          phase: "failed",
+        };
+      case "cancelled":
+        return {
+          ...base,
+          type: "warning",
+          message: title
+            ? `Download cancelado: ${title}`
+            : "Download cancelado.",
+          phase: "cancelled",
+        };
+      default:
+        return {
+          ...base,
+          type: "info",
+          message: `Estado do download: ${data.status}`,
+          percent,
+          phase: data.status,
+        };
+    }
+  };
+
   useEffect(() => {
-    const handler = (data: LogData) => {
-      const line = typeof data === "string" ? data : data?.line;
-      if (!line) return;
-
-      const parsed = parseLog(line);
-
+    const appendLog = (parsed: ParsedLog) => {
       setLogs((prev) => {
-        // Agrupa logs de progresso consecutivos (evita spam)
-        if (parsed.type === "progress" && prev.length > 0) {
+        // Cada download mantém uma linha viva por fase. Isso preserva downloads
+        // concorrentes e evita centenas de linhas iguais de progresso.
+        if (parsed.jobId && parsed.phase) {
+          for (let index = prev.length - 1; index >= 0; index -= 1) {
+            const existing = prev[index];
+            if (
+              existing.jobId === parsed.jobId &&
+              existing.phase === parsed.phase
+            ) {
+              const updated = [...prev];
+              updated[index] = parsed;
+              return updated;
+            }
+          }
+        } else if (parsed.type === "progress" && prev.length > 0) {
           const lastLog = prev[prev.length - 1];
-          if (lastLog.type === "progress") {
-            // Substitui o último log de progresso ao invés de adicionar
+          if (lastLog.type === "progress" && !lastLog.jobId) {
             return [...prev.slice(0, -1), parsed];
           }
         }
@@ -226,12 +320,25 @@ const useTerminalLogs = () => {
       });
     };
 
-    const unsub1 = tryEventsOn("download:log", handler);
-    const unsub2 = tryEventsOn("console:log", handler);
+    const logHandler = (data: DownloadLogData | string) => {
+      const line = typeof data === "string" ? data : data?.line;
+      if (!line) return;
+      appendLog(parseLog(line, typeof data === "string" ? undefined : data.id));
+    };
+
+    const progressHandler = (data: DownloadProgressData) => {
+      if (!data?.id || !data.status) return;
+      appendLog(parseProgress(data));
+    };
+
+    const unsub1 = tryEventsOn("download:log", logHandler);
+    const unsub2 = tryEventsOn("console:log", logHandler);
+    const unsub3 = tryEventsOn("download:progress", progressHandler);
 
     return () => {
       unsub1?.();
       unsub2?.();
+      unsub3?.();
     };
   }, []);
 
@@ -240,7 +347,30 @@ const useTerminalLogs = () => {
     setLogs([]);
   };
 
-  return { logs, clearLogs };
+  const copyLogs = async () => {
+    const report = logs
+      .map((log) => {
+        const job = log.jobId ? ` [job:${log.jobId.slice(0, 8)}]` : "";
+        const progress =
+          log.percent === undefined
+            ? ""
+            : ` (${log.percent}%${log.speed ? `, ${log.speed}` : ""}${log.eta ? `, ETA ${log.eta}` : ""})`;
+        return `[${log.timestamp.toISOString()}]${job} [${log.type}] ${log.message}${progress}`;
+      })
+      .join("\n");
+    if (report) {
+      try {
+        await navigator.clipboard.writeText(report);
+      } catch (error) {
+        console.warn(
+          "Não foi possível copiar o diagnóstico do console:",
+          error,
+        );
+      }
+    }
+  };
+
+  return { logs, clearLogs, copyLogs };
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -287,7 +417,7 @@ const LogIcon = memo(({ type }: { type: LogType }) => {
       <IconFileMusic size={size} className={`${iconClass} text-violet-400`} />
     ),
     system: (
-      <IconPlayerPlay size={size} className={`${iconClass} text-surface-500`} />
+      <IconPlayerPlay size={size} className={`${iconClass} text-zinc-400`} />
     ),
   };
 
@@ -298,7 +428,7 @@ LogIcon.displayName = "LogIcon";
 
 // Mini barra de progresso inline
 const MiniProgressBar = memo(({ percent }: { percent: number }) => (
-  <div className="w-20 h-1.5 bg-surface-800 rounded-full overflow-hidden">
+  <div className="w-20 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
     <motion.div
       className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500"
       initial={{ width: 0 }}
@@ -326,7 +456,7 @@ const LogLine = memo(({ log }: { log: ParsedLog }) => {
   };
 
   const textColors: Record<LogType, string> = {
-    info: "text-surface-400",
+    info: "text-zinc-400",
     progress: "text-cyan-300",
     success: "text-emerald-400",
     warning: "text-amber-400",
@@ -335,7 +465,7 @@ const LogLine = memo(({ log }: { log: ParsedLog }) => {
     download: "text-cyan-300",
     thumbnail: "text-pink-300",
     audio: "text-violet-300",
-    system: "text-surface-500",
+    system: "text-zinc-400",
   };
 
   return (
@@ -344,41 +474,45 @@ const LogLine = memo(({ log }: { log: ParsedLog }) => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
       className={`
-        flex items-center gap-3 px-4 py-1.5
+        flex items-start gap-3 px-4 py-1.5
         ${bgColors[log.type]}
-        hover:bg-surface-800/30 transition-colors rounded-sm
+        hover:bg-zinc-800/50 transition-colors rounded-sm
       `}
     >
       {/* Ícone */}
-      <LogIcon type={log.type} />
+      <span className="mt-0.5">
+        <LogIcon type={log.type} />
+      </span>
 
       {/* Mensagem */}
       <span
-        className={`flex-1 text-xs font-mono truncate ${textColors[log.type]}`}
+        title={log.raw}
+        className={`min-w-0 flex-1 whitespace-pre-wrap break-words text-xs font-mono leading-relaxed ${textColors[log.type]}`}
       >
         {log.message}
       </span>
 
       {/* Info extra para downloads */}
-      {log.type === "progress" && log.percent !== undefined && (
-        <div className="flex items-center gap-3 text-[10px] font-mono">
-          <MiniProgressBar percent={log.percent} />
-          <span className="text-emerald-400 w-10 text-right">
-            {log.percent}%
-          </span>
-          {log.speed && (
-            <span className="text-cyan-400 w-16 text-right">{log.speed}</span>
-          )}
-          {log.eta && (
-            <span className="text-amber-400 w-14 text-right">
-              ETA {log.eta}
+      {(log.type === "progress" || log.type === "download") &&
+        log.percent !== undefined && (
+          <div className="flex shrink-0 items-center gap-3 text-[10px] font-mono">
+            <MiniProgressBar percent={log.percent} />
+            <span className="text-emerald-400 w-10 text-right">
+              {log.percent}%
             </span>
-          )}
-        </div>
-      )}
+            {log.speed && (
+              <span className="text-cyan-400 w-16 text-right">{log.speed}</span>
+            )}
+            {log.eta && (
+              <span className="text-amber-400 w-14 text-right">
+                ETA {log.eta}
+              </span>
+            )}
+          </div>
+        )}
 
       {/* Timestamp */}
-      <span className="text-[9px] text-surface-600 tabular-nums w-14 text-right shrink-0">
+      <span className="text-[9px] text-zinc-400 tabular-nums w-14 text-right shrink-0">
         {log.timestamp.toLocaleTimeString("pt-BR", {
           hour: "2-digit",
           minute: "2-digit",
@@ -402,15 +536,15 @@ const EmptyState = () => {
         className="relative"
       >
         <div className="absolute inset-0 bg-primary-500/20 rounded-full blur-xl" />
-        <div className="relative p-4 bg-surface-800 rounded-2xl border border-surface-700">
-          <IconTerminal size={28} className="text-surface-500" />
+        <div className="relative p-4 bg-zinc-800 rounded-2xl border border-zinc-700">
+          <IconTerminal size={28} className="text-zinc-400" />
         </div>
       </motion.div>
       <div className="text-center">
-        <p className="text-sm font-medium text-surface-400">
+        <p className="text-sm font-medium text-zinc-300">
           {t("terminal.ready")}
         </p>
-        <p className="text-xs text-surface-600 mt-1">Os logs aparecerão aqui</p>
+        <p className="text-xs text-zinc-400 mt-1">Os logs aparecerão aqui</p>
       </div>
     </div>
   );
@@ -419,26 +553,26 @@ const EmptyState = () => {
 // Controles do terminal
 const TerminalControls = ({
   isOpen,
-  isMaximized,
   logCount,
   onToggleMax,
   onClose,
   onClear,
+  onCopy,
 }: {
   isOpen: boolean;
-  isMaximized: boolean;
   logCount: number;
   onToggleMax: () => void;
   onClose: () => void;
   onClear: () => void;
+  onCopy: () => void;
 }) => {
   const { t } = useTranslation("common");
 
   if (!isOpen) {
     return (
-      <div className="flex items-center gap-2 text-surface-500">
+      <div className="flex items-center gap-2 text-zinc-400">
         {logCount > 0 && (
-          <span className="text-[10px] font-mono bg-surface-800 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-mono bg-zinc-800 px-2 py-0.5 rounded-full">
             {logCount}
           </span>
         )}
@@ -452,10 +586,21 @@ const TerminalControls = ({
       <button
         onClick={(e) => {
           e.stopPropagation();
+          onCopy();
+        }}
+        disabled={logCount === 0}
+        title={t("terminal.copy")}
+        className="p-1.5 rounded-md text-zinc-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+      >
+        <IconCopy size={14} />
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
           onClear();
         }}
         title={t("terminal.clear")}
-        className="p-1.5 rounded-md text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+        className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
       >
         <IconTrash size={14} />
       </button>
@@ -465,7 +610,7 @@ const TerminalControls = ({
           onToggleMax();
         }}
         title={t("terminal.maximize")}
-        className="p-1.5 rounded-md text-surface-500 hover:text-surface-300 hover:bg-surface-700 transition-colors"
+        className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
       >
         <IconMaximize size={14} />
       </button>
@@ -475,7 +620,7 @@ const TerminalControls = ({
           onClose();
         }}
         title={t("terminal.minimize")}
-        className="p-1.5 rounded-md text-surface-500 hover:text-surface-300 hover:bg-surface-700 transition-colors"
+        className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
       >
         <IconChevronDown size={14} />
       </button>
@@ -495,7 +640,7 @@ interface TerminalProps {
 
 export default function Terminal({ layout = "sidebar" }: TerminalProps) {
   const { t } = useTranslation("common");
-  const { logs, clearLogs } = useTerminalLogs();
+  const { logs, clearLogs, copyLogs } = useTerminalLogs();
   const { consoleEnabled } = useSettingsStore();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -523,7 +668,9 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
         l.type === "progress" ||
         l.type === "download" ||
         l.type === "merge" ||
-        l.type === "success"
+        l.type === "success" ||
+        l.type === "warning" ||
+        l.type === "error",
     );
     return significantLogs[significantLogs.length - 1];
   }, [logs]);
@@ -544,10 +691,10 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
         fixed bottom-0 right-0 z-40
         left-0 ${leftOffsetClass}
         bg-[#0a0a0b] backdrop-blur-sm
-        border-t border-surface-800
+        border-t border-zinc-800
         ${heightClass}
         transition-[height] duration-300 ease-out
-        ${!isOpen ? "cursor-pointer hover:bg-surface-900" : ""}
+        ${!isOpen ? "cursor-pointer hover:bg-zinc-900" : ""}
       `}
       onClick={() => !isOpen && setIsOpen(true)}
     >
@@ -556,7 +703,7 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
         <div
           className={`
             h-10 shrink-0 w-full flex items-center justify-between px-4
-            bg-[#111113] border-b border-surface-800
+            bg-[#111113] border-b border-zinc-800
             hover:bg-[#18181b] cursor-pointer
             transition-colors select-none
           `}
@@ -580,17 +727,21 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
                   <span className="absolute w-2 h-2 bg-purple-500 rounded-full animate-ping opacity-75" />
                   <span className="relative w-2 h-2 bg-purple-400 rounded-full" />
                 </>
+              ) : currentStatus?.type === "error" ? (
+                <span className="w-2 h-2 bg-red-400 rounded-full" />
+              ) : currentStatus?.type === "warning" ? (
+                <span className="w-2 h-2 bg-amber-400 rounded-full" />
               ) : logs.length > 0 ? (
                 <span className="w-2 h-2 bg-emerald-400 rounded-full" />
               ) : (
-                <span className="w-2 h-2 bg-surface-600 rounded-full" />
+                <span className="w-2 h-2 bg-zinc-600 rounded-full" />
               )}
             </div>
 
             {/* Título */}
             <div className="flex items-center gap-2">
-              <IconTerminal size={14} className="text-surface-500" />
-              <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">
+              <IconTerminal size={14} className="text-zinc-400" />
+              <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
                 {t("nav.console")}
               </span>
             </div>
@@ -600,7 +751,7 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="hidden sm:flex items-center gap-2 text-xs font-mono text-surface-500 truncate max-w-[300px]"
+                className="hidden sm:flex items-center gap-2 text-xs font-mono text-zinc-400 truncate max-w-[300px]"
               >
                 <LogIcon type={currentStatus.type} />
                 <span className="truncate">{currentStatus.message}</span>
@@ -616,11 +767,11 @@ export default function Terminal({ layout = "sidebar" }: TerminalProps) {
           {/* Controles */}
           <TerminalControls
             isOpen={isOpen}
-            isMaximized={isMaximized}
             logCount={logs.length}
             onToggleMax={() => setIsMaximized(!isMaximized)}
             onClose={() => setIsOpen(false)}
             onClear={clearLogs}
+            onCopy={() => void copyLogs()}
           />
         </div>
 

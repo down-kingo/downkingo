@@ -63,6 +63,10 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Test Roadmap Status Mapping
+        working-directory: script-source
+        run: node --test .github/scripts/generate_roadmap.test.js
+
       # ============================================================
       # Step 1: Execute Roadmap Generator (Node.js)
       # ============================================================

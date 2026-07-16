@@ -5,6 +5,9 @@ interface DependencyStatus {
   name: string;
   installed: boolean;
   size: number;
+  version?: string;
+  license?: string;
+  projectUrl?: string;
 }
 
 interface LauncherProgress {
@@ -18,13 +21,11 @@ interface LauncherProgress {
 interface LauncherState {
   dependencies: DependencyStatus[];
   progress: Record<string, LauncherProgress>;
-  isComplete: boolean;
   error: string | null;
 
   // Actions
   setDependencies: (deps: DependencyStatus[]) => void;
   updateProgress: (progress: LauncherProgress) => void;
-  setComplete: () => void;
   setError: (error: string) => void;
   reset: () => void;
 }
@@ -32,7 +33,6 @@ interface LauncherState {
 export const useLauncherStore = create<LauncherState>((set) => ({
   dependencies: [],
   progress: {},
-  isComplete: false,
   error: null,
 
   setDependencies: (deps) => set({ dependencies: deps }),
@@ -42,10 +42,8 @@ export const useLauncherStore = create<LauncherState>((set) => ({
       progress: { ...state.progress, [progress.name]: progress },
     })),
 
-  setComplete: () => set({ isComplete: true }),
-
   setError: (error) => set({ error }),
 
   reset: () =>
-    set({ dependencies: [], progress: {}, isComplete: false, error: null }),
+    set({ dependencies: [], progress: {}, error: null }),
 }));

@@ -12,7 +12,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -107,13 +106,9 @@ var statusMapping = map[string]Status{
 	"completed":   StatusShipped,
 }
 
-// resolveStatus keeps the roadmap consistent with GitHub Issues. A closed
-// issue is always shipped, even if its Project v2 Status field was not moved.
-func resolveStatus(projectStatus, issueState string) Status {
-	if strings.EqualFold(issueState, "CLOSED") {
-		return StatusShipped
-	}
-
+// resolveStatus follows the GitHub Project v2 Status field, which is the
+// roadmap source of truth. Issue open/closed state is independent from it.
+func resolveStatus(projectStatus string) Status {
 	if status, ok := statusMapping[strings.ToLower(strings.TrimSpace(projectStatus))]; ok {
 		return status
 	}
@@ -567,7 +562,6 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 								title
 								body
 								url
-								state
 								closedAt
 								comments { totalCount }
 								reactionsUp: reactions(content: THUMBS_UP) { totalCount }
@@ -629,7 +623,6 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 								Title         string `json:"title"`
 								Body          string `json:"body"`
 								URL           string `json:"url"`
-								State         string `json:"state"`
 								ClosedAt      string `json:"closedAt"`
 								Comments      struct{ TotalCount int }
 								ReactionsUp   struct{ TotalCount int } `json:"reactionsUp"`
@@ -673,11 +666,16 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 		if node.FieldValueByName != nil {
 			projectStatus = node.FieldValueByName.Name
 		}
-		status := resolveStatus(projectStatus, content.State)
+		status := resolveStatus(projectStatus)
 
 		labels := make([]string, 0, len(content.Labels.Nodes))
 		for _, l := range content.Labels.Nodes {
 			labels = append(labels, l.Name)
+		}
+
+		shippedAt := ""
+		if status == StatusShipped {
+			shippedAt = parseDate(content.ClosedAt)
 		}
 
 		items = append(items, RoadmapItem{
@@ -694,7 +692,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 			Author:       content.Author.Login,
 			AuthorAvatar: content.Author.AvatarUrl,
 			CreatedAt:    parseDate(content.CreatedAt),
-			ShippedAt:    parseDate(content.ClosedAt),
+			ShippedAt:    shippedAt,
 		})
 	}
 
@@ -1035,17 +1033,6 @@ func parseDate(dateStr string) string {
 		return ""
 	}
 	return t.Format("2006-01-02")
-}
-
-func sortItems(items []RoadmapItem) {
-	sort.Slice(items, func(i, j int) bool {
-		// Shipped items go to bottom by ID
-		if items[i].Status == StatusShipped && items[j].Status == StatusShipped {
-			return items[i].ID > items[j].ID
-		}
-		// Others sorted by votes
-		return items[i].Votes > items[j].Votes
-	})
 }
 
 // itemsEqual compares two slices of RoadmapItems for equality

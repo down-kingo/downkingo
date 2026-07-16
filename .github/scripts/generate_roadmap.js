@@ -26,7 +26,6 @@ const QUERY = `
                 title
                 body
                 url
-                state
                 closedAt
                 comments { totalCount }
                 reactions(content: THUMBS_UP) { totalCount }
@@ -61,12 +60,10 @@ const STATUS_MAPPING = {
   completed: "shipped",
 };
 
-function resolveStatus(projectStatus, issueState) {
-  // A closed issue is delivered even if the Project v2 field was not moved yet.
-  // This keeps GitHub Issues and the public roadmap consistent.
-  if (issueState === "CLOSED") return "shipped";
-
-  const normalized = projectStatus?.toLowerCase() || "idea";
+function resolveStatus(projectStatus) {
+  // The Project v2 Status field is the roadmap source of truth. An issue can
+  // legitimately be closed while it remains in Bastidores or Em Produção.
+  const normalized = projectStatus?.trim().toLowerCase() || "idea";
   return STATUS_MAPPING[normalized] || "idea";
 }
 
@@ -227,7 +224,7 @@ async function main() {
     const c = node.content;
     if (!c || !c.number) continue;
 
-    const status = resolveStatus(node.fieldValueByName?.name, c.state);
+    const status = resolveStatus(node.fieldValueByName?.name);
 
     // Check Cache - now requires both title AND description translations
     const cached = translationCache[c.number];
@@ -271,7 +268,7 @@ async function main() {
       author: c.author?.login || "",
       author_avatar: c.author?.avatarUrl || "",
       created_at: c.createdAt,
-      shipped_at: c.state === "CLOSED" ? c.closedAt : null,
+      shipped_at: status === "shipped" ? c.closedAt : null,
       _needs_ai: needsAi,
     });
   }

@@ -95,7 +95,7 @@ func getTweetFromSyndication(tweetID string) (*TweetInfo, error) {
 		return nil, fmt.Errorf("syndication API returned status %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 5<<20))
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func getTweetFromHTML(tweetURL, tweetID string) (*TweetInfo, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Twitter returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("twitter returned status %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 10*1024*1024))

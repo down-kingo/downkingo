@@ -122,32 +122,40 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 	h.consoleLog("[Instagram] Buscando imagens do post...")
 	logger.Log.Info().Str("url", url).Msg("extracting instagram carousel")
 	var items []MediaItemDTO
+	var nativeItems []MediaItemDTO
 
 	// ESTRATÉGIA 1: Scraper Nativo
 	if info, err := instagram.GetPostInfo(url); err == nil && len(info.MediaItems) > 0 {
-		elapsed := time.Since(startTime).Seconds()
-		logger.Log.Info().Int("count", len(info.MediaItems)).Msg("native scraper success")
 		for _, item := range info.MediaItems {
 			u := item.DisplayURL
 			if u == "" {
 				u = item.URL
 			}
-			items = append(items, MediaItemDTO{
+			if u == "" {
+				continue
+			}
+			nativeItems = append(nativeItems, MediaItemDTO{
 				URL:    u,
 				Type:   item.Type,
 				Width:  item.Width,
 				Height: item.Height,
 			})
 		}
-		h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via Scraper", len(info.MediaItems), elapsed))
-		return h.finalizeCarousel(url, items), nil
+
+		// Multiple distinct items are enough to confirm a carousel. A single
+		// item may only be the OpenGraph cover, so continue to yt-dlp before
+		// deciding that the post is not a carousel.
+		if result := h.finalizeCarousel(url, nativeItems); len(result.MediaItems) > 1 {
+			elapsed := time.Since(startTime).Seconds()
+			logger.Log.Info().Int("count", len(result.MediaItems)).Msg("native scraper carousel success")
+			h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via Scraper", len(result.MediaItems), elapsed))
+			return result, nil
+		}
 	}
 
 	// ESTRATÉGIA 2: yt-dlp (fallback robusto)
 	if h.youtube != nil {
 		if videoInfos, err := h.youtube.GetPlaylistInfo(context.Background(), url); err == nil && len(videoInfos) > 0 {
-			elapsed := time.Since(startTime).Seconds()
-			logger.Log.Info().Int("count", len(videoInfos)).Msg("yt-dlp success")
 			for _, info := range videoInfos {
 				itemUrl := info.URL
 				if itemUrl == "" && len(info.Formats) > 0 {
@@ -156,11 +164,11 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 				if itemUrl == "" && strings.HasPrefix(info.Thumbnail, "http") {
 					itemUrl = info.Thumbnail
 				}
-
-				tipo := "image"
-				if info.Duration > 0 {
-					tipo = "video"
+				if itemUrl == "" {
+					continue
 				}
+
+				tipo := carouselMediaType(info, itemUrl)
 
 				width := info.Width
 				height := info.Height
@@ -177,14 +185,38 @@ func (h *MediaHandler) GetInstagramCarousel(url string) (*MediaInfo, error) {
 					Height: height,
 				})
 			}
-			h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via YT-DLP", len(videoInfos), elapsed))
-			return h.finalizeCarousel(url, items), nil
+			if result := h.finalizeCarousel(url, items); len(result.MediaItems) > 0 {
+				elapsed := time.Since(startTime).Seconds()
+				logger.Log.Info().Int("count", len(result.MediaItems)).Msg("yt-dlp success")
+				h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagens encontradas (%.1fs) via YT-DLP", len(result.MediaItems), elapsed))
+				return result, nil
+			}
 		}
+	}
+
+	// The native scraper may still have a valid image for a genuinely single
+	// post. Use it only after the carousel-aware strategy has been exhausted.
+	if result := h.finalizeCarousel(url, nativeItems); len(result.MediaItems) > 0 {
+		elapsed := time.Since(startTime).Seconds()
+		logger.Log.Info().Int("count", len(result.MediaItems)).Msg("native scraper single-image fallback")
+		h.consoleLog(fmt.Sprintf("[Instagram] ✓ %d imagem encontrada (%.1fs) via Scraper", len(result.MediaItems), elapsed))
+		return result, nil
 	}
 
 	elapsed := time.Since(startTime).Seconds()
 	h.consoleLog(fmt.Sprintf("[Instagram] ✗ Falha ao extrair imagens (%.1fs)", elapsed))
 	return nil, fmt.Errorf("falha ao extrair carrossel do Instagram")
+}
+
+func carouselMediaType(info youtube.VideoInfo, mediaURL string) string {
+	lowerMediaURL := strings.ToLower(mediaURL)
+	if info.Duration > 0 || len(info.Formats) > 0 ||
+		strings.Contains(lowerMediaURL, ".mp4") ||
+		strings.Contains(lowerMediaURL, ".webm") ||
+		strings.Contains(lowerMediaURL, ".mov") {
+		return "video"
+	}
+	return "image"
 }
 
 func (h *MediaHandler) finalizeCarousel(url string, items []MediaItemDTO) *MediaInfo {
@@ -365,6 +397,11 @@ func (h *MediaHandler) convertVideoInfoToImageInfo(originalURL string, videoInfo
 
 // DownloadImage downloads an image to the specified directory.
 func (h *MediaHandler) DownloadImage(url, filename, imagesDir, ffmpegPath, avifencPath, format string, quality int) (string, error) {
+	return h.DownloadImageAdvanced(url, filename, imagesDir, ffmpegPath, avifencPath, format, quality, 100)
+}
+
+// DownloadImageAdvanced downloads, converts and optionally resizes an image.
+func (h *MediaHandler) DownloadImageAdvanced(url, filename, imagesDir, ffmpegPath, avifencPath, format string, quality, scalePercent int) (string, error) {
 	startTime := time.Now()
 	h.consoleLog(fmt.Sprintf("[Download] Baixando imagem: %s", filename))
 
@@ -381,7 +418,7 @@ func (h *MediaHandler) DownloadImage(url, filename, imagesDir, ffmpegPath, avife
 		return "", err
 	}
 
-	finalPath, err := images.Convert(destPath, format, quality, ffmpegPath, avifencPath)
+	finalPath, err := images.Convert(destPath, format, quality, scalePercent, ffmpegPath, avifencPath)
 	if err != nil {
 		logger.Log.Error().Err(err).Msg("failed to convert image")
 		return destPath, nil

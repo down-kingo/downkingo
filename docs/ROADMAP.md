@@ -5,7 +5,7 @@
 
 ---
 
-## Status Atual (v3.0.0)
+## Status Atual (v3.1.0)
 
 O DownKingo v3 e uma reescrita completa sobre o Wails v3, com novas funcionalidades e melhorias significativas em relacao a v2.
 
@@ -65,6 +65,8 @@ O DownKingo v3 e uma reescrita completa sobre o Wails v3, com novas funcionalida
 - [ ] Plugin system para backends alternativos
 - [ ] Perfis de configuracao
 - [ ] Suporte a mais idiomas via contribuicao da comunidade
+- [ ] Recomendacoes afiliadas e patrocinio sem rastreamento de conteudo
+      ([especificacao futura](MONETIZACAO-FUTURA.md))
 
 ---
 
@@ -79,4 +81,4 @@ Suas sugestoes tambem podem ser enviadas diretamente pelo app!
 
 ---
 
-_Atualizado para v3.0.0_
+_Atualizado para v3.1.0_

@@ -3,6 +3,7 @@ package downloader
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -49,7 +50,6 @@ func TestManager_AddJob_CreatesDownload(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -92,6 +92,43 @@ func TestManager_AddJob_CreatesDownload(t *testing.T) {
 	}
 }
 
+func TestDiagnosticLabelCompactsAndLimitsUserText(t *testing.T) {
+	if got := diagnosticLabel("  linha 1\r\n linha 2\t "); got != "linha 1 linha 2" {
+		t.Fatalf("diagnosticLabel() = %q", got)
+	}
+	long := strings.Repeat("x", 600)
+	if got := diagnosticLabel(long); len(got) != 503 || !strings.HasSuffix(got, "…") {
+		t.Fatalf("long diagnostic length = %d", len(got))
+	}
+	if got := diagnosticLabel(strings.Repeat("ç", 600)); got != strings.Repeat("ç", 500)+"…" {
+		t.Fatal("diagnosticLabel split a UTF-8 title")
+	}
+}
+
+func TestTerminalProgressDiscardsBufferedUpdate(t *testing.T) {
+	m := &Manager{
+		jobs:            make(map[string]*Job),
+		pendingProgress: make(map[string]map[string]interface{}),
+		progressSignal:  make(chan struct{}, 1),
+	}
+
+	m.emitDetailedProgress("job-1", youtube.DownloadProgress{
+		Status:  "downloading",
+		Percent: 42,
+	})
+	if _, exists := m.pendingProgress["job-1"]; !exists {
+		t.Fatal("expected downloading update to be buffered")
+	}
+
+	m.emitDetailedProgress("job-1", youtube.DownloadProgress{
+		Status:  "completed",
+		Percent: 100,
+	})
+	if _, exists := m.pendingProgress["job-1"]; exists {
+		t.Fatal("terminal update left a stale progress event buffered")
+	}
+}
+
 func TestManager_AddJob_PreventsDuplicateURL(t *testing.T) {
 	repo := testRepo(t)
 	m := &Manager{
@@ -99,7 +136,6 @@ func TestManager_AddJob_PreventsDuplicateURL(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -131,7 +167,6 @@ func TestManager_AddJob_ConcurrentSafety(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -188,7 +223,6 @@ func TestManager_CancelJob_UpdatesStatus(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -215,7 +249,6 @@ func TestManager_CancelJob_CancelsContext(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -254,7 +287,6 @@ func TestManager_CancelJob_NonExistentJob(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -262,10 +294,9 @@ func TestManager_CancelJob_NonExistentJob(t *testing.T) {
 
 	// Should not panic, just update DB status (even if no record)
 	err := m.CancelJob("non-existent-id")
-	if err != nil {
-		// It's ok to get an error here since the ID doesn't exist in DB
-		// The important thing is no panic
-	}
+	// It is acceptable for the repository to report a missing ID; the contract
+	// under test is that cancellation remains safe.
+	_ = err
 }
 
 // =============================================================================
@@ -279,7 +310,6 @@ func TestManager_GetQueue(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -304,7 +334,6 @@ func TestManager_GetHistory_Empty(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -326,7 +355,6 @@ func TestManager_ClearHistory(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -389,7 +417,6 @@ func TestManager_CleanupJob(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
@@ -436,7 +463,6 @@ func TestManager_RestorePendingJobs(t *testing.T) {
 		repo:            repo,
 		maxConcurrent:   3,
 		queue:           make(chan *Job, 100),
-		activeSlots:     make(chan struct{}, 3),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),

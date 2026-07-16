@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,10 +11,16 @@ import {
   IconFileDescription,
   IconDatabase,
   IconExternalLink,
+  IconAdjustments,
+  IconChevronDown,
 } from "@tabler/icons-react";
-import { GetImageInfo, DownloadImage } from "../../bindings/kingo/app";
 import {
-  resolveInstagram,
+  GetImageInfo,
+  DownloadImageAdvanced,
+  AddToQueueAdvanced,
+} from "../../bindings/kingo/app";
+import { useSettingsStore } from "../stores/settingsStore";
+import {
   isInstagramUrl,
   isInstagramCDN,
 } from "../lib/instagramResolver";
@@ -49,9 +55,155 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export default function Images() {
+function getRequestedMediaIndex(sourceUrl: string, total: number) {
+  try {
+    const requested = Number(new URL(sourceUrl).searchParams.get("img_index"));
+    if (Number.isInteger(requested) && requested >= 1 && requested <= total) {
+      return requested - 1;
+    }
+  } catch {
+    // Invalid URLs are handled by the normal search flow.
+  }
+  return 0;
+}
+
+function extensionFor(contentType: string, type: MediaItem["type"]) {
+  if (type === "video") return "mp4";
+  if (contentType.includes("webp")) return "webp";
+  if (contentType.includes("png")) return "png";
+  if (contentType.includes("avif")) return "avif";
+  return "jpg";
+}
+
+function contentTypeForMedia(item: MediaItem) {
+  if (item.type === "video") return "video/mp4";
+  try {
+    const pathname = new URL(item.url).pathname.toLowerCase();
+    if (pathname.endsWith(".webp")) return "image/webp";
+    if (pathname.endsWith(".png")) return "image/png";
+    if (pathname.endsWith(".avif")) return "image/avif";
+  } catch {
+    // Keep the safe JPEG fallback for malformed direct URLs.
+  }
+  return "image/jpeg";
+}
+
+interface ImageOptionSelectProps {
+  label: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onChange: (value: string) => void;
+}
+
+function ImageOptionSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: ImageOptionSelectProps) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const selected = options.find((option) => option.value === value);
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  return (
+    <div ref={containerRef} className="relative space-y-1.5">
+      <span className="text-xs font-medium text-surface-700 dark:text-surface-600">
+        {label}
+      </span>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className={`flex w-full items-center justify-between gap-3 rounded-lg border bg-surface-50 px-3 py-2.5 text-left text-xs text-surface-900 outline-none transition-colors dark:bg-surface-200 ${
+          open
+            ? "border-primary-500 ring-1 ring-primary-500"
+            : "border-surface-200 hover:border-surface-300 dark:border-surface-300"
+        }`}
+      >
+        <span className="min-w-0 flex-1 whitespace-normal font-medium leading-relaxed">
+          {selected?.label}
+        </span>
+        <IconChevronDown
+          size={15}
+          className={`shrink-0 text-surface-400 transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          aria-label={label}
+          className="absolute left-0 right-0 top-full z-40 mt-1.5 overflow-hidden rounded-lg border border-surface-200 bg-white p-1 shadow-xl dark:border-surface-300 dark:bg-surface-100"
+        >
+          {options.map((option) => {
+            const isSelected = option.value === value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                  isSelected
+                    ? "bg-primary-50 font-semibold text-primary-700 dark:bg-primary-500/10 dark:text-primary-500"
+                    : "text-surface-700 hover:bg-surface-50 dark:text-surface-600 dark:hover:bg-surface-200"
+                }`}
+              >
+                <span>{option.label}</span>
+                {isSelected && <IconCheck size={14} className="shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface ImagesProps {
+  onOpenQueue?: () => void;
+  initialUrl?: string;
+  embedded?: boolean;
+}
+
+export default function Images({
+  onOpenQueue,
+  initialUrl = "",
+  embedded = false,
+}: ImagesProps) {
   const { t } = useTranslation("images");
-  const [url, setUrl] = useState("");
+  const {
+    skipExisting,
+    useAria2c,
+    aria2cConnections,
+    concurrentFragments,
+  } = useSettingsStore();
+  const [url, setUrl] = useState(initialUrl);
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState<ImageInfo | null>(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]); // Para carrossel
@@ -59,6 +211,112 @@ export default function Images() {
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadPath, setDownloadPath] = useState<string | null>(null);
+  const [batchProgress, setBatchProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
+  const [batchSavedCount, setBatchSavedCount] = useState(0);
+  const [outputFormat, setOutputFormat] = useState("original");
+  const [outputQuality, setOutputQuality] = useState(90);
+  const [resolutionScale, setResolutionScale] = useState(100);
+  const [previewDimensions, setPreviewDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  const lastAutoSearchRef = useRef("");
+
+  const queueVideo = async (item: MediaItem, index: number, total: number) => {
+    await AddToQueueAdvanced({
+      url: item.url,
+      title: `video_${index + 1}_de_${total}`,
+      thumbnail: "",
+      cookieBrowser: "",
+      format: "best",
+      audioOnly: false,
+      audioFormat: "",
+      audioBitrate: "",
+      downloadSubtitles: false,
+      subtitleLanguage: "",
+      embedSubtitles: false,
+      remuxVideo: false,
+      remuxFormat: "mp4",
+      embedThumbnail: false,
+      skipExisting,
+      incognito: false,
+      useAria2c,
+      aria2cConnections,
+      concurrentFragments,
+      startTime: "",
+      endTime: "",
+      excludedRanges: [],
+      captions: {
+        enabled: false,
+        source: "auto",
+        language: "auto",
+        model: "",
+        cues: [],
+        style: {
+          fontFamily: "Arial",
+          fontSize: 56,
+          textColor: "#FFFFFF",
+          backgroundColor: "#000000",
+          backgroundOpacity: 0.55,
+          outlineColor: "#000000",
+          outlineWidth: 3,
+          position: "bottom",
+          bold: true,
+          italic: false,
+        },
+      },
+    });
+  };
+
+  const selectMedia = async (items: MediaItem[], index: number) => {
+    const item = items[index];
+    if (!item) return;
+
+    setSelectedIndex(index);
+    setPreviewDimensions(null);
+    setDownloadPath(null);
+    setBatchSavedCount(0);
+
+    const initialContentType =
+      item.type === "video" ? "video/mp4" : "image/jpeg";
+    const makeFilename = (contentType: string) =>
+      items.length > 1
+        ? `${item.type === "video" ? "video" : "imagem"}_${index + 1}_de_${items.length}.${extensionFor(contentType, item.type)}`
+        : `instagram_${item.type}.${extensionFor(contentType, item.type)}`;
+
+    setInfo({
+      originalUrl: url,
+      directUrl: item.url,
+      contentType: initialContentType,
+      size: 0,
+      filename: makeFilename(initialContentType),
+    });
+
+    if (item.type !== "image") return;
+
+    try {
+      const metadata = await GetImageInfo(item.url);
+      if (!metadata) return;
+      setInfo((current) =>
+        current?.directUrl === item.url
+          ? {
+              ...current,
+              directUrl: metadata.directUrl || current.directUrl,
+              contentType: metadata.contentType || current.contentType,
+              size: metadata.size,
+              filename: makeFilename(
+                metadata.contentType || current.contentType,
+              ),
+            }
+          : current,
+      );
+    } catch {
+      // The preview URL is still usable even if metadata probing is blocked.
+    }
+  };
 
   const handleSearch = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -69,7 +327,10 @@ export default function Images() {
     setInfo(null);
     setMediaItems([]);
     setSelectedIndex(0);
+    setPreviewDimensions(null);
     setDownloadPath(null);
+    setBatchProgress(null);
+    setBatchSavedCount(0);
 
     try {
       // Verificar se é URL de rede social (não CDN direto)
@@ -103,20 +364,12 @@ export default function Images() {
               })
             );
 
+            const initialIndex = getRequestedMediaIndex(
+              url,
+              convertedMedia.length,
+            );
             setMediaItems(convertedMedia);
-            const media = convertedMedia[0];
-            setInfo({
-              originalUrl: url,
-              directUrl: media.url,
-              contentType: media.type === "video" ? "video/mp4" : "image/jpeg",
-              size: 0,
-              filename:
-                convertedMedia.length > 1
-                  ? `instagram_carrossel_${convertedMedia.length}_imagens`
-                  : `instagram_${media.type}.${
-                      media.type === "video" ? "mp4" : "jpg"
-                    }`,
-            });
+            await selectMedia(convertedMedia, initialIndex);
             setLoading(false);
             return;
           }
@@ -131,19 +384,7 @@ export default function Images() {
         if (twResult.success && twResult.media.length > 0) {
           // Armazenar TODAS as mídias encontradas
           setMediaItems(twResult.media);
-          const media = twResult.media[0];
-          setInfo({
-            originalUrl: url,
-            directUrl: media.url,
-            contentType: media.type === "video" ? "video/mp4" : "image/jpeg",
-            size: 0,
-            filename:
-              twResult.media.length > 1
-                ? `twitter_${twResult.media.length}_imagens`
-                : `twitter_${media.type}.${
-                    media.type === "video" ? "mp4" : "jpg"
-                  }`,
-          });
+          await selectMedia(twResult.media, 0);
           setLoading(false);
           return;
         }
@@ -189,64 +430,172 @@ export default function Images() {
     }
   };
 
+  useEffect(() => {
+    if (!embedded || !initialUrl || lastAutoSearchRef.current === initialUrl) {
+      return;
+    }
+    lastAutoSearchRef.current = initialUrl;
+    void handleSearch();
+    // The embedded component is keyed by initialUrl, so each URL mounts once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [embedded, initialUrl]);
+
   const handleDownload = async () => {
     if (!info) return;
 
     setDownloading(true);
     setDownloadPath(null);
+    setBatchSavedCount(0);
     try {
+      const selectedItem = mediaItems[selectedIndex];
+      if (info.contentType.includes("video") || selectedItem?.type === "video") {
+        await queueVideo(
+          selectedItem || { url: info.directUrl, type: "video" },
+          selectedIndex,
+          Math.max(mediaItems.length, 1),
+        );
+        onOpenQueue?.();
+        return;
+      }
+
       // Usa o nome sugerido pelo backend ou cria um timestamp
       const filename = info.filename || `image_${Date.now()}.jpg`;
-      const path = await DownloadImage(info.directUrl, filename);
+      const path = await DownloadImageAdvanced(
+        info.directUrl,
+        filename,
+        outputFormat,
+        outputQuality,
+        resolutionScale,
+      );
       setDownloadPath(path);
-    } catch (err: any) {
-      setError(`Erro ao baixar: ${err}`);
+    } catch (err: unknown) {
+      setError(t("error.download", { message: String(err) }));
     } finally {
       setDownloading(false);
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto p-6 md:p-8 h-full overflow-hidden">
-      <div className="mb-8 border-b border-surface-200 dark:border-surface-800 pb-6">
-        <h1 className="text-2xl font-semibold text-surface-900 mb-1 dark:text-surface-50 tracking-tight">
-          {t("title")}
-        </h1>
-        <p className="text-sm text-surface-500 dark:text-surface-400">
-          {t("subtitle")}
-        </p>
-      </div>
+  const handleDownloadAll = async () => {
+    const downloadItems = mediaItems.map((item, index) => ({ item, index }));
+    if (downloadItems.length < 2) return;
 
-      {/* Input Section */}
-      <form onSubmit={handleSearch} className="mb-10">
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <IconLink
-              className="text-surface-400 group-focus-within:text-primary-600 transition-colors"
-              size={20}
-            />
+    setError(null);
+    setDownloadPath(null);
+    setBatchSavedCount(0);
+    setBatchProgress({ current: 0, total: downloadItems.length });
+
+    let lastPath = "";
+    let completed = 0;
+    let queuedVideos = 0;
+    const source = isInstagramUrl(url)
+      ? "instagram"
+      : isTwitterUrl(url)
+        ? "twitter"
+        : "galeria";
+
+    try {
+      for (const { item, index } of downloadItems) {
+        setBatchProgress({
+          current: completed + 1,
+          total: downloadItems.length,
+        });
+
+        if (item.type === "video") {
+          await queueVideo(item, index, mediaItems.length);
+          queuedVideos += 1;
+          completed += 1;
+          continue;
+        }
+
+        const contentType = contentTypeForMedia(item);
+        const extension = extensionFor(contentType, item.type);
+        const filename = `${source}_${String(index + 1).padStart(2, "0")}_de_${String(mediaItems.length).padStart(2, "0")}.${extension}`;
+        lastPath = await DownloadImageAdvanced(
+          item.url,
+          filename,
+          outputFormat,
+          outputQuality,
+          resolutionScale,
+        );
+        completed += 1;
+      }
+
+      setBatchSavedCount(completed);
+      setDownloadPath(lastPath || "queue");
+      if (queuedVideos > 0) {
+        onOpenQueue?.();
+      }
+    } catch (err: unknown) {
+      setError(
+        t("error.download_all", {
+          completed,
+          total: downloadItems.length,
+          message: String(err),
+        }),
+      );
+    } finally {
+      setBatchProgress(null);
+    }
+  };
+
+  return (
+    <div
+      className={
+        embedded
+          ? "w-full"
+          : "mx-auto h-full w-full max-w-[1600px] overflow-y-auto p-5 custom-scrollbar sm:p-6 lg:p-8"
+      }
+    >
+      {!embedded && (
+        <>
+          <div className="mb-6 border-b border-surface-200 pb-5 dark:border-surface-300">
+            <h1 className="text-2xl font-semibold text-surface-900 mb-1 dark:text-surface-900 tracking-tight">
+              {t("title")}
+            </h1>
+            <p className="text-sm text-surface-500 dark:text-surface-400">
+              {t("subtitle")}
+            </p>
           </div>
-          <input
-            type="text"
-            className="w-full pl-10 pr-32 py-3 bg-white dark:bg-surface-100 border border-surface-200 dark:border-surface-700 rounded-md focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all placeholder:text-surface-400 text-sm text-surface-900 dark:text-surface-200"
-            placeholder={t("placeholder")}
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-          <button
-            type="submit"
-            disabled={loading || !url}
-            className="absolute right-1.5 top-1.5 bottom-1.5 bg-primary-600 hover:bg-primary-700 text-white px-4 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
-          >
-            {loading ? (
-              <IconLoader2 className="animate-spin" size={16} />
-            ) : (
-              <IconSearch size={16} />
-            )}
-            <span>{t("search")}</span>
-          </button>
+
+          {/* Input Section */}
+          <form onSubmit={handleSearch} className="mb-6">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <IconLink
+                  className="text-surface-400 group-focus-within:text-primary-600 transition-colors"
+                  size={20}
+                />
+              </div>
+              <input
+                type="text"
+                className="w-full pl-10 pr-32 py-3 bg-white dark:bg-surface-100 border border-surface-200 dark:border-surface-300 rounded-md focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all placeholder:text-surface-400 text-sm text-surface-900 dark:text-surface-700"
+                placeholder={t("placeholder")}
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <button
+                type="submit"
+                disabled={loading || !url}
+                className="absolute right-1.5 top-1.5 bottom-1.5 bg-primary-600 hover:bg-primary-700 text-white px-4 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
+              >
+                {loading ? (
+                  <IconLoader2 className="animate-spin" size={16} />
+                ) : (
+                  <IconSearch size={16} />
+                )}
+                <span>{t("search")}</span>
+              </button>
+            </div>
+          </form>
+        </>
+      )}
+
+      {embedded && loading && (
+        <div className="card flex items-center justify-center gap-3 p-8 text-sm text-surface-500">
+          <IconLoader2 size={20} className="animate-spin text-primary-600" />
+          <span>{t("loading_content")}</span>
         </div>
-      </form>
+      )}
 
       {/* Error Message */}
       <AnimatePresence>
@@ -309,80 +658,67 @@ export default function Images() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-surface-100 rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden"
+            className="overflow-hidden rounded-xl border border-surface-200 bg-white shadow-sm dark:border-surface-300 dark:bg-surface-100"
           >
-            <div
-              className="flex flex-col md:flex-row overflow-hidden"
-              style={{ maxHeight: "calc(100vh - 220px)" }}
-            >
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
               {/* Preview Area */}
-              <div className="w-full md:w-3/5 bg-surface-50 dark:bg-surface-50 p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 relative">
+              <div className="relative flex min-w-0 flex-col items-center justify-center border-b border-surface-200 bg-surface-50 p-4 dark:border-surface-300 dark:bg-surface-50 sm:p-5 lg:border-b-0 lg:border-r">
                 {/* Checkerboard Pattern */}
                 <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMiIgZD0iTTAgMGgxMHYxMEgwem0xMCAxMGgxMHYxMEgxMHoiLz48L3N2Zz4=')] pointer-events-none" />
 
                 {/* Main Image */}
-                <div className="relative z-10 w-full flex items-center justify-center p-4 bg-transparent">
+                <div className="relative z-10 flex min-h-72 w-full items-center justify-center bg-transparent p-2">
                   {info.contentType.includes("video") ? (
                     <video
                       src={info.directUrl}
                       controls
-                      className="w-full max-h-[35vh] object-contain rounded shadow-lg"
+                      className="max-h-[48vh] w-full rounded-lg object-contain shadow-md"
                     />
                   ) : (
                     <img
                       src={info.directUrl}
                       alt="Preview"
-                      className="max-w-full h-auto object-contain rounded shadow-lg"
-                      style={{ maxHeight: "35vh" }}
+                      onLoad={(event) => {
+                        const { naturalWidth, naturalHeight } =
+                          event.currentTarget;
+                        setPreviewDimensions({
+                          width: naturalWidth,
+                          height: naturalHeight,
+                        });
+                        setMediaItems((current) =>
+                          current.map((item, index) =>
+                            index === selectedIndex &&
+                            (!item.width || !item.height)
+                              ? {
+                                  ...item,
+                                  width: naturalWidth,
+                                  height: naturalHeight,
+                                }
+                              : item,
+                          ),
+                        );
+                      }}
+                      className="max-h-[48vh] max-w-full rounded-lg object-contain shadow-md"
                     />
                   )}
-
-                  {/* Badge de Fonte para Debug */}
-                  <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-white text-[10px] rounded backdrop-blur-sm z-20">
-                    {mediaItems.length > 1
-                      ? t("carousel_mode")
-                      : t("basic_mode")}
-                  </div>
                 </div>
 
                 {/* Carousel Thumbnails */}
                 {mediaItems.length > 1 && (
-                  <div className="w-full mt-6 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-surface-500 mb-3 text-center">
+                  <div className="relative z-10 mt-4 w-full border-t border-surface-200 pt-4 dark:border-surface-300">
+                    <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-surface-500">
                       {t("gallery", { count: mediaItems.length })}
                     </p>
-                    <div className="flex gap-2 overflow-x-auto pb-2 justify-center px-4">
+                    <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
                       {mediaItems.map((item, idx) => (
                         <button
                           key={idx}
-                          onClick={() => {
-                            setSelectedIndex(idx);
-                            setDownloadPath(null); // Reset download state
-
-                            // Atualizar info principal
-                            setInfo({
-                              originalUrl: url,
-                              directUrl: item.url,
-                              contentType:
-                                item.type === "video"
-                                  ? "video/mp4"
-                                  : "image/jpeg",
-                              size: 0,
-                              filename:
-                                mediaItems.length > 1
-                                  ? `${
-                                      item.type === "video" ? "video" : "imagem"
-                                    }_${idx + 1}_de_${mediaItems.length}.${
-                                      item.type === "video" ? "mp4" : "jpg"
-                                    }`
-                                  : `${item.type}_${idx}.${
-                                      item.type === "video" ? "mp4" : "jpg"
-                                    }`,
-                            });
-                          }}
-                          className={`relative w-16 h-16 rounded overflow-hidden border-2 flex-shrink-0 transition-all ${
+                          type="button"
+                          onClick={() => void selectMedia(mediaItems, idx)}
+                          aria-label={`${idx + 1} / ${mediaItems.length}`}
+                          className={`relative aspect-square min-w-0 overflow-hidden rounded-lg border-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/40 ${
                             selectedIndex === idx
-                              ? "border-primary-500 ring-2 ring-primary-500/30 scale-105"
+                              ? "border-primary-500 opacity-100 shadow-sm"
                               : "border-transparent opacity-60 hover:opacity-100"
                           }`}
                         >
@@ -406,14 +742,15 @@ export default function Images() {
               </div>
 
               {/* Info & Actions */}
-              <div className="p-6 md:w-2/5 flex flex-col bg-white dark:bg-surface-100">
-                <div className="mb-auto">
+              <div className="flex flex-col bg-white p-5 dark:bg-surface-100">
+                <div>
                   <div className="flex items-center gap-2 mb-4">
                     <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                      <IconCheck size={10} stroke={3} /> Disponível
+                      <IconCheck size={10} stroke={3} /> {t("available")}
                     </span>
-                    <span className="bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                      {info.contentType.split("/")[1].toUpperCase()}
+                    <span className="bg-surface-100 dark:bg-surface-200 text-surface-600 dark:text-surface-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                      {info.contentType.split("/")[1]?.toUpperCase() ||
+                        t("unknown")}
                     </span>
                     {mediaItems.length > 1 && (
                       <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
@@ -422,12 +759,12 @@ export default function Images() {
                     )}
                   </div>
 
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 break-all mb-6 leading-tight">
+                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-900 break-all mb-6 leading-tight">
                     {info.filename || "imagem_sem_nome"}
                   </h3>
 
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-300 bg-surface-50/50 dark:bg-surface-200/50">
                       <div className="text-surface-400">
                         <IconFileDescription size={18} />
                       </div>
@@ -435,13 +772,13 @@ export default function Images() {
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
                           {t("type")}
                         </p>
-                        <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
+                        <p className="font-mono text-xs text-surface-700 dark:text-surface-600">
                           {info.contentType}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-300 bg-surface-50/50 dark:bg-surface-200/50">
                       <div className="text-surface-400">
                         <IconDatabase size={18} />
                       </div>
@@ -449,13 +786,13 @@ export default function Images() {
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
                           {t("size")}
                         </p>
-                        <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
-                          {formatBytes(info.size)}
+                        <p className="font-mono text-xs text-surface-700 dark:text-surface-600">
+                          {info.size > 0 ? formatBytes(info.size) : t("unknown")}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-surface-100 dark:border-surface-300 bg-surface-50/50 dark:bg-surface-200/50">
                       <div className="text-surface-400">
                         <IconDatabase size={18} />
                       </div>
@@ -463,22 +800,134 @@ export default function Images() {
                         <p className="text-[10px] font-medium uppercase tracking-wide text-surface-500">
                           {t("resolution")}
                         </p>
-                        <p className="font-mono text-xs text-surface-700 dark:text-surface-300">
-                          {mediaItems[selectedIndex]?.width
-                            ? `${mediaItems[selectedIndex].width}x${mediaItems[selectedIndex].height}`
+                        <p className="font-mono text-xs text-surface-700 dark:text-surface-600">
+                          {previewDimensions
+                            ? `${previewDimensions.width}x${previewDimensions.height}`
                             : t("original")}
                         </p>
                       </div>
                     </div>
                   </div>
+
+                  {!info.contentType.includes("video") && (
+                    <div className="mt-5 border-t border-surface-200 pt-4 dark:border-surface-300">
+                      <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-surface-500">
+                        <IconAdjustments size={15} />
+                        {t("output_options")}
+                      </div>
+
+                      <div className="space-y-3">
+                        <ImageOptionSelect
+                          label={t("output_format")}
+                          value={outputFormat}
+                          onChange={setOutputFormat}
+                          options={[
+                            {
+                              value: "original",
+                              label: t("format_original"),
+                            },
+                            { value: "jpg", label: "JPG" },
+                            { value: "png", label: "PNG" },
+                            { value: "webp", label: "WEBP" },
+                            { value: "avif", label: "AVIF" },
+                          ]}
+                        />
+
+                        <ImageOptionSelect
+                          label={t("resolution_scale")}
+                          value={String(resolutionScale)}
+                          onChange={(value) =>
+                            setResolutionScale(Number(value))
+                          }
+                          options={[25, 50, 75, 100, 125, 150, 200].map(
+                            (scale) => ({
+                              value: String(scale),
+                              label: previewDimensions
+                                ? `${scale}% · ${Math.round((previewDimensions.width * scale) / 100)}×${Math.round((previewDimensions.height * scale) / 100)}`
+                                : `${scale}%`,
+                            }),
+                          )}
+                        />
+                      </div>
+
+                      {outputFormat !== "original" &&
+                        outputFormat !== "png" && (
+                          <label className="mt-3 block space-y-1.5">
+                            <span className="flex items-center justify-between text-xs font-medium text-surface-700 dark:text-surface-600">
+                              <span>{t("quality")}</span>
+                              <span className="font-mono text-surface-500">
+                                {outputQuality}%
+                              </span>
+                            </span>
+                            <input
+                              type="range"
+                              min="10"
+                              max="100"
+                              step="5"
+                              value={outputQuality}
+                              onChange={(event) =>
+                                setOutputQuality(Number(event.target.value))
+                              }
+                              className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-surface-200 accent-primary-600 dark:bg-surface-300"
+                            />
+                          </label>
+                        )}
+
+                      {resolutionScale > 100 && (
+                        <p className="mt-3 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
+                          {t("upscale_warning")}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-8 space-y-3">
+                  {mediaItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => void handleDownloadAll()}
+                      disabled={
+                        downloading || !!batchProgress || !!downloadPath
+                      }
+                      className={`flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
+                        batchSavedCount > 0
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-primary-600 hover:bg-primary-700"
+                      }`}
+                    >
+                      {batchProgress ? (
+                        <>
+                          <IconLoader2 className="animate-spin" size={18} />
+                          <span>
+                            {t("downloading_all", batchProgress)}
+                          </span>
+                        </>
+                      ) : batchSavedCount > 0 ? (
+                        <>
+                          <IconCheck size={18} />
+                          <span>
+                            {t("saved_all", { count: batchSavedCount })}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <IconDownload size={18} />
+                          <span>
+                            {t("download_all", {
+                              count: mediaItems.length,
+                            })}
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
                   <button
                     onClick={handleDownload}
-                    disabled={downloading || !!downloadPath}
+                    disabled={downloading || !!batchProgress || !!downloadPath}
                     className={`w-full py-2.5 px-4 rounded-md font-medium text-sm flex items-center justify-center gap-2 transition-colors ${
-                      downloadPath
+                      downloadPath && batchSavedCount === 0
                         ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-surface-900 dark:bg-white text-surface-50 dark:text-surface-900 hover:bg-surface-800 dark:hover:bg-surface-200"
                     } disabled:opacity-70 disabled:cursor-not-allowed`}
@@ -488,7 +937,7 @@ export default function Images() {
                         <IconLoader2 className="animate-spin" size={18} />
                         <span>{t("downloading")}</span>
                       </>
-                    ) : downloadPath ? (
+                    ) : downloadPath && batchSavedCount === 0 ? (
                       <>
                         <IconCheck size={18} />
                         <span>{t("saved")}</span>
@@ -497,7 +946,7 @@ export default function Images() {
                       <>
                         <IconDownload size={18} />
                         <span>
-                          {t("download_image")}{" "}
+                          {t("download_selected")}{" "}
                           {mediaItems.length > 1
                             ? `(${selectedIndex + 1})`
                             : ""}
@@ -511,11 +960,13 @@ export default function Images() {
                       onClick={() => {
                         // Abrir pasta (implementar função no backend se necessário, ou apenas limpar)
                         setDownloadPath(null);
+                        setBatchSavedCount(0);
+                        setBatchProgress(null);
                         setInfo(null);
                         setMediaItems([]);
                         setUrl("");
                       }}
-                      className="w-full py-2 px-4 rounded-md font-medium text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                      className="w-full py-2 px-4 rounded-md font-medium text-sm text-surface-600 dark:text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-200 transition-colors"
                     >
                       {t("download_another")}
                     </button>

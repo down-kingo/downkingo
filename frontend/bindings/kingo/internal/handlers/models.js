@@ -406,6 +406,13 @@ export class TranscribeRequest {
              */
             this["outputFormat"] = "";
         }
+        if (!("useVad" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["useVad"] = false;
+        }
 
         Object.assign(this, $$source);
     }

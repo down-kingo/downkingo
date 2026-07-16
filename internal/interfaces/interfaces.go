@@ -19,6 +19,7 @@ import (
 // Used by the App facade to interact with video functionality.
 type VideoService interface {
 	GetVideoInfo(url string) (*youtube.VideoInfo, error)
+	GetVideoSubtitles(url string, language string) (*youtube.SubtitleResult, error)
 	UpdateYtDlp(channel string) (string, error)
 	Download(opts youtube.DownloadOptions) error
 	AddToQueue(url string, format string, audioOnly bool) (*storage.Download, error)
@@ -51,8 +52,6 @@ type SettingsService interface {
 // SystemService defines the contract for system operations.
 type SystemService interface {
 	CheckDependencies() []launcher.DependencyStatus
-	NeedsDependencies() bool
-	DownloadDependencies() error
 	CheckForUpdate() (*updater.UpdateInfo, error)
 	GetAvailableAppVersions() ([]updater.Release, error)
 	InstallAppVersion(tag string) error
@@ -92,6 +91,7 @@ type YouTubeClient interface {
 	GetVideoInfo(ctx context.Context, url string) (*youtube.VideoInfo, error)
 	GetVideoInfoWithCookies(ctx context.Context, url string, browser string) (*youtube.VideoInfo, error)
 	GetPlaylistInfo(ctx context.Context, url string) ([]youtube.VideoInfo, error)
+	GetSubtitles(ctx context.Context, url string, language string) (*youtube.SubtitleResult, error)
 	Download(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error
 	UpdateYtDlp(channel string) (string, error)
 	HasAria2() bool

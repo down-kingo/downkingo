@@ -33,10 +33,10 @@ export default function UpdateModal() {
   const openDevPreview = useCallback(() => {
     const mockInfo: UpdateInfo = {
       available: true,
-      currentVersion: "3.0.0",
-      latestVersion: "v3.1.0",
+      currentVersion: "3.1.0",
+      latestVersion: "v3.2.0",
       downloadUrl:
-        "https://github.com/org/kingo/releases/download/v3.1.0/kingo-setup.exe",
+        "https://github.com/org/kingo/releases/download/v3.2.0/kingo-setup.exe",
       changelog: `<!-- JSON_I18N: ${JSON.stringify({
         "pt-BR":
           "- **Novo conversor** de vídeo com suporte a AV1\n- Transcrição mais rápida com Whisper v3\n- Correção no download de playlists longas\n- Performance geral melhorada em 30%",

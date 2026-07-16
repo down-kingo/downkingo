@@ -1,6 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { GetVideoInfo } from "../../bindings/kingo/app";
+import {
+  GetVideoInfo,
+  GetVideoInfoWithCookies,
+} from "../../bindings/kingo/app";
 import { useDebounce } from "./useDebounce";
+import { shouldUseVideoDownloader } from "../lib/downloadRouter";
+import type { SubtitleLanguage } from "../components/video/captions";
+import {
+  cleanVideoError,
+  isYoutubeAuthenticationError,
+  type CookieBrowser,
+} from "../lib/videoErrors";
 
 export interface VideoInfo {
   id: string;
@@ -11,8 +21,11 @@ export interface VideoInfo {
   uploader: string;
   view_count: number;
   description: string;
+  language: string;
   width: number;
   height: number;
+  subtitle_languages: SubtitleLanguage[];
+  cookie_browser?: string;
   formats: Array<{
     format_id: string;
     url: string;
@@ -35,17 +48,24 @@ export function useVideoFetch() {
   const [url, setUrl] = useState("");
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setErrorState] = useState("");
+  const [authRequired, setAuthRequired] = useState(false);
+  const [activeAuthBrowser, setActiveAuthBrowser] =
+    useState<CookieBrowser | null>(null);
+  const [failedAuthBrowser, setFailedAuthBrowser] =
+    useState<CookieBrowser | null>(null);
+
+  const setError = useCallback((message: string) => {
+    setErrorState(message);
+    setAuthRequired(false);
+    setFailedAuthBrowser(null);
+  }, []);
 
   const skipDebounceRef = useRef(false);
   const debouncedUrl = useDebounce(url, 400);
 
   const isSupportedUrl = useCallback(
-    (u: string) =>
-      u.includes("youtube.com") ||
-      u.includes("youtu.be") ||
-      u.includes("tiktok.com") ||
-      u.includes("instagram.com"),
+    (u: string) => shouldUseVideoDownloader(u),
     [],
   );
 
@@ -53,16 +73,53 @@ export function useVideoFetch() {
     if (!url.trim()) return;
     setIsFetching(true);
     setError("");
+    setAuthRequired(false);
+    setFailedAuthBrowser(null);
 
     try {
       const info = await GetVideoInfo(url);
       setVideoInfo(info as unknown as VideoInfo);
     } catch (err) {
-      setError(String(err));
+      if (isYoutubeAuthenticationError(err)) {
+        setAuthRequired(true);
+      } else {
+        setError(cleanVideoError(err));
+      }
       setVideoInfo(null);
     } finally {
       setIsFetching(false);
     }
+  }, [url, setError]);
+
+  const retryWithBrowser = useCallback(
+    async (browser: CookieBrowser) => {
+      if (!url.trim()) return;
+      setIsFetching(true);
+      setActiveAuthBrowser(browser);
+      setFailedAuthBrowser(null);
+      setError("");
+
+      try {
+        const info = await GetVideoInfoWithCookies(url, browser);
+        setVideoInfo(info as unknown as VideoInfo);
+        setAuthRequired(false);
+      } catch (err) {
+        console.warn(`Could not use the ${browser} session:`, err);
+        setVideoInfo(null);
+        setAuthRequired(true);
+        setFailedAuthBrowser(browser);
+      } finally {
+        setActiveAuthBrowser(null);
+        setIsFetching(false);
+      }
+    },
+    [url, setError],
+  );
+
+  useEffect(() => {
+    setAuthRequired(false);
+    setActiveAuthBrowser(null);
+    setFailedAuthBrowser(null);
   }, [url]);
 
   // Instant fetch when URL is pasted (bypasses debounce)
@@ -99,7 +156,7 @@ export function useVideoFetch() {
     } catch (err) {
       console.error("Failed to read clipboard:", err);
     }
-  }, [error, isSupportedUrl]);
+  }, [error, isSupportedUrl, setError]);
 
   const onPasteEvent = useCallback(
     (text: string) => {
@@ -114,7 +171,10 @@ export function useVideoFetch() {
     setUrl("");
     setVideoInfo(null);
     setError("");
-  }, []);
+    setAuthRequired(false);
+    setActiveAuthBrowser(null);
+    setFailedAuthBrowser(null);
+  }, [setError]);
 
   return {
     url,
@@ -124,6 +184,10 @@ export function useVideoFetch() {
     isFetching,
     error,
     setError,
+    authRequired,
+    activeAuthBrowser,
+    failedAuthBrowser,
+    retryWithBrowser,
     handlePaste,
     onPasteEvent,
     clearUrl,

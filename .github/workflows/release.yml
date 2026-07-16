@@ -23,7 +23,8 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -65,6 +66,7 @@ jobs:
           curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip
           unzip -q ffmpeg.zip
           mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe build/sidecar/windows/
+          mv ffmpeg-master-latest-win64-gpl/bin/ffprobe.exe build/sidecar/windows/
           rm -rf ffmpeg-master-latest-win64-gpl ffmpeg.zip
           echo "Sidecar binaries ready:"
           ls -la build/sidecar/windows/
@@ -82,7 +84,7 @@ jobs:
       # ============================================================
       - name: Install Wails CLI
         shell: bash
-        run: go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha2.117
 
       - name: Generate Windows Resources (.syso)
         shell: bash
@@ -154,23 +156,9 @@ jobs:
         with:
           path: artifacts
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install AI Dependencies
-        run: npm install @google/generative-ai
-
-      - name: Generate Release Notes (Gemini)
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node .github/scripts/generate_release_notes.js
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: RELEASE_NOTES.md
+          generate_release_notes: true
           files: |
             artifacts/**/*

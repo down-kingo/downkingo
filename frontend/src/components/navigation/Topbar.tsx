@@ -1,7 +1,6 @@
 import {
   IconHome,
   IconDownload,
-  IconPhoto,
   IconTransform,
   IconMicrophone,
   IconList,
@@ -30,9 +29,9 @@ export default function Topbar({
   const { t } = useTranslation("common");
   const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
   return (
-    <header className="flex items-center justify-between px-6 py-3 bg-surface-50 dark:bg-surface-50 border-b border-surface-200 dark:border-white/10">
+    <header className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-6 py-3 bg-surface-50 dark:bg-surface-50 border-b border-surface-200 dark:border-white/10">
       {/* Brand Logo (Simplified) */}
-      <div className="flex items-center gap-3 select-none">
+      <div className="flex min-w-0 items-center gap-3 justify-self-start select-none">
         <Logo size={32} />
         <span className="font-display font-bold text-lg tracking-tight text-surface-900">
           DownKingo
@@ -40,7 +39,7 @@ export default function Topbar({
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex items-center gap-1 bg-surface-100 dark:bg-surface-200/50 p-1 rounded-lg">
+      <nav className="flex items-center gap-1 justify-self-center bg-surface-100 dark:bg-surface-200/50 p-1 rounded-lg">
         <button
           onClick={() => setActiveTab("home")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
@@ -58,30 +57,18 @@ export default function Topbar({
           enabledFeatures.includes("images")) && (
           <div className="w-px h-4 bg-surface-300 dark:bg-surface-400/30 mx-0.5" />
         )}
-        {enabledFeatures.includes("videos") && (
+        {(enabledFeatures.includes("videos") ||
+          enabledFeatures.includes("images")) && (
           <button
             onClick={() => setActiveTab("video")}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-              activeTab === "video"
+              activeTab === "video" || activeTab === "images"
                 ? "bg-white dark:bg-surface-100 text-surface-900"
                 : "text-surface-600 hover:text-surface-900"
             }`}
           >
             <IconDownload size={16} />
-            <span>{t("nav.videos")}</span>
-          </button>
-        )}
-        {enabledFeatures.includes("images") && (
-          <button
-            onClick={() => setActiveTab("images")}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-              activeTab === "images"
-                ? "bg-white dark:bg-surface-100 text-surface-900"
-                : "text-surface-600 hover:text-surface-900"
-            }`}
-          >
-            <IconPhoto size={16} />
-            <span>{t("nav.images")}</span>
+            <span>{t("nav.downloads")}</span>
           </button>
         )}
         <button
@@ -160,7 +147,7 @@ export default function Topbar({
       </nav>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 justify-self-end">
         <button
           onClick={onOpenSettings}
           className="p-2 text-surface-500 hover:text-surface-900 hover:bg-surface-100 dark:hover:bg-surface-200 rounded-lg transition-colors"

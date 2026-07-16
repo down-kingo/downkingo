@@ -139,7 +139,7 @@ downkingo/
 ├── main.go                 # Bootstrap da aplicacao Wails v3
 ├── app.go                  # Facade — todos os metodos expostos ao frontend
 ├── Taskfile.yml            # Task runner (substitui o Wails CLI)
-├── VERSION                 # Versao semantica (3.0.0)
+├── VERSION                 # Versao semantica (3.1.0)
 ├── internal/               # Logica backend (Go)
 │   ├── app/                # Paths e ciclo de vida da aplicacao
 │   ├── auth/               # GitHub OAuth2 Device Flow
@@ -188,7 +188,7 @@ downkingo/
 | **Estado**      | Zustand                                                 |
 | **i18n**        | react-i18next (pt-BR, en-US, es-ES, fr-FR, de-DE)      |
 | **Testes**      | Go stdlib + Vitest + React Testing Library              |
-| **Media**       | yt-dlp, FFmpeg, aria2c, Whisper                         |
+| **Media**       | yt-dlp, FFmpeg, BgUtils PO Provider, aria2c, Whisper    |
 | **Distribuicao**| NSIS (Windows), AppImage (Linux)                        |
 
 ---

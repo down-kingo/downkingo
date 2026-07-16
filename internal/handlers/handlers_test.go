@@ -3,8 +3,10 @@ package handlers_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
+	apperr "kingo/internal/errors"
 	"kingo/internal/handlers"
 	"kingo/internal/storage"
 	"kingo/internal/youtube"
@@ -16,9 +18,18 @@ import (
 
 // MockYouTubeClient is a test double for the YouTube client.
 type MockYouTubeClient struct {
-	GetVideoInfoFunc func(ctx context.Context, url string) (*youtube.VideoInfo, error)
-	DownloadFunc     func(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error
-	UpdateYtDlpFunc  func(channel string) (string, error)
+	GetVideoInfoFunc            func(ctx context.Context, url string) (*youtube.VideoInfo, error)
+	GetVideoInfoWithCookiesFunc func(ctx context.Context, url string, browser string) (*youtube.VideoInfo, error)
+	GetSubtitlesFunc            func(ctx context.Context, url string, language string) (*youtube.SubtitleResult, error)
+	DownloadFunc                func(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error
+	UpdateYtDlpFunc             func(channel string) (string, error)
+}
+
+func (m *MockYouTubeClient) GetSubtitles(ctx context.Context, url string, language string) (*youtube.SubtitleResult, error) {
+	if m.GetSubtitlesFunc != nil {
+		return m.GetSubtitlesFunc(ctx, url, language)
+	}
+	return &youtube.SubtitleResult{Cues: []youtube.SubtitleCue{}}, nil
 }
 
 func (m *MockYouTubeClient) GetVideoInfo(ctx context.Context, url string) (*youtube.VideoInfo, error) {
@@ -26,6 +37,13 @@ func (m *MockYouTubeClient) GetVideoInfo(ctx context.Context, url string) (*yout
 		return m.GetVideoInfoFunc(ctx, url)
 	}
 	return &youtube.VideoInfo{Title: "Test Video", Duration: 120}, nil
+}
+
+func (m *MockYouTubeClient) GetVideoInfoWithCookies(ctx context.Context, url string, browser string) (*youtube.VideoInfo, error) {
+	if m.GetVideoInfoWithCookiesFunc != nil {
+		return m.GetVideoInfoWithCookiesFunc(ctx, url, browser)
+	}
+	return &youtube.VideoInfo{Title: "Authenticated Video", Duration: 120, CookieBrowser: browser}, nil
 }
 
 func (m *MockYouTubeClient) Download(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error {
@@ -147,12 +165,98 @@ func TestVideoHandler_GetVideoInfo(t *testing.T) {
 		}
 	})
 
+	t.Run("classifies YouTube anti-bot response without leaking raw yt-dlp output", func(t *testing.T) {
+		mockYT := &MockYouTubeClient{
+			GetVideoInfoFunc: func(context.Context, string) (*youtube.VideoInfo, error) {
+				return nil, errors.New("ERROR: [youtube] test: Sign in to confirm you're not a bot. Use --cookies-from-browser")
+			},
+		}
+		handler := handlers.NewVideoHandler(mockYT, nil)
+
+		_, err := handler.GetVideoInfo("https://youtube.com/watch?v=test")
+		if !errors.Is(err, apperr.ErrAuthRequired) {
+			t.Fatalf("expected auth-required error, got %v", err)
+		}
+		if strings.Contains(err.Error(), "--cookies-from-browser") {
+			t.Fatalf("raw yt-dlp error leaked to the UI: %v", err)
+		}
+	})
+
 	t.Run("returns error when youtube client is nil", func(t *testing.T) {
 		handler := handlers.NewVideoHandler(nil, nil)
 
 		_, err := handler.GetVideoInfo("https://youtube.com/watch?v=test")
 		if err == nil {
 			t.Error("expected error when youtube client is nil")
+		}
+	})
+}
+
+func TestVideoHandler_GetVideoInfoWithCookies(t *testing.T) {
+	t.Run("uses the explicitly selected browser", func(t *testing.T) {
+		var receivedBrowser string
+		mockYT := &MockYouTubeClient{
+			GetVideoInfoWithCookiesFunc: func(_ context.Context, _ string, browser string) (*youtube.VideoInfo, error) {
+				receivedBrowser = browser
+				return &youtube.VideoInfo{Title: "Authenticated", CookieBrowser: browser}, nil
+			},
+		}
+		handler := handlers.NewVideoHandler(mockYT, nil)
+
+		info, err := handler.GetVideoInfoWithCookies("https://youtube.com/watch?v=test", "Chrome")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if receivedBrowser != "chrome" || info.CookieBrowser != "chrome" {
+			t.Fatalf("browser was not normalized and propagated: received=%q info=%q", receivedBrowser, info.CookieBrowser)
+		}
+	})
+
+	t.Run("rejects an unsupported browser", func(t *testing.T) {
+		handler := handlers.NewVideoHandler(&MockYouTubeClient{}, nil)
+		if _, err := handler.GetVideoInfoWithCookies("https://youtube.com/watch?v=test", "custom --flag"); err == nil {
+			t.Fatal("expected unsupported browser error")
+		}
+	})
+}
+
+func TestVideoHandler_GetVideoSubtitles(t *testing.T) {
+	t.Run("imports editable cues", func(t *testing.T) {
+		var receivedLanguage string
+		mockYT := &MockYouTubeClient{
+			GetSubtitlesFunc: func(_ context.Context, _ string, language string) (*youtube.SubtitleResult, error) {
+				receivedLanguage = language
+				return &youtube.SubtitleResult{
+					Language: "pt-BR",
+					Source:   "manual",
+					Cues:     []youtube.SubtitleCue{{Start: 0, End: 2, Text: "Olá"}},
+				}, nil
+			},
+		}
+		handler := handlers.NewVideoHandler(mockYT, nil)
+		result, err := handler.GetVideoSubtitles("https://youtube.com/watch?v=test", "pt-BR")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if receivedLanguage != "pt-BR" || len(result.Cues) != 1 || result.Cues[0].Text != "Olá" {
+			t.Fatalf("unexpected subtitle result: %#v (language %q)", result, receivedLanguage)
+		}
+	})
+
+	t.Run("rejects invalid URL before calling extractor", func(t *testing.T) {
+		called := false
+		mockYT := &MockYouTubeClient{
+			GetSubtitlesFunc: func(_ context.Context, _, _ string) (*youtube.SubtitleResult, error) {
+				called = true
+				return nil, nil
+			},
+		}
+		handler := handlers.NewVideoHandler(mockYT, nil)
+		if _, err := handler.GetVideoSubtitles("not-a-url", "pt"); err == nil {
+			t.Fatal("expected invalid URL error")
+		}
+		if called {
+			t.Fatal("extractor was called for an invalid URL")
 		}
 	})
 }
@@ -468,6 +572,23 @@ func TestVideoHandler_AddToQueueAdvanced(t *testing.T) {
 
 		if capturedConnections != 16 {
 			t.Errorf("got aria2c connections %d, want 16 (default)", capturedConnections)
+		}
+	})
+
+	t.Run("defaults invalid concurrent fragments to 8", func(t *testing.T) {
+		var capturedFragments int
+		mockDM := &MockDownloadManager{
+			AddJobFunc: func(opts youtube.DownloadOptions) (*storage.Download, error) {
+				capturedFragments = opts.ConcurrentFragments
+				return &storage.Download{ID: "test"}, nil
+			},
+		}
+		handler := handlers.NewVideoHandler(nil, mockDM)
+		_, _ = handler.AddToQueueAdvanced(youtube.DownloadOptions{
+			URL: "https://youtube.com/watch?v=test", ConcurrentFragments: 100,
+		})
+		if capturedFragments != 8 {
+			t.Errorf("got concurrent fragments %d, want 8", capturedFragments)
 		}
 	})
 }

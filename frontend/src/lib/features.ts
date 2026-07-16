@@ -67,11 +67,41 @@ export const FEATURE_REGISTRY: Record<FeatureId, FeatureMeta> = {
  * Whisper é tratado separadamente no fluxo de Setup.
  */
 export const FEATURE_DEPS: Record<FeatureId, string[]> = {
-  videos: ["yt-dlp", "FFmpeg"],
+  videos: [
+    "yt-dlp",
+    "FFmpeg",
+    "YouTube PO Provider",
+    "yt-dlp PO Plugin",
+  ],
   images: ["yt-dlp", "avifenc"],
   converter: ["FFmpeg", "avifenc"],
   transcriber: ["FFmpeg"], // Whisper tratado separadamente
 };
+
+export interface DependencyStatusLike {
+  name: string;
+  installed: boolean;
+}
+
+/** Retorna as dependências externas sem duplicatas, na ordem do catálogo. */
+export function getRequiredDependencyNames(
+  features: readonly FeatureId[],
+): string[] {
+  return [...new Set(features.flatMap((feature) => FEATURE_DEPS[feature]))];
+}
+
+/** Considera ausente também uma dependência exigida que não veio no catálogo. */
+export function hasMissingRequiredDependencies(
+  features: readonly FeatureId[],
+  statuses: readonly DependencyStatusLike[],
+): boolean {
+  const installedByName = new Map(
+    statuses.map((dependency) => [dependency.name, dependency.installed]),
+  );
+  return getRequiredDependencyNames(features).some(
+    (name) => installedByName.get(name) !== true,
+  );
+}
 
 /** Lista ordenada de todas as FeatureIds para iteração consistente. */
 export const ALL_FEATURE_IDS: FeatureId[] = [

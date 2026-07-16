@@ -5,11 +5,11 @@ import {
   IconLayoutSidebar,
   IconLayoutNavbar,
   IconCheck,
+  IconHeartOff,
 } from "@tabler/icons-react";
 import {
   useSettingsStore,
   AppColor,
-  AppLayout,
 } from "../../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 
@@ -90,14 +90,42 @@ const ColorSwatch = ({
   );
 };
 
+const Switch = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) => (
+  <button
+    type="button"
+    role="switch"
+    aria-checked={checked}
+    onClick={() => onChange(!checked)}
+    className={`relative h-6 w-11 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/30 ${
+      checked
+        ? "bg-primary-600 shadow-lg shadow-primary-600/20 dark:bg-primary-500"
+        : "bg-surface-200 hover:bg-surface-300 dark:bg-surface-200 dark:hover:bg-surface-300"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${
+        checked ? "translate-x-5" : "translate-x-0"
+      }`}
+    />
+  </button>
+);
+
 export default function AppearanceSettings() {
   const {
     theme,
     layout,
     primaryColor,
+    showDonationBanners,
     toggleTheme,
     setLayout,
     setPrimaryColor,
+    setSetting,
   } = useSettingsStore();
   const { t } = useTranslation("settings");
 
@@ -121,7 +149,7 @@ export default function AppearanceSettings() {
                 className={`p-2 rounded-md transition-all ${
                   theme === "light"
                     ? "bg-white shadow-sm text-yellow-600"
-                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200"
+                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-700"
                 }`}
               >
                 <IconSun size={18} />
@@ -131,7 +159,7 @@ export default function AppearanceSettings() {
                 className={`p-2 rounded-md transition-all ${
                   theme === "dark"
                     ? "bg-surface-200 shadow-sm text-purple-400"
-                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200"
+                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-700"
                 }`}
               >
                 <IconGhost size={18} />
@@ -179,7 +207,7 @@ export default function AppearanceSettings() {
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                   layout === "sidebar"
                     ? "bg-white dark:bg-surface-200 shadow-sm text-surface-900 dark:text-white"
-                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200"
+                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-700"
                 }`}
               >
                 <IconLayoutSidebar size={16} />
@@ -190,13 +218,33 @@ export default function AppearanceSettings() {
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                   layout === "topbar"
                     ? "bg-white dark:bg-surface-200 shadow-sm text-surface-900 dark:text-white"
-                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200"
+                    : "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-700"
                 }`}
               >
                 <IconLayoutNavbar size={16} />
                 <span>{t("appearance_settings.topbar")}</span>
               </button>
             </div>
+          </SettingItem>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-surface-400 mb-3 flex items-center gap-2">
+          <IconHeartOff size={14} />
+          {t("appearance_settings.content")}
+        </h3>
+        <div className="space-y-3">
+          <SettingItem
+            icon={IconHeartOff}
+            label={t("appearance_settings.donation_ads")}
+            desc={t("appearance_settings.donation_ads_desc")}
+            active={showDonationBanners}
+          >
+            <Switch
+              checked={showDonationBanners}
+              onChange={(value) => setSetting("showDonationBanners", value)}
+            />
           </SettingItem>
         </div>
       </section>

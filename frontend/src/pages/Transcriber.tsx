@@ -5,7 +5,6 @@ import {
   IconFileMusic,
   IconChevronDown,
   IconLoader2,
-  IconWand,
   IconX,
   IconSettings,
   IconLanguage,
@@ -30,6 +29,7 @@ import {
   WhisperSetup,
 } from "../components/transcriber";
 import type { ModelInfo, TranscribeResult } from "../components/transcriber";
+import DonationBanner from "../components/DonationBanner";
 
 const LANGUAGES = [
   "auto",
@@ -52,12 +52,14 @@ function getFileName(path: string): string {
 
 export default function Transcriber() {
   const { t } = useTranslation("transcriber");
+  const { t: commonT } = useTranslation("common");
 
   const [filePath, setFilePath] = useState("");
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState("");
   const [language, setLanguage] = useState("auto");
   const [outputFormat, setOutputFormat] = useState<string>("txt");
+  const [useVad, setUseVad] = useState(false);
 
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [result, setResult] = useState<TranscribeResult | null>(null);
@@ -85,8 +87,6 @@ export default function Transcriber() {
     } finally {
       setIsChecking(false);
     }
-    // selectedModel intencionalmente excluído das deps para evitar re-render em loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -124,9 +124,9 @@ export default function Transcriber() {
       const res = await TranscribeFile({
         filePath,
         model: selectedModel,
-        // Passa "auto" explicitamente — o backend faz two-pass detection
-        language: language === "auto" ? "auto" : language,
+        language,
         outputFormat,
+        useVad,
       });
       setResult(res);
     } catch (err) {
@@ -214,7 +214,7 @@ export default function Transcriber() {
                             setResult(null);
                             setError("");
                           }}
-                          className="p-1.5 text-surface-400 hover:text-surface-600 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
+                          className="p-1.5 text-surface-400 hover:text-surface-600 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-200 rounded-lg transition-colors"
                         >
                           <IconX size={16} />
                         </button>
@@ -229,14 +229,14 @@ export default function Transcriber() {
                         disabled={isTranscribing}
                         className="w-full flex items-center gap-4 p-3 border-2 border-dashed border-surface-200 dark:border-white/10 rounded-xl hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 transition-all group cursor-pointer text-left"
                       >
-                        <div className="w-10 h-10 rounded-full bg-surface-100 dark:bg-surface-800 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 flex items-center justify-center shrink-0 transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-surface-100 dark:bg-surface-200 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 flex items-center justify-center shrink-0 transition-colors">
                           <IconUpload
                             size={20}
                             className="text-surface-400 group-hover:text-primary-600 transition-colors"
                           />
                         </div>
                         <div>
-                          <p className="font-medium text-sm text-surface-700 dark:text-surface-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                          <p className="font-medium text-sm text-surface-700 dark:text-surface-600 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                             {t("select_file")}
                           </p>
                           <p className="text-xs text-surface-400">
@@ -353,6 +353,27 @@ export default function Transcriber() {
 
                   <div className="h-px bg-surface-100 dark:bg-surface-200" />
 
+                  {/* Voice Activity Detection */}
+                  <label className="flex items-start gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={useVad}
+                      onChange={(event) => setUseVad(event.target.checked)}
+                      disabled={isTranscribing}
+                      className="mt-0.5 h-4 w-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
+                    />
+                    <span className="min-w-0">
+                      <span className="text-xs font-semibold text-surface-700 dark:text-surface-700 flex items-center gap-1.5">
+                        <IconWaveSine size={13} /> {t("vad_label")}
+                      </span>
+                      <span className="block mt-0.5 text-[10px] leading-relaxed text-surface-400">
+                        {t("vad_description")}
+                      </span>
+                    </span>
+                  </label>
+
+                  <div className="h-px bg-surface-100 dark:bg-surface-200" />
+
                   {/* Output Format */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-semibold text-surface-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -367,7 +388,7 @@ export default function Transcriber() {
                           className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 ${
                             outputFormat === fmt
                               ? "bg-surface-900 dark:bg-primary-600 text-white shadow-md shadow-primary-500/20"
-                              : "text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                              : "text-surface-600 dark:text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-200"
                           }`}
                         >
                           {fmt}
@@ -379,7 +400,17 @@ export default function Transcriber() {
               </motion.div>
             </div>
 
-            <div className="h-24" />
+            <div className="mt-5 w-full max-w-2xl">
+              <DonationBanner
+                variant="subtle"
+                eyebrow={commonT("donation.sidebar.eyebrow")}
+                title={commonT("donation.sidebar.title")}
+                description={commonT("donation.sidebar.description")}
+                action={commonT("donation.dashboard.action")}
+              />
+            </div>
+
+            <div className="h-12" />
           </div>
         </div>
 
@@ -398,7 +429,7 @@ export default function Transcriber() {
                     <span>{t("transcribing")}</span>
                     <IconLoader2 size={12} className="animate-spin" />
                   </div>
-                  <div className="h-1 bg-surface-100 dark:bg-surface-800/50 rounded-full overflow-hidden">
+                  <div className="h-1 bg-surface-100 dark:bg-surface-200/50 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-primary-600 rounded-full"
                       initial={{ width: "0%" }}

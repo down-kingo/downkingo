@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   IconInfoCircle,
-  IconHeart,
   IconBook,
   IconBrandGithub,
   IconExternalLink,
@@ -9,6 +8,8 @@ import {
 import { safeBrowserOpenURL } from "../../lib/wailsRuntime";
 import { useTranslation } from "react-i18next";
 import { GetVersion } from "../../../bindings/kingo/app";
+import DonationBanner from "../DonationBanner";
+import appIcon from "../../assets/images/appicon.avif";
 
 const SettingItem = ({
   icon: Icon,
@@ -73,7 +74,7 @@ export default function AboutSettings() {
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="w-20 h-20 bg-surface-100 dark:bg-surface-200 rounded-2xl flex items-center justify-center mb-4">
             <img
-              src="/src/assets/images/appicon.avif"
+              src={appIcon}
               alt="DownKingo Logo"
               className="w-16 h-16 object-contain"
             />
@@ -84,7 +85,7 @@ export default function AboutSettings() {
           <p className="text-sm text-surface-500 dark:text-surface-400 mb-4">
             v{appVersion}
           </p>
-          <p className="text-sm text-surface-600 dark:text-surface-300 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-surface-600 dark:text-surface-600 max-w-md mx-auto leading-relaxed">
             {t("about.description")}
           </p>
         </div>
@@ -121,20 +122,12 @@ export default function AboutSettings() {
           </SettingItem>
 
           {/* Doação - Destaque */}
-          <div className="relative overflow-hidden rounded-xl border border-pink-200 dark:border-pink-900/30 bg-gradient-to-br from-pink-50 to-white dark:from-pink-900/10 dark:to-surface-100 p-1">
-            <SettingItem
-              icon={IconHeart}
-              label={t("about.support")}
-              desc={t("about.support_desc")}
-              onClick={() =>
-                handleOpenLink("https://github.com/sponsors/Capman002/")
-              }
-            >
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-lg text-xs font-bold uppercase tracking-wide">
-                {t("about.donate")}
-              </div>
-            </SettingItem>
-          </div>
+          <DonationBanner
+            eyebrow={t("about.support_eyebrow")}
+            title={t("about.support")}
+            description={t("about.support_desc")}
+            action={t("about.donate")}
+          />
         </div>
       </section>
 

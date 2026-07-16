@@ -117,7 +117,7 @@ func (f *CDNFetcher) FetchRoadmap(previousETag string, lang string) (*FetchRoadm
 	}
 
 	// Read body and compute hash
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 10<<20))
 	if err != nil {
 		return nil, fmt.Errorf("read roadmap body: %w", err)
 	}

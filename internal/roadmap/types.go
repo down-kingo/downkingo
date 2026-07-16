@@ -92,19 +92,12 @@ func DefaultConfig() Config {
 
 // ToRoadmapItem converts CDNItem to frontend-compatible RoadmapItem
 func (c *CDNItem) ToRoadmapItem() RoadmapItem {
-	status := c.Status
-	// Legacy CDN snapshots may contain a closed timestamp while retaining an
-	// outdated Project v2 status. The issue lifecycle is authoritative.
-	if c.ShippedAt != nil && *c.ShippedAt != "" {
-		status = StatusShipped
-	}
-
 	item := RoadmapItem{
 		ID:            c.ID,
 		Title:         c.Title,
 		FriendlyTitle: c.FriendlyTitle,
 		Description:   c.Description,
-		Status:        status,
+		Status:        c.Status,
 		Votes:         c.VotesUp, // Maintain backwards compatibility
 		VotesUp:       c.VotesUp,
 		VotesDown:     c.VotesDown,
@@ -115,7 +108,7 @@ func (c *CDNItem) ToRoadmapItem() RoadmapItem {
 		AuthorAvatar:  c.AuthorAvatar,
 		CreatedAt:     c.CreatedAt,
 	}
-	if c.ShippedAt != nil {
+	if c.Status == StatusShipped && c.ShippedAt != nil {
 		item.ShippedAt = *c.ShippedAt
 	}
 	return item

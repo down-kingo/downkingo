@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { GetSettings, SaveSettings } from "../../../bindings/kingo/app";
@@ -39,6 +39,9 @@ const SettingItem = ({
 export default function ImageSettings() {
   const { imageFormat, imageQuality, setSetting } = useSettingsStore();
   const { t } = useTranslation("settings");
+  const backendConfigRef = useRef<
+    Awaited<ReturnType<typeof GetSettings>> | null
+  >(null);
 
   // Sync com backend
   useEffect(() => {
@@ -46,6 +49,7 @@ export default function ImageSettings() {
       try {
         const cfg = await GetSettings();
         if (cfg?.image) {
+          backendConfigRef.current = cfg;
           setSetting("imageFormat", cfg.image.format);
           setSetting("imageQuality", cfg.image.quality);
         }
@@ -54,25 +58,27 @@ export default function ImageSettings() {
       }
     };
     load();
-  }, []);
+  }, [setSetting]);
 
   // Salvar quando muda
   useEffect(() => {
-    const save = async () => {
+    const cfg = backendConfigRef.current;
+    if (!cfg || !imageFormat) return;
+
+    // Debounce the slider and preserve the complete backend config. Sending a
+    // partial Go struct used to reset unrelated booleans such as privacy and
+    // clipboard monitoring to false.
+    const timer = setTimeout(async () => {
       try {
-        // @ts-ignore - Backend aceita objeto parcial
-        await SaveSettings({
-          downloadsPath: "",
-          image: {
-            format: imageFormat,
-            quality: imageQuality,
-          },
-        });
+        cfg.image.format = imageFormat;
+        cfg.image.quality = imageQuality;
+        await SaveSettings(cfg);
       } catch (e) {
         console.error("Save settings failed", e);
       }
-    };
-    if (imageFormat) save();
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [imageFormat, imageQuality]);
 
   return (
@@ -92,7 +98,7 @@ export default function ImageSettings() {
             <select
               value={imageFormat}
               onChange={(e) => setSetting("imageFormat", e.target.value as any)}
-              className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-600 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
+              className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-300 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
             >
               <option value="original">
                 {t("image_settings.formats.original")}
@@ -135,7 +141,7 @@ export default function ImageSettings() {
                   onChange={(e) =>
                     setSetting("imageQuality", Number(e.target.value))
                   }
-                  className="w-full accent-primary-600 h-1.5 bg-surface-200 dark:bg-surface-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-primary-600 h-1.5 bg-surface-200 dark:bg-surface-300 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
             </SettingItem>
@@ -146,7 +152,7 @@ export default function ImageSettings() {
       {/* Info Box */}
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl">
         <div className="flex gap-3">
-          <IconPhoto size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
+          <IconPhoto size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
               {t("image_settings.tips_title")}

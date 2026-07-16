@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -70,13 +71,21 @@ func Load(configDir string) (*Config, error) {
 	cfg := Default()
 	cfg.filePath = filePath
 
-	data, err := os.ReadFile(filePath)
+	file, err := os.Open(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			// File doesn't exist, return default.
 			// Caller might want to Save() it immediately to create the file.
 			return cfg, nil
 		}
+		return nil, err
+	}
+	defer file.Close()
+
+	// A settings file should remain tiny. Cap corrupted or externally replaced
+	// files so startup cannot allocate an arbitrary amount of memory.
+	data, err := io.ReadAll(io.LimitReader(file, 1<<20))
+	if err != nil {
 		return nil, err
 	}
 

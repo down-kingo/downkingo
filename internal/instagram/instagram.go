@@ -95,7 +95,7 @@ func getPostInfoAnonymous(shortcode, postURL string) (*PostInfo, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Instagram retornou status %d", resp.StatusCode)
+		return nil, fmt.Errorf("instagram retornou status %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 10*1024*1024))

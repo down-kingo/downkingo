@@ -482,8 +482,8 @@ export default function Converter() {
                     isActive
                       ? "bg-surface-900 dark:bg-primary-600 text-white dark:text-white shadow-md shadow-primary-500/20"
                       : isSameGroup && inputPath
-                        ? "text-surface-700 dark:text-surface-200 bg-surface-100 dark:bg-surface-800 ring-1 ring-primary-500/30"
-                        : "text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                        ? "text-surface-700 dark:text-surface-700 bg-surface-100 dark:bg-surface-200 ring-1 ring-primary-500/30"
+                        : "text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-200"
                   }`}
                 >
                   <Icon size={16} />
@@ -577,7 +577,6 @@ export default function Converter() {
         <ActionPanel
           inputPath={inputPath}
           outputDir={outputDir}
-          activeTab={activeTab}
           isProcessing={isProcessing}
           result={result}
           error={error}

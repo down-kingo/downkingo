@@ -44,7 +44,9 @@ func main() {
 	// 4. Move new binary → original path
 	if err := os.Rename(*newPath, *oldPath); err != nil {
 		// Rollback: restore backup
-		os.Rename(backupPath, *oldPath)
+		if rollbackErr := os.Rename(backupPath, *oldPath); rollbackErr != nil {
+			fmt.Fprintf(os.Stderr, "Rollback also failed: %v\n", rollbackErr)
+		}
 		fmt.Fprintf(os.Stderr, "Failed to install update: %v\n", err)
 		os.Exit(1)
 	}
@@ -107,7 +109,11 @@ func waitForProcessExitWindows(pid int, timeout time.Duration) error {
 	if err != nil {
 		return nil // Process doesn't exist or can't be accessed — treat as exited
 	}
-	defer syscall.CloseHandle(handle)
+	defer func() {
+		if err := syscall.CloseHandle(handle); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not close process handle: %v\n", err)
+		}
+	}()
 
 	// WaitForSingleObject with timeout in milliseconds
 	millis := uint32(timeout.Milliseconds())

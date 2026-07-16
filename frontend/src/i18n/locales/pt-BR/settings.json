@@ -9,7 +9,8 @@
     "github_desc": "Código fonte e contribuições",
     "resources": "Recursos",
     "support": "Apoie o Projeto",
-    "support_desc": "Ajude a manter o desenvolvimento ativo",
+    "support_desc": "Cada contribuição apoia a manutenção e novas melhorias. Doe o valor que fizer sentido para você.",
+    "support_eyebrow": "Você faz parte",
     "title": "Sobre",
     "version": "Versão"
   },
@@ -24,6 +25,9 @@
   "appearance_settings": {
     "accent_color": "Cor de Destaque",
     "accent_desc": "Personalize a cor principal da interface",
+    "content": "Conteúdo",
+    "donation_ads": "Exibir anúncios de doação",
+    "donation_ads_desc": "Mostra os banners de apoio ao projeto na interface",
     "layout": "Layout",
     "menu_desc": "Escolha como navegar pela aplicação",
     "menu_layout": "Disposição do Menu",
@@ -36,6 +40,7 @@
   "aria2c_settings": {
     "component": "Componente",
     "connections": "Conexões",
+    "fragments": "Fragmentos DASH/HLS",
     "delete_btn": "Excluir do sistema",
     "deleting": "Excluindo...",
     "install_btn": "Instalar (~3MB)",

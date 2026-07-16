@@ -18,6 +18,8 @@ import (
 // Device Flow habilitado nas configurações do App
 const ClientID = "Iv23liJjoBb3O4FatgRC"
 
+const maxAuthResponseSize = 1 << 20 // 1 MiB; GitHub auth JSON is normally a few hundred bytes.
+
 // authHTTPClient is a shared HTTP client with timeout for all auth requests.
 var authHTTPClient = &http.Client{
 	Timeout: 15 * time.Second,
@@ -79,7 +81,7 @@ func (s *AuthService) StartDeviceFlow() (*DeviceCodeResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(io.LimitReader(resp.Body, maxAuthResponseSize))
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response: %w", err)
 	}

@@ -34,8 +34,8 @@ var supportedDomains = []string{
 }
 
 type Monitor struct {
-	ctx       context.Context
 	cancel    context.CancelFunc
+	done      chan struct{}
 	mu        sync.Mutex
 	lastText  string
 	isRunning bool
@@ -64,30 +64,42 @@ func (m *Monitor) Start(ctx context.Context) {
 		return
 	}
 
-	m.ctx, m.cancel = context.WithCancel(ctx)
+	monitorCtx, cancel := context.WithCancel(ctx)
+	m.cancel = cancel
+	m.done = make(chan struct{})
 	m.isRunning = true
 
 	// Wails v3: use application.Get().Clipboard.Text()
-	if text, ok := application.Get().Clipboard.Text(); ok {
-		m.lastText = text
+	if app := application.Get(); app != nil {
+		if text, ok := app.Clipboard.Text(); ok {
+			m.lastText = text
+		}
 	}
 
-	go m.loop()
+	go m.loop(monitorCtx, m.done)
 	logger.Log.Info().Msg("Clipboard monitor started")
 }
 
 func (m *Monitor) Stop() {
 	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	if !m.isRunning {
+		m.mu.Unlock()
 		return
 	}
 
-	if m.cancel != nil {
-		m.cancel()
-	}
+	cancel := m.cancel
+	done := m.done
+	m.cancel = nil
+	m.done = nil
 	m.isRunning = false
+	m.mu.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+	if done != nil {
+		<-done
+	}
 	logger.Log.Info().Msg("Clipboard monitor stopped")
 }
 
@@ -98,18 +110,28 @@ const (
 	backoffFactor   = 2                      // Exponential growth rate
 )
 
-func (m *Monitor) loop() {
+func (m *Monitor) loop(ctx context.Context, done chan<- struct{}) {
+	defer close(done)
 	currentInterval := minPollInterval
+	timer := time.NewTimer(currentInterval)
+	defer timer.Stop()
 
 	for {
 		select {
-		case <-m.ctx.Done():
+		case <-ctx.Done():
 			return
-		case <-time.After(currentInterval):
-			text, ok := application.Get().Clipboard.Text()
+		case <-timer.C:
+			app := application.Get()
+			if app == nil {
+				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
+				timer.Reset(currentInterval)
+				continue
+			}
+			text, ok := app.Clipboard.Text()
 			if !ok {
 				// On error, increase backoff to avoid hammering
 				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
+				timer.Reset(currentInterval)
 				continue
 			}
 
@@ -135,6 +157,7 @@ func (m *Monitor) loop() {
 				// Increase backoff when idle
 				currentInterval = minDuration(currentInterval*backoffFactor, maxPollInterval)
 			}
+			timer.Reset(currentInterval)
 		}
 	}
 }
@@ -149,8 +172,9 @@ func minDuration(a, b time.Duration) time.Duration {
 
 // limitString é um helper para logs
 func limitString(s string, max int) string {
-	if len(s) > max {
-		return s[:max] + "..."
+	runes := []rune(s)
+	if len(runes) > max {
+		return string(runes[:max]) + "..."
 	}
 	return s
 }
@@ -174,9 +198,13 @@ func platformName(rawURL string) string {
 		"threads.net":     "Threads",
 		"soundcloud.com":  "SoundCloud",
 	}
-	lower := strings.ToLower(rawURL)
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil {
+		return "Link"
+	}
+	host := strings.ToLower(parsed.Hostname())
 	for domain, name := range platforms {
-		if strings.Contains(lower, domain) {
+		if hostMatchesDomain(host, domain) {
 			return name
 		}
 	}
@@ -200,12 +228,16 @@ func (m *Monitor) sendNotification(detectedURL string) {
 
 	if err := n.Push(); err != nil {
 		logger.Log.Warn().Err(err).Str("url", detectedURL).Msg("failed to send native notification, falling back to event")
-		application.Get().Event.Emit("clipboard:link-detected", detectedURL)
+		if app := application.Get(); app != nil {
+			app.Event.Emit("clipboard:link-detected", detectedURL)
+		}
 		return
 	}
 
 	// Emit event immediately so frontend can fill URL when notification appears
-	application.Get().Event.Emit("clipboard:link-detected", detectedURL)
+	if app := application.Get(); app != nil {
+		app.Event.Emit("clipboard:link-detected", detectedURL)
+	}
 }
 
 func (m *Monitor) isValidURL(text string) bool {
@@ -225,17 +257,23 @@ func (m *Monitor) isValidURL(text string) bool {
 	}
 
 	// Deve ter host não-vazio
-	host := strings.ToLower(parsedURL.Host)
+	host := strings.ToLower(parsedURL.Hostname())
 	if host == "" {
 		return false
 	}
 
 	// Verifica se é um domínio de mídia suportado
 	for _, domain := range supportedDomains {
-		if strings.Contains(host, domain) {
+		if hostMatchesDomain(host, domain) {
 			return true
 		}
 	}
 
 	return false
+}
+
+func hostMatchesDomain(host, domain string) bool {
+	host = strings.TrimSuffix(strings.ToLower(host), ".")
+	domain = strings.TrimSuffix(strings.ToLower(domain), ".")
+	return host == domain || strings.HasSuffix(host, "."+domain)
 }

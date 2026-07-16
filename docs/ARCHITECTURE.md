@@ -172,6 +172,24 @@ User -> Frontend -> TranscribeFile() -> TranscriberHandler -> whisper.Client
                                                           4. Retorna resultado (texto + timestamps)
 ```
 
+## Fluxo de Legendas no Editor
+
+```text
+Editor -> GetVideoSubtitles() -> yt-dlp (faixa manual/automatica)
+   |                                  |
+   |                                  +-> trechos editaveis + timestamps
+   |
+   +-> AddToQueueAdvanced(captions) -> Download -> workspace temporario
+                                                  |
+                         sem faixa e source=auto -+-> Whisper local
+                                                  |
+                         cortes -> ajuste ripple -+-> ASS estilizado
+                                                  |
+                                                  +-> FFmpeg ass + H.264/AAC
+```
+
+As legendas visuais e os cortes usam uma unica renderizacao final. Isso preserva a sincronizacao depois de remover trechos e evita uma segunda perda de qualidade.
+
 ## Tratamento de Erros
 
 Estrategia em camadas:
@@ -232,6 +250,8 @@ main.go
 | **Media** | yt-dlp, FFmpeg, aria2c, Whisper |
 | **Build** | Taskfile (substitui Wails CLI) |
 | **Distribuicao** | NSIS (Windows), AppImage (Linux) |
+
+Detalhes de versões, checksums, instalação, parâmetros e benchmarks dos componentes de mídia estão em [Runtimes locais, transcrição e downloads acelerados](RUNTIMES-E-DOWNLOADS.md).
 
 ## Decisoes de Arquitetura (ADRs)
 

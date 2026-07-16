@@ -75,7 +75,7 @@ const Switch = ({
       ${
         checked
           ? "bg-primary-600 dark:bg-primary-500 shadow-lg shadow-primary-600/20"
-          : "bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600"
+          : "bg-surface-200 dark:bg-surface-300 hover:bg-surface-300 dark:hover:bg-surface-400"
       }
     `}
   >
@@ -104,6 +104,7 @@ export default function VideoSettings() {
     videoCompatibility,
     useAria2c,
     aria2cConnections,
+    concurrentFragments,
     setSetting,
   } = useSettingsStore();
 
@@ -179,7 +180,7 @@ export default function VideoSettings() {
             <select
               value={videoCompatibility}
               onChange={(e) => setSetting("videoCompatibility", e.target.value)}
-              className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-600 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
+              className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-300 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
             >
               <option value="universal">
                 {t("video_settings.compatibility_universal")}
@@ -201,7 +202,7 @@ export default function VideoSettings() {
                 <select
                   value={remuxFormat || "mp4"}
                   onChange={(e) => setSetting("remuxFormat", e.target.value)}
-                  className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-600 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
+                  className="bg-surface-50 dark:bg-surface-200 border border-surface-200 dark:border-surface-300 rounded-lg px-3 py-2 text-sm text-surface-900 focus:outline-none focus:ring-2 focus:ring-primary-500/50 cursor-pointer"
                 >
                   <option value="mp4">MP4</option>
                   <option value="mkv">MKV</option>
@@ -295,7 +296,7 @@ export default function VideoSettings() {
           </div>
 
           {/* Detalhes */}
-          <div className="p-3 bg-surface-100/50 dark:bg-surface-800/30 rounded-lg space-y-2">
+          <div className="p-3 bg-surface-100/50 dark:bg-surface-200/50 rounded-lg space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-surface-500 flex items-center gap-2">
                 <IconCheck size={14} />
@@ -349,6 +350,25 @@ export default function VideoSettings() {
               </select>
             </div>
 
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-surface-500 flex items-center gap-2">
+                <IconRocket size={14} />
+                {t("aria2c_settings.fragments")}
+              </span>
+              <select
+                value={concurrentFragments}
+                onChange={(e) =>
+                  setSetting("concurrentFragments", Number(e.target.value))
+                }
+                className="bg-transparent text-surface-600 font-medium text-xs text-right cursor-pointer focus:outline-none"
+              >
+                <option value={2}>2</option>
+                <option value={4}>4</option>
+                <option value={8}>8</option>
+                <option value={16}>16</option>
+              </select>
+            </div>
+
             {!aria2cStatus?.installed && !isDownloading && (
               <button
                 onClick={handleAria2cToggle}
@@ -362,7 +382,7 @@ export default function VideoSettings() {
             {aria2cStatus?.installed && !isDeleting && (
               <button
                 onClick={handleAria2cDelete}
-                className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs font-medium rounded-lg transition-colors border border-red-200 dark:border-red-800"
+                className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs font-medium rounded-lg transition-colors border border-red-200 dark:border-red-800"
               >
                 <IconTrash size={14} />
                 {t("aria2c_settings.delete_btn")}

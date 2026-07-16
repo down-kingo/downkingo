@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLauncherStore } from "../stores/launcherStore";
@@ -6,14 +6,18 @@ import { useSettingsStore, FeatureId } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import {
   CheckDependencies,
-  DownloadDependencies,
   DownloadSelectedDependencies,
   DownloadAndApplyUpdate,
   IsWhisperInstalled,
   DownloadWhisperBinary,
+  OpenUrl,
 } from "../../bindings/kingo/app";
-import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
-import { FEATURE_REGISTRY, ALL_FEATURE_IDS, FEATURE_DEPS } from "../lib/features";
+import { safeEventsOn } from "../lib/wailsRuntime";
+import {
+  FEATURE_REGISTRY,
+  ALL_FEATURE_IDS,
+  getRequiredDependencyNames,
+} from "../lib/features";
 import {
   IconCheck,
   IconX,
@@ -54,6 +58,10 @@ export default function Setup() {
     preselected ?? ["videos", "images", "converter", "transcriber"],
   );
   const setEnabledFeatures = useSettingsStore((s) => s.setEnabledFeatures);
+  const requiredDepNames = useMemo(
+    () => getRequiredDependencyNames(selectedFeatures),
+    [selectedFeatures],
+  );
 
   // Durante o onboarding, o toggle opera no estado local (antes de confirmar)
   const toggleLocalFeature = (id: FeatureId) => {
@@ -87,23 +95,31 @@ export default function Setup() {
   const {
     dependencies,
     progress,
-    isComplete,
     error,
     setDependencies,
     updateProgress: updateLauncherProgress,
-    setComplete,
     setError,
     reset,
   } = useLauncherStore();
 
   // Track whisper download progress separately
-  const [whisperProgress, setWhisperProgress] = useState<{
+  const [, setWhisperProgress] = useState<{
     status: string;
     percent: number;
   } | null>(null);
   const needsWhisperRef = useRef(false);
 
-  const startSetup = async () => {
+  const startWhisperDownload = useCallback(async () => {
+    try {
+      setWhisperProgress({ status: "downloading", percent: 0 });
+      await DownloadWhisperBinary();
+      // whisper:binary-progress events atualizam o progresso via listener
+    } catch (err) {
+      setError(String(err));
+    }
+  }, [setError]);
+
+  const startSetup = useCallback(async () => {
     try {
       if (isUpdateMode) {
         if (!updateUrl) {
@@ -119,10 +135,6 @@ export default function Setup() {
         needsWhisperRef.current = false;
 
         // Calcular dependências necessárias com base nas features selecionadas
-        const requiredDepNames = [
-          ...new Set(selectedFeatures.flatMap((f) => FEATURE_DEPS[f])),
-        ];
-
         const allStatuses = await CheckDependencies();
 
         // Filtrar apenas as deps necessárias para as features selecionadas
@@ -148,6 +160,9 @@ export default function Setup() {
             name: "Whisper",
             installed: whisperInstalled,
             size: 0,
+            version: "v1.9.1",
+            license: "MIT",
+            projectUrl: "https://github.com/ggml-org/whisper.cpp",
           });
         }
 
@@ -181,26 +196,31 @@ export default function Setup() {
         setError(String(err));
       }
     }
-  };
+  }, [
+    isUpdateMode,
+    navigate,
+    requiredDepNames,
+    reset,
+    selectedFeatures,
+    setDependencies,
+    setEnabledFeatures,
+    setError,
+    startWhisperDownload,
+    updateUrl,
+  ]);
 
-  const startWhisperDownload = async () => {
-    try {
-      setWhisperProgress({ status: "downloading", percent: 0 });
-      await DownloadWhisperBinary();
-      // whisper:binary-progress events atualizam o progresso via listener
-    } catch (err) {
-      setError(String(err));
-    }
-  };
-
-  const unsubscribeRef = useRef<{
-    progress?: () => void;
-    complete?: () => void;
-    whisperProgress?: () => void;
-  }>({});
   const mountedRef = useRef(true);
+  const listenerRunRef = useRef(0);
 
   useEffect(() => {
+    const runID = ++listenerRunRef.current;
+    const unsubscribers: {
+      progress?: () => void;
+      complete?: () => void;
+      whisperProgress?: () => void;
+    } = {};
+    const isActive = () =>
+      mountedRef.current && listenerRunRef.current === runID;
     mountedRef.current = true;
 
     const registerListeners = async () => {
@@ -210,7 +230,7 @@ export default function Setup() {
           const unsubUpdate = await safeEventsOn<any>(
             "updater:progress",
             (data) => {
-              if (!mountedRef.current) return;
+              if (!isActive()) return;
               if (data.status === "downloading") {
                 setUpdateStatus("downloading");
                 setUpdateProgress(data.percent);
@@ -225,23 +245,23 @@ export default function Setup() {
               }
             },
           );
-          unsubscribeRef.current.progress = unsubUpdate;
+          if (isActive()) unsubscribers.progress = unsubUpdate;
+          else unsubUpdate();
         } else {
           // Listeners for Dependency Setup
           const unsubProgress = await safeEventsOn<any>(
             "launcher:progress",
             (data) => {
-              if (mountedRef.current) updateLauncherProgress(data);
+              if (isActive()) updateLauncherProgress(data);
             },
           );
-          if (mountedRef.current)
-            unsubscribeRef.current.progress = unsubProgress;
+          if (isActive()) unsubscribers.progress = unsubProgress;
           else unsubProgress();
 
           const unsubComplete = await safeEventsOn<void>(
             "launcher:complete",
             () => {
-              if (!mountedRef.current) return;
+              if (!isActive()) return;
               if (needsWhisperRef.current) {
                 // Deps padrão OK, agora baixar whisper
                 needsWhisperRef.current = false;
@@ -249,22 +269,20 @@ export default function Setup() {
               } else {
                 // Todas as deps instaladas com sucesso — agora é seguro persistir
                 setEnabledFeatures(selectedFeatures);
-                setComplete();
                 setTimeout(() => {
-                  if (mountedRef.current) navigate("/home");
+                  if (isActive()) navigate("/home");
                 }, 1000);
               }
             },
           );
-          if (mountedRef.current)
-            unsubscribeRef.current.complete = unsubComplete;
+          if (isActive()) unsubscribers.complete = unsubComplete;
           else unsubComplete();
 
           // Listener para progresso do whisper binary
           const unsubWhisper = await safeEventsOn<any>(
             "whisper:binary-progress",
             (data) => {
-              if (!mountedRef.current) return;
+              if (!isActive()) return;
               const percent = data.percent || 0;
               const status = data.status || "downloading";
 
@@ -287,15 +305,13 @@ export default function Setup() {
               if (status === "complete") {
                 // Whisper instalado com sucesso — agora é seguro persistir features
                 setEnabledFeatures(selectedFeatures);
-                setComplete();
                 setTimeout(() => {
-                  if (mountedRef.current) navigate("/home");
+                  if (isActive()) navigate("/home");
                 }, 1000);
               }
             },
           );
-          if (mountedRef.current)
-            unsubscribeRef.current.whisperProgress = unsubWhisper;
+          if (isActive()) unsubscribers.whisperProgress = unsubWhisper;
           else unsubWhisper();
         }
       } catch (e) {
@@ -306,12 +322,49 @@ export default function Setup() {
     if (isPreview) {
       // Modo preview: popula dados mockados sem iniciar downloads
       reset();
-      const mockDeps: any[] = [
-        { name: "yt-dlp", installed: false },
-        { name: "FFmpeg", installed: false },
+      const mockCatalog: any[] = [
+        {
+          name: "yt-dlp",
+          installed: false,
+          version: "latest",
+          license: "Unlicense",
+          projectUrl: "https://github.com/yt-dlp/yt-dlp",
+        },
+        {
+          name: "FFmpeg",
+          installed: false,
+          version: "latest",
+          license: "GPL-3.0",
+          projectUrl: "https://ffmpeg.org/",
+        },
+        {
+          name: "YouTube PO Provider",
+          installed: false,
+          version: "v0.8.1",
+          license: "GPL-3.0",
+          projectUrl:
+            "https://github.com/jim60105/bgutil-ytdlp-pot-provider-rs",
+        },
+        {
+          name: "yt-dlp PO Plugin",
+          installed: false,
+          version: "v0.8.1",
+          license: "GPL-3.0",
+          projectUrl:
+            "https://github.com/jim60105/bgutil-ytdlp-pot-provider-rs",
+        },
       ];
+      const mockDeps = mockCatalog.filter((dependency) =>
+        requiredDepNames.includes(dependency.name),
+      );
       if (selectedFeatures.includes("transcriber")) {
-        mockDeps.push({ name: "Whisper", installed: false });
+        mockDeps.push({
+          name: "Whisper",
+          installed: false,
+          version: "v1.9.1",
+          license: "MIT",
+          projectUrl: "https://github.com/ggml-org/whisper.cpp",
+        });
       }
       setDependencies(mockDeps);
       return () => {
@@ -331,20 +384,24 @@ export default function Setup() {
 
     return () => {
       mountedRef.current = false;
-      if (unsubscribeRef.current.progress) unsubscribeRef.current.progress();
-      else {
-        if (isUpdateMode) tryEventsOff("updater:progress");
-        else tryEventsOff("launcher:progress");
-      }
-
-      if (unsubscribeRef.current.complete) unsubscribeRef.current.complete();
-      else if (!isUpdateMode) tryEventsOff("launcher:complete");
-
-      if (unsubscribeRef.current.whisperProgress)
-        unsubscribeRef.current.whisperProgress();
-      else if (!isUpdateMode) tryEventsOff("whisper:binary-progress");
+      unsubscribers.progress?.();
+      unsubscribers.complete?.();
+      unsubscribers.whisperProgress?.();
     };
-  }, [isUpdateMode, step]);
+  }, [
+    isPreview,
+    isUpdateMode,
+    navigate,
+    requiredDepNames,
+    reset,
+    selectedFeatures,
+    setDependencies,
+    setEnabledFeatures,
+    startSetup,
+    startWhisperDownload,
+    step,
+    updateLauncherProgress,
+  ]);
 
   const handleRetry = () => {
     setIsRetrying(true);
@@ -601,7 +658,10 @@ export default function Setup() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white">
+    <div
+      style={lightVars}
+      className="min-h-screen bg-white text-surface-900 flex flex-col items-center justify-center p-8 selection:bg-surface-900 selection:text-white"
+    >
       {/* Header - Area Ampla */}
       <div className="w-full max-w-4xl text-center mb-20 space-y-4">
         <motion.h1
@@ -666,6 +726,7 @@ export default function Setup() {
               {displayItems.map((dep, index) => {
                 const status = getStatusInfoUpdateWrapper(dep);
                 const Icon = status.icon;
+                const component = "installed" in dep ? dep : null;
 
                 const percent = isUpdateMode
                   ? updateProgress
@@ -695,7 +756,7 @@ export default function Setup() {
                     />
 
                     <div
-                      className="flex items-center gap-4 relative"
+                      className="flex min-w-0 items-center gap-4 relative"
                       style={{ zIndex: 1 }}
                     >
                       <Icon
@@ -703,9 +764,33 @@ export default function Setup() {
                         className={`${status.iconStyle} transition-transform group-hover:scale-110`}
                         stroke={2}
                       />
-                      <span className="font-bold tracking-tight text-sm uppercase">
-                        {dep.name}
-                      </span>
+                      <div className="min-w-0">
+                        <span className="block truncate font-bold tracking-tight text-sm uppercase">
+                          {dep.name}
+                        </span>
+                        {(component?.version ||
+                          component?.license ||
+                          component?.projectUrl) && (
+                          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[10px] font-semibold uppercase tracking-wider text-surface-500">
+                            {component.version && <span>{component.version}</span>}
+                            {component.license && <span>{component.license}</span>}
+                            {component.projectUrl && (
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (component.projectUrl) {
+                                    OpenUrl(component.projectUrl);
+                                  }
+                                }}
+                                className="underline decoration-surface-300 underline-offset-2 transition-colors hover:text-surface-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-surface-500"
+                              >
+                                {t("setup.source_code")}
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <span

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { safeEventsOn, tryEventsOff } from "../lib/wailsRuntime";
+import { useEffect } from "react";
+import { safeEventsOn } from "../lib/wailsRuntime";
 import {
   useDownloadStore,
   Download,
@@ -13,15 +13,17 @@ import {
  * @internal Usado internamente por useDownloadSync
  */
 export function useDownloadListeners() {
-  const { addDownload, updateDownload, completeDownload } = useDownloadStore();
-
-  const unsubscribeRef = useRef<{ added?: () => void; progress?: () => void }>(
-    {}
-  );
-  const mountedRef = useRef(true);
+  const addDownload = useDownloadStore((state) => state.addDownload);
+  const updateDownload = useDownloadStore((state) => state.updateDownload);
+  const completeDownload = useDownloadStore((state) => state.completeDownload);
 
   useEffect(() => {
-    mountedRef.current = true;
+    let mounted = true;
+    const unsubscribers: { added?: () => void; progress?: () => void } = {};
+    const completionTimers = new Map<
+      string,
+      ReturnType<typeof setTimeout>
+    >();
     console.log("[useDownloadListeners] Setting up event listeners");
 
     const registerListeners = async () => {
@@ -30,14 +32,14 @@ export function useDownloadListeners() {
         const unsubAdded = await safeEventsOn<Download>(
           "download:added",
           (download) => {
-            if (mountedRef.current) {
+            if (mounted) {
               console.log("[useDownloadListeners] download:added", download);
               addDownload(download);
             }
           }
         );
-        if (mountedRef.current) {
-          unsubscribeRef.current.added = unsubAdded;
+        if (mounted) {
+          unsubscribers.added = unsubAdded;
         } else {
           unsubAdded();
         }
@@ -46,7 +48,7 @@ export function useDownloadListeners() {
         const unsubProgress = await safeEventsOn<DownloadProgress>(
           "download:progress",
           (progress) => {
-            if (mountedRef.current) {
+            if (mounted) {
               console.log("[useDownloadListeners] download:progress", progress);
 
               updateDownload(progress.id, {
@@ -64,17 +66,22 @@ export function useDownloadListeners() {
                 progress.status === "failed" ||
                 progress.status === "cancelled"
               ) {
-                setTimeout(() => {
-                  if (mountedRef.current) {
+                const existingTimer = completionTimers.get(progress.id);
+                if (existingTimer) clearTimeout(existingTimer);
+
+                const timer = setTimeout(() => {
+                  completionTimers.delete(progress.id);
+                  if (mounted) {
                     completeDownload(progress.id);
                   }
                 }, 1500);
+                completionTimers.set(progress.id, timer);
               }
             }
           }
         );
-        if (mountedRef.current) {
-          unsubscribeRef.current.progress = unsubProgress;
+        if (mounted) {
+          unsubscribers.progress = unsubProgress;
         } else {
           unsubProgress();
         }
@@ -90,17 +97,17 @@ export function useDownloadListeners() {
 
     // Cleanup
     return () => {
-      mountedRef.current = false;
-      console.log("[useDownloadListeners] Cleaning up event listeners");
-      if (unsubscribeRef.current.added) {
-        unsubscribeRef.current.added();
-      } else {
-        tryEventsOff("download:added");
+      mounted = false;
+      for (const timer of completionTimers.values()) {
+        clearTimeout(timer);
       }
-      if (unsubscribeRef.current.progress) {
-        unsubscribeRef.current.progress();
-      } else {
-        tryEventsOff("download:progress");
+      completionTimers.clear();
+      console.log("[useDownloadListeners] Cleaning up event listeners");
+      if (unsubscribers.added) {
+        unsubscribers.added();
+      }
+      if (unsubscribers.progress) {
+        unsubscribers.progress();
       }
     };
   }, [addDownload, updateDownload, completeDownload]);

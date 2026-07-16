@@ -82,7 +82,7 @@ export default function ShortcutSettings() {
               className={`min-w-[120px] px-4 py-2 rounded-lg text-sm font-mono font-medium transition-all ${
                 recordingKey === item.key
                   ? "bg-primary-600 text-white ring-2 ring-primary-300 ring-offset-2"
-                  : "bg-surface-100 dark:bg-surface-800 text-surface-900 dark:text-surface-100 hover:bg-surface-200 dark:hover:bg-surface-700"
+                  : "bg-surface-100 dark:bg-surface-200 text-surface-900 dark:text-surface-800 hover:bg-surface-200 dark:hover:bg-surface-300"
               }`}
             >
               {recordingKey === item.key ? (

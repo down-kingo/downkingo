@@ -7,6 +7,116 @@
 import { Create as $Create } from "@wailsio/runtime";
 
 /**
+ * CaptionOptions controls subtitle acquisition and visual rendering.
+ */
+export class CaptionOptions {
+    /**
+     * Creates a new CaptionOptions instance.
+     * @param {Partial<CaptionOptions>} [$$source = {}] - The source object to create the CaptionOptions.
+     */
+    constructor($$source = {}) {
+        if (!("enabled" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["enabled"] = false;
+        }
+        if (!("source" in $$source)) {
+            /**
+             * auto, youtube, whisper
+             * @member
+             * @type {string}
+             */
+            this["source"] = "";
+        }
+        if (!("language" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["language"] = "";
+        }
+        if (!("model" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["model"] = "";
+        }
+        if (!("cues" in $$source)) {
+            /**
+             * @member
+             * @type {SubtitleCue[]}
+             */
+            this["cues"] = [];
+        }
+        if (!("style" in $$source)) {
+            /**
+             * @member
+             * @type {SubtitleStyle}
+             */
+            this["style"] = (new SubtitleStyle());
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CaptionOptions instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {CaptionOptions}
+     */
+    static createFrom($$source = {}) {
+        const $$createField4_0 = $$createType1;
+        const $$createField5_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("cues" in $$parsedSource) {
+            $$parsedSource["cues"] = $$createField4_0($$parsedSource["cues"]);
+        }
+        if ("style" in $$parsedSource) {
+            $$parsedSource["style"] = $$createField5_0($$parsedSource["style"]);
+        }
+        return new CaptionOptions(/** @type {Partial<CaptionOptions>} */($$parsedSource));
+    }
+}
+
+export class CutRange {
+    /**
+     * Creates a new CutRange instance.
+     * @param {Partial<CutRange>} [$$source = {}] - The source object to create the CutRange.
+     */
+    constructor($$source = {}) {
+        if (!("start" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["start"] = 0;
+        }
+        if (!("end" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["end"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CutRange instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {CutRange}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new CutRange(/** @type {Partial<CutRange>} */($$parsedSource));
+    }
+}
+
+/**
  * DownloadOptions specifies download parameters
  */
 export class DownloadOptions {
@@ -135,6 +245,14 @@ export class DownloadOptions {
              */
             this["aria2cConnections"] = 0;
         }
+        if (!("concurrentFragments" in $$source)) {
+            /**
+             * Parallel DASH/HLS fragments (default 8)
+             * @member
+             * @type {number}
+             */
+            this["concurrentFragments"] = 0;
+        }
         if (!("title" in $$source)) {
             /**
              * Optional metadata
@@ -150,6 +268,14 @@ export class DownloadOptions {
              * @type {string}
              */
             this["thumbnail"] = "";
+        }
+        if (!("cookieBrowser" in $$source)) {
+            /**
+             * Browser session explicitly authorized by the user
+             * @member
+             * @type {string}
+             */
+            this["cookieBrowser"] = "";
         }
         if (!("startTime" in $$source)) {
             /**
@@ -168,6 +294,23 @@ export class DownloadOptions {
              */
             this["endTime"] = "";
         }
+        if (!("excludedRanges" in $$source)) {
+            /**
+             * Edit decision list: source ranges that must be removed and ripple-joined.
+             * @member
+             * @type {CutRange[]}
+             */
+            this["excludedRanges"] = [];
+        }
+        if (!("captions" in $$source)) {
+            /**
+             * Captions are visually burned into the rendered video. This is separate
+             * from EmbedSubtitles, which only adds a selectable subtitle stream.
+             * @member
+             * @type {CaptionOptions}
+             */
+            this["captions"] = (new CaptionOptions());
+        }
 
         Object.assign(this, $$source);
     }
@@ -178,7 +321,15 @@ export class DownloadOptions {
      * @returns {DownloadOptions}
      */
     static createFrom($$source = {}) {
+        const $$createField21_0 = $$createType4;
+        const $$createField22_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("excludedRanges" in $$parsedSource) {
+            $$parsedSource["excludedRanges"] = $$createField21_0($$parsedSource["excludedRanges"]);
+        }
+        if ("captions" in $$parsedSource) {
+            $$parsedSource["captions"] = $$createField22_0($$parsedSource["captions"]);
+        }
         return new DownloadOptions(/** @type {Partial<DownloadOptions>} */($$parsedSource));
     }
 }
@@ -296,6 +447,286 @@ export class Format {
  */
 
 /**
+ * SubtitleCue is one editable, timestamped caption in source-video time.
+ */
+export class SubtitleCue {
+    /**
+     * Creates a new SubtitleCue instance.
+     * @param {Partial<SubtitleCue>} [$$source = {}] - The source object to create the SubtitleCue.
+     */
+    constructor($$source = {}) {
+        if (!("start" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["start"] = 0;
+        }
+        if (!("end" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["end"] = 0;
+        }
+        if (!("text" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["text"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SubtitleCue instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {SubtitleCue}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new SubtitleCue(/** @type {Partial<SubtitleCue>} */($$parsedSource));
+    }
+}
+
+/**
+ * SubtitleLanguage is a caption language advertised by the extractor. Source
+ * is either "manual" or "automatic"; a manual track wins when both exist.
+ */
+export class SubtitleLanguage {
+    /**
+     * Creates a new SubtitleLanguage instance.
+     * @param {Partial<SubtitleLanguage>} [$$source = {}] - The source object to create the SubtitleLanguage.
+     */
+    constructor($$source = {}) {
+        if (!("code" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["code"] = "";
+        }
+        if (!("name" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["name"] = "";
+        }
+        if (!("source" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["source"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SubtitleLanguage instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {SubtitleLanguage}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new SubtitleLanguage(/** @type {Partial<SubtitleLanguage>} */($$parsedSource));
+    }
+}
+
+/**
+ * SubtitleResult is returned to the editor after importing a remote track.
+ */
+export class SubtitleResult {
+    /**
+     * Creates a new SubtitleResult instance.
+     * @param {Partial<SubtitleResult>} [$$source = {}] - The source object to create the SubtitleResult.
+     */
+    constructor($$source = {}) {
+        if (!("cues" in $$source)) {
+            /**
+             * @member
+             * @type {SubtitleCue[]}
+             */
+            this["cues"] = [];
+        }
+        if (!("language" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["language"] = "";
+        }
+        if (!("source" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["source"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SubtitleResult instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {SubtitleResult}
+     */
+    static createFrom($$source = {}) {
+        const $$createField0_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("cues" in $$parsedSource) {
+            $$parsedSource["cues"] = $$createField0_0($$parsedSource["cues"]);
+        }
+        return new SubtitleResult(/** @type {Partial<SubtitleResult>} */($$parsedSource));
+    }
+}
+
+/**
+ * SubtitleStyle maps the editor controls to an ASS style rendered by FFmpeg.
+ */
+export class SubtitleStyle {
+    /**
+     * Creates a new SubtitleStyle instance.
+     * @param {Partial<SubtitleStyle>} [$$source = {}] - The source object to create the SubtitleStyle.
+     */
+    constructor($$source = {}) {
+        if (!("fontFamily" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fontFamily"] = "";
+        }
+        if (!("fontSize" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["fontSize"] = 0;
+        }
+        if (!("textColor" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["textColor"] = "";
+        }
+        if (!("backgroundColor" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["backgroundColor"] = "";
+        }
+        if (!("backgroundOpacity" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["backgroundOpacity"] = 0;
+        }
+        if (!("outlineColor" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["outlineColor"] = "";
+        }
+        if (!("outlineWidth" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["outlineWidth"] = 0;
+        }
+        if (!("position" in $$source)) {
+            /**
+             * top, center, bottom
+             * @member
+             * @type {string}
+             */
+            this["position"] = "";
+        }
+        if (!("bold" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["bold"] = false;
+        }
+        if (!("italic" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["italic"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SubtitleStyle instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {SubtitleStyle}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new SubtitleStyle(/** @type {Partial<SubtitleStyle>} */($$parsedSource));
+    }
+}
+
+/**
+ * Thumbnail is one image candidate emitted by yt-dlp.
+ */
+export class Thumbnail {
+    /**
+     * Creates a new Thumbnail instance.
+     * @param {Partial<Thumbnail>} [$$source = {}] - The source object to create the Thumbnail.
+     */
+    constructor($$source = {}) {
+        if (!("url" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["url"] = "";
+        }
+        if (!("width" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["width"] = 0;
+        }
+        if (!("height" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["height"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Thumbnail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {Thumbnail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Thumbnail(/** @type {Partial<Thumbnail>} */($$parsedSource));
+    }
+}
+
+/**
  * VideoInfo holds metadata about a video
  */
 export class VideoInfo {
@@ -340,6 +771,13 @@ export class VideoInfo {
              */
             this["thumbnail"] = "";
         }
+        if (!("thumbnails" in $$source)) {
+            /**
+             * @member
+             * @type {Thumbnail[]}
+             */
+            this["thumbnails"] = [];
+        }
         if (!("uploader" in $$source)) {
             /**
              * @member
@@ -360,6 +798,13 @@ export class VideoInfo {
              * @type {string}
              */
             this["description"] = "";
+        }
+        if (!("language" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["language"] = "";
         }
         if (!("width" in $$source)) {
             /**
@@ -382,6 +827,20 @@ export class VideoInfo {
              */
             this["formats"] = [];
         }
+        if (!("subtitle_languages" in $$source)) {
+            /**
+             * @member
+             * @type {SubtitleLanguage[]}
+             */
+            this["subtitle_languages"] = [];
+        }
+        if (/** @type {any} */(false)) {
+            /**
+             * @member
+             * @type {string | undefined}
+             */
+            this["cookie_browser"] = undefined;
+        }
 
         Object.assign(this, $$source);
     }
@@ -392,15 +851,33 @@ export class VideoInfo {
      * @returns {VideoInfo}
      */
     static createFrom($$source = {}) {
-        const $$createField10_0 = $$createType1;
+        const $$createField5_0 = $$createType7;
+        const $$createField12_0 = $$createType9;
+        const $$createField13_0 = $$createType11;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("thumbnails" in $$parsedSource) {
+            $$parsedSource["thumbnails"] = $$createField5_0($$parsedSource["thumbnails"]);
+        }
         if ("formats" in $$parsedSource) {
-            $$parsedSource["formats"] = $$createField10_0($$parsedSource["formats"]);
+            $$parsedSource["formats"] = $$createField12_0($$parsedSource["formats"]);
+        }
+        if ("subtitle_languages" in $$parsedSource) {
+            $$parsedSource["subtitle_languages"] = $$createField13_0($$parsedSource["subtitle_languages"]);
         }
         return new VideoInfo(/** @type {Partial<VideoInfo>} */($$parsedSource));
     }
 }
 
 // Private type creation functions
-const $$createType0 = Format.createFrom;
+const $$createType0 = SubtitleCue.createFrom;
 const $$createType1 = $Create.Array($$createType0);
+const $$createType2 = SubtitleStyle.createFrom;
+const $$createType3 = CutRange.createFrom;
+const $$createType4 = $Create.Array($$createType3);
+const $$createType5 = CaptionOptions.createFrom;
+const $$createType6 = Thumbnail.createFrom;
+const $$createType7 = $Create.Array($$createType6);
+const $$createType8 = Format.createFrom;
+const $$createType9 = $Create.Array($$createType8);
+const $$createType10 = SubtitleLanguage.createFrom;
+const $$createType11 = $Create.Array($$createType10);

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"kingo/internal/app"
+	aria2runtime "kingo/internal/aria2"
 	"kingo/internal/launcher"
 	"kingo/internal/updater"
 	"os"
@@ -62,23 +63,6 @@ func (h *SystemHandler) CheckDependencies() []launcher.DependencyStatus {
 	return h.launcher.CheckDependencies()
 }
 
-// NeedsDependencies returns true if any dependency is missing.
-func (h *SystemHandler) NeedsDependencies() bool {
-	return h.launcher.NeedsDependencies()
-}
-
-// DownloadDependencies downloads all missing dependencies.
-func (h *SystemHandler) DownloadDependencies() error {
-	h.consoleLog("[Sistema] Baixando dependências necessárias...")
-	err := h.launcher.DownloadDependencies()
-	if err == nil {
-		h.consoleLog("[Sistema] Dependências instaladas com sucesso!")
-	} else {
-		h.consoleLog("[Sistema] Erro ao instalar dependências")
-	}
-	return err
-}
-
 // DownloadSelectedDependencies downloads only the named dependencies.
 func (h *SystemHandler) DownloadSelectedDependencies(names []string) error {
 	h.consoleLog("[Sistema] Baixando dependências selecionadas...")
@@ -100,26 +84,11 @@ func (h *SystemHandler) CheckAria2cStatus() Aria2cStatus {
 		return Aria2cStatus{Installed: false}
 	}
 
-	info, err := os.Stat(path)
-	if err != nil || info.IsDir() || info.Size() == 0 {
+	version, err := aria2runtime.Validate(path)
+	if err != nil {
 		return Aria2cStatus{
 			Installed: false,
 			Path:      path,
-		}
-	}
-
-	// Get actual version from binary
-	version := "unknown"
-	cmd := exec.Command(path, "--version")
-	hideWindow(cmd)
-	if output, err := cmd.Output(); err == nil {
-		lines := strings.Split(string(output), "\n")
-		if len(lines) > 0 {
-			// First line is "aria2 version X.X.X"
-			parts := strings.Fields(lines[0])
-			if len(parts) >= 3 {
-				version = parts[2]
-			}
 		}
 	}
 

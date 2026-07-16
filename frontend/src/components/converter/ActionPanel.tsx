@@ -10,7 +10,7 @@ import {
   IconFolderOpen,
   IconArrowRight,
 } from "@tabler/icons-react";
-import type { ConversionResult, ConversionTab } from "./types";
+import type { ConversionResult } from "./types";
 
 /**
  * Formata o tamanho do arquivo em formato legível.
@@ -33,7 +33,6 @@ function getFileName(path: string): string {
 interface ActionPanelProps {
   inputPath: string;
   outputDir: string;
-  activeTab: ConversionTab;
   isProcessing: boolean;
   result: ConversionResult | null;
   error: string;
@@ -56,7 +55,6 @@ interface ActionPanelProps {
 export const ActionPanel = memo(function ActionPanel({
   inputPath,
   outputDir,
-  activeTab,
   isProcessing,
   result,
   error,
@@ -99,7 +97,7 @@ export const ActionPanel = memo(function ActionPanel({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-surface-700 dark:text-surface-300 truncate">
+                <p className="text-xs font-medium text-surface-700 dark:text-surface-600 truncate">
                   {outputDir ? getFileName(outputDir) : t("original_folder")}
                 </p>
               </div>
@@ -122,7 +120,7 @@ export const ActionPanel = memo(function ActionPanel({
                 onChange={(e) => onCustomOutputNameChange(e.target.value)}
                 disabled={isProcessing}
                 placeholder={inputPath ? getFileName(inputPath).replace(/\.[^.]+$/, "") : t("output_name_placeholder")}
-                className="w-full p-2.5 bg-surface-50 dark:bg-black/20 rounded-xl border border-surface-200 dark:border-surface-200 hover:border-primary-500 dark:hover:border-primary-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-xs font-medium text-surface-700 dark:text-surface-300 outline-none"
+                className="w-full p-2.5 bg-surface-50 dark:bg-black/20 rounded-xl border border-surface-200 dark:border-surface-300 hover:border-primary-500 dark:hover:border-primary-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-xs font-medium text-surface-700 dark:text-surface-600 outline-none"
               />
             </div>
           )}
@@ -133,7 +131,7 @@ export const ActionPanel = memo(function ActionPanel({
           {estimatedSize != null && estimatedSize > 0 && !result && (
             <div className="text-center text-[10px] text-surface-500 py-1">
               <span className="font-medium">{t("estimated_size")}:</span>{" "}
-              <span className="font-mono font-semibold text-surface-700 dark:text-surface-300">
+              <span className="font-mono font-semibold text-surface-700 dark:text-surface-600">
                 ~{formatSize(estimatedSize)}
               </span>{" "}
               <span className="text-surface-400">{t("estimate_disclaimer")}</span>
@@ -162,7 +160,7 @@ export const ActionPanel = memo(function ActionPanel({
                     <IconLoader2 size={12} className="animate-spin" />
                   </div>
                   {/* Barra indeterminada honesta — não simula progresso falso */}
-                  <div className="h-1 bg-surface-100 dark:bg-surface-800/50 rounded-full overflow-hidden">
+                  <div className="h-1 bg-surface-100 dark:bg-surface-200/50 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full w-1/3 bg-gradient-to-r from-primary-500 to-primary-400 rounded-full"
                       animate={{ x: ["0%", "200%", "0%"] }}
@@ -241,7 +239,7 @@ export const ActionPanel = memo(function ActionPanel({
                     </span>
                   </div>
                   <div className="bg-white/60 dark:bg-black/20 p-1.5 rounded">
-                    <span className="block text-green-600">{t("after")}</span>
+                    <span className="block text-green-600 dark:text-green-400">{t("after")}</span>
                     <span className="font-mono font-bold text-green-700 dark:text-green-400">
                       {formatSize(result.outputSize)}
                     </span>
