@@ -73,13 +73,12 @@ jobs:
       - name: Generate Roadmap (AI-Powered)
         env:
           GITHUB_TOKEN: ${{ secrets.ROADMAP_PAT }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ORG_NAME: "down-kingo"
           PROJECT_NUMBER: 2
         working-directory: script-source
         run: |
           # This generates multiple files + cache in current dir (script-source)
-          npm install @google/generative-ai --no-save || true # Try install if implied deps needed, though script uses raw HTTP
           node .github/scripts/generate_roadmap.js
 
       # ============================================================

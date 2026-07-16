@@ -1,16 +1,16 @@
 const fs = require("fs");
 const https = require("https");
 const {
-  GEMINI_MODEL_ROADMAP,
+  OPENROUTER_MODEL,
   GENERATION_CONFIG_ROADMAP,
-  getGeminiRestUrl,
+  OPENROUTER_API_URL,
   delay,
   RATE_LIMIT_DELAY_MS,
 } = require("./ai-config");
 
 // --- Configuration ---
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const ORG_NAME = process.env.ORG_NAME || "down-kingo";
 const PROJECT_NUMBER = parseInt(process.env.PROJECT_NUMBER || "2");
 
@@ -103,7 +103,7 @@ async function graphql(query, variables) {
   });
 }
 
-async function callGemini(technicalTitle, description) {
+async function callOpenRouter(technicalTitle, description) {
   const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
 
   // Truncate description to avoid token overflow (keep first 1000 chars)
@@ -136,16 +136,23 @@ async function callGemini(technicalTitle, description) {
   `;
 
   const body = JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: GENERATION_CONFIG_ROADMAP,
+    model: OPENROUTER_MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: GENERATION_CONFIG_ROADMAP.temperature,
+    max_tokens: GENERATION_CONFIG_ROADMAP.max_tokens,
   });
 
   return new Promise((resolve, reject) => {
     const req = https.request(
-      getGeminiRestUrl(GEMINI_MODEL_ROADMAP, GEMINI_API_KEY),
+      OPENROUTER_API_URL,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "https://downkingo.com",
+          "X-Title": "DownKingo Roadmap Sync",
+        },
       },
       (res) => {
         let responseBody = "";
@@ -153,7 +160,7 @@ async function callGemini(technicalTitle, description) {
         res.on("end", () => {
           try {
             const json = JSON.parse(responseBody);
-            const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+            const text = json.choices?.[0]?.message?.content;
             if (!text) return resolve(null);
 
             // Clean markdown code blocks if present
@@ -163,7 +170,7 @@ async function callGemini(technicalTitle, description) {
               .trim();
             resolve(JSON.parse(cleanJson));
           } catch (e) {
-            console.error("Gemini Parse Error:", e);
+            console.error("OpenRouter Parse Error:", e);
             console.error("Raw Response:", responseBody.slice(0, 500));
             resolve(null);
           }
@@ -276,13 +283,13 @@ async function main() {
 
   // 3. Process with AI
   const itemsToProcess = items.filter((i) => i._needs_ai);
-  console.log(`🤖 Processing ${itemsToProcess.length} items with Gemini...`);
+  console.log(`🤖 Processing ${itemsToProcess.length} items with OpenRouter...`);
 
   for (const item of itemsToProcess) {
     console.log(`   > Translating #${item.id}: ${item.title}`);
     try {
       // NEW: Pass both title and description for translation
-      const translations = await callGemini(item.title, item.description);
+      const translations = await callOpenRouter(item.title, item.description);
       if (translations) {
         // translations format: { "pt-BR": { title: "...", description: "..." }, ... }
 

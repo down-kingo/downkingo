@@ -1,49 +1,65 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const https = require("https");
 const { execSync } = require("child_process");
-const { GEMINI_MODEL_RELEASE_NOTES } = require("./ai-config");
+const fs = require("fs");
+const {
+  OPENROUTER_MODEL,
+  GENERATION_CONFIG_RELEASE_NOTES,
+  OPENROUTER_API_URL,
+} = require("./ai-config");
 
 // Config
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const GITHUB_REF_NAME = process.env.GITHUB_REF_NAME; // e.g., v2.0.1
-const REPO_OWNER = process.env.GITHUB_REPOSITORY_OWNER;
-const REPO_NAME = process.env.GITHUB_REPOSITORY.split("/")[1];
-
-if (!GEMINI_API_KEY) {
-  console.error("❌ GEMINI_API_KEY is missing");
-  process.exit(1);
-}
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 async function generateNotes() {
   console.log(`🚀 Generating release notes for ${GITHUB_REF_NAME}...`);
 
+  let commits = "";
   try {
     // 1. Get previous tag
     const previousTag = getPreviousTag();
     console.log(`📋 Comparing with previous tag: ${previousTag}`);
 
     // 2. Get commits between tags
-    const commits = getCommits(previousTag, GITHUB_REF_NAME);
+    commits = getCommits(previousTag, GITHUB_REF_NAME);
     if (!commits) {
       console.log("⚠️ No commits found");
-      return "Initial Release";
+      commits = "Initial release";
     }
 
-    // 3. Generate content with Gemini
-    const releaseNotes = await askGemini(commits, GITHUB_REF_NAME);
+    // 3. Generate content with OpenRouter when configured. Release publishing
+    // must not depend on the availability or rate limit of an external AI API.
+    const releaseNotes = OPENROUTER_API_KEY
+      ? await askOpenRouter(commits, GITHUB_REF_NAME)
+      : createFallbackNotes(commits, GITHUB_REF_NAME);
+
+    if (!OPENROUTER_API_KEY) {
+      console.warn(
+        "⚠️ OPENROUTER_API_KEY is missing; using commit-based release notes",
+      );
+    }
 
     // Output for GitHub Action
     console.log("📝 Generated Notes:");
     console.log(releaseNotes);
 
-    // Save to file allows the action to read it
-    const fs = require("fs");
     fs.writeFileSync("RELEASE_NOTES.md", releaseNotes);
   } catch (error) {
     console.error("❌ Error generating notes:", error);
-    process.exit(1);
+    fs.writeFileSync(
+      "RELEASE_NOTES.md",
+      createFallbackNotes(commits || "Bug fixes and improvements.", GITHUB_REF_NAME),
+    );
   }
+}
+
+function createFallbackNotes(commits, version) {
+  const bullets = commits
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => `- ${line}`)
+    .join("\n");
+  return `## ${version || "DownKingo"}\n\n${bullets}`;
 }
 
 function getPreviousTag() {
@@ -80,10 +96,55 @@ function getCommits(from, to) {
   }
 }
 
-async function askGemini(commits, version) {
-  // Using the model from centralized config
-  const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_RELEASE_NOTES });
+function callOpenRouter(prompt) {
+  const body = JSON.stringify({
+    model: OPENROUTER_MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: GENERATION_CONFIG_RELEASE_NOTES.temperature,
+    max_tokens: GENERATION_CONFIG_RELEASE_NOTES.max_tokens,
+  });
 
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      OPENROUTER_API_URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "https://downkingo.com",
+          "X-Title": "DownKingo Release Notes",
+        },
+      },
+      (res) => {
+        let responseBody = "";
+        res.on("data", (chunk) => (responseBody += chunk));
+        res.on("end", () => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            console.error(
+              `OpenRouter returned HTTP ${res.statusCode}; using commit-based notes`,
+            );
+            return resolve(null);
+          }
+          try {
+            const json = JSON.parse(responseBody);
+            const text = json.choices?.[0]?.message?.content;
+            resolve(text || null);
+          } catch (e) {
+            console.error("OpenRouter Parse Error:", e);
+            console.error("Raw Response:", responseBody.slice(0, 500));
+            resolve(null);
+          }
+        });
+      }
+    );
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+async function askOpenRouter(commits, version) {
   const prompt = `
     Persona: You are a Visionary Product Manager and Elite Tech Marketer for DownKingo (a premium video downloader app).
     Goal: Create engaging, high-impact release notes in a multilingual JSON format suitable for parsing by the application.
@@ -97,7 +158,7 @@ async function askGemini(commits, version) {
     1. **Vibe**: Clean, Minimalist, and Professional. Focus on readability and structure.
     2. **Language**: Clear and direct. Use active voice.
     3. **Formatting**: Use bullet points for easy scanning. Add empty lines between sections.
-    4. **Structure**: 
+    4. **Structure**:
        ### ⚡ Highlights
        (Top 1-2 major features)
 
@@ -108,7 +169,7 @@ async function askGemini(commits, version) {
        (Bug fixes and stability)
 
     Output Format (Critical):
-    Return ONLY a valid, raw JSON object (no markdown fencing like \`\`\`json). 
+    Return ONLY a valid, raw JSON object (no markdown fencing like \`\`\`json).
     Matches this schema:
     {
       "pt-BR": "Markdown string...",
@@ -117,24 +178,26 @@ async function askGemini(commits, version) {
     }
   `;
 
-  /* 
-     Gemini returns a JSON string. We want to output:
+  /*
+     The model returns a JSON string. We want to output:
      1. The Visible Fallback (pt-BR)
      2. The Hidden JSON payload for smart clients
   */
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  let text = response.text();
+  const text = await callOpenRouter(prompt);
+  if (!text) {
+    console.error("OpenRouter returned no content, falling back to raw commits");
+    return createFallbackNotes(commits, version);
+  }
 
   // Cleanup
-  text = text
+  const cleanText = text
     .replace(/```json/g, "")
     .replace(/```/g, "")
     .trim();
 
   try {
-    const json = JSON.parse(text);
+    const json = JSON.parse(cleanText);
 
     // Fallback content (pt-BR)
     const visibleContent = json["pt-BR"] || Object.values(json)[0];
@@ -144,8 +207,8 @@ async function askGemini(commits, version) {
 
     return `${visibleContent}\n\n${hiddenPayload}`;
   } catch (e) {
-    console.error("Failed to parse Gemini JSON output, returning raw text", e);
-    return text; // Fail safe
+    console.error("Failed to parse OpenRouter JSON output, returning raw text", e);
+    return cleanText; // Fail safe
   }
 }
 

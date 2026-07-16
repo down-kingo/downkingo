@@ -158,15 +158,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
-      - name: Install AI SDK Dependencies
-        run: npm install @google/generative-ai --no-save
+          node-version: "24"
 
       - name: Generate Release Notes (AI-Powered)
+        continue-on-error: true
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: node .github/scripts/generate_release_notes.js
+
+      - name: Ensure Release Notes
+        shell: bash
+        run: |
+          if [ ! -s RELEASE_NOTES.md ]; then
+            printf '## %s\n\n' "$GITHUB_REF_NAME" > RELEASE_NOTES.md
+            git log -1 --pretty='- %h | %an | %s' >> RELEASE_NOTES.md
+          fi
 
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
