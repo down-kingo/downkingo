@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-16T11:19:14.792Z",
+  "generated_at": "2026-07-16T12:54:13.744Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objective\nRecord technical decisions and protect new flows against regressions.\n\n## Scope\n- Document versions, hashes, directories, parameters, and limitations.\n- Document dev/production isolation and update checklist.\n- Add unit tests for runtime, parsing, conversion, routing, and thumbnails.\n- Add opt-in integrations for Whisper, aria2c, yt-dlp, FFmpeg, and Instagram.\n- Regenerate Wails bindings after Go contract changes.\n\n## Acceptance criteria\n- [ ] `go test ./...` passes without network dependency.\n- [ ] Frontend build, lint, and tests pass.\n- [ ] Real integrations use temporary directories.\n- [ ] Documentation contains reproducible commands and does not confuse local app with intermediate server.\n\n> Local implementation in development for the next version.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Cover runtimes and document transcription architecture"
+      "friendly_title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads"
     }
   ]
 }

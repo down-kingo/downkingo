@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-16T11:19:14.792Z",
+  "generated_at": "2026-07-16T12:54:13.744Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objetivo\nRegistrar decisiones técnicas y proteger los nuevos flujos contra regresiones.\n\n## Alcance\n- Documentar versiones, hashes, directorios, parámetros y limitaciones.\n- Documentar aislamiento dev/producción y checklist de actualización.\n- Agregar pruebas unitarias de runtime, parsing, conversión, enrutamiento y miniaturas.\n- Agregar integraciones opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings de Wails tras cambios en los contratos de Go.\n\n## Criterios de aceptación\n- [ ] `go test ./...` pasa sin depender de la red.\n- [ ] El build, lint y las pruebas del frontend pasan.\n- [ ] Las integraciones reales usan directorios temporales.\n- [ ] La documentación contiene comandos reproducibles y no confunde la app local con el servidor intermedio.\n\n> Implementación local en desarrollo para la próxima versión.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Cubrir runtimes y documentar arquitectura de transcripción"
+      "friendly_title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads"
     }
   ]
 }

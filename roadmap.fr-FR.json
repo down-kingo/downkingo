@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-16T11:19:14.792Z",
+  "generated_at": "2026-07-16T12:54:13.744Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objectif\nEnregistrer les décisions techniques et protéger les nouveaux flux contre les régressions.\n\n## Portée\n- Documenter les versions, les hachages, les répertoires, les paramètres et les limitations.\n- Documenter l'isolation dev/production et la checklist de mise à jour.\n- Ajouter des tests unitaires de runtime, parsing, conversion, routage et miniatures.\n- Ajouter des intégrations opt-in pour Whisper, aria2c, yt-dlp, FFmpeg et Instagram.\n- Régénérer les bindings Wails après les modifications des contrats Go.\n\n## Critères d'acceptation\n- [ ] `go test ./...` passe sans dépendre du réseau.\n- [ ] Le build, le lint et les tests du frontend passent.\n- [ ] Les intégrations réelles utilisent des répertoires temporaires.\n- [ ] La documentation contient des commandes reproductibles et ne confond pas l'application locale avec le serveur intermédiaire.\n\n> Mise en œuvre locale en cours de développement pour la prochaine version.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -824,7 +824,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
       "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "Couvrir les runtimes et documenter l'architecture"
+      "friendly_title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads"
     }
   ]
 }
