@@ -301,20 +301,14 @@
   },
   "24": {
     "original_title": "feat(ui): Customização de Aparência",
-    "original_desc_hash": "###DescriçãoOpçõesavançadasparapersonalizaraaparênciadoaplicativoalémdostemasbásicos._455",
+    "original_desc_hash": "###DescriçãoOp��õesavançadasparapersonalizaraaparênciadoaplicativoalémdostemasbásicos._456",
     "title_i18n": {
-      "pt-BR": "Customização de Aparência",
-      "en-US": "Appearance Customization",
-      "es-ES": "Personalización de Apariencia",
-      "fr-FR": "Personnalisation de l'Apparence",
-      "de-DE": "Anpassung des Erscheinungsbilds"
+      "en-US": "Customização de Aparência",
+      "pt-BR": "Customização de Aparência"
     },
     "description_i18n": {
-      "pt-BR": "### Descrição\nOpções avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nAdvanced options to customize the application's appearance beyond basic themes.\n\n### Technical Details\n- **Accent Color:** Choice of the main highlight color (Primary Color).\n- **Density:** Interface spacing adjustment (Compact, Comfortable).\n- **Transparency:** Enable/disable blur/Mica effects (Windows 11).\n- **Borders:** Control of element rounding (Border Radius).\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nOpciones avanzadas para personalizar la apariencia de la aplicación más allá de los temas básicos.\n\n### Detalles Técnicos\n- **Accent Color:** Elección del color de destaque principal (Primary Color).\n- **Densidad:** Ajuste del espaciado de la interfaz (Compacto, Cómodo).\n- **Transparencia:** Activar/desactivar efectos de desenfoque/Mica (Windows 11).\n- **Bordes:** Control del redondeo (Border Radius) de los elementos.\n\n### Status\n✅ Entregado en la v2.0.0",
-      "fr-FR": "### Description\nOptions avancées pour personnaliser l'apparence de l'application au-delà des thèmes de base.\n\n### Détails Techniques\n- **Accent Color:** Choix de la couleur de mise en évidence principale (Primary Color).\n- **Densité:** Ajustement de l'espacement de l'interface (Compact, Confortable).\n- **Transparence:** Activer/désactiver les effets de flou/Mica (Windows 11).\n- **Bordures:** Contrôle de l'arrondi (Border Radius) des éléments.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nErweiterte Optionen zur Anpassung des Erscheinungsbilds der Anwendung über die Basisthemen hinaus.\n\n### Technische Details\n- **Accent Color:** Auswahl der Hauptakzentfarbe (Primary Color).\n- **Dichte:** Anpassung der Schnittstellenabstände (Kompakt, Komfortabel).\n- **Transparenz:** Aktivieren/Deaktivieren von Blur/Mica-Effekten (Windows 11).\n- **Ränder:** Steuerung der Abrundung (Border Radius) der Elemente.\n\n### Status\n✅ Geliefert in v2.0.0"
+      "en-US": "### Descrição\nOp��ões avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nOp��ões avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "25": {
