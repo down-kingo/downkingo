@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-18T09:48:26.759Z",
+  "generated_at": "2026-07-18T10:51:06.719Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -442,7 +442,7 @@
     {
       "id": 24,
       "title": "feat(ui): Customização de Aparência",
-      "description": "### Descrição\nOp��ões avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nOpções avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,

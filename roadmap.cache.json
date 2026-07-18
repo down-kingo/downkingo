@@ -301,14 +301,14 @@
   },
   "24": {
     "original_title": "feat(ui): Customização de Aparência",
-    "original_desc_hash": "###DescriçãoOp��õesavançadasparapersonalizaraaparênciadoaplicativoalémdostemasbásicos._456",
+    "original_desc_hash": "###DescriçãoOpçõesavançadasparapersonalizaraaparênciadoaplicativoalémdostemasbásicos._455",
     "title_i18n": {
       "en-US": "Customização de Aparência",
       "pt-BR": "Customização de Aparência"
     },
     "description_i18n": {
-      "en-US": "### Descrição\nOp��ões avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
-      "pt-BR": "### Descrição\nOp��ões avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0"
+      "en-US": "### Descrição\nOpções avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nOpções avançadas para personalizar a aparência do aplicativo além dos temas básicos.\n\n### Detalhes Técnicos\n- **Accent Color:** Escolha da cor de destaque principal (Primary Color).\n- **Densidade:** Ajuste do espaçamento da interface (Compacto, Confortável).\n- **Transparência:** Habilitar/desabilitar efeitos de blur/Mica (Windows 11).\n- **Bordas:** Controle do arredondamento (Border Radius) dos elementos.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "25": {
