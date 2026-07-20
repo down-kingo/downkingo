@@ -21,8 +21,7 @@ vi.mock("react-i18next", () => ({
       const map: Record<string, string> = {
         "nav.home": "TEXT_HOME",
         "nav.queue": "TEXT_QUEUE",
-        "nav.videos": "TEXT_VIDEOS",
-        "nav.images": "TEXT_IMAGES",
+        "nav.downloads": "TEXT_DOWNLOADS",
         "nav.converter": "TEXT_CONVERTER",
         "nav.transcriber": "TEXT_TRANSCRIBER",
         "nav.tools": "TEXT_TOOLS",
@@ -40,7 +39,7 @@ describe("Sidebar", () => {
     activeTab: "home" as TabType,
     setActiveTab: vi.fn(),
     queueCount: 0,
-    version: "3.0.0",
+    version: "3.1.1",
     onOpenSettings: vi.fn(),
   };
 
@@ -50,8 +49,8 @@ describe("Sidebar", () => {
   });
 
   it("renders the version number", () => {
-    render(<Sidebar {...defaultProps} version="3.0.0" />);
-    expect(screen.getByText("v3.0.0")).toBeInTheDocument();
+    render(<Sidebar {...defaultProps} version="3.1.1" />);
+    expect(screen.getByText("v3.1.1")).toBeInTheDocument();
   });
 
   it("shows queue count badge when queueCount > 0", () => {
@@ -66,19 +65,18 @@ describe("Sidebar", () => {
 
   it("highlights active tab", () => {
     render(<Sidebar {...defaultProps} activeTab="video" />);
-    const videoButton = screen.getByText("TEXT_VIDEOS").closest("button");
-    expect(videoButton).toHaveClass("active");
+    const downloadsButton = screen
+      .getByText("TEXT_DOWNLOADS")
+      .closest("button");
+    expect(downloadsButton).toHaveClass("active");
   });
 
   it("calls setActiveTab when clicking a tab", () => {
     const mockSetActiveTab = vi.fn();
     render(<Sidebar {...defaultProps} setActiveTab={mockSetActiveTab} />);
 
-    fireEvent.click(screen.getByText("TEXT_VIDEOS"));
+    fireEvent.click(screen.getByText("TEXT_DOWNLOADS"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("video");
-
-    fireEvent.click(screen.getByText("TEXT_IMAGES"));
-    expect(mockSetActiveTab).toHaveBeenCalledWith("images");
 
     fireEvent.click(screen.getByText("TEXT_CONVERTER"));
     expect(mockSetActiveTab).toHaveBeenCalledWith("converter");

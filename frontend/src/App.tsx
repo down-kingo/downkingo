@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useState,
   useRef,
   useCallback,
@@ -13,19 +14,19 @@ import {
   Navigate,
   useNavigate,
 } from "react-router-dom";
-import { NeedsDependencies } from "../bindings/kingo/app";
-import { safeEventsOn, tryEventsOff } from "./lib/wailsRuntime";
+import { CheckDependencies } from "../bindings/kingo/app";
+import {
+  safeEventsOn,
+  safeWindowSetDarkTheme,
+  safeWindowSetLightTheme,
+} from "./lib/wailsRuntime";
 const Setup = lazy(() => import("./pages/Setup"));
 const Video = lazy(() => import("./pages/Video"));
 import { useSettingsStore } from "./stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import OnboardingModal from "./components/OnboardingModal";
 import UpdateModal from "./components/UpdateModal";
-
-// Payload enviado pelo backend no evento app:ready
-interface AppReadyPayload {
-  needsSetup: boolean;
-}
+import { hasMissingRequiredDependencies } from "./lib/features";
 
 /** Atalhos de desenvolvimento (Ctrl+Shift+F8 → toggle Setup preview, Ctrl+Shift+F9 → toggle Onboarding) */
 function DevShortcuts() {
@@ -72,8 +73,48 @@ function App() {
   const mountedRef = useRef(true);
   const eventReceivedRef = useRef(false); // Track if event was already received
 
-  const { language } = useSettingsStore();
+  const language = useSettingsStore((state) => state.language);
+  const theme = useSettingsStore((state) => state.theme);
+  const primaryColor = useSettingsStore((state) => state.primaryColor);
+  const enabledFeatures = useSettingsStore((state) => state.enabledFeatures);
   const { i18n } = useTranslation();
+
+  const checkRequiredDependencies = useCallback(async () => {
+    if (!mountedRef.current || eventReceivedRef.current) return;
+    eventReceivedRef.current = true;
+
+    try {
+      const statuses = await CheckDependencies();
+      const missing = hasMissingRequiredDependencies(
+        enabledFeatures,
+        statuses,
+      );
+
+      if (mountedRef.current) {
+        console.log("[App] Required dependencies missing:", missing);
+        setNeedsSetup(missing);
+      }
+    } catch (error) {
+      console.warn("[App] Failed to check dependency status:", error);
+      if (mountedRef.current) {
+        // Não bloquear o app indefinidamente quando a verificação falhar.
+        setNeedsSetup(false);
+      }
+    }
+  }, [enabledFeatures]);
+
+  // Aparência é uma responsabilidade global: dashboard, navegação, setup e
+  // páginas carregadas sob demanda devem receber a mesma paleta desde a raiz.
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.setAttribute("data-color", primaryColor);
+
+    if (theme === "dark") {
+      safeWindowSetDarkTheme();
+    } else {
+      safeWindowSetLightTheme();
+    }
+  }, [theme, primaryColor]);
 
   // Sincroniza i18n com settings store ao iniciar
   useEffect(() => {
@@ -90,16 +131,10 @@ function App() {
     // Registrar listener de forma assíncrona e segura
     const registerListener = async () => {
       try {
-        const unsubscribe = await safeEventsOn<AppReadyPayload>(
-          "app:ready",
-          (payload) => {
-            if (mountedRef.current && !eventReceivedRef.current) {
-              eventReceivedRef.current = true;
-              console.log("[App] Received app:ready event:", payload);
-              setNeedsSetup(payload.needsSetup);
-            }
-          },
-        );
+        const unsubscribe = await safeEventsOn<void>("app:ready", () => {
+          console.log("[App] Received app:ready event");
+          void checkRequiredDependencies();
+        });
         if (mountedRef.current) {
           unsubscribeRef.current = unsubscribe;
         } else {
@@ -118,22 +153,7 @@ function App() {
 
     // Verificação imediata: não esperar pelo evento se o backend já estiver pronto
     // Isso evita o delay de 2s caso o evento já tenha sido emitido antes do frontend carregar
-    NeedsDependencies()
-      .then((needs) => {
-        if (mountedRef.current && !eventReceivedRef.current) {
-          console.log("[App] Initial check: needsSetup =", needs);
-          setNeedsSetup(needs);
-          eventReceivedRef.current = true;
-        }
-      })
-      .catch((err) => {
-        console.warn("[App] Failed to get initial dependency status:", err);
-        // Em caso de erro, assumir que não precisa de setup para não travar na tela de loading
-        if (mountedRef.current && !eventReceivedRef.current) {
-          setNeedsSetup(false);
-          eventReceivedRef.current = true;
-        }
-      });
+    void checkRequiredDependencies();
 
     // Cleanup ao desmontar
     return () => {
@@ -141,19 +161,18 @@ function App() {
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
         unsubscribeRef.current = null;
-      } else {
-        tryEventsOff("app:ready");
       }
     };
-  }, []);
+  }, [checkRequiredDependencies]);
 
   // Listen for deep-link events from the backend (protocol handler)
   useEffect(() => {
     let deepLinkUnsubscribe: (() => void) | null = null;
+    let disposed = false;
 
     const registerDeepLinkListener = async () => {
       try {
-        deepLinkUnsubscribe = await safeEventsOn<string>(
+        const unsubscribe = await safeEventsOn<string>(
           "deep-link",
           (protocolUrl) => {
             console.log("[App] Received deep-link:", protocolUrl);
@@ -169,7 +188,9 @@ function App() {
               const targetUrl = parsed.searchParams.get("url");
 
               if (targetUrl) {
-                const decodedUrl = decodeURIComponent(targetUrl);
+                // URLSearchParams already percent-decodes values. Decoding a
+                // second time corrupts URLs containing literal percent signs.
+                const decodedUrl = targetUrl;
                 console.log(
                   "[App] Dispatching kinematic:fill-url with:",
                   decodedUrl,
@@ -185,6 +206,8 @@ function App() {
             }
           },
         );
+        if (disposed) unsubscribe();
+        else deepLinkUnsubscribe = unsubscribe;
       } catch (e) {
         console.warn("[App] Failed to register deep-link listener:", e);
       }
@@ -193,10 +216,9 @@ function App() {
     registerDeepLinkListener();
 
     return () => {
+      disposed = true;
       if (deepLinkUnsubscribe) {
         deepLinkUnsubscribe();
-      } else {
-        tryEventsOff("deep-link");
       }
     };
   }, []);
@@ -204,7 +226,7 @@ function App() {
   // Loading state - Splash screen enquanto o backend inicializa
   if (needsSetup === null) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-surface-50 text-surface-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-surface-600">Iniciando...</p>
@@ -215,9 +237,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
+      <BrowserRouter>
         {import.meta.env.DEV && <DevShortcuts />}
         <OnboardingModal />
         <UpdateModal />

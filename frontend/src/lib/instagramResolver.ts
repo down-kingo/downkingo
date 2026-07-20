@@ -220,7 +220,7 @@ async function tryEmbedEndpoint(
   const seen = new Set<string>();
 
   for (const match of displayUrlMatches) {
-    let url = match[1].replace(/\\u0026/g, "&").replace(/\\\//g, "/");
+    const url = match[1].replace(/\\u0026/g, "&").replace(/\\\//g, "/");
 
     if (
       !seen.has(url) &&
@@ -242,11 +242,6 @@ async function tryEmbedEndpoint(
 }
 
 async function tryOEmbedAPI(url: string): Promise<InstagramResolverResult> {
-  // API OEmbed oficial do Facebook
-  const oembedUrl = `https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(
-    url
-  )}&access_token=INSTAGRAM_OEMBED_TOKEN`;
-
   // Alternativa: endpoint público (pode não funcionar sempre)
   const publicOembed = `https://api.instagram.com/oembed/?url=${encodeURIComponent(
     url
@@ -277,7 +272,45 @@ async function tryOEmbedAPI(url: string): Promise<InstagramResolverResult> {
 
 // Função auxiliar para verificar se é URL do Instagram
 export function isInstagramUrl(url: string): boolean {
-  return /instagram\.com\/(p|reel|reels)\//.test(url);
+  const parsed = parseInstagramUrl(url);
+  if (!parsed) return false;
+  return /^(?:p|reel|reels|stories)\//i.test(
+    parsed.pathname.replace(/^\/+/, ""),
+  );
+}
+
+export function isInstagramStoryUrl(url: string): boolean {
+  const parsed = parseInstagramUrl(url);
+  if (!parsed) return false;
+  return /^stories\/[^/]+(?:\/|$)/i.test(parsed.pathname.replace(/^\/+/, ""));
+}
+
+export function isInstagramAuthenticationError(error: unknown): boolean {
+  const message = String(error).toLowerCase();
+  return (
+    message.includes("instagram_auth_required") ||
+    message.includes("instagram_auth_failed") ||
+    message.includes("sessão autenticada") ||
+    message.includes("use --cookies-from-browser") ||
+    message.includes("need to log in") ||
+    message.includes("authentication required")
+  );
+}
+
+function parseInstagramUrl(rawUrl: string): URL | null {
+  try {
+    const parsed = new URL(rawUrl.trim());
+    const hostname = parsed.hostname.toLowerCase().replace(/\.$/, "");
+    if (
+      (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+      (hostname !== "instagram.com" && !hostname.endsWith(".instagram.com"))
+    ) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 // Função auxiliar para verificar se é URL direta de CDN

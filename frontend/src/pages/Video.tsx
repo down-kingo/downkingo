@@ -1,21 +1,19 @@
 import { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  safeWindowSetDarkTheme,
-  safeWindowSetLightTheme,
-  safeEventsOn,
-} from "../lib/wailsRuntime";
+import { safeEventsOn } from "../lib/wailsRuntime";
 import { useDownloadStore } from "../stores/downloadStore";
 import { useDownloadSync } from "../hooks/useDownloadSync";
 import { useShallow } from "zustand/react/shallow";
-import { useSettingsStore } from "../stores/settingsStore";
+import { useSettingsStore, type FeatureId } from "../stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import { shouldUseMediaInspector } from "../lib/downloadRouter";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useVideoFetch } from "../hooks/useVideoFetch";
 import { useTrimmer } from "../hooks/useTrimmer";
 import SettingsPanel, { SettingsTab } from "../components/SettingsPanel";
 import Terminal from "../components/Terminal";
 import OnboardingModal from "../components/OnboardingModal";
+import DonationBanner from "../components/DonationBanner";
 import QueueList from "../components/QueueList";
 import { Sidebar, Topbar, TabType } from "../components/navigation";
 import {
@@ -23,6 +21,7 @@ import {
   AUDIO_FORMATS,
   VideoTrimmer,
 } from "../components/video";
+import { BrowserAuthPrompt } from "../components/video/BrowserAuthPrompt";
 const Images = lazy(() => import("./Images"));
 const Converter = lazy(() => import("./Converter"));
 const Transcriber = lazy(() => import("./Transcriber"));
@@ -33,13 +32,14 @@ import { Skeleton } from "../components/Skeleton";
 import { TabContent } from "../components/TabContent";
 import { RouteErrorBoundary } from "../components/ErrorBoundary";
 import {
-  GetDownloadsPath,
   GetVersion,
   AddToQueueAdvanced,
   UpdateYtDlp,
   CheckForUpdate,
   InstallAppVersion,
   RestartApp,
+  CheckAria2cStatus,
+  DownloadAria2c,
 } from "../../bindings/kingo/app";
 import {
   IconDownload,
@@ -51,8 +51,8 @@ import {
   IconSearch,
   IconList,
   IconRocket,
-  IconBolt,
-  IconArrowRight,
+  IconSettings,
+  IconClipboard,
 } from "@tabler/icons-react";
 
 // Memoized Suspense fallback to avoid recreating on every render
@@ -62,12 +62,99 @@ const SuspenseFallback = (
   </div>
 );
 
+const TAB_TO_FEATURE: Partial<Record<TabType, FeatureId>> = {
+  video: "videos",
+  images: "images",
+  converter: "converter",
+  transcriber: "transcriber",
+};
+
+interface QuickTurboOptionsProps {
+  label: string;
+  values: number[];
+  selected: number;
+  onSelect: (value: number) => void;
+}
+
+function QuickTurboOptions({
+  label,
+  values,
+  selected,
+  onSelect,
+}: QuickTurboOptionsProps) {
+  return (
+    <fieldset>
+      <legend className="mb-2 text-[11px] font-bold uppercase tracking-wider text-surface-500">
+        {label}
+      </legend>
+      <div className="grid grid-cols-4 gap-2">
+        {values.map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={selected === value}
+            onClick={() => onSelect(value)}
+            className={`rounded-lg border px-2 py-1.5 text-xs font-bold transition-colors ${
+              selected === value
+                ? "border-primary-500 bg-primary-500/10 text-primary-600 dark:text-primary-500"
+                : "border-surface-200 dark:border-surface-300 text-surface-600 dark:text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-200"
+            }`}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+interface QuickSettingToggleProps {
+  checked: boolean;
+  disabled?: boolean;
+  label: string;
+  onChange: () => void;
+}
+
+function QuickSettingToggle({
+  checked,
+  disabled = false,
+  label,
+  onChange,
+}: QuickSettingToggleProps) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onChange}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/30 disabled:cursor-wait disabled:opacity-60 ${
+        checked
+          ? "bg-primary-600 dark:bg-primary-500 shadow-sm shadow-primary-600/20"
+          : "bg-surface-200 dark:bg-surface-300 hover:bg-surface-300 dark:hover:bg-surface-400"
+      }`}
+    >
+      {disabled ? (
+        <IconLoader2
+          size={14}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin text-surface-500"
+        />
+      ) : (
+        <span
+          className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${
+            checked ? "translate-x-5" : "translate-x-0"
+          }`}
+        />
+      )}
+    </button>
+  );
+}
+
 export default function Video() {
   const settings = useSettingsStore(
     useShallow((state) => ({
-      theme: state.theme,
       layout: state.layout,
-      primaryColor: state.primaryColor,
       language: state.language,
       remuxVideo: state.remuxVideo,
       remuxFormat: state.remuxFormat,
@@ -79,13 +166,13 @@ export default function Video() {
       videoCompatibility: state.videoCompatibility,
       useAria2c: state.useAria2c,
       aria2cConnections: state.aria2cConnections,
+      concurrentFragments: state.concurrentFragments,
+      setSetting: state.setSetting,
     })),
   );
 
   const {
-    theme,
     layout,
-    primaryColor,
     remuxVideo,
     remuxFormat,
     embedThumbnail,
@@ -96,9 +183,16 @@ export default function Video() {
     videoCompatibility,
     useAria2c,
     aria2cConnections,
+    concurrentFragments,
+    setSetting,
   } = settings;
   const enabledFeatures = useSettingsStore((s) => s.enabledFeatures);
   const { t } = useTranslation("common");
+  const { t: settingsT } = useTranslation("settings");
+  const pasteShortcut = useMemo(
+    () => (navigator.userAgent.includes("Mac") ? "⌘V" : "Ctrl+V"),
+    [],
+  );
 
   const VIDEO_QUALITIES = useMemo(
     () => getVideoQualities(videoCompatibility),
@@ -114,43 +208,47 @@ export default function Video() {
     isFetching,
     error,
     setError,
-    handlePaste,
+    authRequired,
+    activeAuthBrowser,
+    failedAuthBrowser,
+    retryWithBrowser,
     onPasteEvent,
     clearUrl: clearUrlState,
   } = useVideoFetch();
 
   const {
     trimEnabled,
-    trimStart,
-    trimEnd,
+    cutRanges,
+    captions,
     streamUrl,
     handleTrimToggle,
     handleStreamError,
-    handleTrimChange,
+    handleCutsChange,
+    handleCaptionsChange,
     resetTrimmer,
   } = useTrimmer(videoInfo, url);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [downloadsPath, setDownloadsPath] = useState("");
+  const [mediaURL, setMediaURL] = useState("");
   const [version, setVersion] = useState("");
 
   // Tab state
   const [activeTab, setActiveTabRaw] = useState<TabType>("home");
 
   // Map TabType → FeatureId for feature-gated tabs
-  const tabToFeature: Partial<
-    Record<TabType, (typeof enabledFeatures)[number]>
-  > = {
-    video: "videos",
-    images: "images",
-    converter: "converter",
-    transcriber: "transcriber",
-  };
-
   // Guard: only allow navigation to enabled tabs
   const setActiveTab = useCallback(
     (tab: TabType) => {
-      const requiredFeature = tabToFeature[tab];
+      if (tab === "images") tab = "video";
+      if (
+        tab === "video" &&
+        (enabledFeatures.includes("videos") ||
+          enabledFeatures.includes("images"))
+      ) {
+        setActiveTabRaw("video");
+        return;
+      }
+      const requiredFeature = TAB_TO_FEATURE[tab];
       if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
         return;
       }
@@ -161,7 +259,13 @@ export default function Video() {
 
   // Reset to home if current tab was disabled
   useEffect(() => {
-    const requiredFeature = tabToFeature[activeTab];
+    if (
+      activeTab === "video" &&
+      (enabledFeatures.includes("videos") || enabledFeatures.includes("images"))
+    ) {
+      return;
+    }
+    const requiredFeature = TAB_TO_FEATURE[activeTab];
     if (requiredFeature && !enabledFeatures.includes(requiredFeature)) {
       setActiveTabRaw("home");
     }
@@ -186,11 +290,87 @@ export default function Video() {
   }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const turboMenuRef = useRef<HTMLDivElement>(null);
+  const [turboMenuOpen, setTurboMenuOpen] = useState(false);
+  const [isCheckingTurbo, setIsCheckingTurbo] = useState(false);
+
+  const applyUnifiedURL = useCallback(
+    (value: string) => {
+      if (shouldUseMediaInspector(value)) {
+        setMediaURL(value);
+        setUrl("");
+        setVideoInfo(null);
+        setError("");
+        return;
+      }
+      setMediaURL("");
+      setUrl(value);
+    },
+    [setError, setUrl, setVideoInfo],
+  );
+
+  const handleUnifiedPaste = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) applyUnifiedURL(text);
+    } catch (pasteError) {
+      console.error("Failed to read clipboard:", pasteError);
+    }
+  }, [applyUnifiedURL]);
+
+  const toggleTurbo = useCallback(async () => {
+    if (useAria2c) {
+      setSetting("useAria2c", false);
+      return;
+    }
+
+    setIsCheckingTurbo(true);
+    try {
+      let status = await CheckAria2cStatus();
+      if (!status.installed) {
+        await DownloadAria2c();
+        status = await CheckAria2cStatus();
+      }
+
+      if (status.installed) {
+        setSetting("useAria2c", true);
+      } else {
+        setError(t("home.turbo_not_installed"));
+      }
+    } catch (turboError) {
+      setError(String(turboError));
+    } finally {
+      setIsCheckingTurbo(false);
+    }
+  }, [setError, setSetting, t, useAria2c]);
+
+  useEffect(() => {
+    if (!turboMenuOpen) return;
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!turboMenuRef.current?.contains(event.target as Node)) {
+        setTurboMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTurboMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [turboMenuOpen]);
 
   useKeyboardShortcuts({
     onOpenSettings: () => openSettings(),
     onFocusInput: () => {
-      if (enabledFeatures.includes("videos")) {
+      if (
+        enabledFeatures.includes("videos") ||
+        enabledFeatures.includes("images")
+      ) {
         setActiveTab("video");
         setTimeout(() => inputRef.current?.focus(), 50);
       }
@@ -200,21 +380,28 @@ export default function Video() {
   // Listen for clipboard link detected events (from native notification callback)
   useEffect(() => {
     let cancel: (() => void) | undefined;
+    let disposed = false;
 
     safeEventsOn<string>("clipboard:link-detected", (detectedUrl) => {
-      if (detectedUrl && enabledFeatures.includes("videos")) {
-        setUrl(detectedUrl);
+      if (
+        detectedUrl &&
+        (enabledFeatures.includes("videos") ||
+          enabledFeatures.includes("images"))
+      ) {
+        applyUnifiedURL(detectedUrl);
         setActiveTab("video");
         setTimeout(() => inputRef.current?.focus(), 100);
       }
     }).then((unsubscribe) => {
-      cancel = unsubscribe;
+      if (disposed) unsubscribe();
+      else cancel = unsubscribe;
     });
 
     return () => {
+      disposed = true;
       cancel?.();
     };
-  }, []);
+  }, [applyUnifiedURL, enabledFeatures, setActiveTab]);
 
   // Video info state
   const [downloadMode, setDownloadMode] = useState<"video" | "audio">("video");
@@ -260,24 +447,7 @@ export default function Video() {
   const { queue } = useDownloadStore();
   useDownloadSync();
 
-  // Apply Theme and Colors
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    document.documentElement.setAttribute("data-color", primaryColor);
-
-    if (theme === "dark") {
-      safeWindowSetDarkTheme();
-    } else {
-      safeWindowSetLightTheme();
-    }
-  }, [theme, primaryColor]);
-
-  useEffect(() => {
-    GetDownloadsPath().then(setDownloadsPath);
     GetVersion().then(setVersion);
   }, []);
 
@@ -312,6 +482,7 @@ export default function Video() {
         url,
         title: videoInfo.title,
         thumbnail: videoInfo.thumbnail,
+        cookieBrowser: videoInfo.cookie_browser || "",
         format: downloadMode === "video" ? selectedQuality : "bestaudio",
         audioOnly: downloadMode === "audio",
         audioFormat: downloadMode === "audio" ? selectedAudioFormat : "",
@@ -326,8 +497,11 @@ export default function Video() {
         incognito: false,
         useAria2c: useAria2c,
         aria2cConnections: aria2cConnections,
-        startTime: trimEnabled ? trimStart : "",
-        endTime: trimEnabled ? trimEnd : "",
+        concurrentFragments: concurrentFragments,
+        startTime: "",
+        endTime: "",
+        excludedRanges: trimEnabled ? cutRanges : [],
+        captions: downloadMode === "video" ? captions : { ...captions, enabled: false },
       });
       clearUrlState();
       resetTrimmer();
@@ -348,15 +522,17 @@ export default function Video() {
     skipExisting,
     useAria2c,
     aria2cConnections,
+    concurrentFragments,
     trimEnabled,
-    trimStart,
-    trimEnd,
+    cutRanges,
+    captions,
     clearUrlState,
     resetTrimmer,
     setError,
   ]);
 
   const clearUrl = useCallback(() => {
+    setMediaURL("");
     clearUrlState();
     resetTrimmer();
   }, [clearUrlState, resetTrimmer]);
@@ -428,18 +604,6 @@ export default function Video() {
               </TabContent>
             )}
 
-            {activeTab === "images" && enabledFeatures.includes("images") && (
-              <TabContent key="images">
-                <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-surface-50 dark:bg-surface-950">
-                  <RouteErrorBoundary>
-                    <Suspense fallback={SuspenseFallback}>
-                      <Images />
-                    </Suspense>
-                  </RouteErrorBoundary>
-                </div>
-              </TabContent>
-            )}
-
             {activeTab === "converter" &&
               enabledFeatures.includes("converter") && (
                 <TabContent key="converter">
@@ -472,119 +636,240 @@ export default function Video() {
               </TabContent>
             )}
 
-            {activeTab === "video" && enabledFeatures.includes("videos") && (
+            {activeTab === "video" &&
+              (enabledFeatures.includes("videos") ||
+                enabledFeatures.includes("images")) && (
               <TabContent key="video" className="flex flex-col h-full">
                 <header className="header p-6 shrink-0">
                   <div className="max-w-4xl mx-auto w-full">
                     {/* URL Input */}
                     <div className="card-elevated p-2">
                       <div className="flex gap-2">
-                        <div className="flex-1 relative">
+                        <div ref={turboMenuRef} className="flex-1 relative">
                           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400">
                             <IconSearch size={20} />
                           </div>
                           <input
                             ref={inputRef}
                             type="text"
-                            value={url}
+                            value={mediaURL || url}
                             onChange={(e) => {
-                              setUrl(e.target.value);
-                              if (error) setError("");
+                              applyUnifiedURL(e.target.value);
+                              if (error || authRequired) setError("");
                             }}
                             onPaste={(e) => {
-                              onPasteEvent(e.clipboardData.getData("text"));
+                              const pasted = e.clipboardData.getData("text");
+                              if (shouldUseMediaInspector(pasted)) {
+                                e.preventDefault();
+                                applyUnifiedURL(pasted);
+                              } else {
+                                onPasteEvent(pasted);
+                              }
                             }}
                             placeholder={t("home.paste_url")}
-                            className="w-full bg-transparent border-none py-3 pl-12 pr-10 text-surface-900 placeholder:text-surface-400 focus:ring-0 text-base font-medium"
+                            className={`w-full bg-transparent border-none py-3 pl-12 text-surface-900 placeholder:text-surface-400 focus:ring-0 text-base font-medium ${
+                              mediaURL || url ? "pr-24" : "pr-24 sm:pr-44"
+                            }`}
                           />
-                          {/* Paste Button */}
-                          {!url && (
-                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                            {/* Paste Button */}
+                            {!mediaURL && !url && (
                               <button
-                                onClick={handlePaste}
+                                onClick={handleUnifiedPaste}
                                 type="button"
-                                className="p-2 text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors text-xs font-bold flex items-center gap-2"
+                                className="p-2 text-surface-400 hover:text-surface-900 dark:hover:text-surface-700 hover:bg-surface-100 dark:hover:bg-surface-200 rounded-lg transition-colors text-xs font-bold flex items-center gap-2"
                               >
+                                <IconClipboard
+                                  size={18}
+                                  className="sm:hidden"
+                                />
                                 <span className="hidden sm:inline">
                                   {t("home.paste")}
                                 </span>
-                                <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-surface-200 dark:border-surface-600 bg-surface-50 dark:bg-surface-200/50 text-[10px] font-mono text-surface-500 dark:text-surface-400">
-                                  <span className="text-xs">⌘</span>V
+                                <kbd className="hidden sm:inline-flex items-center rounded border border-surface-200 bg-surface-50 px-1.5 py-0.5 font-mono text-[10px] leading-none text-surface-500 dark:border-surface-300 dark:bg-surface-200/50 dark:text-surface-500">
+                                  {pasteShortcut}
                                 </kbd>
                               </button>
+                            )}
+                            {/* Clear Button */}
+                            {(mediaURL || url) && (
+                              <button
+                                type="button"
+                                onClick={clearUrl}
+                                aria-label={t("home.clear_url")}
+                                className="rounded-full p-1.5 text-surface-400 transition-colors hover:bg-surface-100 hover:text-surface-700 dark:hover:bg-surface-200"
+                              >
+                                <IconX size={18} />
+                              </button>
+                            )}
+                            <div className="ml-1 border-l border-surface-200 pl-2 dark:border-surface-300">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setTurboMenuOpen((open) => !open)
+                                }
+                                aria-expanded={turboMenuOpen}
+                                aria-controls="quick-download-settings"
+                                aria-label={t("home.turbo_quick_title")}
+                                title={t("home.turbo_quick_title")}
+                                className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/30 ${
+                                  turboMenuOpen
+                                    ? "bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-500"
+                                    : "text-surface-400 hover:bg-surface-100 hover:text-surface-700 dark:hover:bg-surface-200 dark:hover:text-surface-700"
+                                }`}
+                              >
+                                <IconSettings size={19} />
+                              </button>
                             </div>
-                          )}
-                          {/* Clear Button */}
-                          {url && (
-                            <button
-                              onClick={clearUrl}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-surface-100 dark:hover:bg-surface-200 rounded-full transition-colors"
-                            >
-                              <IconX size={18} className="text-surface-400" />
-                            </button>
-                          )}
+                          </div>
+
+                          <AnimatePresence>
+                            {turboMenuOpen && (
+                              <motion.div
+                                id="quick-download-settings"
+                                role="dialog"
+                                aria-modal="false"
+                                aria-labelledby="quick-download-settings-title"
+                                initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                                transition={{ duration: 0.16 }}
+                                className="absolute right-0 top-full z-50 mt-3 w-[min(22rem,calc(100vw-3rem))] origin-top-right overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-xl dark:border-surface-300 dark:bg-surface-100"
+                              >
+                                <div className="flex items-center justify-between border-b border-surface-200 px-4 py-3 dark:border-surface-300">
+                                  <span
+                                    id="quick-download-settings-title"
+                                    className="text-sm font-bold text-surface-900 dark:text-surface-800"
+                                  >
+                                    {t("home.turbo_quick_title")}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setTurboMenuOpen(false)}
+                                    aria-label={t("actions.close")}
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition-colors hover:bg-surface-100 hover:text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500/30 dark:hover:bg-surface-200 dark:hover:text-surface-700"
+                                  >
+                                    <IconX size={17} />
+                                  </button>
+                                </div>
+
+                                <div className="space-y-4 p-4">
+                                  <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-50 px-3 py-3 dark:bg-surface-200/70">
+                                    <div className="flex min-w-0 items-center gap-2.5">
+                                    <IconRocket
+                                      size={18}
+                                      className={`shrink-0 ${
+                                        useAria2c
+                                          ? "text-primary-600 dark:text-primary-500"
+                                          : "text-surface-400"
+                                      }`}
+                                    />
+                                    <span
+                                      className={
+                                        useAria2c
+                                          ? "truncate text-sm font-semibold text-primary-700 dark:text-primary-400"
+                                          : "truncate text-sm font-semibold text-surface-700 dark:text-surface-600"
+                                      }
+                                    >
+                                      {t(
+                                        useAria2c
+                                          ? "home.aria2c_active"
+                                          : "home.aria2c_inactive",
+                                      )}
+                                    </span>
+                                  </div>
+                                  <QuickSettingToggle
+                                    checked={useAria2c}
+                                    disabled={isCheckingTurbo}
+                                    label={t(
+                                      useAria2c
+                                        ? "home.aria2c_active"
+                                        : "home.aria2c_inactive",
+                                    )}
+                                    onChange={() => void toggleTurbo()}
+                                  />
+                                  </div>
+
+                                  <AnimatePresence initial={false}>
+                                    {useAria2c && (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="overflow-hidden"
+                                      >
+                                        <div className="space-y-4">
+                                        <QuickTurboOptions
+                                          label={t("home.turbo_connections")}
+                                          values={[4, 8, 16, 32]}
+                                          selected={aria2cConnections}
+                                          onSelect={(value) =>
+                                            setSetting(
+                                              "aria2cConnections",
+                                              value,
+                                            )
+                                          }
+                                        />
+                                        <QuickTurboOptions
+                                          label={t("home.turbo_fragments")}
+                                          values={[2, 4, 8, 16]}
+                                          selected={concurrentFragments}
+                                          onSelect={(value) =>
+                                            setSetting(
+                                              "concurrentFragments",
+                                              value,
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+
+                                  <div className="space-y-3 border-t border-surface-200 pt-4 dark:border-surface-300">
+                                    <p className="text-[11px] font-bold uppercase tracking-wider text-surface-500">
+                                      {settingsT("downloads.title")}
+                                    </p>
+                                  <div className="flex items-center justify-between gap-4">
+                                    <span className="text-xs font-medium text-surface-700 dark:text-surface-600">
+                                      {settingsT("downloads.skip_existing")}
+                                    </span>
+                                    <QuickSettingToggle
+                                      checked={skipExisting}
+                                      label={settingsT(
+                                        "downloads.skip_existing",
+                                      )}
+                                      onChange={() =>
+                                        setSetting(
+                                          "skipExisting",
+                                          !skipExisting,
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                  <div className="flex items-center justify-between gap-4">
+                                    <span className="text-xs font-medium text-surface-700 dark:text-surface-600">
+                                      {settingsT("downloads.thumbnail")}
+                                    </span>
+                                    <QuickSettingToggle
+                                      checked={embedThumbnail}
+                                      label={settingsT("downloads.thumbnail")}
+                                      onChange={() =>
+                                        setSetting(
+                                          "embedThumbnail",
+                                          !embedThumbnail,
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
                     </div>
-
-                    {/* Aria2c Active Warning - Minimalist Pill */}
-                    <AnimatePresence>
-                      {useAria2c && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -5 }}
-                          className="flex justify-center mt-6"
-                        >
-                          <div className="inline-flex items-center gap-2 bg-surface-100/80 dark:bg-surface-800/50 backdrop-blur-sm border border-surface-200 dark:border-surface-200/30 rounded-full px-4 py-1.5 shadow-sm">
-                            <IconRocket
-                              size={14}
-                              className="text-orange-500 dark:text-orange-400"
-                            />
-                            <span className="text-xs font-bold text-surface-600 dark:text-surface-500 uppercase tracking-widest">
-                              {t("home.aria2c_active")}
-                            </span>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Turbo Mode Promotion - Show if NOT active */}
-                    <AnimatePresence>
-                      {!useAria2c && !url && !videoInfo && !isFetching && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="mt-6 max-w-sm mx-auto"
-                        >
-                          <div className="inline-flex flex-col sm:flex-row items-center gap-3 bg-surface-100/80 dark:bg-surface-800/50 backdrop-blur-sm border border-surface-200 dark:border-surface-200/30 rounded-full py-2 pl-4 pr-3 shadow-sm">
-                            <div className="flex items-center gap-2">
-                              <div className="text-orange-500 dark:text-orange-400 animate-pulse">
-                                <IconBolt size={16} fill="currentColor" />
-                              </div>
-                              <span className="text-sm font-medium text-surface-600 dark:text-surface-500">
-                                {t("home.turbo_tip_title")}
-                              </span>
-                            </div>
-
-                            <div className="hidden sm:block w-px h-4 bg-surface-300 dark:bg-surface-200" />
-                            <button
-                              onClick={() =>
-                                openSettings("video", "aria2c-settings")
-                              }
-                              className="group flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-surface-200 hover:bg-surface-50 dark:hover:bg-surface-300 text-surface-900 dark:text-surface-600 text-xs font-bold rounded-full shadow-sm border border-surface-200 dark:border-surface-200/50 transition-all"
-                            >
-                              <span>{t("home.turbo_activate")}</span>
-                              <IconArrowRight
-                                size={12}
-                                className="group-hover:translate-x-0.5 transition-transform"
-                              />
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
 
                     {/* Fetching indicator */}
                     {isFetching && (
@@ -598,10 +883,25 @@ export default function Video() {
                       </motion.div>
                     )}
 
-                    {/* Error */}
+                    {/* Authentication / Error */}
                     <AnimatePresence>
-                      {error && (
+                      {authRequired && (
                         <motion.div
+                          key="youtube-auth"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                        >
+                          <BrowserAuthPrompt
+                            activeBrowser={activeAuthBrowser}
+                            failedBrowser={failedAuthBrowser}
+                            onRetry={retryWithBrowser}
+                          />
+                        </motion.div>
+                      )}
+                      {!authRequired && error && (
+                        <motion.div
+                          key="video-error"
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
@@ -614,11 +914,57 @@ export default function Video() {
                   </div>
                 </header>
 
-                <div className="flex-1 min-h-0 overflow-y-auto p-6 custom-scrollbar">
-                  <div className="max-w-4xl mx-auto">
+                <div className="flex-1 min-h-0 p-6">
+                  <div
+                    className={`mx-auto grid h-full w-full items-stretch gap-4 ${
+                      layout === "sidebar"
+                        ? "max-w-[94rem] grid-cols-1 xl:grid-cols-[minmax(6rem,1fr)_minmax(0,60rem)_minmax(6rem,1fr)]"
+                        : "max-w-[100rem] grid-cols-1 xl:grid-cols-[minmax(7rem,1fr)_minmax(0,60rem)_minmax(7rem,1fr)]"
+                    }`}
+                  >
+                    <div className="hidden h-[90%] w-[90%] self-start justify-self-center xl:block">
+                      <DonationBanner
+                        variant="rail"
+                        eyebrow={t("donation.sidebar.eyebrow")}
+                        title={t("donation.sidebar.title")}
+                        description={t("donation.sidebar.description")}
+                        action={t("donation.dashboard.action")}
+                      />
+                    </div>
+
+                    <div className="min-h-0 min-w-0 overflow-y-auto [scrollbar-gutter:stable_both-edges] custom-scrollbar">
+                    <div className="mx-auto w-full max-w-4xl">
+                    <div className="mb-4 xl:hidden">
+                      <DonationBanner
+                        variant="subtle"
+                        eyebrow={t("donation.sidebar.eyebrow")}
+                        title={t("donation.sidebar.title")}
+                        description={t("donation.sidebar.description")}
+                        action={t("donation.dashboard.action")}
+                      />
+                    </div>
                     {/* Video Content */}
                     <AnimatePresence mode="wait">
-                      {videoInfo ? (
+                      {mediaURL ? (
+                        <motion.div
+                          key={`media-${mediaURL}`}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="mb-6"
+                        >
+                          <RouteErrorBoundary>
+                            <Suspense fallback={SuspenseFallback}>
+                              <Images
+                                key={mediaURL}
+                                initialUrl={mediaURL}
+                                embedded
+                                onOpenQueue={() => setActiveTab("queue")}
+                              />
+                            </Suspense>
+                          </RouteErrorBoundary>
+                        </motion.div>
+                      ) : videoInfo ? (
                         <motion.div
                           key="video-options"
                           initial={{ opacity: 0, y: 20 }}
@@ -668,7 +1014,7 @@ export default function Video() {
                           </div>
 
                           {/* Mode Selector */}
-                          <div className="flex items-center gap-4 mb-6 p-1 bg-surface-100 dark:bg-surface-800/50 rounded-xl w-fit">
+                          <div className="flex items-center gap-4 mb-6 p-1 bg-surface-100 dark:bg-surface-200/50 rounded-xl w-fit">
                             <button
                               onClick={() => setDownloadMode("video")}
                               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
@@ -715,7 +1061,7 @@ export default function Video() {
                                       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all ${
                                         selectedQuality === q.value
                                           ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-100"
-                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-400"
+                                          : "border-surface-200 dark:border-surface-300 hover:border-surface-300 text-surface-700 dark:text-surface-500"
                                       }`}
                                     >
                                       <Icon size={18} />
@@ -760,7 +1106,7 @@ export default function Video() {
                                       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all ${
                                         selectedAudioFormat === f.value
                                           ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-100"
-                                          : "border-surface-200 dark:border-surface-700 hover:border-surface-300 text-surface-700 dark:text-surface-400"
+                                          : "border-surface-200 dark:border-surface-300 hover:border-surface-300 text-surface-700 dark:text-surface-500"
                                       }`}
                                     >
                                       <Icon size={18} />
@@ -779,14 +1125,19 @@ export default function Video() {
 
                           {/* Video Trimmer — isolated state, won't re-render parent */}
                           {videoInfo.duration > 0 && (
-                            <div className="mb-5 pt-5 border-t border-surface-100 dark:border-surface-800">
+                            <div className="mb-5 pt-5 border-t border-surface-100 dark:border-surface-300">
                               <VideoTrimmer
                                 videoUrl={streamUrl}
                                 duration={videoInfo.duration}
-                                onTrimChange={handleTrimChange}
+                                onCutsChange={handleCutsChange}
                                 onTrimToggle={handleTrimToggle}
                                 trimEnabled={trimEnabled}
                                 onStreamError={handleStreamError}
+                                sourceUrl={url}
+                                captions={captions}
+                                onCaptionsChange={handleCaptionsChange}
+                                subtitleLanguages={videoInfo.subtitle_languages || []}
+                                videoLanguage={videoInfo.language || ""}
                               />
                             </div>
                           )}
@@ -815,7 +1166,7 @@ export default function Video() {
                         </motion.div>
                       ) : isFetching ? (
                         <div className="mt-8">
-                          <div className="bg-surface-50/50 dark:bg-surface-900/50 rounded-3xl p-6 border border-surface-200 dark:border-surface-800">
+                          <div className="bg-surface-50/50 dark:bg-surface-50/50 rounded-3xl p-6 border border-surface-200 dark:border-surface-300">
                             <div className="flex flex-col md:flex-row gap-8">
                               <Skeleton className="w-full md:w-64 h-40 rounded-2xl shrink-0" />
                               <div className="flex-1 space-y-4 py-2">
@@ -839,7 +1190,7 @@ export default function Video() {
                           className="mt-8"
                         >
                           {queue.length > 0 ? (
-                            <div className="text-center p-8 bg-surface-50/50 dark:bg-surface-900/50 rounded-2xl border border-surface-200 dark:border-surface-800">
+                            <div className="text-center p-8 bg-surface-50/50 dark:bg-surface-50/50 rounded-2xl border border-surface-200 dark:border-surface-300">
                               <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-primary-600 dark:text-primary-400">
                                 <IconList size={32} />
                               </div>
@@ -881,6 +1232,18 @@ export default function Video() {
                         </motion.div>
                       )}
                     </AnimatePresence>
+                    </div>
+                    </div>
+
+                    <div className="hidden h-[90%] w-[90%] self-start justify-self-center xl:block">
+                      <DonationBanner
+                        variant="rail"
+                        eyebrow={t("donation.sidebar.eyebrow")}
+                        title={t("donation.sidebar.title")}
+                        description={t("donation.sidebar.description")}
+                        action={t("donation.dashboard.action")}
+                      />
+                    </div>
                   </div>
                 </div>
               </TabContent>

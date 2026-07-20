@@ -1,7 +1,6 @@
 import {
   IconHome,
   IconDownload,
-  IconPhoto,
   IconTransform,
   IconMicrophone,
   IconList,
@@ -12,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { Logo } from "../Logo";
+import DonationBanner from "../DonationBanner";
 
 export type TabType =
   | "home"
@@ -61,7 +61,7 @@ export default function Sidebar({
             <span className="font-display font-bold text-xl tracking-tight text-surface-900">
               Kingo
             </span>
-            <span className="text-[10px] font-bold text-primary-600 uppercase tracking-widest leading-none">
+            <span className="text-[10px] font-bold text-surface-500 uppercase tracking-widest leading-none dark:text-surface-400">
               Downloader
             </span>
           </div>
@@ -91,26 +91,17 @@ export default function Sidebar({
                 Downloads
               </h3>
               <div className="space-y-1">
-                {showVideos && (
+                {(showVideos || showImages) && (
                   <button
                     onClick={() => setActiveTab("video")}
                     className={`sidebar-link w-full ${
-                      activeTab === "video" ? "active" : ""
+                      activeTab === "video" || activeTab === "images"
+                        ? "active"
+                        : ""
                     }`}
                   >
                     <IconDownload size={18} />
-                    <span>{t("nav.videos")}</span>
-                  </button>
-                )}
-                {showImages && (
-                  <button
-                    onClick={() => setActiveTab("images")}
-                    className={`sidebar-link w-full ${
-                      activeTab === "images" ? "active" : ""
-                    }`}
-                  >
-                    <IconPhoto size={18} />
-                    <span>{t("nav.images")}</span>
+                    <span>{t("nav.downloads")}</span>
                   </button>
                 )}
                 <button
@@ -176,6 +167,16 @@ export default function Sidebar({
         </div>
       </nav>
 
+      <div className="px-4 pb-4">
+        <DonationBanner
+          variant="compact"
+          eyebrow={t("donation.sidebar.eyebrow")}
+          title={t("donation.sidebar.title")}
+          description={t("donation.sidebar.description")}
+          action={t("donation.sidebar.action")}
+        />
+      </div>
+
       {/* Footer - Roadmap, Settings & Version */}
       <div className="p-4 mt-auto border-t border-surface-100 dark:border-surface-200">
         <button
@@ -187,7 +188,7 @@ export default function Sidebar({
           <div className="flex items-center gap-3">
             <IconMap2
               size={18}
-              className="text-surface-500 group-hover:text-surface-900 group-hover:dark:text-surface-100 transition-colors"
+              className="text-surface-500 group-hover:text-surface-900 group-hover:dark:text-surface-800 transition-colors"
             />
             <span>{t("nav.roadmap")}</span>
           </div>
@@ -199,7 +200,7 @@ export default function Sidebar({
           <div className="flex items-center gap-3">
             <IconSettings
               size={18}
-              className="text-surface-500 group-hover:text-surface-900 group-hover:dark:text-surface-100 transition-colors"
+              className="text-surface-500 group-hover:text-surface-900 group-hover:dark:text-surface-800 transition-colors"
             />
             <span>{t("nav.settings")}</span>
           </div>

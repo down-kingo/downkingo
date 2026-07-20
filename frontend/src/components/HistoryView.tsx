@@ -23,7 +23,7 @@ export const HistoryView = memo(function HistoryView() {
   const getStatusBadge = (download: Download) => {
     const badges: Record<string, React.ReactNode> = {
       pending: (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-200 text-surface-600 dark:bg-surface-800 dark:text-surface-400">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-200 text-surface-600 dark:bg-surface-200 dark:text-surface-500">
           <span className="w-1.5 h-1.5 rounded-full bg-surface-500" />
           {t("status.in_queue")}
         </span>
@@ -51,7 +51,7 @@ export const HistoryView = memo(function HistoryView() {
         </span>
       ),
       cancelled: (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-200 text-surface-600 dark:bg-surface-800 dark:text-surface-400">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-200 text-surface-600 dark:bg-surface-200 dark:text-surface-500">
           {t("status.cancelled")}
         </span>
       ),
@@ -95,7 +95,7 @@ export const HistoryView = memo(function HistoryView() {
                 className="group relative bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/10 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex">
-                  <div className="w-32 h-20 bg-surface-100 dark:bg-surface-800 flex-shrink-0 relative overflow-hidden flex items-center justify-center">
+                  <div className="w-32 h-20 bg-surface-100 dark:bg-surface-200 flex-shrink-0 relative overflow-hidden flex items-center justify-center">
                     {download.thumbnail ? (
                       <img
                         src={download.thumbnail}
@@ -150,7 +150,7 @@ export const HistoryView = memo(function HistoryView() {
         </>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 opacity-50">
-          <div className="w-20 h-20 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4">
+          <div className="w-20 h-20 rounded-full bg-surface-100 dark:bg-surface-200 flex items-center justify-center mb-4">
             <IconHistory
               size={32}
               className="text-surface-300 dark:text-surface-600"

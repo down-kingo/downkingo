@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   IconVideo,
-  IconPhoto,
   IconHistory,
   IconArrowRight,
   IconSparkles,
@@ -12,6 +11,7 @@ import { useDownloadStore } from "../stores/downloadStore";
 import { useFeatures } from "../hooks/useFeatures";
 import { useTranslation } from "react-i18next";
 import { TabType } from "../components/navigation/Sidebar";
+import DonationBanner from "../components/DonationBanner";
 
 function ToolCard({
   onClick,
@@ -31,20 +31,20 @@ function ToolCard({
   return (
     <button
       onClick={onClick}
-      className="w-full text-left group bg-white dark:bg-surface-100 border border-surface-200 dark:border-white/5 rounded-2xl p-6 hover:bg-surface-50 dark:hover:bg-surface-200/50 transition-all duration-300 relative overflow-hidden"
+      className="group relative h-full w-full overflow-hidden rounded-2xl border border-surface-200 bg-white p-6 text-left transition-all duration-300 hover:bg-surface-50 dark:border-white/5 dark:bg-surface-100 dark:hover:bg-surface-200/50"
     >
       <div
         className={`absolute top-0 right-0 w-32 h-32 ${glowColor} blur-2xl rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
       />
       <div className="flex items-start justify-between mb-4 relative z-10">
         <div
-          className={`p-3 bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/5 rounded-xl text-surface-600 dark:text-surface-900 ${hoverColor} transition-colors shadow-sm`}
+          className={`p-3 bg-surface-50 dark:bg-white/5 border border-surface-100 dark:border-white/10 rounded-xl text-surface-600 dark:text-surface-700 ${hoverColor} transition-colors shadow-sm`}
         >
           <Icon size={26} className="stroke-[1.5]" />
         </div>
         <IconArrowRight
           size={18}
-          className="text-surface-400 dark:text-surface-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+          className="text-surface-400 dark:text-surface-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
         />
       </div>
       <h3 className="font-semibold text-surface-900 dark:text-surface-900 text-base mb-1">
@@ -84,41 +84,40 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 border-b border-surface-200 dark:border-surface-700 pb-6"
+          className="mb-8 flex flex-col gap-6 border-b border-surface-200 pb-6 lg:flex-row lg:items-center lg:justify-between dark:border-surface-300"
         >
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-900 tracking-tight font-display">
-            {t("dashboard.overview")}
-          </h1>
-          <p className="text-sm text-surface-500 dark:text-surface-500 mt-2 font-medium">
-            {t("dashboard.manage_tools")}
-          </p>
+          <div className="shrink-0">
+            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-900 tracking-tight font-display">
+              {t("dashboard.overview")}
+            </h1>
+            <p className="text-sm text-surface-500 dark:text-surface-500 mt-2 font-medium">
+              {t("dashboard.manage_tools")}
+            </p>
+          </div>
+
+          <div className="w-full lg:max-w-xl">
+            <DonationBanner
+              variant="header"
+              eyebrow={t("donation.dashboard.eyebrow")}
+              title={t("donation.dashboard.title")}
+              description={t("donation.dashboard.description")}
+              action={t("donation.dashboard.action")}
+            />
+          </div>
         </motion.div>
 
         {/* Tools Grid - Authentic Glassmorphism */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           <AnimatePresence mode="popLayout">
-            {showVideos && (
-              <motion.div key="card-video" layout {...cardMotionRes}>
+            {(showVideos || showImages) && (
+              <motion.div key="card-downloads" layout {...cardMotionRes}>
                 <ToolCard
                   onClick={() => onNavigate("video")}
                   icon={IconVideo}
                   glowColor="bg-primary-600/20 dark:bg-primary-600/40"
-                  hoverColor="group-hover:text-primary-600 dark:group-hover:text-primary-600"
-                  title={t("dashboard.tools.video_downloader.title")}
-                  desc={t("dashboard.tools.video_downloader.desc")}
-                />
-              </motion.div>
-            )}
-
-            {showImages && (
-              <motion.div key="card-images" layout {...cardMotionRes}>
-                <ToolCard
-                  onClick={() => onNavigate("images")}
-                  icon={IconPhoto}
-                  glowColor="bg-purple-600/20 dark:bg-purple-600/40"
-                  hoverColor="group-hover:text-purple-600 dark:group-hover:text-purple-600"
-                  title={t("dashboard.tools.image_extractor.title")}
-                  desc={t("dashboard.tools.image_extractor.desc")}
+                  hoverColor="group-hover:text-primary-600 dark:group-hover:text-primary-400"
+                  title={t("dashboard.tools.downloads.title")}
+                  desc={t("dashboard.tools.downloads.desc")}
                 />
               </motion.div>
             )}
@@ -129,7 +128,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   onClick={() => onNavigate("converter")}
                   icon={IconTransform}
                   glowColor="bg-blue-600/20 dark:bg-blue-600/40"
-                  hoverColor="group-hover:text-blue-600 dark:group-hover:text-blue-600"
+                  hoverColor="group-hover:text-blue-600 dark:group-hover:text-blue-400"
                   title={t("dashboard.tools.converter.title")}
                   desc={t("dashboard.tools.converter.desc")}
                 />
@@ -142,7 +141,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   onClick={() => onNavigate("transcriber")}
                   icon={IconMicrophone}
                   glowColor="bg-emerald-600/20 dark:bg-emerald-600/40"
-                  hoverColor="group-hover:text-emerald-600 dark:group-hover:text-emerald-600"
+                  hoverColor="group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
                   title={t("dashboard.tools.transcriber.title")}
                   desc={t("dashboard.tools.transcriber.desc")}
                 />
@@ -163,7 +162,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             </h3>
             <button
               onClick={() => onNavigate("history")}
-              className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline transition-all"
+              className="text-xs font-medium text-surface-600 transition-colors hover:text-surface-900 hover:underline dark:text-surface-400 dark:hover:text-surface-700"
             >
               {t("dashboard.view_full_history")}
             </button>
@@ -196,7 +195,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                       className={`text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wide shadow-sm ${
                         item.status === "completed"
                           ? "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 border border-green-200 dark:border-green-500/20"
-                          : "bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400"
+                          : "bg-surface-100 text-surface-600 dark:bg-surface-200 dark:text-surface-500"
                       }`}
                     >
                       {item.status === "completed"

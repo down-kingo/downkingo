@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"kingo/internal/pot"
 )
 
 // DevMode is set at build time via ldflags to isolate dev environment from production.
@@ -54,16 +56,17 @@ func GetPaths() (*Paths, error) {
 	var downloads string
 	var images string
 
+	appName := getAppDirName()
 	switch runtime.GOOS {
 	case "windows":
-		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Videos", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	case "darwin":
-		downloads = filepath.Join(homeDir, "Movies", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Movies", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	default:
-		downloads = filepath.Join(homeDir, "Videos", "DownKingo")
-		images = filepath.Join(homeDir, "Pictures", "DownKingo")
+		downloads = filepath.Join(homeDir, "Videos", appName)
+		images = filepath.Join(homeDir, "Pictures", appName)
 	}
 
 	return &Paths{
@@ -77,13 +80,37 @@ func GetPaths() (*Paths, error) {
 
 // EnsureDirectories creates all required directories
 func (p *Paths) EnsureDirectories() error {
-	dirs := []string{p.AppData, p.Bin, p.Downloads, p.Images}
+	dirs := []string{p.AppData, p.Bin, p.Downloads, p.Images, p.POTCacheDir()}
 	for _, dir := range dirs {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// sidecarBinDirs returns the platform-specific directories that may contain
+// binaries shipped with the desktop installer.
+func (p *Paths) sidecarBinDirs() []string {
+	switch runtime.GOOS {
+	case "windows":
+		return []string{filepath.Join(p.ExeDir, "bin")}
+	case "darwin":
+		return []string{
+			filepath.Join(p.ExeDir, "..", "Resources", "bin"),
+			p.ExeDir,
+		}
+	default:
+		return []string{p.ExeDir, filepath.Join(p.ExeDir, "bin")}
+	}
+}
+
+// BinarySearchDirs returns binary roots in discovery priority order. The
+// launcher uses the same list as runtime path resolution, preventing bundled
+// sidecars from being downloaded a second time into AppData.
+func (p *Paths) BinarySearchDirs() []string {
+	dirs := append([]string{}, p.sidecarBinDirs()...)
+	return append(dirs, p.Bin)
 }
 
 // getSidecarPaths returns all possible sidecar locations for the current OS.
@@ -95,28 +122,10 @@ func (p *Paths) EnsureDirectories() error {
 //     The executable is in .app/Contents/MacOS/, so we go up two levels to Resources
 //   - Linux AppImage: Binaries are in the same directory as the executable (usr/bin/)
 func (p *Paths) getSidecarPaths(binaryName string) []string {
-	var paths []string
-
-	switch runtime.GOOS {
-	case "windows":
-		// Windows NSIS: Binários em ExeDir/bin/
-		paths = append(paths, filepath.Join(p.ExeDir, "bin", binaryName))
-
-	case "darwin":
-		// macOS App Bundle: Binários em .app/Contents/Resources/bin/
-		// O executável fica em .app/Contents/MacOS/, então subimos dois níveis
-		resourcesDir := filepath.Join(p.ExeDir, "..", "Resources", "bin")
-		paths = append(paths, filepath.Join(resourcesDir, binaryName))
-		// Fallback: ao lado do executável (dev mode)
-		paths = append(paths, filepath.Join(p.ExeDir, binaryName))
-
-	default: // Linux
-		// AppImage: Binários no mesmo diretório do executável (usr/bin/)
-		paths = append(paths, filepath.Join(p.ExeDir, binaryName))
-		// Fallback: subdiretório bin
-		paths = append(paths, filepath.Join(p.ExeDir, "bin", binaryName))
+	paths := make([]string, 0, len(p.sidecarBinDirs()))
+	for _, dir := range p.sidecarBinDirs() {
+		paths = append(paths, filepath.Join(dir, binaryName))
 	}
-
 	return paths
 }
 
@@ -173,6 +182,34 @@ func (p *Paths) AvifencPath() string {
 		return p.getBinaryPath("avifenc.exe")
 	}
 	return p.getBinaryPath("avifenc")
+}
+
+// POTProviderPath returns the managed Rust provider executable.
+func (p *Paths) POTProviderPath() string {
+	asset, err := pot.BinaryAsset()
+	if err != nil {
+		if runtime.GOOS == "windows" {
+			return p.getBinaryPath("bgutil-pot.exe")
+		}
+		return p.getBinaryPath("bgutil-pot")
+	}
+	return p.getBinaryPath(asset.LocalName)
+}
+
+// POTPluginPath returns the verified plugin archive paired with the provider.
+func (p *Paths) POTPluginPath() string {
+	for _, root := range p.BinarySearchDirs() {
+		candidate := filepath.Join(root, "yt-dlp-plugins", pot.PluginFileName)
+		if fileExists(candidate) {
+			return candidate
+		}
+	}
+	return filepath.Join(p.Bin, "yt-dlp-plugins", pot.PluginFileName)
+}
+
+// POTCacheDir isolates provider cache data inside DownKingo's application data.
+func (p *Paths) POTCacheDir() string {
+	return filepath.Join(p.AppData, "pot-cache")
 }
 
 // WhisperDir returns the directory for whisper.cpp binary and models

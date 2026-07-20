@@ -14,7 +14,11 @@ import {
   IconPuzzle,
 } from "@tabler/icons-react";
 import { useSettingsStore, Language, FeatureId } from "../../stores/settingsStore";
-import { FEATURE_REGISTRY, ALL_FEATURE_IDS, FEATURE_DEPS } from "../../lib/features";
+import {
+  FEATURE_REGISTRY,
+  ALL_FEATURE_IDS,
+  getRequiredDependencyNames,
+} from "../../lib/features";
 import { supportedLanguages } from "../../i18n";
 import {
   GetVideoDownloadPath,
@@ -127,7 +131,7 @@ export default function GeneralSettings() {
     // Habilitar: verificar se deps estão instaladas
     setCheckingDeps(true);
     try {
-      const requiredDepNames = FEATURE_DEPS[id];
+      const requiredDepNames = getRequiredDependencyNames([id]);
       const statuses = await CheckDependencies();
 
       // Verificar deps padrão

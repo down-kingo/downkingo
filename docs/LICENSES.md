@@ -31,6 +31,21 @@ DownKingo downloads the following third-party binaries on first launch. They are
 
 FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. As required by the LGPL, if you wish to modify FFmpeg and use it with DownKingo, you may obtain the source code from the links above.
 
+### YouTube PO Token Provider
+
+|             |                                                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Project** | [jim60105/bgutil-ytdlp-pot-provider-rs](https://github.com/jim60105/bgutil-ytdlp-pot-provider-rs)                                         |
+| **Version** | 0.8.1                                                                                                                                    |
+| **License** | [GPL v3](https://github.com/jim60105/bgutil-ytdlp-pot-provider-rs/blob/v0.8.1/LICENSE)                                                     |
+| **Usage**   | Local, automatic generation of YouTube Proof-of-Origin tokens for yt-dlp                                                                  |
+| **Parts**   | Rust HTTP sidecar and the matching Python yt-dlp plugin archive                                                                            |
+
+DownKingo runs the unmodified provider as a separate local process bound to
+`127.0.0.1`. Both release artifacts are downloaded from the public project,
+pinned by version and verified with SHA-256 before execution. The provider is
+not affiliated with yt-dlp or YouTube.
+
 ### aria2c (Optional)
 
 |             |                                                                   |
@@ -111,6 +126,7 @@ FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.
 ## Credits
 
 - Video downloading: [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- YouTube PO tokens: [BgUtils POT Provider (Rust)](https://github.com/jim60105/bgutil-ytdlp-pot-provider-rs)
 - Media processing: [FFmpeg](https://ffmpeg.org/)
 - Desktop framework: [Wails v3](https://wails.io/)
 - Transcription: [whisper.cpp](https://github.com/ggerganov/whisper.cpp)

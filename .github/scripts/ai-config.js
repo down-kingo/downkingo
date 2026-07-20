@@ -6,26 +6,17 @@
  * Configuração centralizada para todos os modelos de IA.
  * Altere os valores aqui para atualizar todos os scripts.
  *
- * @see https://ai.google.dev/gemini-api/docs/models
+ * @see https://openrouter.ai/docs
  */
 
 // ═══════════════════════════════════════════════════════════════════
-// 🎯 MODELOS GEMINI
+// 🎯 MODELOS (via OpenRouter)
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Modelo para geração de Release Notes
- * Requer: Alta qualidade de escrita, criatividade
- * Recomendado: gemini-3-flash-preview
+ * Modelo usado para Release Notes e tradução de Roadmap
  */
-const GEMINI_MODEL_RELEASE_NOTES = "gemini-3-flash-preview";
-
-/**
- * Modelo para tradução de Roadmap
- * Requer: Rápido, eficiente, bom custo-benefício
- * Recomendado: gemini-3-flash-preview
- */
-const GEMINI_MODEL_ROADMAP = "gemini-3-flash-preview";
+const OPENROUTER_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
 
 // ═══════════════════════════════════════════════════════════════════
 // ⚙️ CONFIGURAÇÕES DE GERAÇÃO
@@ -36,7 +27,7 @@ const GEMINI_MODEL_ROADMAP = "gemini-3-flash-preview";
  */
 const GENERATION_CONFIG_RELEASE_NOTES = {
   temperature: 0.7, // Mais criativo
-  maxOutputTokens: 4096,
+  max_tokens: 4096,
 };
 
 /**
@@ -44,7 +35,7 @@ const GENERATION_CONFIG_RELEASE_NOTES = {
  */
 const GENERATION_CONFIG_ROADMAP = {
   temperature: 0.3, // Mais preciso/determinístico
-  maxOutputTokens: 4000,
+  max_tokens: 4000,
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -52,20 +43,9 @@ const GENERATION_CONFIG_ROADMAP = {
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Base URL para API REST do Gemini
- * Usado quando não se usa a SDK oficial
+ * Endpoint de Chat Completions da OpenRouter (formato compatível com OpenAI)
  */
-const GEMINI_API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
-
-/**
- * Monta a URL completa para chamada REST do Gemini
- * @param {string} model - Nome do modelo
- * @param {string} apiKey - Chave da API
- * @returns {string} URL completa
- */
-function getGeminiRestUrl(model, apiKey) {
-  return `${GEMINI_API_BASE_URL}/models/${model}:generateContent?key=${apiKey}`;
-}
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 // ═══════════════════════════════════════════════════════════════════
 // 🔧 RATE LIMITING
@@ -91,16 +71,14 @@ function delay(ms = RATE_LIMIT_DELAY_MS) {
 
 module.exports = {
   // Modelos
-  GEMINI_MODEL_RELEASE_NOTES,
-  GEMINI_MODEL_ROADMAP,
+  OPENROUTER_MODEL,
 
   // Configurações de geração
   GENERATION_CONFIG_RELEASE_NOTES,
   GENERATION_CONFIG_ROADMAP,
 
   // API
-  GEMINI_API_BASE_URL,
-  getGeminiRestUrl,
+  OPENROUTER_API_URL,
 
   // Rate Limiting
   RATE_LIMIT_DELAY_MS,

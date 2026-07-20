@@ -55,12 +55,12 @@ export const BatchFileList = memo(function BatchFileList({
           {(succeeded > 0 || failed > 0) && (
             <div className="flex gap-2 text-[10px]">
               {succeeded > 0 && (
-                <span className="text-green-600 font-medium">
+                <span className="text-green-600 dark:text-green-400 font-medium">
                   {t("batch_succeeded", { count: succeeded })}
                 </span>
               )}
               {failed > 0 && (
-                <span className="text-red-500 font-medium">
+                <span className="text-red-500 dark:text-red-400 font-medium">
                   {t("batch_failed", { count: failed })}
                 </span>
               )}
@@ -75,7 +75,7 @@ export const BatchFileList = memo(function BatchFileList({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="p-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors group"
+                className="p-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-200/50 transition-colors group"
               >
                 <div className="flex items-center gap-2">
                   {/* Status icon */}
@@ -90,26 +90,26 @@ export const BatchFileList = memo(function BatchFileList({
                       />
                     )}
                     {file.status === "done" && (
-                      <IconCheck size={14} className="text-green-500" />
+                      <IconCheck size={14} className="text-green-500 dark:text-green-400" />
                     )}
                     {file.status === "error" && (
-                      <IconAlertCircle size={14} className="text-red-500" />
+                      <IconAlertCircle size={14} className="text-red-500 dark:text-red-400" />
                     )}
                   </div>
 
                   {/* File name */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-surface-700 dark:text-surface-300 truncate">
+                    <p className="text-xs font-medium text-surface-700 dark:text-surface-600 truncate">
                       {file.fileName}
                     </p>
                     {file.status === "done" && file.result && (
-                      <p className="text-[10px] text-green-600">
+                      <p className="text-[10px] text-green-600 dark:text-green-400">
                         {formatSize(file.result.inputSize)} →{" "}
                         {formatSize(file.result.outputSize)}
                       </p>
                     )}
                     {file.status === "error" && file.error && (
-                      <p className="text-[10px] text-red-500 truncate">
+                      <p className="text-[10px] text-red-500 dark:text-red-400 truncate">
                         {file.error}
                       </p>
                     )}
@@ -136,7 +136,7 @@ export const BatchFileList = memo(function BatchFileList({
                   {!isProcessing && (
                     <button
                       onClick={() => onRemove(file.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 text-surface-400 hover:text-red-500 rounded transition-all"
+                      className="opacity-0 group-hover:opacity-100 p-1 text-surface-400 hover:text-red-500 dark:hover:text-red-400 dark:hover:bg-red-500/10 rounded transition-all"
                     >
                       <IconX size={12} />
                     </button>
@@ -157,7 +157,7 @@ export const BatchFileList = memo(function BatchFileList({
                           onUpdateCustomName(file.id, e.target.value)
                         }
                         placeholder={file.fileName.replace(/\.[^.]+$/, "")}
-                        className="flex-1 min-w-0 px-2 py-1 text-[11px] bg-surface-50 dark:bg-black/20 rounded-lg border border-surface-200 dark:border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-surface-700 dark:text-surface-300 placeholder:text-surface-300 dark:placeholder:text-surface-500"
+                        className="flex-1 min-w-0 px-2 py-1 text-[11px] bg-surface-50 dark:bg-black/20 rounded-lg border border-surface-200 dark:border-surface-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-surface-700 dark:text-surface-600 placeholder:text-surface-300 dark:placeholder:text-surface-400"
                         autoFocus
                       />
                     </div>

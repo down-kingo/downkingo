@@ -88,7 +88,9 @@ func (h *SettingsHandler) SelectVideoDirectory() (string, error) {
 	}
 
 	if selection != "" {
-		h.cfg.VideoDownloadPath = selection
+		h.cfg.Update(func(cfg *config.Config) {
+			cfg.VideoDownloadPath = selection
+		})
 		if h.youtube != nil {
 			h.youtube.SetOutputDirectory(selection)
 		}
@@ -111,7 +113,9 @@ func (h *SettingsHandler) SelectImageDirectory() (string, error) {
 	}
 
 	if selection != "" {
-		h.cfg.ImageDownloadPath = selection
+		h.cfg.Update(func(cfg *config.Config) {
+			cfg.ImageDownloadPath = selection
+		})
 		if err := h.cfg.Save(); err != nil {
 			logger.Log.Error().Err(err).Msg("failed to save config after image directory selection")
 		}
@@ -126,16 +130,18 @@ func (h *SettingsHandler) SelectDirectory() (string, error) {
 
 // GetVideoDownloadPath returns the video downloads directory.
 func (h *SettingsHandler) GetVideoDownloadPath(defaultPath string) string {
-	if h.cfg.VideoDownloadPath != "" {
-		return h.cfg.VideoDownloadPath
+	cfg := h.cfg.Get()
+	if cfg.VideoDownloadPath != "" {
+		return cfg.VideoDownloadPath
 	}
 	return defaultPath
 }
 
 // GetImageDownloadPath returns the image downloads directory.
 func (h *SettingsHandler) GetImageDownloadPath(defaultPath string) string {
-	if h.cfg.ImageDownloadPath != "" {
-		return h.cfg.ImageDownloadPath
+	cfg := h.cfg.Get()
+	if cfg.ImageDownloadPath != "" {
+		return cfg.ImageDownloadPath
 	}
 	return defaultPath
 }

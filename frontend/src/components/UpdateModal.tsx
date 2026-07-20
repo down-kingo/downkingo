@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { IconDownload, IconX, IconArrowRight } from "@tabler/icons-react";
 import { useState, useEffect, useCallback } from "react";
-import { CheckForUpdate } from "../../bindings/kingo/app";
+import { CheckForUpdate, OpenUrl } from "../../bindings/kingo/app";
 import { UpdateInfo } from "../../bindings/kingo/internal/updater/models.js";
 import { Logo } from "./Logo";
 import { useTranslation } from "react-i18next";
@@ -13,18 +13,30 @@ export default function UpdateModal() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const checkUpdate = useCallback(async () => {
+    try {
+      const info = await CheckForUpdate();
+      if (info && info.available) {
+        setUpdateInfo(info);
+        setIsOpen(true);
+      }
+    } catch (err) {
+      console.error("Failed to check for updates:", err);
+    }
+  }, []);
+
   useEffect(() => {
     checkUpdate();
-  }, []);
+  }, [checkUpdate]);
 
   // [DEV ONLY] Ctrl+Shift+F10
   const openDevPreview = useCallback(() => {
     const mockInfo: UpdateInfo = {
       available: true,
-      currentVersion: "3.0.0",
-      latestVersion: "v3.1.0",
+      currentVersion: "3.1.2",
+      latestVersion: "v3.2.0",
       downloadUrl:
-        "https://github.com/org/kingo/releases/download/v3.1.0/kingo-setup.exe",
+        "https://github.com/org/kingo/releases/download/v3.2.0/kingo-setup.exe",
       changelog: `<!-- JSON_I18N: ${JSON.stringify({
         "pt-BR":
           "- **Novo conversor** de vídeo com suporte a AV1\n- Transcrição mais rápida com Whisper v3\n- Correção no download de playlists longas\n- Performance geral melhorada em 30%",
@@ -50,20 +62,14 @@ export default function UpdateModal() {
     return () => window.removeEventListener("dev:open-update-modal", handler);
   }, [openDevPreview]);
 
-  const checkUpdate = async () => {
-    try {
-      const info = await CheckForUpdate();
-      if (info && info.available) {
-        setUpdateInfo(info);
-        setIsOpen(true);
-      }
-    } catch (err) {
-      console.error("Failed to check for updates:", err);
+  const handleUpdate = async () => {
+    if (!updateInfo?.downloadUrl) {
+      setIsOpen(false);
+      await OpenUrl(
+        "https://github.com/down-kingo/downkingo/releases/latest",
+      );
+      return;
     }
-  };
-
-  const handleUpdate = () => {
-    if (!updateInfo?.downloadUrl) return;
     setIsOpen(false);
     navigate("/setup", {
       state: { isUpdate: true, downloadUrl: updateInfo.downloadUrl },

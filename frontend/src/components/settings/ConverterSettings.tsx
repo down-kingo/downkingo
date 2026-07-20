@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconFolder, IconBell } from "@tabler/icons-react";
 
 import { useTranslation } from "react-i18next";
@@ -60,7 +60,7 @@ const Switch = ({
       ${
         checked
           ? "bg-primary-600 dark:bg-primary-500 shadow-lg shadow-primary-600/20"
-          : "bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600"
+          : "bg-surface-200 dark:bg-surface-300 hover:bg-surface-300 dark:hover:bg-surface-400"
       }
     `}
   >

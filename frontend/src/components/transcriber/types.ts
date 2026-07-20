@@ -28,4 +28,5 @@ export interface TranscribeRequest {
   model: string;
   language: string;
   outputFormat: string;
+  useVad: boolean;
 }

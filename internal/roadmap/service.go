@@ -12,7 +12,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -105,6 +104,15 @@ var statusMapping = map[string]Status{
 	"done":        StatusShipped,
 	"shipped":     StatusShipped,
 	"completed":   StatusShipped,
+}
+
+// resolveStatus follows the GitHub Project v2 Status field, which is the
+// roadmap source of truth. Issue open/closed state is independent from it.
+func resolveStatus(projectStatus string) Status {
+	if status, ok := statusMapping[strings.ToLower(strings.TrimSpace(projectStatus))]; ok {
+		return status
+	}
+	return StatusIdeia
 }
 
 // NewService creates a new roadmap service instance
@@ -341,10 +349,9 @@ func (s *Service) updateMemoryCache(items []RoadmapItem, lang string) {
 
 // syncInBackground updates data from source and emits event if changed
 func (s *Service) syncInBackground(reason string, lang string) {
-	if s.isFetching.Load() {
+	if !s.isFetching.CompareAndSwap(false, true) {
 		return
 	}
-	s.isFetching.Store(true)
 	defer s.isFetching.Store(false)
 
 	logger.Log.Debug().Str("reason", reason).Msg("Starting background sync")
@@ -357,6 +364,13 @@ func (s *Service) syncInBackground(reason string, lang string) {
 
 	// Check if update is needed (Lightweight HEAD request or Meta check)
 	// For simplicity, we just fetch fresh data and compare
+	// Preserve the previous snapshot before the fetch updates the internal cache.
+	// Comparing after fetchFromCDNSync would compare the new data with itself and
+	// suppress the roadmap:update event.
+	s.mu.RLock()
+	previousItems := append([]RoadmapItem(nil), s.cache...)
+	s.mu.RUnlock()
+
 	var freshItems []RoadmapItem
 	var err error
 
@@ -385,10 +399,8 @@ func (s *Service) syncInBackground(reason string, lang string) {
 	s.syncState.BackoffTime = 0
 	s.syncMu.Unlock()
 
-	// Compare with current cache
-	s.mu.RLock()
-	hasChanges := !itemsEqual(s.cache, freshItems)
-	s.mu.RUnlock()
+	// Compare with the snapshot captured before fetching.
+	hasChanges := !itemsEqual(previousItems, freshItems)
 
 	if hasChanges {
 		s.updateMemoryCache(freshItems, lang)
@@ -550,6 +562,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 								title
 								body
 								url
+								closedAt
 								comments { totalCount }
 								reactionsUp: reactions(content: THUMBS_UP) { totalCount }
 								reactionsDown: reactions(content: THUMBS_DOWN) { totalCount }
@@ -610,6 +623,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 								Title         string `json:"title"`
 								Body          string `json:"body"`
 								URL           string `json:"url"`
+								ClosedAt      string `json:"closedAt"`
 								Comments      struct{ TotalCount int }
 								ReactionsUp   struct{ TotalCount int } `json:"reactionsUp"`
 								ReactionsDown struct{ TotalCount int } `json:"reactionsDown"`
@@ -648,17 +662,20 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 			continue // Skip draft items or non-issues
 		}
 
-		status := StatusIdeia
-		if node.FieldValueByName != nil && node.FieldValueByName.Name != "" {
-			slug := strings.ToLower(node.FieldValueByName.Name)
-			if s, ok := statusMapping[slug]; ok {
-				status = s
-			}
+		projectStatus := ""
+		if node.FieldValueByName != nil {
+			projectStatus = node.FieldValueByName.Name
 		}
+		status := resolveStatus(projectStatus)
 
 		labels := make([]string, 0, len(content.Labels.Nodes))
 		for _, l := range content.Labels.Nodes {
 			labels = append(labels, l.Name)
+		}
+
+		shippedAt := ""
+		if status == StatusShipped {
+			shippedAt = parseDate(content.ClosedAt)
 		}
 
 		items = append(items, RoadmapItem{
@@ -675,6 +692,7 @@ func (s *Service) fetchFromProjects(token string) ([]RoadmapItem, error) {
 			Author:       content.Author.Login,
 			AuthorAvatar: content.Author.AvatarUrl,
 			CreatedAt:    parseDate(content.CreatedAt),
+			ShippedAt:    shippedAt,
 		})
 	}
 
@@ -1015,17 +1033,6 @@ func parseDate(dateStr string) string {
 		return ""
 	}
 	return t.Format("2006-01-02")
-}
-
-func sortItems(items []RoadmapItem) {
-	sort.Slice(items, func(i, j int) bool {
-		// Shipped items go to bottom by ID
-		if items[i].Status == StatusShipped && items[j].Status == StatusShipped {
-			return items[i].ID > items[j].ID
-		}
-		// Others sorted by votes
-		return items[i].Votes > items[j].Votes
-	})
 }
 
 // itemsEqual compares two slices of RoadmapItems for equality

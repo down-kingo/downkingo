@@ -108,7 +108,7 @@ func (c *CDNItem) ToRoadmapItem() RoadmapItem {
 		AuthorAvatar:  c.AuthorAvatar,
 		CreatedAt:     c.CreatedAt,
 	}
-	if c.ShippedAt != nil {
+	if c.Status == StatusShipped && c.ShippedAt != nil {
 		item.ShippedAt = *c.ShippedAt
 	}
 	return item

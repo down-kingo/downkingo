@@ -79,7 +79,7 @@ export default function TranscriberSettings() {
               <select
                 value={modelQuality}
                 onChange={(e) => setModelQuality(e.target.value)}
-                className="w-full appearance-none bg-surface-50 border border-surface-200 dark:bg-[#121214] dark:border-white/10 rounded-lg py-2 pl-3 pr-10 text-sm font-medium text-surface-900 dark:text-surface-100 hover:border-surface-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 shadow-sm transition-all text-left"
+                className="w-full appearance-none bg-surface-50 border border-surface-200 dark:bg-[#121214] dark:border-white/15 rounded-lg py-2 pl-3 pr-10 text-sm font-medium text-surface-900 dark:text-surface-800 hover:border-surface-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 shadow-sm transition-all text-left"
               >
                 <option value="tiny">Tiny (Mais rápido)</option>
                 <option value="base">Base (Padrão)</option>
@@ -116,7 +116,7 @@ export default function TranscriberSettings() {
               <select
                 value={targetLang}
                 onChange={(e) => setTargetLang(e.target.value)}
-                className="w-full appearance-none bg-surface-50 border border-surface-200 dark:bg-[#121214] dark:border-white/10 rounded-lg py-2 pl-3 pr-10 text-sm font-medium text-surface-900 dark:text-surface-100 hover:border-surface-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 shadow-sm transition-all text-left"
+                className="w-full appearance-none bg-surface-50 border border-surface-200 dark:bg-[#121214] dark:border-white/15 rounded-lg py-2 pl-3 pr-10 text-sm font-medium text-surface-900 dark:text-surface-800 hover:border-surface-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 shadow-sm transition-all text-left"
               >
                 <option value="auto">Automático</option>
                 <option value="pt">Português (BR)</option>

@@ -1,12 +1,11 @@
 # 🌐 DownKingo Internationalization (i18n)
 
-This project uses a professional ("Senior Level") automated translation workflow to ensure the interface is always translated and consistent, avoiding error-prone manual JSON editing.
+This project uses a structured translation workflow to keep the interface translated and consistent.
 
 ## 🛠️ Tech Stack
 
 - **Core**: `i18next` + `react-i18next`
 - **Extraction**: `i18next-parser` (Scans code and creates JSONs)
-- **Automation**: Custom script with `@iamtraction/google-translate`
 - **Quality**: `eslint-plugin-i18next` (Prevents hardcoded text in code)
 
 ---
@@ -22,7 +21,6 @@ We use **namespaces** to better organize strings:
 - `roadmap.json`, `images.json`, etc.
 
 **Base Language (Source of Truth):** 🇧🇷 `pt-BR` (Brazilian Portuguese).
-The translation script uses Portuguese as the base to generate other languages.
 
 ---
 
@@ -60,22 +58,7 @@ bun run i18n:extract
 - Creates/Updates JSON files in `src/i18n/locales` for **all** languages.
 - If the key is new, it enters empty (`""`) in other languages, ready to be translated.
 
-### 3. Translating (Automatic) 🤖
-
-To avoid wasting time manually using Google Translate, use our translation bot:
-
-```bash
-bun run i18n:translate
-```
-
-🔹 **What does this do?**
-
-- Reads `pt-BR` files as the base.
-- Scans files for other languages (`en-US`, `es-ES`, `de-DE`, `fr-FR`).
-- If it finds an empty or missing key, it **automatically translates** and fills the file.
-- Saves the updated file.
-
-### 4. Validating (CI/CD)
+### 3. Validating (CI/CD)
 
 In our CI pipeline (Github Actions), we run:
 

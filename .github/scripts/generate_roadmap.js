@@ -1,18 +1,19 @@
 const fs = require("fs");
 const https = require("https");
 const {
-  GEMINI_MODEL_ROADMAP,
+  OPENROUTER_MODEL,
   GENERATION_CONFIG_ROADMAP,
-  getGeminiRestUrl,
+  OPENROUTER_API_URL,
   delay,
   RATE_LIMIT_DELAY_MS,
 } = require("./ai-config");
 
 // --- Configuration ---
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const ORG_NAME = process.env.ORG_NAME || "down-kingo";
 const PROJECT_NUMBER = parseInt(process.env.PROJECT_NUMBER || "2");
+const LANGUAGES = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
 
 const QUERY = `
   query($login: String!, $number: Int!) {
@@ -26,7 +27,6 @@ const QUERY = `
                 title
                 body
                 url
-                state
                 closedAt
                 comments { totalCount }
                 reactions(content: THUMBS_UP) { totalCount }
@@ -61,13 +61,168 @@ const STATUS_MAPPING = {
   completed: "shipped",
 };
 
-function resolveStatus(projectStatus, issueState) {
-  // A closed issue is delivered even if the Project v2 field was not moved yet.
-  // This keeps GitHub Issues and the public roadmap consistent.
-  if (issueState === "CLOSED") return "shipped";
-
-  const normalized = projectStatus?.toLowerCase() || "idea";
+function resolveStatus(projectStatus) {
+  // The Project v2 Status field is the roadmap source of truth. An issue can
+  // legitimately be closed while it remains in Bastidores or Em Produção.
+  const normalized = projectStatus?.trim().toLowerCase() || "idea";
   return STATUS_MAPPING[normalized] || "idea";
+}
+
+function hashDescription(description) {
+  if (!description) return "";
+  return `${description.slice(0, 100).replace(/\s/g, "")}_${description.length}`;
+}
+
+function normalizeComparableText(value) {
+  return String(value || "")
+    .normalize("NFKC")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function hasTranslationKey(map, lang, allowEmpty = false) {
+  return (
+    map &&
+    Object.prototype.hasOwnProperty.call(map, lang) &&
+    typeof map[lang] === "string" &&
+    (allowEmpty || map[lang].trim().length > 0)
+  );
+}
+
+function isUsableTranslationBundle(
+  titleI18n,
+  descriptionI18n,
+  originalTitle = "",
+  originalDescription = ""
+) {
+  const descriptionCanBeEmpty = originalDescription.trim().length === 0;
+  if (
+    !LANGUAGES.every((lang) => hasTranslationKey(titleI18n, lang)) ||
+    !LANGUAGES.every((lang) =>
+      hasTranslationKey(descriptionI18n, lang, descriptionCanBeEmpty)
+    )
+  ) {
+    return false;
+  }
+
+  // The broken production cache had all five language keys populated with
+  // the same Portuguese text. Presence alone is therefore not proof that an
+  // item was translated. Long natural-language descriptions must contain at
+  // least two distinct localized values and may match the source in at most
+  // one language (the detected source language itself).
+  const normalizedOriginal = normalizeComparableText(originalDescription);
+  const localizedTitles = LANGUAGES.map((lang) =>
+    normalizeComparableText(titleI18n[lang])
+  );
+  const localizedDescriptions = LANGUAGES.map((lang) =>
+    normalizeComparableText(descriptionI18n[lang])
+  );
+  if (
+    new Set(localizedTitles).size === 1 &&
+    new Set(localizedDescriptions).size === 1 &&
+    (normalizeComparableText(originalTitle).length >= 12 ||
+      normalizedOriginal.length >= 20)
+  ) {
+    return false;
+  }
+
+  if (normalizedOriginal.length >= 80) {
+    const distinctDescriptions = new Set(localizedDescriptions);
+    const sourceMatches = localizedDescriptions.filter(
+      (value) => value === normalizedOriginal
+    ).length;
+    if (distinctDescriptions.size < 2 || sourceMatches > 1) {
+      return false;
+    }
+  }
+  if (
+    normalizedOriginal.length >= 500 &&
+    localizedDescriptions.some(
+      (value) => value.length < normalizedOriginal.length * 0.6
+    )
+  ) {
+    // The old batch prompt truncated long descriptions at 1,000 characters
+    // and cached the partial result forever. Localized bodies must retain a
+    // reasonable amount of the source content.
+    return false;
+  }
+
+  return LANGUAGES.every(
+    (lang) => normalizeComparableText(titleI18n[lang]).length > 0
+  );
+}
+
+function extractTranslationMaps(translations) {
+  const titleI18n = {};
+  const descriptionI18n = {};
+
+  for (const lang of LANGUAGES) {
+    const content = translations?.[lang];
+    if (!content || typeof content !== "object") continue;
+    if (typeof content.title === "string") titleI18n[lang] = content.title;
+    if (typeof content.description === "string") {
+      descriptionI18n[lang] = content.description;
+    }
+  }
+
+  return { titleI18n, descriptionI18n };
+}
+
+function createRoadmapItemFromProjectNode(node, translationCache = {}) {
+  const content = node?.content;
+  if (!content?.number) return null;
+
+  const status = resolveStatus(node.fieldValueByName?.name);
+  const originalDescription = content.body || "";
+  const originalDescHash = hashDescription(originalDescription);
+  const cached = translationCache[content.number];
+  const cacheMatchesSource =
+    cached?.original_title === content.title &&
+    cached?.original_desc_hash === originalDescHash;
+  const cacheIsUsable =
+    cacheMatchesSource &&
+    isUsableTranslationBundle(
+      cached.title_i18n,
+      cached.description_i18n,
+      content.title,
+      originalDescription
+    );
+
+  return {
+    id: content.number,
+    title: content.title,
+    title_i18n: cacheIsUsable ? cached.title_i18n : null,
+    description: originalDescription,
+    description_i18n: cacheIsUsable ? cached.description_i18n : null,
+    _original_desc_hash: originalDescHash,
+    status,
+    votes: content.reactions?.totalCount || 0,
+    votes_up: content.reactions?.totalCount || 0,
+    votes_down: content.reactions_down?.totalCount || 0,
+    comments: content.comments?.totalCount || 0,
+    url: content.url,
+    labels: (content.labels?.nodes || []).map((label) => label.name),
+    author: content.author?.login || "",
+    author_avatar: content.author?.avatarUrl || "",
+    created_at: content.createdAt,
+    // A closed issue remains visible in its Project column. closedAt is only
+    // release metadata when that canonical column is actually shipped.
+    shipped_at: status === "shipped" ? content.closedAt : null,
+    _needs_ai: !cacheIsUsable,
+  };
+}
+
+function createItemForLang(item, lang) {
+  return {
+    ...item,
+    friendly_title:
+      item.title_i18n?.[lang] || item.friendly_title || item.title,
+    description: item.description_i18n?.[lang] ?? item.description,
+    title_i18n: undefined,
+    description_i18n: undefined,
+    _needs_ai: undefined,
+  };
 }
 
 // --- Helpers ---
@@ -106,9 +261,55 @@ async function graphql(query, variables) {
   });
 }
 
-async function callGemini(technicalTitle, description) {
-  const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
+async function requestOpenRouter(prompt) {
+  const body = JSON.stringify({
+    model: OPENROUTER_MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: GENERATION_CONFIG_ROADMAP.temperature,
+    max_tokens: GENERATION_CONFIG_ROADMAP.max_tokens,
+  });
 
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      OPENROUTER_API_URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "https://downkingo.com",
+          "X-Title": "DownKingo Roadmap Sync",
+        },
+      },
+      (res) => {
+        let responseBody = "";
+        res.on("data", (chunk) => (responseBody += chunk));
+        res.on("end", () => {
+          try {
+            const json = JSON.parse(responseBody);
+            const text = json.choices?.[0]?.message?.content;
+            if (!text) return resolve(null);
+
+            const cleanJson = text
+              .replace(/```json/g, "")
+              .replace(/```/g, "")
+              .trim();
+            resolve(JSON.parse(cleanJson));
+          } catch (error) {
+            console.error("OpenRouter Parse Error:", error);
+            console.error("Raw Response:", responseBody.slice(0, 500));
+            resolve(null);
+          }
+        });
+      }
+    );
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+async function callOpenRouter(technicalTitle, description, attempt = 1) {
   // Truncate description to avoid token overflow (keep first 1000 chars)
   const shortDesc = description ? description.slice(0, 1000) : "";
 
@@ -125,8 +326,9 @@ async function callGemini(technicalTitle, description) {
     === RULES ===
     1. For TITLE: Remove prefixes like feat:, fix:, chore:, docs:, refactor:, style:, test:, ci:. Make it a clear, concise feature name (max 60 chars). No trailing punctuation.
     2. For DESCRIPTION: Translate the full text preserving Markdown formatting (headers, lists, bold, etc). Keep technical terms if appropriate.
-    3. Provide translations for: ${languages.join(", ")}.
-    4. RETURN ONLY RAW VALID JSON. No Markdown block. No explanation.
+    3. Provide translations for: ${LANGUAGES.join(", ")}.
+    4. Every language value MUST actually be written in that language. Copying the Portuguese/source text into en-US, es-ES, fr-FR, or de-DE is invalid.
+    5. This is validation attempt ${attempt}. RETURN ONLY RAW VALID JSON. No Markdown block. No explanation.
 
     === EXPECTED JSON FORMAT ===
     {
@@ -138,45 +340,80 @@ async function callGemini(technicalTitle, description) {
     }
   `;
 
-  const body = JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: GENERATION_CONFIG_ROADMAP,
-  });
+  return requestOpenRouter(prompt);
+}
 
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      getGeminiRestUrl(GEMINI_MODEL_ROADMAP, GEMINI_API_KEY),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      },
-      (res) => {
-        let responseBody = "";
-        res.on("data", (chunk) => (responseBody += chunk));
-        res.on("end", () => {
-          try {
-            const json = JSON.parse(responseBody);
-            const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!text) return resolve(null);
+async function callOpenRouterForLanguage(technicalTitle, description, lang) {
+  const shortDesc = description ? description.slice(0, 10000) : "";
+  return requestOpenRouter(`
+    Translate this GitHub Issue to ${lang}.
 
-            // Clean markdown code blocks if present
-            const cleanJson = text
-              .replace(/```json/g, "")
-              .replace(/```/g, "")
-              .trim();
-            resolve(JSON.parse(cleanJson));
-          } catch (e) {
-            console.error("Gemini Parse Error:", e);
-            console.error("Raw Response:", responseBody.slice(0, 500));
-            resolve(null);
-          }
-        });
-      }
+    Technical Title: "${technicalTitle}"
+    Description (Markdown):
+    """
+    ${shortDesc}
+    """
+
+    Remove conventional prefixes from the title and keep Markdown formatting
+    in the description. The result MUST be written in ${lang}; do not copy the
+    source language unless it is already ${lang}.
+
+    Return ONLY this raw JSON shape:
+    {"title":"Localized title","description":"Localized Markdown description"}
+  `);
+}
+
+async function translateItemWithValidation(item) {
+  // Batch translation is efficient for short issues, but long bodies can
+  // exceed a single multi-language response and were previously truncated.
+  const batchAttempts = item.description.length <= 700 ? 2 : 0;
+  for (let attempt = 1; attempt <= batchAttempts; attempt += 1) {
+    const translations = await callOpenRouter(
+      item.title,
+      item.description,
+      attempt
     );
-    req.on("error", reject);
-    req.write(body);
-    req.end();
-  });
+    const maps = extractTranslationMaps(translations);
+    if (
+      isUsableTranslationBundle(
+        maps.titleI18n,
+        maps.descriptionI18n,
+        item.title,
+        item.description
+      )
+    ) {
+      return maps;
+    }
+    console.warn(
+      `   ⚠️ Invalid translation bundle for #${item.id} (attempt ${attempt})`
+    );
+    await delay();
+  }
+
+  // A per-language fallback is slower, but it prevents a batch response that
+  // repeats the source text five times from poisoning the persistent cache.
+  const translations = {};
+  for (const lang of LANGUAGES) {
+    const localized = await callOpenRouterForLanguage(
+      item.title,
+      item.description,
+      lang
+    );
+    if (localized && typeof localized === "object") {
+      translations[lang] = localized;
+    }
+    await delay();
+  }
+
+  const maps = extractTranslationMaps(translations);
+  return isUsableTranslationBundle(
+    maps.titleI18n,
+    maps.descriptionI18n,
+    item.title,
+    item.description
+  )
+    ? maps
+    : null;
 }
 
 // --- Main ---
@@ -216,117 +453,55 @@ async function main() {
 
   const items = [];
 
-  // Helper to create a hash of description for change detection
-  const hashDesc = (desc) => {
-    if (!desc) return "";
-    // Simple hash: first 100 chars + length
-    return `${desc.slice(0, 100).replace(/\s/g, "")}_${desc.length}`;
-  };
-
   for (const node of nodes) {
-    const c = node.content;
-    if (!c || !c.number) continue;
-
-    const status = resolveStatus(node.fieldValueByName?.name, c.state);
-
-    // Check Cache - now requires both title AND description translations
-    const cached = translationCache[c.number];
-    const currentDescHash = hashDesc(c.body);
-
-    let title_i18n = null;
-    let description_i18n = null;
-    let needsAi = false;
-
-    if (
-      cached &&
-      cached.original_title === c.title &&
-      cached.original_desc_hash === currentDescHash &&
-      cached.title_i18n &&
-      cached.description_i18n
-    ) {
-      // Cache hit - both title and description are valid
-      title_i18n = cached.title_i18n;
-      description_i18n = cached.description_i18n;
-      process.stdout.write("."); // Dot progress for cache hit
-    } else {
-      // Cache miss - need AI translation
-      needsAi = true;
-      process.stdout.write("!"); // Exclamation for new/changed
-    }
-
-    items.push({
-      id: c.number,
-      title: c.title,
-      title_i18n, // Pre-filled from cache or null
-      description: c.body || "",
-      description_i18n, // Pre-filled from cache or null
-      _original_desc_hash: hashDesc(c.body), // For cache update
-      status,
-      votes: c.reactions.totalCount || 0,
-      votes_up: c.reactions.totalCount || 0,
-      votes_down: c.reactions_down.totalCount || 0,
-      comments: c.comments.totalCount || 0,
-      url: c.url,
-      labels: (c.labels.nodes || []).map((l) => l.name),
-      author: c.author?.login || "",
-      author_avatar: c.author?.avatarUrl || "",
-      created_at: c.createdAt,
-      shipped_at: c.state === "CLOSED" ? c.closedAt : null,
-      _needs_ai: needsAi,
-    });
+    const item = createRoadmapItemFromProjectNode(node, translationCache);
+    if (!item) continue;
+    process.stdout.write(item._needs_ai ? "!" : ".");
+    items.push(item);
   }
   console.log("\n");
 
   // 3. Process with AI
   const itemsToProcess = items.filter((i) => i._needs_ai);
-  console.log(`🤖 Processing ${itemsToProcess.length} items with Gemini...`);
+  console.log(`🤖 Processing ${itemsToProcess.length} items with OpenRouter...`);
 
   for (const item of itemsToProcess) {
     console.log(`   > Translating #${item.id}: ${item.title}`);
     try {
-      // NEW: Pass both title and description for translation
-      const translations = await callGemini(item.title, item.description);
+      const translations = await translateItemWithValidation(item);
       if (translations) {
-        // translations format: { "pt-BR": { title: "...", description: "..." }, ... }
-
-        // Extract title translations for backward compatibility
-        const titleI18n = {};
-        const descI18n = {};
-
-        for (const [lang, content] of Object.entries(translations)) {
-          if (content && typeof content === "object") {
-            titleI18n[lang] = content.title || item.title;
-            descI18n[lang] = content.description || item.description;
-          }
-        }
-
-        // BACKWARD COMPATIBILITY: friendly_title as string (pt-BR default)
         item.friendly_title =
-          titleI18n["pt-BR"] ||
-          titleI18n["en-US"] ||
-          Object.values(titleI18n)[0] ||
+          translations.titleI18n["pt-BR"] ||
+          translations.titleI18n["en-US"] ||
           item.title;
-
-        item.title_i18n = titleI18n;
-        item.description_i18n = descI18n;
+        item.title_i18n = translations.titleI18n;
+        item.description_i18n = translations.descriptionI18n;
       } else {
-        // Fallback - no translation available
-        const fallback = item.title.replace(
-          /^(feat|fix|chore|docs|refactor|style|test|ci)\([^)]*\):\s*/i,
-          ""
+        console.error(
+          `   ❌ Translation validation failed for #${item.id}; keeping it out of the publishable output`
         );
-        item.friendly_title = fallback;
-        item.title_i18n = { "en-US": fallback, "pt-BR": fallback };
-        item.description_i18n = {
-          "en-US": item.description,
-          "pt-BR": item.description,
-        };
       }
-      // Rate limiting - using centralized config
       await delay();
     } catch (err) {
       console.error(`   ❌ Failed #${item.id}:`, err.message);
     }
+  }
+
+  const invalidTranslationIds = items
+    .filter(
+      (item) =>
+        !isUsableTranslationBundle(
+          item.title_i18n,
+          item.description_i18n,
+          item.title,
+          item.description
+        )
+    )
+    .map((item) => item.id);
+  if (invalidTranslationIds.length > 0) {
+    throw new Error(
+      `Refusing to publish invalid roadmap translations for issues: ${invalidTranslationIds.join(", ")}`
+    );
   }
 
   // 3.5. Update and Save Master Cache
@@ -361,39 +536,9 @@ async function main() {
   // No manual sort here to keep GitHub sequence
 
   // 5. Generate Output Files (One per language)
-  const languages = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
   const now = new Date().toISOString();
 
-  // Helper to create item for specific lang
-  const createItemForLang = (item, lang) => {
-    // Get translated title or fallback
-    let displayTitle = item.title; // default technical
-    let displayDescription = item.description; // default original
-
-    if (item.title_i18n && item.title_i18n[lang]) {
-      displayTitle = item.title_i18n[lang];
-    } else if (item.friendly_title && typeof item.friendly_title === "string") {
-      // Legacy cache/fallback
-      displayTitle = item.friendly_title;
-    }
-
-    // Get translated description
-    if (item.description_i18n && item.description_i18n[lang]) {
-      displayDescription = item.description_i18n[lang];
-    }
-
-    return {
-      ...item,
-      friendly_title: displayTitle, // Simple string for title
-      description: displayDescription, // Translated description
-      // Remove internal/bulk fields to keep payload clean
-      title_i18n: undefined,
-      description_i18n: undefined,
-      _needs_ai: undefined,
-    };
-  };
-
-  for (const lang of languages) {
+  for (const lang of LANGUAGES) {
     const localizedItems = items.map((i) => createItemForLang(i, lang));
 
     const output = {
@@ -434,7 +579,7 @@ async function main() {
     version: "2.1.0",
     generated_at: now,
     items_count: items.length,
-    languages: languages,
+    languages: LANGUAGES,
   };
   fs.writeFileSync("roadmap.meta.json", JSON.stringify(meta, null, 2));
 }
@@ -446,4 +591,12 @@ if (require.main === module) {
   });
 }
 
-module.exports = { resolveStatus };
+module.exports = {
+  LANGUAGES,
+  createItemForLang,
+  createRoadmapItemFromProjectNode,
+  extractTranslationMaps,
+  hashDescription,
+  isUsableTranslationBundle,
+  resolveStatus,
+};

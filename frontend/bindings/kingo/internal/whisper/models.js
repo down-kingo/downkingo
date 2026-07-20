@@ -7,7 +7,7 @@
 import { Create as $Create } from "@wailsio/runtime";
 
 /**
- * AvailableModel describes a model available for download.
+ * AvailableModel describes a model from the supported, checksummed catalog.
  */
 export class AvailableModel {
     /**
@@ -52,7 +52,7 @@ export class AvailableModel {
 }
 
 /**
- * ModelInfo holds metadata about a whisper model.
+ * ModelInfo holds metadata about an installed Whisper model.
  */
 export class ModelInfo {
     /**
@@ -142,7 +142,7 @@ export class Segment {
 }
 
 /**
- * TranscribeResult holds the result of a transcription.
+ * TranscribeResult holds the canonical result of a transcription.
  */
 export class TranscribeResult {
     /**

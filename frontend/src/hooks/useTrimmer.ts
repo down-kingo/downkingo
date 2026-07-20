@@ -1,19 +1,33 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { GetStreamURL, SetStreamURL } from "../../bindings/kingo/app";
 import type { VideoInfo } from "./useVideoFetch";
+import type { CutRange } from "../components/video/VideoTrimmer";
+import {
+  createDefaultCaptionOptions,
+  type CaptionOptions,
+} from "../components/video/captions";
 
 /**
- * Hook that manages video trimmer state: stream loading, blob upgrade, trim times.
+ * Hook that manages video trimmer state: stream loading and trim times.
  * Kept isolated to prevent trimmer state changes from re-rendering the entire Video page.
  */
 export function useTrimmer(videoInfo: VideoInfo | null, url: string) {
   const [trimEnabled, setTrimEnabled] = useState(false);
-  const [trimStart, setTrimStart] = useState("");
-  const [trimEnd, setTrimEnd] = useState("");
+  const [cutRanges, setCutRanges] = useState<CutRange[]>([]);
+  const [captions, setCaptions] = useState<CaptionOptions>(() =>
+    createDefaultCaptionOptions(),
+  );
   const [streamUrl, setStreamUrl] = useState("");
   const [isLoadingStream, setIsLoadingStream] = useState(false);
   const streamFallbackTriedRef = useRef(false);
-  const blobAbortRef = useRef<AbortController | null>(null);
+  const captionsVideoIDRef = useRef(videoInfo?.id || "");
+
+  useEffect(() => {
+    const nextID = videoInfo?.id || "";
+    if (nextID === captionsVideoIDRef.current) return;
+    captionsVideoIDRef.current = nextID;
+    setCaptions(createDefaultCaptionOptions());
+  }, [videoInfo?.id]);
 
   // Find best muxed (video+audio) format URL for preview.
   // Prefers small (360p) MP4 — preview doesn't need HD.
@@ -36,59 +50,32 @@ export function useTrimmer(videoInfo: VideoInfo | null, url: string) {
     return best?.url || muxed[0]?.url || null;
   }, [videoInfo]);
 
-  // Phase 1: Show video via proxy (instant streaming)
-  // Phase 2: Download blob in background, swap src when ready (instant seeking)
+  // Keep previews streamed through the range-aware local proxy. Downloading the
+  // entire video into a Blob duplicates network traffic and can retain gigabytes
+  // in the WebView process for long videos.
   const handleTrimToggle = useCallback(
     async (enabled: boolean) => {
       setTrimEnabled(enabled);
       streamFallbackTriedRef.current = false;
 
-      // Abort any pending blob download
-      blobAbortRef.current?.abort();
-      blobAbortRef.current = null;
-
       if (enabled && url && !streamUrl) {
-        // Phase 1: stream via proxy — video appears immediately
+        // Stream via proxy — video appears immediately and seeking uses Range.
         const muxedUrl = findBestMuxedUrl();
         if (muxedUrl) {
           try {
             const proxyUrl = await SetStreamURL(muxedUrl);
             setStreamUrl(proxyUrl);
-
-            // Phase 2: download blob in background for instant seeking
-            const controller = new AbortController();
-            blobAbortRef.current = controller;
-            fetch(proxyUrl, { signal: controller.signal })
-              .then((r) => (r.ok ? r.blob() : Promise.reject()))
-              .then((blob) => {
-                if (!controller.signal.aborted) {
-                  const blobUrl = URL.createObjectURL(blob);
-                  setStreamUrl(blobUrl);
-                }
-              })
-              .catch(() => {});
             return;
           } catch {
             // Fall through to yt-dlp
           }
         }
 
-        // Fallback: yt-dlp extraction → proxy stream → blob upgrade
+        // Fallback: yt-dlp extraction → proxy stream.
         setIsLoadingStream(true);
         try {
           const proxyUrl = await GetStreamURL(url, "best[ext=mp4]/best");
           setStreamUrl(proxyUrl);
-
-          const controller = new AbortController();
-          blobAbortRef.current = controller;
-          fetch(proxyUrl, { signal: controller.signal })
-            .then((r) => (r.ok ? r.blob() : Promise.reject()))
-            .then((blob) => {
-              if (!controller.signal.aborted) {
-                setStreamUrl(URL.createObjectURL(blob));
-              }
-            })
-            .catch(() => {});
         } catch {
           setStreamUrl("");
         } finally {
@@ -104,9 +91,6 @@ export function useTrimmer(videoInfo: VideoInfo | null, url: string) {
     if (streamFallbackTriedRef.current || !url) return;
     streamFallbackTriedRef.current = true;
 
-    if (streamUrl.startsWith("blob:")) URL.revokeObjectURL(streamUrl);
-    blobAbortRef.current?.abort();
-
     setIsLoadingStream(true);
     try {
       const proxyUrl = await GetStreamURL(url, "best[ext=mp4]/best");
@@ -116,33 +100,34 @@ export function useTrimmer(videoInfo: VideoInfo | null, url: string) {
     } finally {
       setIsLoadingStream(false);
     }
-  }, [url, streamUrl]);
+  }, [url]);
 
-  const handleTrimChange = useCallback((start: string, end: string) => {
-    setTrimStart(start);
-    setTrimEnd(end);
+  const handleCutsChange = useCallback((ranges: CutRange[]) => {
+    setCutRanges(ranges);
+  }, []);
+
+  const handleCaptionsChange = useCallback((options: CaptionOptions) => {
+    setCaptions(options);
   }, []);
 
   const resetTrimmer = useCallback(() => {
     setTrimEnabled(false);
-    setTrimStart("");
-    setTrimEnd("");
-    blobAbortRef.current?.abort();
-    blobAbortRef.current = null;
-    if (streamUrl.startsWith("blob:")) URL.revokeObjectURL(streamUrl);
+    setCutRanges([]);
+    setCaptions(createDefaultCaptionOptions());
     setStreamUrl("");
     streamFallbackTriedRef.current = false;
-  }, [streamUrl]);
+  }, []);
 
   return {
     trimEnabled,
-    trimStart,
-    trimEnd,
+    cutRanges,
+    captions,
     streamUrl,
     isLoadingStream,
     handleTrimToggle,
     handleStreamError,
-    handleTrimChange,
+    handleCutsChange,
+    handleCaptionsChange,
     resetTrimmer,
   };
 }

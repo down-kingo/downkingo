@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   IconX,
@@ -38,8 +38,11 @@ const MODEL_QUALITY: Record<
   tiny: { stars: 1 },
   base: { stars: 2, badge: "recommended" },
   small: { stars: 3 },
+  "small-q5_1": { stars: 3 },
   medium: { stars: 4 },
+  "medium-q5_0": { stars: 4 },
   "large-v3-turbo": { stars: 5, badge: "best" },
+  "large-v3-turbo-q5_0": { stars: 5, badge: "best" },
 };
 
 /** Formata o nome do modelo para exibição: "large-v3-turbo" → "Large V3 Turbo" */
@@ -221,7 +224,7 @@ export default function ModelManager({
   const [deletingModel, setDeletingModel] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const loadModels = async () => {
+  const loadModels = useCallback(async () => {
     try {
       const [downloaded, available] = await Promise.all([
         ListWhisperModels(),
@@ -233,11 +236,11 @@ export default function ModelManager({
       const msg = err instanceof Error ? err.message : String(err);
       setErrorMessage(t("error_transcribe", { defaultValue: `Failed to load models: ${msg}` }));
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     if (isOpen) loadModels();
-  }, [isOpen]);
+  }, [isOpen, loadModels]);
 
   const handleDownload = async (modelName: string) => {
     setDownloadingModel(modelName);

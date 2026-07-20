@@ -354,6 +354,13 @@ export class MediaItemDTO {
              */
             this["height"] = 0;
         }
+        if (/** @type {any} */(false)) {
+            /**
+             * @member
+             * @type {string | undefined}
+             */
+            this["cookieBrowser"] = undefined;
+        }
 
         Object.assign(this, $$source);
     }
@@ -405,6 +412,13 @@ export class TranscribeRequest {
              * @type {string}
              */
             this["outputFormat"] = "";
+        }
+        if (!("useVad" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["useVad"] = false;
         }
 
         Object.assign(this, $$source);

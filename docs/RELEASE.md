@@ -18,7 +18,7 @@ A versao atual e definida no arquivo `VERSION` na raiz do projeto.
 
 ```bash
 # Atualize o VERSION com a nova versao
-echo "3.1.0" > VERSION
+echo "3.1.2" > VERSION
 
 # Verifique se todos os testes passam
 go test ./...

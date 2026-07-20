@@ -32,7 +32,7 @@ export default function QueueList({ queue }: QueueListProps) {
   const { cancelDownload } = useDownloadSync();
 
   return (
-    <div className="flex-1 h-full overflow-y-auto custom-scrollbar p-8 pb-32 bg-surface-50 dark:bg-surface-950">
+    <div className="flex-1 h-full overflow-y-auto custom-scrollbar p-8 pb-32 bg-surface-50">
       <div className="max-w-4xl mx-auto h-full flex flex-col">
         <header className="mb-8 shrink-0">
           <h1 className="text-3xl font-display font-bold text-surface-900 mb-2">
@@ -55,8 +55,8 @@ export default function QueueList({ queue }: QueueListProps) {
               exit={{ opacity: 0, y: -20 }}
               className="flex-1 flex flex-col items-center justify-center text-surface-400"
             >
-              <div className="w-24 h-24 bg-surface-100 rounded-full flex items-center justify-center mb-6">
-                <IconDownload size={48} className="text-surface-300" />
+              <div className="w-24 h-24 bg-surface-100 dark:bg-surface-200 rounded-full flex items-center justify-center mb-6">
+                <IconDownload size={48} className="text-surface-400" />
               </div>
               <h3 className="text-lg font-medium text-surface-600 mb-1">
                 A fila está vazia
@@ -74,7 +74,7 @@ export default function QueueList({ queue }: QueueListProps) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="bg-white rounded-xl p-4 shadow-sm border border-surface-200/60 hover:shadow-md transition-shadow"
+                  className="bg-white dark:bg-surface-100 rounded-xl p-4 shadow-sm border border-surface-200/60 dark:border-surface-300 hover:shadow-md transition-shadow"
                 >
                   <div className="flex gap-4">
                     {/* Thumbnail */}
@@ -137,7 +137,7 @@ export default function QueueList({ queue }: QueueListProps) {
                         {/* Cancel Button */}
                         <button
                           onClick={() => cancelDownload(download.id)}
-                          className="text-surface-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
+                          className="text-surface-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:text-red-400 p-1.5 rounded-lg transition-colors"
                           title="Cancelar download"
                         >
                           <IconX size={18} />

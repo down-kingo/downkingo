@@ -7,12 +7,12 @@ info:
   description: "Media downloader and converter"
   copyright: "(c) 2025, DownKingo"
   comments: "DownKingo Desktop App"
-  version: "3.0.0"
+  version: "3.1.2"
 
 dev_mode:
   root_path: .
   log_level: warn
-  frontend_dev_server_url: http://localhost:9245
+  frontend_dev_server_url: http://127.0.0.1:9245
   debounce: 1000
   ignore:
     dir:

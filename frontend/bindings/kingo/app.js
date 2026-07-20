@@ -188,19 +188,25 @@ export function DownloadAria2c() {
 }
 
 /**
- * @returns {$CancellablePromise<void>}
- */
-export function DownloadDependencies() {
-    return $Call.ByID(1006649596);
-}
-
-/**
  * @param {string} url
  * @param {string} filename
  * @returns {$CancellablePromise<string>}
  */
 export function DownloadImage(url, filename) {
     return $Call.ByID(1200166230, url, filename);
+}
+
+/**
+ * DownloadImageAdvanced downloads an image with per-download conversion and scaling.
+ * @param {string} url
+ * @param {string} filename
+ * @param {string} format
+ * @param {number} quality
+ * @param {number} scalePercent
+ * @returns {$CancellablePromise<string>}
+ */
+export function DownloadImageAdvanced(url, filename, format, quality, scalePercent) {
+    return $Call.ByID(1857304612, url, filename, format, quality, scalePercent);
 }
 
 /**
@@ -331,6 +337,17 @@ export function GetInstagramCarousel(url) {
 }
 
 /**
+ * @param {string} url
+ * @param {string} browser
+ * @returns {$CancellablePromise<handlers$0.MediaInfo | null>}
+ */
+export function GetInstagramCarouselWithCookies(url, browser) {
+    return $Call.ByID(2976651454, url, browser).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType17($result);
+    }));
+}
+
+/**
  * GetRoadmap fetches roadmap items from the configured source
  * @param {string} lang
  * @returns {$CancellablePromise<roadmap$0.RoadmapItem[]>}
@@ -408,6 +425,30 @@ export function GetVideoInfo(url) {
 }
 
 /**
+ * GetVideoInfoWithCookies retries extraction with a browser session explicitly
+ * chosen by the user. Cookie contents are handled only by yt-dlp.
+ * @param {string} url
+ * @param {string} browser
+ * @returns {$CancellablePromise<youtube$0.VideoInfo | null>}
+ */
+export function GetVideoInfoWithCookies(url, browser) {
+    return $Call.ByID(1803545597, url, browser).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType23($result);
+    }));
+}
+
+/**
+ * @param {string} url
+ * @param {string} language
+ * @returns {$CancellablePromise<youtube$0.SubtitleResult | null>}
+ */
+export function GetVideoSubtitles(url, language) {
+    return $Call.ByID(209104367, url, language).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType25($result);
+    }));
+}
+
+/**
  * @param {string} tag
  * @returns {$CancellablePromise<void>}
  */
@@ -427,7 +468,7 @@ export function IsWhisperInstalled() {
  */
 export function ListWhisperModels() {
     return $Call.ByID(1479260439).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType25($result);
+        return $$createType27($result);
     }));
 }
 
@@ -436,13 +477,6 @@ export function ListWhisperModels() {
  */
 export function LogoutGitHub() {
     return $Call.ByID(2536661304);
-}
-
-/**
- * @returns {$CancellablePromise<boolean>}
- */
-export function NeedsDependencies() {
-    return $Call.ByID(4002180015);
 }
 
 /**
@@ -520,7 +554,7 @@ export function SelectImageFile() {
  */
 export function SelectImageFiles() {
     return $Call.ByID(398204413).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType26($result);
+        return $$createType28($result);
     }));
 }
 
@@ -557,7 +591,7 @@ export function SelectVideoFile() {
  */
 export function SelectVideoFiles() {
     return $Call.ByID(1065016043).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType26($result);
+        return $$createType28($result);
     }));
 }
 
@@ -587,7 +621,7 @@ export function SetStreamURL(directURL) {
  */
 export function StartGitHubAuth() {
     return $Call.ByID(4217852034).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType28($result);
+        return $$createType30($result);
     }));
 }
 
@@ -606,7 +640,7 @@ export function SuggestFeature(title, desc) {
  */
 export function TranscribeFile(req) {
     return $Call.ByID(1827659560, req).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType30($result);
+        return $$createType32($result);
     }));
 }
 
@@ -659,10 +693,12 @@ const $$createType20 = config$0.Config.createFrom;
 const $$createType21 = $Create.Map($Create.Any, $Create.Any);
 const $$createType22 = youtube$0.VideoInfo.createFrom;
 const $$createType23 = $Create.Nullable($$createType22);
-const $$createType24 = whisper$0.ModelInfo.createFrom;
-const $$createType25 = $Create.Array($$createType24);
-const $$createType26 = $Create.Array($Create.Any);
-const $$createType27 = auth$0.DeviceCodeResponse.createFrom;
-const $$createType28 = $Create.Nullable($$createType27);
-const $$createType29 = whisper$0.TranscribeResult.createFrom;
+const $$createType24 = youtube$0.SubtitleResult.createFrom;
+const $$createType25 = $Create.Nullable($$createType24);
+const $$createType26 = whisper$0.ModelInfo.createFrom;
+const $$createType27 = $Create.Array($$createType26);
+const $$createType28 = $Create.Array($Create.Any);
+const $$createType29 = auth$0.DeviceCodeResponse.createFrom;
 const $$createType30 = $Create.Nullable($$createType29);
+const $$createType31 = whisper$0.TranscribeResult.createFrom;
+const $$createType32 = $Create.Nullable($$createType31);

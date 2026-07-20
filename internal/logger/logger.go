@@ -121,7 +121,9 @@ func (w *rotatingWriter) rotate() error {
 	backupName := w.backupName()
 	if err := os.Rename(w.path, backupName); err != nil {
 		// If rename fails, try to reopen the original
-		w.open()
+		if reopenErr := w.open(); reopenErr != nil {
+			return fmt.Errorf("rename log: %v; reopen log: %w", err, reopenErr)
+		}
 		return err
 	}
 

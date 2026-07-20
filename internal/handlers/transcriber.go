@@ -26,6 +26,7 @@ type TranscribeRequest struct {
 	Model        string `json:"model"`
 	Language     string `json:"language"`
 	OutputFormat string `json:"outputFormat"`
+	UseVAD       bool   `json:"useVad"`
 }
 
 // NewTranscriberHandler creates a new TranscriberHandler.
@@ -83,7 +84,7 @@ func (h *TranscriberHandler) TranscribeFile(req TranscribeRequest) (*whisper.Tra
 	inputName := filepath.Base(req.FilePath)
 	h.consoleLog(fmt.Sprintf("[Transcriber] Transcribing: %s (model: %s)", inputName, req.Model))
 
-	result, err := h.whisper.TranscribeFile(req.FilePath, req.Model, req.Language, req.OutputFormat)
+	result, err := h.whisper.TranscribeFile(req.FilePath, req.Model, req.Language, req.OutputFormat, req.UseVAD)
 	if err != nil {
 		h.consoleLog(fmt.Sprintf("[Transcriber] Error: %s", err.Error()))
 		return nil, err

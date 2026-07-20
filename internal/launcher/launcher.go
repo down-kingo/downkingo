@@ -16,8 +16,10 @@ import (
 	"strings"
 	"time"
 
+	aria2runtime "kingo/internal/aria2"
 	"kingo/internal/events"
 	"kingo/internal/logger"
+	"kingo/internal/pot"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -36,121 +38,152 @@ var httpClient = &http.Client{
 // Dependency represents a required binary
 type Dependency struct {
 	Name           string
+	Version        string
+	License        string
+	ProjectURL     string
 	URL            string
 	FileName       string
+	RelativeDir    string   // Optional directory below a binary root
 	IsArchive      bool     // Needs extraction (zip/tar.gz)
 	ArchiveType    string   // "zip" or "tar.gz"
 	ExtractTargets []string // Names of the files to extract
 	SHA256         string   // Expected checksum (empty = skip verification)
+	Validate       func(string) error
 }
 
 // Launcher handles dependency checking and downloading
 type Launcher struct {
-	ctx    context.Context
-	binDir string
-	deps   []Dependency
+	ctx        context.Context
+	binDir     string
+	searchDirs []string
+	deps       []Dependency
 }
 
 // NewLauncher creates a new launcher instance with OS-specific dependencies
 func NewLauncher(binDir string) *Launcher {
 	return &Launcher{
-		binDir: binDir,
-		deps:   getDependencies(),
+		ctx:        context.Background(),
+		binDir:     binDir,
+		searchDirs: []string{binDir},
+		deps:       getDependencies(),
+	}
+}
+
+// SetSearchDirs configures all binary roots accepted as installed. Runtime
+// AppData remains the installation destination and final fallback.
+func (l *Launcher) SetSearchDirs(dirs ...string) {
+	seen := make(map[string]struct{}, len(dirs)+1)
+	l.searchDirs = l.searchDirs[:0]
+	for _, dir := range append(dirs, l.binDir) {
+		dir = filepath.Clean(strings.TrimSpace(dir))
+		if dir == "." || dir == "" {
+			continue
+		}
+		key := strings.ToLower(dir)
+		if _, exists := seen[key]; exists {
+			continue
+		}
+		seen[key] = struct{}{}
+		l.searchDirs = append(l.searchDirs, dir)
 	}
 }
 
 // getDependencies returns OS-specific dependency configurations
 func getDependencies() []Dependency {
+	var dependencies []Dependency
 	switch goruntime.GOOS {
 	case "windows":
-		return []Dependency{
+		dependencies = []Dependency{
 			{
-				Name:     "yt-dlp",
-				URL:      "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe",
-				FileName: "yt-dlp.exe",
+				Name: "yt-dlp", Version: "latest", License: "Unlicense",
+				ProjectURL: "https://github.com/yt-dlp/yt-dlp",
+				URL:        "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe",
+				FileName:   "yt-dlp.exe",
 			},
 			{
-				Name:           "FFmpeg",
-				URL:            "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip",
-				FileName:       "ffmpeg.zip",
-				IsArchive:      true,
-				ArchiveType:    "zip",
+				Name: "FFmpeg", Version: "latest", License: "GPL-3.0",
+				ProjectURL: "https://ffmpeg.org/",
+				URL:        "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip",
+				FileName:   "ffmpeg.zip", IsArchive: true, ArchiveType: "zip",
 				ExtractTargets: []string{"ffmpeg.exe", "ffprobe.exe"},
 			},
 			{
-				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/windows-artifacts.zip",
-				FileName:       "avifenc.zip",
-				IsArchive:      true,
-				ArchiveType:    "zip",
+				Name: "avifenc", Version: "latest", License: "BSD-2-Clause",
+				ProjectURL: "https://github.com/AOMediaCodec/libavif",
+				URL:        "https://github.com/AOMediaCodec/libavif/releases/latest/download/windows-artifacts.zip",
+				FileName:   "avifenc.zip", IsArchive: true, ArchiveType: "zip",
 				ExtractTargets: []string{"avifenc.exe"},
 			},
 		}
 	case "darwin": // macOS
-		return []Dependency{
+		dependencies = []Dependency{
 			{
-				Name:     "yt-dlp",
-				URL:      "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos",
-				FileName: "yt-dlp",
+				Name: "yt-dlp", Version: "latest", License: "Unlicense",
+				ProjectURL: "https://github.com/yt-dlp/yt-dlp",
+				URL:        "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos",
+				FileName:   "yt-dlp",
 			},
 			{
-				Name:           "FFmpeg",
-				URL:            "https://evermeet.cx/ffmpeg/getrelease/zip",
-				FileName:       "ffmpeg.zip",
-				IsArchive:      true,
-				ArchiveType:    "zip",
+				Name: "FFmpeg", Version: "latest", License: "LGPL-2.1+ / GPL-2.0+",
+				ProjectURL: "https://ffmpeg.org/",
+				URL:        "https://evermeet.cx/ffmpeg/getrelease/zip",
+				FileName:   "ffmpeg.zip", IsArchive: true, ArchiveType: "zip",
 				ExtractTargets: []string{"ffmpeg", "ffprobe"},
 			},
 			{
-				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/macOS-artifacts.zip",
-				FileName:       "avifenc.zip",
-				IsArchive:      true,
-				ArchiveType:    "zip",
+				Name: "avifenc", Version: "latest", License: "BSD-2-Clause",
+				ProjectURL: "https://github.com/AOMediaCodec/libavif",
+				URL:        "https://github.com/AOMediaCodec/libavif/releases/latest/download/macOS-artifacts.zip",
+				FileName:   "avifenc.zip", IsArchive: true, ArchiveType: "zip",
 				ExtractTargets: []string{"avifenc"},
 			},
 		}
 	default: // Linux
-		return []Dependency{
+		dependencies = []Dependency{
 			{
-				Name:     "yt-dlp",
-				URL:      "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp",
-				FileName: "yt-dlp",
+				Name: "yt-dlp", Version: "latest", License: "Unlicense",
+				ProjectURL: "https://github.com/yt-dlp/yt-dlp",
+				URL:        "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp",
+				FileName:   "yt-dlp",
 			},
 			{
-				Name:           "FFmpeg",
-				URL:            "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
-				FileName:       "ffmpeg.tar.xz",
-				IsArchive:      true,
-				ArchiveType:    "tar.xz",
+				Name: "FFmpeg", Version: "latest", License: "LGPL-2.1+ / GPL-2.0+",
+				ProjectURL: "https://ffmpeg.org/",
+				URL:        "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
+				FileName:   "ffmpeg.tar.xz", IsArchive: true, ArchiveType: "tar.xz",
 				ExtractTargets: []string{"ffmpeg", "ffprobe"},
 			},
 			{
-				Name:           "avifenc",
-				URL:            "https://github.com/AOMediaCodec/libavif/releases/download/v1.3.0/linux-artifacts.zip",
-				FileName:       "avifenc.zip",
-				IsArchive:      true,
-				ArchiveType:    "zip",
+				Name: "avifenc", Version: "latest", License: "BSD-2-Clause",
+				ProjectURL: "https://github.com/AOMediaCodec/libavif",
+				URL:        "https://github.com/AOMediaCodec/libavif/releases/latest/download/linux-artifacts.zip",
+				FileName:   "avifenc.zip", IsArchive: true, ArchiveType: "zip",
 				ExtractTargets: []string{"avifenc"},
 			},
 		}
 	}
-}
 
-// getFFmpegBinaryName returns the correct binary name for the OS
-func getFFmpegBinaryName() string {
-	if goruntime.GOOS == "windows" {
-		return "ffmpeg.exe"
+	if provider, err := pot.BinaryAsset(); err == nil {
+		plugin := pot.PluginAsset()
+		dependencies = append(dependencies,
+			Dependency{
+				Name: pot.ProviderDependencyName, Version: "v" + pot.SupportedVersion,
+				License: pot.License, ProjectURL: pot.ProjectURL,
+				URL: provider.URL, FileName: provider.LocalName, SHA256: provider.SHA256,
+				Validate: func(path string) error {
+					_, err := pot.ValidateBinary(path)
+					return err
+				},
+			},
+			Dependency{
+				Name: pot.PluginDependencyName, Version: "v" + pot.SupportedVersion,
+				License: pot.License, ProjectURL: pot.ProjectURL,
+				URL: plugin.URL, FileName: plugin.LocalName, RelativeDir: "yt-dlp-plugins",
+				SHA256: plugin.SHA256, Validate: pot.ValidatePlugin,
+			},
+		)
 	}
-	return "ffmpeg"
-}
-
-// getYtDlpBinaryName returns the correct binary name for the OS
-func getYtDlpBinaryName() string {
-	if goruntime.GOOS == "windows" {
-		return "yt-dlp.exe"
-	}
-	return "yt-dlp"
+	return dependencies
 }
 
 // SetContext sets the context for cancellation (kept for interface compatibility)
@@ -160,9 +193,12 @@ func (l *Launcher) SetContext(ctx context.Context) {
 
 // DependencyStatus represents the status of a dependency
 type DependencyStatus struct {
-	Name      string `json:"name"`
-	Installed bool   `json:"installed"`
-	Size      int64  `json:"size"`
+	Name       string `json:"name"`
+	Installed  bool   `json:"installed"`
+	Size       int64  `json:"size"`
+	Version    string `json:"version,omitempty"`
+	License    string `json:"license,omitempty"`
+	ProjectURL string `json:"projectUrl,omitempty"`
 }
 
 // CheckDependencies verifies which dependencies are installed
@@ -170,49 +206,15 @@ func (l *Launcher) CheckDependencies() []DependencyStatus {
 	statuses := make([]DependencyStatus, 0, len(l.deps))
 
 	for _, dep := range l.deps {
-		installed := true
-		var size int64
-
-		// Check all targets if archive
-		if dep.IsArchive {
-			for _, target := range dep.ExtractTargets {
-				targetFile := filepath.Join(l.binDir, target)
-				info, err := os.Stat(targetFile)
-				if err != nil || info.Size() == 0 {
-					installed = false
-					break
-				}
-				size += info.Size()
-			}
-		} else {
-			// Single file download
-			targetFile := filepath.Join(l.binDir, dep.FileName)
-			info, err := os.Stat(targetFile)
-			if err != nil || info.Size() == 0 {
-				installed = false
-			} else {
-				size = info.Size()
-			}
-		}
+		installed, size := l.dependencyInstalled(dep)
 
 		statuses = append(statuses, DependencyStatus{
-			Name:      dep.Name,
-			Installed: installed,
-			Size:      size,
+			Name: dep.Name, Installed: installed, Size: size,
+			Version: dep.Version, License: dep.License, ProjectURL: dep.ProjectURL,
 		})
 	}
 
 	return statuses
-}
-
-// NeedsDependencies returns true if any dependency is missing
-func (l *Launcher) NeedsDependencies() bool {
-	for _, status := range l.CheckDependencies() {
-		if !status.Installed {
-			return true
-		}
-	}
-	return false
 }
 
 // DownloadProgress is emitted during download
@@ -222,43 +224,6 @@ type DownloadProgress struct {
 	Total      int64   `json:"total"`
 	Percent    float64 `json:"percent"`
 	Status     string  `json:"status"` // downloading, extracting, verifying, complete, error
-}
-
-// DownloadDependencies downloads and installs all missing dependencies
-func (l *Launcher) DownloadDependencies() error {
-	for _, dep := range l.deps {
-		installed := true
-
-		if dep.IsArchive {
-			for _, target := range dep.ExtractTargets {
-				targetFile := filepath.Join(l.binDir, target)
-				if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
-					installed = false
-					break
-				}
-			}
-		} else {
-			targetFile := filepath.Join(l.binDir, getYtDlpBinaryName())
-			if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
-				installed = false
-			}
-		}
-
-		if installed {
-			l.emitProgress(dep.Name, 100, 100, 100, "complete")
-			continue
-		}
-
-		if err := l.downloadDependency(dep); err != nil {
-			l.emitProgress(dep.Name, 0, 0, 0, "error")
-			return fmt.Errorf("failed to download %s: %w", dep.Name, err)
-		}
-	}
-
-	// Emit completion event using Wails v3 API
-	l.emitEvent(events.LauncherComplete, nil)
-	logger.Log.Info().Msg("all dependencies installed successfully")
-	return nil
 }
 
 // DownloadSelectedDependencies downloads only the dependencies whose names match the provided list
@@ -273,21 +238,7 @@ func (l *Launcher) DownloadSelectedDependencies(names []string) error {
 			continue
 		}
 
-		installed := true
-		if dep.IsArchive {
-			for _, target := range dep.ExtractTargets {
-				targetFile := filepath.Join(l.binDir, target)
-				if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
-					installed = false
-					break
-				}
-			}
-		} else {
-			targetFile := filepath.Join(l.binDir, dep.FileName)
-			if info, err := os.Stat(targetFile); err != nil || info.Size() == 0 {
-				installed = false
-			}
-		}
+		installed, _ := l.dependencyInstalled(dep)
 
 		if installed {
 			l.emitProgress(dep.Name, 100, 100, 100, "complete")
@@ -305,6 +256,40 @@ func (l *Launcher) DownloadSelectedDependencies(names []string) error {
 	return nil
 }
 
+func (l *Launcher) dependencyInstalled(dep Dependency) (bool, int64) {
+	targets := dep.ExtractTargets
+	if !dep.IsArchive {
+		targets = []string{dep.FileName}
+	}
+	var totalSize int64
+	for _, target := range targets {
+		found := false
+		for _, root := range l.searchDirs {
+			path := filepath.Join(root, dep.RelativeDir, target)
+			info, err := os.Stat(path)
+			if err != nil || info.IsDir() || info.Size() == 0 {
+				continue
+			}
+			if dep.Validate != nil {
+				if err := dep.Validate(path); err != nil {
+					continue
+				}
+			}
+			totalSize += info.Size()
+			found = true
+			break
+		}
+		if !found {
+			return false, 0
+		}
+	}
+	return true, totalSize
+}
+
+func (l *Launcher) dependencyInstallDir(dep Dependency) string {
+	return filepath.Join(l.binDir, dep.RelativeDir)
+}
+
 // DownloadAria2c baixa e instala o aria2c (download opcional, sob demanda)
 func (l *Launcher) DownloadAria2c() error {
 	var dep Dependency
@@ -313,11 +298,12 @@ func (l *Launcher) DownloadAria2c() error {
 	case "windows":
 		dep = Dependency{
 			Name:           "aria2c",
-			URL:            "https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip",
+			URL:            aria2runtime.ArchiveURL,
 			FileName:       "aria2c.zip",
 			IsArchive:      true,
 			ArchiveType:    "zip",
 			ExtractTargets: []string{"aria2c.exe"},
+			SHA256:         aria2runtime.ArchiveSHA256,
 		}
 	default:
 		// Linux/Mac: aria2c geralmente disponível via package manager
@@ -327,16 +313,26 @@ func (l *Launcher) DownloadAria2c() error {
 	// Verificar se já existe
 	// Usa o primeiro alvo como referência principal
 	targetFile := filepath.Join(l.binDir, dep.ExtractTargets[0])
-	if info, err := os.Stat(targetFile); err == nil && info.Size() > 0 {
-		return nil // Já instalado
+	if _, err := aria2runtime.Validate(targetFile); err == nil {
+		return nil
 	}
-
-	return l.downloadDependency(dep)
+	if err := l.downloadDependency(dep); err != nil {
+		return err
+	}
+	if _, err := aria2runtime.Validate(targetFile); err != nil {
+		_ = os.Remove(targetFile)
+		return fmt.Errorf("downloaded aria2c failed validation: %w", err)
+	}
+	return nil
 }
 
 func (l *Launcher) downloadDependency(dep Dependency) error {
 	l.emitProgress(dep.Name, 0, 0, 0, "downloading")
 	logger.Log.Info().Str("dependency", dep.Name).Str("url", dep.URL).Msg("starting download")
+	installDir := l.dependencyInstallDir(dep)
+	if err := os.MkdirAll(installDir, 0755); err != nil {
+		return err
+	}
 
 	// Create HTTP request with context for proper cancellation
 	req, err := http.NewRequestWithContext(l.ctx, "GET", dep.URL, nil)
@@ -363,7 +359,7 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 	}
 
 	total := resp.ContentLength
-	tempFile := filepath.Join(l.binDir, dep.FileName+".tmp")
+	tempFile := filepath.Join(installDir, dep.FileName+".tmp")
 
 	// Create temp file
 	out, err := os.Create(tempFile)
@@ -389,7 +385,10 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 			}
 			downloaded += int64(n)
 
-			percent := float64(downloaded) / float64(total) * 100
+			percent := float64(0)
+			if total > 0 {
+				percent = float64(downloaded) / float64(total) * 100
+			}
 			l.emitProgress(dep.Name, downloaded, total, percent, "downloading")
 		}
 		if err == io.EOF {
@@ -425,23 +424,28 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 		var extractErr error
 		switch dep.ArchiveType {
 		case "zip":
-			extractErr = l.extractFromZip(tempFile, dep.ExtractTargets)
+			extractErr = l.extractFromZip(tempFile, installDir, dep.ExtractTargets)
 		case "tar.xz", "tar.gz":
-			extractErr = l.extractFromTarGz(tempFile, dep.ExtractTargets)
+			extractErr = l.extractFromTarGz(tempFile, installDir, dep.ExtractTargets)
 		}
 		os.Remove(tempFile)
 		if extractErr != nil {
 			return extractErr
 		}
 	} else {
-		// Move temp file to final location
-		finalPath := filepath.Join(l.binDir, dep.FileName)
-		if err := os.Rename(tempFile, finalPath); err != nil {
-			return err
-		}
 		// Make executable on Unix
 		if goruntime.GOOS != "windows" {
-			os.Chmod(finalPath, 0755)
+			_ = os.Chmod(tempFile, 0755)
+		}
+		if dep.Validate != nil {
+			if err := dep.Validate(tempFile); err != nil {
+				_ = os.Remove(tempFile)
+				return fmt.Errorf("downloaded %s failed validation: %w", dep.Name, err)
+			}
+		}
+		finalPath := filepath.Join(installDir, dep.FileName)
+		if err := activateDownloadedFile(tempFile, finalPath); err != nil {
+			return err
 		}
 	}
 
@@ -450,12 +454,18 @@ func (l *Launcher) downloadDependency(dep Dependency) error {
 }
 
 // extractFromZip extracts specific files from a zip archive
-func (l *Launcher) extractFromZip(zipPath string, targets []string) error {
+func (l *Launcher) extractFromZip(zipPath, destinationDir string, targets []string) error {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
+
+	stageDir, err := os.MkdirTemp(destinationDir, ".extract-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(stageDir)
 
 	foundCount := 0
 	targetMap := make(map[string]bool)
@@ -474,8 +484,8 @@ func (l *Launcher) extractFromZip(zipPath string, targets []string) error {
 			}
 
 			// Extrai o arquivo
-			outPath := filepath.Join(l.binDir, baseName)
-			out, err := os.Create(outPath)
+			outPath := filepath.Join(stageDir, baseName)
+			out, err := os.OpenFile(outPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0755)
 			if err != nil {
 				rc.Close()
 				return err
@@ -491,7 +501,9 @@ func (l *Launcher) extractFromZip(zipPath string, targets []string) error {
 
 			// Make executable on Unix
 			if goruntime.GOOS != "windows" {
-				os.Chmod(outPath, 0755)
+				if err := os.Chmod(outPath, 0755); err != nil {
+					return err
+				}
 			}
 
 			foundCount++
@@ -501,12 +513,11 @@ func (l *Launcher) extractFromZip(zipPath string, targets []string) error {
 	if foundCount < len(targets) {
 		return fmt.Errorf("alguns arquivos não foram encontrados no zip (encontrados: %d/%d)", foundCount, len(targets))
 	}
-
-	return nil
+	return activateExtractedFiles(stageDir, destinationDir, targets)
 }
 
 // extractFromTarGz extracts specific files from a tar.gz/tar.xz archive
-func (l *Launcher) extractFromTarGz(archivePath string, targets []string) error {
+func (l *Launcher) extractFromTarGz(archivePath, destinationDir string, targets []string) error {
 	file, err := os.Open(archivePath)
 	if err != nil {
 		return err
@@ -547,7 +558,7 @@ func (l *Launcher) extractFromTarGz(archivePath string, targets []string) error 
 
 		baseName := filepath.Base(header.Name)
 		if targetMap[baseName] {
-			outPath := filepath.Join(l.binDir, baseName)
+			outPath := filepath.Join(destinationDir, baseName)
 			out, err := os.Create(outPath)
 			if err != nil {
 				return err
@@ -561,7 +572,9 @@ func (l *Launcher) extractFromTarGz(archivePath string, targets []string) error 
 			}
 
 			// Make executable
-			os.Chmod(outPath, 0755)
+			if err := os.Chmod(outPath, 0755); err != nil {
+				return err
+			}
 
 			foundCount++
 		}
@@ -587,5 +600,83 @@ func (l *Launcher) emitProgress(name string, downloaded, total int64, percent fl
 
 // emitEvent emits an event using Wails v3 API
 func (l *Launcher) emitEvent(eventName string, data any) {
-	application.Get().Event.Emit(eventName, data)
+	if app := application.Get(); app != nil {
+		app.Event.Emit(eventName, data)
+	}
+}
+
+func activateExtractedFiles(stageDir, destinationDir string, targets []string) error {
+	type activation struct {
+		staged, final, backup string
+		activated             bool
+	}
+	items := make([]activation, 0, len(targets))
+	stamp := time.Now().UnixNano()
+	for _, name := range targets {
+		items = append(items, activation{
+			staged: filepath.Join(stageDir, name), final: filepath.Join(destinationDir, name),
+			backup: filepath.Join(destinationDir, fmt.Sprintf(".%s.backup-%d", name, stamp)),
+		})
+	}
+	restoreBackups := func() {
+		for i := range items {
+			if items[i].activated {
+				_ = os.Remove(items[i].final)
+			}
+			if items[i].backup != "" {
+				if _, err := os.Stat(items[i].backup); err == nil {
+					_ = os.Rename(items[i].backup, items[i].final)
+				}
+			}
+		}
+	}
+	for i := range items {
+		if _, err := os.Stat(items[i].final); err == nil {
+			if err := os.Rename(items[i].final, items[i].backup); err != nil {
+				restoreBackups()
+				return err
+			}
+		} else if !os.IsNotExist(err) {
+			restoreBackups()
+			return err
+		} else {
+			items[i].backup = ""
+		}
+	}
+	for i := range items {
+		if err := os.Rename(items[i].staged, items[i].final); err != nil {
+			restoreBackups()
+			return err
+		}
+		items[i].activated = true
+	}
+	for _, item := range items {
+		if item.backup != "" {
+			_ = os.Remove(item.backup)
+		}
+	}
+	return nil
+}
+
+func activateDownloadedFile(stagedPath, finalPath string) error {
+	backupPath := fmt.Sprintf("%s.backup-%d", finalPath, time.Now().UnixNano())
+	hadPrevious := false
+	if _, err := os.Stat(finalPath); err == nil {
+		if err := os.Rename(finalPath, backupPath); err != nil {
+			return err
+		}
+		hadPrevious = true
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	if err := os.Rename(stagedPath, finalPath); err != nil {
+		if hadPrevious {
+			_ = os.Rename(backupPath, finalPath)
+		}
+		return err
+	}
+	if hadPrevious {
+		_ = os.Remove(backupPath)
+	}
+	return nil
 }

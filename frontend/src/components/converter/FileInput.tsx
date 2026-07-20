@@ -167,7 +167,7 @@ export const FileInput = memo(function FileInput({
                 <button
                   onClick={onSelectInput}
                   disabled={isProcessing}
-                  className="px-3 py-1.5 text-xs font-medium text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors border border-transparent hover:border-surface-200 dark:hover:border-white/10"
+                  className="px-3 py-1.5 text-xs font-medium text-surface-600 dark:text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-200 rounded-lg transition-colors border border-transparent hover:border-surface-200 dark:hover:border-surface-400"
                 >
                   {t("change")}
                 </button>
@@ -199,7 +199,7 @@ export const FileInput = memo(function FileInput({
                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                   isDragging
                     ? "bg-primary-100 dark:bg-primary-900/40"
-                    : "bg-surface-100 dark:bg-surface-800 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30"
+                    : "bg-surface-100 dark:bg-surface-200 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30"
                 }`}
               >
                 <IconUpload
@@ -216,7 +216,7 @@ export const FileInput = memo(function FileInput({
                   className={`font-medium text-sm transition-colors ${
                     isDragging
                       ? "text-primary-600 dark:text-primary-400"
-                      : "text-surface-700 dark:text-surface-300 group-hover:text-primary-600 dark:group-hover:text-primary-400"
+                      : "text-surface-700 dark:text-surface-600 group-hover:text-primary-600 dark:group-hover:text-primary-400"
                   }`}
                 >
                   {isDragging

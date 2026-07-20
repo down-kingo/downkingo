@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,7 +7,6 @@ import {
   IconBrandGithub,
   IconThumbUp,
   IconThumbDown,
-  IconArrowRight,
   IconArrowLeft,
   IconExternalLink,
   IconPlus,
@@ -22,7 +21,6 @@ import SuggestionModal from "../components/SuggestionModal";
 // Store & Utils
 import { useRoadmapStore, useRoadmapInit } from "../stores/roadmapStore";
 import { useShallow } from "zustand/react/shallow";
-import { getDisplayTitle, getDisplayDescription } from "../utils/textUtils";
 import type { RoadmapItem, RoadmapStatus } from "../types/roadmap";
 import { RoadmapCard } from "../components/roadmap/RoadmapCard";
 import type { ColumnConfig } from "../components/roadmap/types";
@@ -102,7 +100,6 @@ export default function Roadmap() {
   const {
     items,
     isLoading,
-    userVotes,
     fetchRoadmap,
     voteForItem,
     voteDownForItem,
@@ -111,7 +108,6 @@ export default function Roadmap() {
     useShallow((state) => ({
       items: state.items,
       isLoading: state.isLoading,
-      userVotes: state.userVotes,
       fetchRoadmap: state.fetchRoadmap,
       voteForItem: state.voteForItem,
       voteDownForItem: state.voteDownForItem,
@@ -143,6 +139,11 @@ export default function Roadmap() {
   // Suggestion State
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const checkAuth = useCallback(async () => {
+    const token = await GetGitHubToken();
+    setIsAuthenticated(!!token && token.length > 0);
+  }, []);
+
   useEffect(() => {
     // Initial setup with subscription
     const cleanup = initialize(i18n.language);
@@ -159,11 +160,6 @@ export default function Roadmap() {
       refetch(i18n.language);
     }
   }, [i18n.language, refetch]);
-
-  const checkAuth = async () => {
-    const token = await GetGitHubToken();
-    setIsAuthenticated(!!token && token.length > 0);
-  };
 
   // --- Auth Flow (Device Flow) ---
 
@@ -349,7 +345,7 @@ export default function Roadmap() {
                       <h3 className="text-sm font-bold text-surface-700 dark:text-white leading-none">
                         {col.label}
                       </h3>
-                      <span className="text-[10px] font-medium text-surface-400 dark:text-surface-300">
+                      <span className="text-[10px] font-medium text-surface-400 dark:text-surface-600">
                         {col.sub}
                       </span>
                     </div>
@@ -386,7 +382,6 @@ export default function Roadmap() {
                           item={item}
                           column={col}
                           index={index}
-                          isAuthenticated={isAuthenticated}
                           userVote={getUserVote(item.id)}
                           onVote={handleVote}
                           onVoteDown={handleVoteDown}
@@ -467,7 +462,7 @@ function AuthModal({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="w-full max-w-sm bg-surface-900 text-white rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden"
+        className="w-full max-w-sm bg-surface-900 dark:bg-surface-100 text-white rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden"
       >
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl" />
 
@@ -608,7 +603,7 @@ function RoadmapDetail({
       animate={{ x: 0 }}
       exit={{ x: "100%" }}
       transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-      className="absolute inset-0 z-50 bg-surface-50 dark:bg-surface-50 overflow-hidden text-surface-900 dark:text-surface-100"
+      className="absolute inset-0 z-50 bg-surface-50 dark:bg-surface-50 overflow-hidden text-surface-900 dark:text-surface-800"
     >
       {/* Botão Voltar - Lateral Esquerda Fixa */}
       <button
@@ -662,7 +657,7 @@ function RoadmapDetail({
                   className="w-6 h-6 rounded-full border border-white/10 shadow-sm"
                 />
               )}
-              <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
+              <span className="text-sm font-medium text-surface-600 dark:text-surface-600">
                 {item.author}
               </span>
             </div>
@@ -704,7 +699,7 @@ function RoadmapDetail({
                 ),
                 // Parágrafos com espaçamento elegante
                 p: ({ children }) => (
-                  <p className="text-surface-600 dark:text-surface-200 leading-relaxed mb-4">
+                  <p className="text-surface-600 dark:text-surface-700 leading-relaxed mb-4">
                     {children}
                   </p>
                 ),
@@ -718,7 +713,7 @@ function RoadmapDetail({
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="flex items-start gap-3 text-surface-600 dark:text-surface-200">
+                  <li className="flex items-start gap-3 text-surface-600 dark:text-surface-700">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
                     <span className="flex-1">{children}</span>
                   </li>
@@ -743,12 +738,12 @@ function RoadmapDetail({
                 ),
                 // Blockquotes
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-primary-500 pl-4 py-2 my-4 bg-primary-50 dark:bg-primary-900/10 rounded-r-lg italic text-surface-600 dark:text-surface-300">
+                  <blockquote className="border-l-4 border-primary-500 pl-4 py-2 my-4 bg-primary-50 dark:bg-primary-900/20 rounded-r-lg italic text-surface-600 dark:text-surface-600">
                     {children}
                   </blockquote>
                 ),
                 // Links
-                a: ({ node, ...props }) => (
+                a: (props) => (
                   <a
                     {...props}
                     target="_blank"
@@ -778,7 +773,7 @@ function RoadmapDetail({
                 className={`flex items-center gap-2 transition-colors group ${
                   userVote === "up"
                     ? "text-green-600 cursor-default"
-                    : "text-surface-600 dark:text-surface-300 hover:text-green-500 cursor-pointer"
+                    : "text-surface-600 dark:text-surface-600 hover:text-green-500 dark:hover:text-green-400 cursor-pointer"
                 }`}
               >
                 <div
@@ -804,7 +799,7 @@ function RoadmapDetail({
                 className={`flex items-center gap-2 transition-colors group ${
                   userVote === "down"
                     ? "text-red-600 cursor-default"
-                    : "text-surface-600 dark:text-surface-300 hover:text-red-500 cursor-pointer"
+                    : "text-surface-600 dark:text-surface-600 hover:text-red-500 dark:hover:text-red-400 cursor-pointer"
                 }`}
               >
                 <div
@@ -860,7 +855,7 @@ function RoadmapDetail({
                 {(item.labels || []).map((l) => (
                   <span
                     key={l}
-                    className="px-3 py-1 rounded-md bg-surface-100 dark:bg-white/5 text-xs font-bold text-surface-600 dark:text-surface-300 border border-surface-200 dark:border-white/10"
+                    className="px-3 py-1 rounded-md bg-surface-100 dark:bg-white/5 text-xs font-bold text-surface-600 dark:text-surface-600 border border-surface-200 dark:border-white/15"
                   >
                     {l}
                   </span>

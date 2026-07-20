@@ -187,7 +187,7 @@ export default function SuggestionModal({
 
         {submitSuccess ? (
           <div className="p-10 text-center">
-            <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+            <div className="w-16 h-16 bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
               <IconCheck size={32} stroke={3} />
             </div>
             <h3 className="text-lg font-bold text-surface-900 dark:text-white">
@@ -224,7 +224,7 @@ export default function SuggestionModal({
                   <select
                     value={issueType}
                     onChange={(e) => setIssueType(e.target.value as IssueType)}
-                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-200"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-700"
                   >
                     {ISSUE_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>
@@ -242,7 +242,7 @@ export default function SuggestionModal({
                   <select
                     value={scope}
                     onChange={(e) => setScope(e.target.value)}
-                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-200"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none appearance-none cursor-pointer dark:text-surface-700"
                   >
                     {SCOPES.map((s) => (
                       <option key={s} value={s}>
@@ -262,7 +262,7 @@ export default function SuggestionModal({
                     placeholder={t("suggestion.placeholder_title")}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-200"
+                    className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-700"
                   />
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function SuggestionModal({
                   placeholder={t("suggestion.placeholder_context")}
                   value={context}
                   onChange={(e) => setContext(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-700"
                 />
               </div>
 
@@ -302,7 +302,7 @@ export default function SuggestionModal({
                   }
                   value={problem}
                   onChange={(e) => setProblem(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-700"
                 />
               </div>
 
@@ -315,7 +315,7 @@ export default function SuggestionModal({
                   placeholder={t("suggestion.placeholder_proposal")}
                   value={proposal}
                   onChange={(e) => setProposal(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-200"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none dark:text-surface-700"
                 />
               </div>
 
@@ -331,7 +331,7 @@ export default function SuggestionModal({
                   placeholder={t("suggestion.placeholder_tasks")}
                   value={tasks}
                   onChange={(e) => setTasks(e.target.value)}
-                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none font-mono text-xs dark:text-surface-200"
+                  className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-20 resize-none font-mono text-xs dark:text-surface-700"
                 />
               </div>
 
@@ -339,7 +339,7 @@ export default function SuggestionModal({
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-2 text-xs text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
+                className="flex items-center gap-2 text-xs text-surface-500 hover:text-surface-700 dark:hover:text-surface-700 transition-colors"
               >
                 <IconChevronDown
                   size={14}
@@ -366,7 +366,7 @@ export default function SuggestionModal({
                       placeholder={t("suggestion.placeholder_dependencies")}
                       value={dependencies}
                       onChange={(e) => setDependencies(e.target.value)}
-                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-200"
+                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none dark:text-surface-700"
                     />
                   </div>
 
@@ -382,7 +382,7 @@ export default function SuggestionModal({
                       placeholder={t("suggestion.placeholder_references")}
                       value={references}
                       onChange={(e) => setReferences(e.target.value)}
-                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-16 resize-none font-mono text-xs dark:text-surface-200"
+                      className="w-full bg-surface-50 dark:bg-black/20 border border-surface-200 dark:border-white/15 rounded-lg px-3 py-2.5 text-sm focus:border-primary-500 outline-none h-16 resize-none font-mono text-xs dark:text-surface-700"
                     />
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export default function SuggestionModal({
             <div className="px-6 py-4 border-t border-surface-100 dark:border-white/10 flex justify-end gap-3 shrink-0 bg-surface-50/50 dark:bg-black/20">
               <button
                 onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-surface-500 hover:text-surface-700 dark:hover:text-surface-700 transition-colors"
               >
                 {t("suggestion.cancel")}
               </button>

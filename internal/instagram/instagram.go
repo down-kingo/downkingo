@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -53,6 +54,21 @@ func ExtractShortcode(url string) (string, error) {
 	return matches[1], nil
 }
 
+// IsStoryURL reports whether rawURL points to Instagram's authenticated Story
+// surface (for example /stories/neymarjr/ or /stories/neymarjr/123456/).
+func IsStoryURL(rawURL string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil {
+		return false
+	}
+	host := strings.ToLower(strings.TrimSuffix(parsed.Hostname(), "."))
+	if host != "instagram.com" && !strings.HasSuffix(host, ".instagram.com") {
+		return false
+	}
+	segments := strings.Split(strings.Trim(parsed.Path, "/"), "/")
+	return len(segments) >= 2 && strings.EqualFold(segments[0], "stories") && segments[1] != ""
+}
+
 // GetPostInfo extrai informações de um post do Instagram
 // Nota: Desde dezembro/2024, o Instagram bloqueia acessos anônimos na maioria dos casos
 func GetPostInfo(postURL string) (*PostInfo, error) {
@@ -95,7 +111,7 @@ func getPostInfoAnonymous(shortcode, postURL string) (*PostInfo, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Instagram retornou status %d", resp.StatusCode)
+		return nil, fmt.Errorf("instagram retornou status %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 10*1024*1024))

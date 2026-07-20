@@ -5,6 +5,29 @@ Todas as mudanças notáveis neste projeto serão documentadas aqui.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [3.1.2] - 2026-07-16
+
+### Adicionado
+
+- Stories do Instagram agora podem usar a sessao autenticada dos navegadores Chrome, Edge, Firefox e Brave.
+
+### Corrigido
+
+- O botao de download de imagens voltou a ter contraste adequado no modo escuro.
+- O fluxo de Stories do Instagram agora encaminha cookies do navegador ao `yt-dlp` e trata o conteudo como playlist.
+- O roadmap agora valida todas as traducoes, repete tentativas incompletas e traduz descricoes longas por idioma antes da publicacao.
+- Issues fechadas que continuam no GitHub Project permanecem visiveis no roadmap, respeitando a coluna do projeto como status oficial.
+
+## [3.1.1] - 2026-07-16
+
+### Corrigido
+
+- O botão **Atualizar Agora** agora reconhece o instalador Windows publicado na release.
+- A atualização aguarda o aplicativo fechar e solicita elevação antes de instalar em `Program Files`.
+- Releases sem um artefato compatível abrem a página oficial de download em vez de deixar o botão sem ação.
+- Downloads de atualização agora validam origem, resposta HTTP e limite de tamanho antes da execução.
+- O instalador Windows ficou menor com FFmpeg compartilhado e compactação LZMA sólida, sem alterar o consumo do app em execução.
+
 ## [2.0.0-beta] - 2025-01-07
 
 ### 🚀 Principais Novidades
@@ -44,5 +67,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ---
 
+[3.1.2]: https://github.com/down-kingo/downkingo/compare/v3.1.1...v3.1.2
+[3.1.1]: https://github.com/down-kingo/downkingo/releases/tag/v3.1.1
 [2.0.0-beta]: https://github.com/Capman002/DownKingo/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/Capman002/DownKingo/releases/tag/v1.0.0

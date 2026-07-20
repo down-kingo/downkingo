@@ -16,7 +16,6 @@ interface RoadmapCardProps {
   item: RoadmapItem;
   column: ColumnConfig;
   index: number;
-  isAuthenticated: boolean;
   userVote: UserVote; // Current user's vote on this item
   onVote: (id: number) => void;
   onVoteDown: (id: number) => void;
@@ -37,7 +36,6 @@ function arePropsEqual(
     prev.item.status === next.item.status &&
     prev.column.id === next.column.id &&
     prev.index === next.index &&
-    prev.isAuthenticated === next.isAuthenticated &&
     prev.userVote === next.userVote
   );
 }
@@ -46,7 +44,6 @@ export const RoadmapCard = memo(function RoadmapCard({
   item,
   column,
   index,
-  isAuthenticated,
   userVote,
   onVote,
   onVoteDown,

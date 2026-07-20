@@ -15,9 +15,34 @@ import (
 // This interface is consumed here following Go's interface segregation principle.
 type YouTubeClientInterface interface {
 	GetVideoInfo(ctx context.Context, url string) (*youtube.VideoInfo, error)
+	GetVideoInfoWithCookies(ctx context.Context, url string, browser string) (*youtube.VideoInfo, error)
+	GetSubtitles(ctx context.Context, url string, language string) (*youtube.SubtitleResult, error)
 	Download(ctx context.Context, opts youtube.DownloadOptions, onProgress youtube.ProgressCallback, onLog youtube.LogCallback) error
 	UpdateYtDlp(channel string) (string, error)
 	GetStreamURL(ctx context.Context, url string, format string) (string, error)
+}
+
+// GetVideoSubtitles imports a remote caption track for preview and editing.
+func (h *VideoHandler) GetVideoSubtitles(url, language string) (*youtube.SubtitleResult, error) {
+	const op = "VideoHandler.GetVideoSubtitles"
+	if _, err := validate.URL(url); err != nil {
+		return nil, apperr.Wrap(op, err)
+	}
+	if h.youtube == nil {
+		return nil, apperr.NewWithMessage(op, apperr.ErrDependencyMissing, "cliente yt-dlp não inicializado")
+	}
+	h.consoleLog("[Legendas] Buscando faixa disponível no vídeo...")
+	result, err := h.youtube.GetSubtitles(h.ctx, url, language)
+	if err != nil {
+		h.consoleLog("[Legendas] Não foi possível importar a faixa do vídeo; o Whisper poderá ser usado como alternativa.")
+		return nil, apperr.Wrap(op, err)
+	}
+	if len(result.Cues) == 0 {
+		h.consoleLog("[Legendas] O vídeo não possui uma faixa no idioma selecionado.")
+	} else {
+		h.consoleLog(fmt.Sprintf("[Legendas] %d trechos importados para o editor.", len(result.Cues)))
+	}
+	return result, nil
 }
 
 // DownloadManagerInterface defines what VideoHandler needs from a download manager.
@@ -108,14 +133,50 @@ func (h *VideoHandler) GetVideoInfo(url string) (*youtube.VideoInfo, error) {
 		if strings.Contains(err.Error(), "unsupported") {
 			return nil, apperr.WrapWithMessage(op, apperr.ErrUnsupportedPlatform, "Plataforma não suportada pelo yt-dlp")
 		}
-		if strings.Contains(err.Error(), "private") || strings.Contains(err.Error(), "login") {
-			return nil, apperr.WrapWithMessage(op, apperr.ErrAuthRequired, "Vídeo privado ou requer autenticação")
+		if youtube.IsAuthenticationRequired(err) {
+			return nil, apperr.NewWithCode(
+				op,
+				apperr.ErrAuthRequired,
+				"youtube_auth_required",
+				"O YouTube solicitou uma sessão autenticada. Entre no YouTube em um navegador e autorize o DownKingo a usar essa sessão.",
+			)
 		}
 
 		return nil, apperr.Wrap(op, err)
 	}
 
 	h.consoleLog(fmt.Sprintf("[Vídeo] ✓ \"%s\" encontrado", info.Title))
+	return info, nil
+}
+
+// GetVideoInfoWithCookies retries metadata extraction with the browser session
+// explicitly selected by the user. yt-dlp reads the cookies directly; the app
+// neither receives nor persists their contents.
+func (h *VideoHandler) GetVideoInfoWithCookies(url, browser string) (*youtube.VideoInfo, error) {
+	const op = "VideoHandler.GetVideoInfoWithCookies"
+	if _, err := validate.URL(url); err != nil {
+		return nil, apperr.Wrap(op, err)
+	}
+	if h.youtube == nil {
+		return nil, apperr.NewWithMessage(op, apperr.ErrDependencyMissing, "cliente yt-dlp não inicializado")
+	}
+	normalizedBrowser, err := youtube.NormalizeCookieBrowser(browser)
+	if err != nil {
+		return nil, apperr.WrapWithMessage(op, apperr.ErrInvalidURL, "Navegador não suportado para autenticação")
+	}
+
+	h.consoleLog(fmt.Sprintf("[Vídeo] Tentando sessão autenticada do %s...", normalizedBrowser))
+	info, err := h.youtube.GetVideoInfoWithCookies(h.ctx, url, normalizedBrowser)
+	if err != nil {
+		h.consoleLog(fmt.Sprintf("[Vídeo] ✗ Não foi possível usar a sessão do %s", normalizedBrowser))
+		return nil, apperr.WrapWithMessage(
+			op,
+			apperr.ErrAuthRequired,
+			"Não foi possível ler uma sessão válida do navegador selecionado. Confirme que você está conectado ao YouTube nele e tente novamente.",
+		)
+	}
+
+	h.consoleLog(fmt.Sprintf("[Vídeo] ✓ Sessão do %s autorizada para este vídeo", normalizedBrowser))
 	return info, nil
 }
 
@@ -233,6 +294,9 @@ func (h *VideoHandler) AddToQueueAdvanced(opts youtube.DownloadOptions) (*storag
 	// Validate aria2c connections (prevent abuse)
 	if opts.Aria2cConnections < 0 || opts.Aria2cConnections > 32 {
 		opts.Aria2cConnections = 16
+	}
+	if opts.ConcurrentFragments <= 0 || opts.ConcurrentFragments > 16 {
+		opts.ConcurrentFragments = 8
 	}
 
 	download, err := h.downloadManager.AddJob(opts)

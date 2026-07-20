@@ -2,7 +2,10 @@ package downloader
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"kingo/internal/events"
@@ -28,21 +31,23 @@ type Manager struct {
 	client        *youtube.Client
 	maxConcurrent int
 
-	queue       chan *Job
-	activeSlots chan struct{} // Semaphore for concurrency control
-	jobs        map[string]*Job
-	mu          sync.RWMutex
-	quit        chan struct{}
-	wg          sync.WaitGroup
+	queue     chan *Job
+	jobs      map[string]*Job
+	mu        sync.RWMutex
+	quit      chan struct{}
+	wg        sync.WaitGroup
+	startOnce sync.Once
+	stopOnce  sync.Once
 
 	// Metrics
-	totalCompleted int64
-	totalFailed    int64
+	totalCompleted atomic.Int64
+	totalFailed    atomic.Int64
 
-	// Batched progress: stores latest progress per job, flushed every 50ms
+	// Batched progress: stores latest progress per job. The signal-driven
+	// flusher stays asleep while there are no active progress updates.
 	pendingProgress map[string]map[string]interface{}
 	progressMu      sync.Mutex
-	progressTicker  *time.Ticker
+	progressSignal  chan struct{}
 }
 
 // NewManager creates a new download manager
@@ -56,10 +61,10 @@ func NewManager(repo *storage.DownloadRepository, client *youtube.Client, maxCon
 		client:          client,
 		maxConcurrent:   maxConcurrent,
 		queue:           make(chan *Job, 100), // Buffered to not block UI
-		activeSlots:     make(chan struct{}, maxConcurrent),
 		jobs:            make(map[string]*Job),
 		quit:            make(chan struct{}),
 		pendingProgress: make(map[string]map[string]interface{}),
+		progressSignal:  make(chan struct{}, 1),
 	}
 }
 
@@ -70,50 +75,67 @@ func (m *Manager) SetContext(ctx context.Context) {
 
 // Start begins the worker pool processing loop
 func (m *Manager) Start() {
-	logger.Log.Info().Int("maxConcurrent", m.maxConcurrent).Msg("download manager started")
+	m.startOnce.Do(func() {
+		logger.Log.Info().Int("maxConcurrent", m.maxConcurrent).Msg("download manager started")
 
-	// Restore pending jobs from database
-	m.restorePendingJobs()
-
-	// Periodic stats logging
-	go m.logStatsLoop()
-
-	// Batched progress flush loop (50ms window to reduce frontend event thrashing)
-	m.progressTicker = time.NewTicker(50 * time.Millisecond)
-	go m.flushProgressLoop()
-
-	// Main processing loop
-	go func() {
-		for {
-			select {
-			case job := <-m.queue:
-				// Acquire a slot (blocks if maxConcurrent reached)
-				m.activeSlots <- struct{}{}
-
-				m.wg.Add(1)
-				go func(j *Job) {
-					defer m.wg.Done()
-					defer func() { <-m.activeSlots }() // Release slot when done
-					m.processJob(j)
-				}(job)
-
-			case <-m.quit:
-				logger.Log.Info().Msg("download manager shutting down")
-				return
-			}
+		// Fixed workers avoid creating a goroutine for every queued item and make
+		// shutdown deterministic even when the queue is at capacity.
+		m.wg.Add(m.maxConcurrent + 2)
+		for range m.maxConcurrent {
+			go func() {
+				defer m.wg.Done()
+				m.workerLoop()
+			}()
 		}
-	}()
+		go func() {
+			defer m.wg.Done()
+			m.logStatsLoop()
+		}()
+		go func() {
+			defer m.wg.Done()
+			m.flushProgressLoop()
+		}()
+
+		// Workers must be running before restoration; otherwise more than 100
+		// persisted jobs would fill the queue and deadlock startup.
+		m.restorePendingJobs()
+	})
 }
 
 // Stop gracefully shuts down the manager
 func (m *Manager) Stop() {
-	close(m.quit)
-	if m.progressTicker != nil {
-		m.progressTicker.Stop()
+	m.stopOnce.Do(func() {
+		close(m.quit)
+
+		m.mu.RLock()
+		cancels := make([]context.CancelFunc, 0, len(m.jobs))
+		for _, job := range m.jobs {
+			if job.Cancel != nil {
+				cancels = append(cancels, job.Cancel)
+			}
+		}
+		m.mu.RUnlock()
+		for _, cancel := range cancels {
+			cancel()
+		}
+
+		m.wg.Wait()
+		m.flushPendingProgress()
+		logger.Log.Info().Msg("download manager stopped")
+	})
+}
+
+func (m *Manager) workerLoop() {
+	for {
+		select {
+		case <-m.quit:
+			return
+		case job := <-m.queue:
+			if job != nil {
+				m.processJob(job)
+			}
+		}
 	}
-	m.flushPendingProgress() // Flush remaining progress events
-	m.wg.Wait()
-	logger.Log.Info().Msg("download manager stopped")
 }
 
 // AddJob creates a new download job and adds it to the queue
@@ -129,6 +151,7 @@ func (m *Manager) AddJob(opts youtube.DownloadOptions) (*storage.Download, error
 			Str("id", existing.ID).
 			Str("url", opts.URL).
 			Msg("download already in queue, skipping duplicate")
+		m.emitLog(existing.ID, "[Fila] O download já está na fila.")
 		return existing, nil // Return existing instead of creating new
 	}
 
@@ -162,6 +185,7 @@ func (m *Manager) AddJob(opts youtube.DownloadOptions) (*storage.Download, error
 
 	// Emit event for UI
 	m.emitJobAdded(download)
+	m.emitLog(download.ID, fmt.Sprintf("[Fila] Download adicionado: %s", diagnosticLabel(download.Title)))
 
 	// Feedback imediato: Se já temos título/thumb, manda progresso 0%
 	if download.Title != "" {
@@ -172,7 +196,14 @@ func (m *Manager) AddJob(opts youtube.DownloadOptions) (*storage.Download, error
 	}
 
 	// Add to queue
-	m.queue <- job
+	select {
+	case m.queue <- job:
+	case <-m.quit:
+		job.Cancel()
+		m.cleanupJob(download.ID)
+		_ = m.repo.Delete(download.ID)
+		return nil, fmt.Errorf("download manager is shutting down")
+	}
 
 	logger.Log.Info().
 		Str("traceID", download.ID).
@@ -227,6 +258,7 @@ func (m *Manager) processJob(job *Job) {
 		Str("phase", "start").
 		Str("url", download.URL).
 		Msg("processing job")
+	m.emitLog(download.ID, "[Download] Preparando o trabalho e validando as opções...")
 
 	// Feedback imediato: Mudando status para downloading (0%) enquanto busca info
 	download.Status = storage.StatusDownloading
@@ -236,8 +268,16 @@ func (m *Manager) processJob(job *Job) {
 	})
 
 	// Fetch video info first
-	info, err := m.client.GetVideoInfo(job.Ctx, download.URL)
+	m.emitLog(download.ID, "[Metadados] Consultando informações atualizadas da mídia...")
+	var info *youtube.VideoInfo
+	var err error
+	if job.Options.CookieBrowser != "" {
+		info, err = m.client.GetVideoInfoWithCookies(job.Ctx, download.URL, job.Options.CookieBrowser)
+	} else {
+		info, err = m.client.GetVideoInfo(job.Ctx, download.URL)
+	}
 	if err != nil {
+		m.emitLog(download.ID, "[Metadados] ✗ Não foi possível preparar a mídia.")
 		// Se falhou porque o usuário cancelou, use cancelJob
 		select {
 		case <-job.Ctx.Done():
@@ -262,6 +302,7 @@ func (m *Manager) processJob(job *Job) {
 	}
 
 	m.emitProgress(download)
+	m.emitLog(download.ID, fmt.Sprintf("[Metadados] ✓ Mídia confirmada: %s", diagnosticLabel(download.Title)))
 
 	// Use the full options stored in the job
 	opts := job.Options
@@ -295,6 +336,11 @@ func (m *Manager) processJob(job *Job) {
 	}
 
 	// Execute download (blocking) com callbacks e contexto de cancelamento
+	mediaType := "vídeo"
+	if opts.AudioOnly {
+		mediaType = "áudio"
+	}
+	m.emitLog(download.ID, fmt.Sprintf("[Download] Iniciando transferência de %s...", mediaType))
 	if err := m.client.Download(job.Ctx, opts, onProgress, onLog); err != nil {
 		// Check if cancelled
 		select {
@@ -324,17 +370,21 @@ func (m *Manager) failJob(download *storage.Download, errMsg string) {
 
 	if exists && job.Options.Incognito {
 		// Incognito: Delete record immediately
-		m.repo.Delete(download.ID)
+		if err := m.repo.Delete(download.ID); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to delete incognito download")
+		}
 		// Still emit event so UI knows it finished (but won't find it in history)
 		m.emitProgress(download)
 	} else {
 		// Normal: Update record
-		m.repo.Update(download)
+		if err := m.repo.Update(download); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to persist failed download")
+		}
 		m.emitProgress(download)
 	}
 
 	m.cleanupJob(download.ID)
-	m.totalFailed++
+	m.totalFailed.Add(1)
 
 	logger.Log.Error().
 		Str("traceID", download.ID).
@@ -353,10 +403,14 @@ func (m *Manager) cancelJob(download *storage.Download) {
 	download.CompletedAt = &now
 
 	if exists && job.Options.Incognito {
-		m.repo.Delete(download.ID)
+		if err := m.repo.Delete(download.ID); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to delete incognito download")
+		}
 		m.emitProgress(download)
 	} else {
-		m.repo.Update(download)
+		if err := m.repo.Update(download); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to persist cancelled download")
+		}
 		m.emitProgress(download)
 	}
 
@@ -377,17 +431,21 @@ func (m *Manager) completeJob(download *storage.Download) {
 
 	if exists && job.Options.Incognito {
 		// Incognito: Delete record immediately
-		m.repo.Delete(download.ID)
+		if err := m.repo.Delete(download.ID); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to delete incognito download")
+		}
 		// Still emit event so UI knows it finished
 		m.emitProgress(download)
 	} else {
 		// Normal: Update record
-		m.repo.Update(download)
+		if err := m.repo.Update(download); err != nil {
+			logger.Log.Error().Err(err).Str("id", download.ID).Msg("failed to persist completed download")
+		}
 		m.emitProgress(download)
 	}
 
 	m.cleanupJob(download.ID)
-	m.totalCompleted++
+	m.totalCompleted.Add(1)
 
 	logger.Log.Info().
 		Str("traceID", download.ID).
@@ -398,8 +456,12 @@ func (m *Manager) completeJob(download *storage.Download) {
 
 func (m *Manager) cleanupJob(id string) {
 	m.mu.Lock()
+	job := m.jobs[id]
 	delete(m.jobs, id)
 	m.mu.Unlock()
+	if job != nil && job.Cancel != nil {
+		job.Cancel()
+	}
 }
 
 // restorePendingJobs loads pending jobs from database on startup
@@ -435,7 +497,13 @@ func (m *Manager) restorePendingJobs() {
 		m.jobs[download.ID] = job
 		m.mu.Unlock()
 
-		m.queue <- job
+		select {
+		case m.queue <- job:
+		case <-m.quit:
+			cancel()
+			m.cleanupJob(download.ID)
+			return
+		}
 	}
 
 	if len(pending) > 0 {
@@ -458,8 +526,8 @@ func (m *Manager) logStatsLoop() {
 			logger.Log.Info().
 				Int("activeJobs", activeJobs).
 				Int("queueLen", queueLen).
-				Int64("totalCompleted", m.totalCompleted).
-				Int64("totalFailed", m.totalFailed).
+				Int64("totalCompleted", m.totalCompleted.Load()).
+				Int64("totalFailed", m.totalFailed.Load()).
 				Msg("manager stats")
 		case <-m.quit:
 			return
@@ -482,6 +550,15 @@ func (m *Manager) emitJobAdded(download *storage.Download) {
 
 // emitProgress emits download progress/status updates
 func (m *Manager) emitProgress(download *storage.Download) {
+	if download.Status == storage.StatusCompleted ||
+		download.Status == storage.StatusFailed ||
+		download.Status == storage.StatusCancelled {
+		m.discardPendingProgress(download.ID)
+	}
+	diagnosticError := ""
+	if download.ErrorMessage != "" {
+		diagnosticError = diagnosticLabel(download.ErrorMessage)
+	}
 	m.emitEvent(events.DownloadProgress, map[string]interface{}{
 		"id":        download.ID,
 		"status":    download.Status,
@@ -490,6 +567,7 @@ func (m *Manager) emitProgress(download *storage.Download) {
 		"eta":       download.ETA,
 		"title":     download.Title,
 		"thumbnail": download.Thumbnail,
+		"error":     diagnosticError,
 	})
 }
 
@@ -501,8 +579,10 @@ func (m *Manager) emitDetailedProgress(jobID string, p youtube.DownloadProgress)
 	m.mu.RUnlock()
 
 	thumbnail := ""
+	title := ""
 	if exists && job.Download != nil {
 		thumbnail = job.Download.Thumbnail
+		title = job.Download.Title
 	}
 
 	data := map[string]interface{}{
@@ -512,10 +592,14 @@ func (m *Manager) emitDetailedProgress(jobID string, p youtube.DownloadProgress)
 		"speed":     p.Speed,
 		"eta":       p.ETA,
 		"thumbnail": thumbnail,
+		"title":     title,
 	}
 
-	// For terminal states, emit immediately (don't buffer)
-	if p.Status == "merging" || p.Status == "completed" || p.Status == "failed" {
+	// Immediate states supersede any older buffered download update. Without
+	// clearing it, a stale "downloading" event can arrive after "completed".
+	if p.Status == "merging" || p.Status == "completed" ||
+		p.Status == "failed" || p.Status == "cancelled" {
+		m.discardPendingProgress(jobID)
 		m.emitEvent(events.DownloadProgress, data)
 		return
 	}
@@ -523,13 +607,36 @@ func (m *Manager) emitDetailedProgress(jobID string, p youtube.DownloadProgress)
 	m.progressMu.Lock()
 	m.pendingProgress[jobID] = data
 	m.progressMu.Unlock()
+	select {
+	case m.progressSignal <- struct{}{}:
+	default:
+	}
 }
 
-// flushProgressLoop periodically sends batched progress to frontend
+func (m *Manager) discardPendingProgress(jobID string) {
+	m.progressMu.Lock()
+	delete(m.pendingProgress, jobID)
+	m.progressMu.Unlock()
+}
+
+// flushProgressLoop batches active updates without a permanently ticking timer.
 func (m *Manager) flushProgressLoop() {
+	timer := time.NewTimer(time.Hour)
+	if !timer.Stop() {
+		<-timer.C
+	}
+	defer timer.Stop()
+	armed := false
+
 	for {
 		select {
-		case <-m.progressTicker.C:
+		case <-m.progressSignal:
+			if !armed {
+				timer.Reset(50 * time.Millisecond)
+				armed = true
+			}
+		case <-timer.C:
+			armed = false
 			m.flushPendingProgress()
 		case <-m.quit:
 			return
@@ -559,4 +666,17 @@ func (m *Manager) emitLog(jobID string, line string) {
 		"id":   jobID,
 		"line": line,
 	})
+}
+
+func diagnosticLabel(value string) string {
+	value = strings.Join(strings.Fields(value), " ")
+	if value == "" {
+		return "mídia sem título"
+	}
+	const maxLength = 500
+	runes := []rune(value)
+	if len(runes) > maxLength {
+		return string(runes[:maxLength]) + "…"
+	}
+	return value
 }

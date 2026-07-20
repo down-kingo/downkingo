@@ -89,7 +89,7 @@ export const VideoToVideoOptions = memo(function VideoToVideoOptions({
       <div className="pt-2 border-t border-surface-100 dark:border-white/10">
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-2 text-xs font-medium text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors py-2"
+          className="flex items-center gap-2 text-xs font-medium text-surface-500 hover:text-surface-700 dark:hover:text-surface-700 transition-colors py-2"
         >
           <IconChevronDown
             size={16}
@@ -124,7 +124,7 @@ export const VideoToVideoOptions = memo(function VideoToVideoOptions({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800/50 rounded-xl">
+                <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-200/50 rounded-xl">
                   <input
                     type="checkbox"
                     id="keepAudio"
@@ -134,7 +134,7 @@ export const VideoToVideoOptions = memo(function VideoToVideoOptions({
                   />
                   <label
                     htmlFor="keepAudio"
-                    className="text-xs font-medium text-surface-700 dark:text-surface-300"
+                    className="text-xs font-medium text-surface-700 dark:text-surface-600"
                   >
                     {t("keep_audio_track")}
                   </label>

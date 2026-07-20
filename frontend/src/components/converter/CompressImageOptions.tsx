@@ -30,7 +30,7 @@ export const CompressImageOptions = memo(function CompressImageOptions({
           max="100"
           value={imageQuality}
           onChange={(e) => setImageQuality(Number(e.target.value))}
-          className="w-full h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full appearance-none cursor-pointer accent-primary-600"
+          className="w-full h-1.5 bg-surface-200 dark:bg-surface-300 rounded-full appearance-none cursor-pointer accent-primary-600"
         />
         <div className="flex justify-between text-[10px] text-surface-400 mt-1">
           <span>{t("max_compression")}</span>
