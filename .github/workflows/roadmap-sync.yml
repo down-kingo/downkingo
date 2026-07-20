@@ -1,6 +1,15 @@
 name: Roadmap Sync
 
 on:
+  # Publish immediately when the roadmap pipeline itself changes on main.
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/ai-config.js"
+      - ".github/scripts/generate_roadmap.js"
+      - ".github/scripts/generate_roadmap.test.js"
+      - ".github/workflows/roadmap-sync.yml"
+
   # Manual trigger
   workflow_dispatch:
 
