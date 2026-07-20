@@ -12,6 +12,12 @@ on:
 
   # Manual trigger
   workflow_dispatch:
+    inputs:
+      translate_missing:
+        description: "Repair missing or invalid translations with OpenRouter"
+        required: false
+        type: boolean
+        default: false
 
   # Project v2 item field changes do not trigger repository Actions events.
   # Poll periodically so manual status moves always reach the CDN.
@@ -42,6 +48,7 @@ jobs:
   sync:
     name: Sync Roadmap to CDN
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Checkout Source Code (Main)
@@ -79,12 +86,13 @@ jobs:
       # ============================================================
       # Step 1: Execute Roadmap Generator (Node.js)
       # ============================================================
-      - name: Generate Roadmap (AI-Powered)
+      - name: Generate Roadmap
         env:
           GITHUB_TOKEN: ${{ secrets.ROADMAP_PAT }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ORG_NAME: "down-kingo"
           PROJECT_NUMBER: 2
+          ROADMAP_TRANSLATE_MISSING: ${{ github.event_name == 'workflow_dispatch' && inputs.translate_missing }}
         working-directory: script-source
         run: |
           # This generates multiple files + cache in current dir (script-source)

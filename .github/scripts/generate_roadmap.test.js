@@ -6,6 +6,7 @@ const {
   createRoadmapItemFromProjectNode,
   isUsableTranslationBundle,
   resolveStatus,
+  shouldTranslateMissing,
 } = require("./generate_roadmap");
 
 test("roadmap status follows the GitHub Project column", () => {
@@ -22,6 +23,13 @@ test("roadmap status normalization is case and whitespace insensitive", () => {
 test("missing or unknown project status safely falls back to idea", () => {
   assert.equal(resolveStatus(), "idea");
   assert.equal(resolveStatus("unknown"), "idea");
+});
+
+test("AI translation repair is opt-in and cannot block a normal sync", () => {
+  assert.equal(shouldTranslateMissing(undefined), false);
+  assert.equal(shouldTranslateMissing("false"), false);
+  assert.equal(shouldTranslateMissing("true"), true);
+  assert.equal(shouldTranslateMissing("1"), true);
 });
 
 test("closed issues remain visible in their canonical Project column", () => {
@@ -160,4 +168,22 @@ test("translation cache rejects truncated long descriptions", () => {
     ),
     false,
   );
+});
+
+test("localized output falls back to source text without a valid translation", () => {
+  const localized = createItemForLang(
+    {
+      id: 2,
+      title: "Título original",
+      title_i18n: null,
+      description: "Descrição original",
+      description_i18n: null,
+    },
+    "en-US",
+  );
+
+  assert.equal(localized.friendly_title, "Título original");
+  assert.equal(localized.description, "Descrição original");
+  assert.equal(localized.title_i18n, undefined);
+  assert.equal(localized.description_i18n, undefined);
 });

@@ -13,6 +13,10 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const ORG_NAME = process.env.ORG_NAME || "down-kingo";
 const PROJECT_NUMBER = parseInt(process.env.PROJECT_NUMBER || "2");
+const OPENROUTER_REQUEST_TIMEOUT_MS = parseInt(
+  process.env.OPENROUTER_REQUEST_TIMEOUT_MS || "45000",
+  10
+);
 const LANGUAGES = ["pt-BR", "en-US", "es-ES", "fr-FR", "de-DE"];
 
 const QUERY = `
@@ -66,6 +70,10 @@ function resolveStatus(projectStatus) {
   // legitimately be closed while it remains in Bastidores or Em Produção.
   const normalized = projectStatus?.trim().toLowerCase() || "idea";
   return STATUS_MAPPING[normalized] || "idea";
+}
+
+function shouldTranslateMissing(value = process.env.ROADMAP_TRANSLATE_MISSING) {
+  return ["1", "true", "yes"].includes(String(value || "").toLowerCase());
 }
 
 function hashDescription(description) {
@@ -285,6 +293,12 @@ async function requestOpenRouter(prompt) {
         let responseBody = "";
         res.on("data", (chunk) => (responseBody += chunk));
         res.on("end", () => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            console.error(
+              `OpenRouter API Status: ${res.statusCode} ${responseBody.slice(0, 500)}`
+            );
+            return resolve(null);
+          }
           try {
             const json = JSON.parse(responseBody);
             const text = json.choices?.[0]?.message?.content;
@@ -304,6 +318,13 @@ async function requestOpenRouter(prompt) {
       }
     );
     req.on("error", reject);
+    req.setTimeout(OPENROUTER_REQUEST_TIMEOUT_MS, () => {
+      req.destroy(
+        new Error(
+          `OpenRouter request timed out after ${OPENROUTER_REQUEST_TIMEOUT_MS}ms`
+        )
+      );
+    });
     req.write(body);
     req.end();
   });
@@ -462,8 +483,21 @@ async function main() {
   console.log("\n");
 
   // 3. Process with AI
-  const itemsToProcess = items.filter((i) => i._needs_ai);
-  console.log(`🤖 Processing ${itemsToProcess.length} items with OpenRouter...`);
+  // Status synchronization must never wait for optional AI translation. A
+  // normal run publishes cached translations when they are valid and falls
+  // back to the issue's source text otherwise. Translation repair is an
+  // explicit maintenance operation started through workflow_dispatch.
+  const translateMissing = shouldTranslateMissing();
+  const itemsToProcess = translateMissing
+    ? items.filter((i) => i._needs_ai)
+    : [];
+  if (translateMissing) {
+    console.log(`🤖 Processing ${itemsToProcess.length} items with OpenRouter...`);
+  } else {
+    console.log(
+      "⏭️ AI translation disabled for this sync; publishing source-text fallbacks immediately"
+    );
+  }
 
   for (const item of itemsToProcess) {
     console.log(`   > Translating #${item.id}: ${item.title}`);
@@ -499,8 +533,8 @@ async function main() {
     )
     .map((item) => item.id);
   if (invalidTranslationIds.length > 0) {
-    throw new Error(
-      `Refusing to publish invalid roadmap translations for issues: ${invalidTranslationIds.join(", ")}`
+    console.warn(
+      `⚠️ Publishing source-text fallbacks for issues without valid translations: ${invalidTranslationIds.join(", ")}`
     );
   }
 
@@ -599,4 +633,5 @@ module.exports = {
   hashDescription,
   isUsableTranslationBundle,
   resolveStatus,
+  shouldTranslateMissing,
 };
