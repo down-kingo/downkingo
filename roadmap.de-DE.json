@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-20T09:01:23.087Z",
+  "generated_at": "2026-07-20T09:36:50.780Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -23,7 +23,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T21:04:06Z",
       "shipped_at": "2026-02-08T02:26:20Z",
-      "friendly_title": "Migração Arquitetural para Wails v3"
+      "friendly_title": "feat(core): Migração Arquitetural para Wails v3"
     },
     {
       "id": 20,
@@ -44,7 +44,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:18Z",
       "shipped_at": "2026-01-08T15:03:30Z",
-      "friendly_title": "Build-in-Public com Votação"
+      "friendly_title": "feat(roadmap): Build-in-Public com Votação"
     },
     {
       "id": 14,
@@ -65,7 +65,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:41Z",
       "shipped_at": "2026-01-08T15:02:56Z",
-      "friendly_title": "Download de Imagens"
+      "friendly_title": "feat(download): Download de Imagens"
     },
     {
       "id": 17,
@@ -128,13 +128,13 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:39Z",
       "shipped_at": "2026-01-08T15:02:52Z",
-      "friendly_title": "Melhorias no Downloader de Vídeo"
+      "friendly_title": "feat(download): Melhorias no Downloader de Vídeo"
     },
     {
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
-      "description": "## Kontext\nDerzeit hat der Benutzer nach dem Herunterladen eines Videos oder Bildes auf Kingo (PC) keine native und schnelle Möglichkeit, diesen Inhalt auf sein Telefon zu übertragen. Die Abhängigkeit von der Cloud (Google Drive/WhatsApp) ist langsam und verbraucht unnötig Internetbandbreite.\n## Motivation\nErstellen Sie eine \"reibungslose\" Erfahrung, bei der der Benutzer einfach die Kamera seines Telefons auf Kingo richtet und der Download sofort über das lokale Netzwerk (P2P) beginnt, wobei die maximale Wi-Fi-Geschwindigkeit genutzt wird.\n## Problem\nDas Übertragen großer Dateien vom PC auf mobile Geräte ist ein mühsamer Prozess, der normalerweise USB-Kabel oder Uploads zu externen Diensten beinhaltet, was die Agilität einer Download-App beeinträchtigt.\n## Technischer Vorschlag\nImplementieren Sie einen **Ephemeral Transmission Server** in Go:\n1. **Backend (Go):** \n   - Verwenden Sie `net/http`, um einen temporären Webserver auf einem zufälligen Port zu starten.\n   - Implementieren Sie ein **IP Discovery**-System, um die Adresse des PCs im lokalen Netzwerk zu identifizieren (z. B. 192.168.x.x).\n   - Servieren Sie die Datei di",
-      "status": "shipped",
+      "description": "## Contexto\nAtualmente, após baixar um vídeo ou imagem no Kingo (PC), o usuário não tem uma forma nativa e rápida de passar esse conteúdo para o celular. Depender de nuvem (Google Drive/WhatsApp) é lento e consome banda de internet desnecessariamente.\n## Motivação\nCriar uma experiência de \"fricção zero\" onde o usuário apenas aponta a câmera do celular para o Kingo e o download começa instantaneamente via rede local (P2P), aproveitando a velocidade máxima do Wi-Fi.\n## Problema\nTransferir arquivos grandes do PC para dispositivos móveis é um processo chato que geralmente envolve cabos USB ou uploads para serviços externos, o que mata a agilidade de um app de download.\n## Proposta Técnica\nImplementar um **Servidor de Transmissão Efêmero** no Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir um servidor web temporário em uma porta aleatória.\n   - Implementar um sistema de **IP Discovery** para identificar o endereço do PC na rede local (ex: 192.168.x.x).\n   - Servir o arquivo diretamente do disco via Streaming (Chunked Transfer Encoding).\n2. **Segurança:**\n   - Gerar URLs únicas com tokens de uso único (Single-use tokens) que expiram em X minutos ou após o download.\n3. **Frontend (React):**\n   - Exibir um modal elegante com o QR Code gerado dinamicamente usando a URL assinada.\n## Dependências\n- Biblioteca de geração de QR Code no frontend (ex: `qrcode.react`).\n- Nenhuma dependência pesada no backend (pure Go standard library).\n## Tarefas\n- [ ] Criar serviço de rede para descoberta de IP local (ignorar VirtualBox/Docker IPs).\n- [ ] Implementar Handler HTTP para servir arquivos com suporte a resumo (Range Requests).\n- [ ] Implementar sistema de tokens de segurança para acesso temporário.\n- [ ] Adicionar botão \"Compartilhar com Celular\" no histórico de downloads.\n- [ ] Criar interface Visual com animações (Framer Motion) para exibição do QR Code.\n## Referências\n- Go `net` package documentation.\n- MDN: [Using HTTP Range Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) (essencial para vídeos grandes).",
+      "status": "in-progress",
       "votes": 1,
       "votes_up": 1,
       "votes_down": 1,
@@ -144,14 +144,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:34:40Z",
-      "shipped_at": "2026-07-20T09:01:04Z",
-      "friendly_title": "Lokales Teilen via QR-Code (Magic Share)"
+      "shipped_at": null,
+      "friendly_title": "feat(network): Compartilhamento Local via QR Code (Magic Share)"
     },
     {
       "id": 34,
       "title": "Spotify Download Support",
-      "description": "### Typ\n\nfeat: Neue Funktionalität\n\n### Bereich\n\nDownload\n\n### Kurzbeschreibung\n\nFügen Sie DownKingo native Unterstützung für den Download von Spotify-Titeln (und optional Playlists/Alben) hinzu, damit Benutzer Audiodateien mit vollständigen Metadaten direkt von Spotify-URLs abrufen können.\n\n### Kontext\n\nDownKingo unterstützt derzeit das Herunterladen von Medien von YouTube, aber noch nicht Spotify als Quelle. Die Bereitstellung von Unterstützung für Spotify-URLs würde den Nutzen der App über Video-Downloads hinaus erweitern und Streaming-Audio-Downloads von einem der am weitesten verbreiteten Musikdienste umfassen.\n\n### Problem / Motivation\n\nViele Benutzer würden davon profitieren, Spotify-Titel, Playlists und Alben zusätzlich zu YouTube-Inhalten herunterladen zu können. Im Moment müssen sich Benutzer auf separate Tools verlassen, um Audio von Spotify zu extrahieren, was den Workflow fragmentiert. Die Integration der Spotify-Unterstützung direkt in DownKingo würde das Herunterladen von Medien in einem einzigen, benutzerfreundlichen Tool vereinheitlichen und die Reibung für Benutzer verringern, die regelmäßig mit YouTube und Spo arbeiten",
-      "status": "shipped",
+      "description": "### Type\n\nfeat: New functionality\n\n### Scope\n\ndownload\n\n### Short Description\n\nAdd native Spotify track (and optionally playlist/album) download support to DownKingo, enabling users to fetch audio files with full metadata directly from Spotify URLs.\n\n### Context\n\nDownKingo currently supports downloading media from YouTube, but it does not yet support Spotify as a source. Providing support for Spotify URLs would expand the utility of the app beyond video downloads to include streaming audio downloads from one of the most widely used music services.\n\n### Problem / Motivation\n\nMany users would benefit from being able to download Spotify tracks, playlists, and albums in addition to YouTube content. Right now, users must rely on separate tools to extract audio from Spotify, which fragments the workflow. Integrating Spotify support directly into DownKingo would unify media downloading into a single, user-friendly tool and reduce friction for users who regularly work with both YouTube and Spotify content.\n\n### Technical Proposal\n\nAdd a new Spotify provider module that parses Spotify URLs and fetches audio content with associated metadata. The implementation could follow the existing provider architecture used for YouTube, extending it to handle:\n\n- Spotify track, playlist, and album URL formats\n- Metadata retrieval (title, artist, album, cover art)\n- Audio download and file tagging\n\nThe open-source Go project [SpotiDownloader](https://github.com/afkarxyz/SpotiDownloader)\ncan serve as a reference for Spotify parsing and audio extraction logic, showing how Spotify API and audio sources can be integrated in Go.\n\n### Tasks (one per line)\n\n- Analyze Spotify URL patterns and determine supported media types (track / playlist / album)\n- Design and implement a Spotify provider within the DownKingo codebase (following existing provider structure)\n- Integrate Spotify metadata fetching and audio download logic\n- Add automatic tagging of downloaded files with metadata (artist, title, album, artwork)\n- Add tests for Spotify URL parsing, download flow, and metadata tagging\n- Update CLI/UI to accept and detect Spotify URLs\n- Update documentation to include Spotify support and usage examples\n\n### Dependencies (optional)\n\n_No response_\n\n### References (optional)\n\nhttps://github.com/afkarxyz/SpotiDownloader\nGo-based Spotify download logic example and reference implementation",
+      "status": "idea",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -163,8 +163,8 @@
       "author": "ehsanpo2",
       "author_avatar": "https://avatars.githubusercontent.com/u/253980122?v=4",
       "created_at": "2026-01-10T10:52:42Z",
-      "shipped_at": "2026-02-08T18:03:53Z",
-      "friendly_title": "Spotify-Download-Unterstützung"
+      "shipped_at": null,
+      "friendly_title": "Spotify Download Support"
     },
     {
       "id": 9,
@@ -248,7 +248,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:02:41Z",
       "shipped_at": "2026-01-08T15:02:57Z",
-      "friendly_title": "Histórico Persistente"
+      "friendly_title": "feat(history): Histórico Persistente"
     },
     {
       "id": 16,
@@ -295,7 +295,7 @@
     {
       "id": 19,
       "title": "feat(i18n): Suporte a 5 Idiomas",
-      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecç��o automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -311,7 +311,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:01Z",
       "shipped_at": "2026-01-08T15:03:17Z",
-      "friendly_title": "Suporte a 5 Idiomas"
+      "friendly_title": "feat(i18n): Suporte a 5 Idiomas"
     },
     {
       "id": 22,
@@ -332,7 +332,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:20Z",
       "shipped_at": "2026-01-08T15:03:34Z",
-      "friendly_title": "Modal de Sugestões"
+      "friendly_title": "feat(roadmap): Modal de Sugestões"
     },
     {
       "id": 23,
@@ -374,7 +374,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:37Z",
       "shipped_at": "2026-01-08T15:03:55Z",
-      "friendly_title": "Toast de Clipboard"
+      "friendly_title": "feat(ui): Toast de Clipboard"
     },
     {
       "id": 21,
@@ -458,7 +458,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:36Z",
       "shipped_at": "2026-01-08T15:03:52Z",
-      "friendly_title": "Customização de Aparência"
+      "friendly_title": "feat(ui): Customização de Aparência"
     },
     {
       "id": 25,
@@ -584,7 +584,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:38Z",
       "shipped_at": "2026-01-08T15:03:57Z",
-      "friendly_title": "Configurações Gerais"
+      "friendly_title": "feat(settings): Configurações Gerais"
     },
     {
       "id": 29,
@@ -611,7 +611,7 @@
       "id": 6,
       "title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)",
       "description": "## Contexto\nO ecossistema Kingo precisa de uma integração mais fluida com o navegador. Atualmente, o usuário depende do monitor de clipboard ou de copiar/colar manualmente. O esquema de protocolo `kingo://` já existe no código, mas o comportamento de \"instância única\" ainda não foi refinado.\n## Motivação\nPermitir que o usuário envie vídeos para o Kingo com apenas um clique diretamente do YouTube/Instagram, sem a necessidade de copiar links para a área de transferência. Isso torna o fluxo de trabalho muito mais rápido e profissional.\n## Problema\n1. **Falta de Bridge:** Não há uma extensão oficial que facilite o envio de URLs.\n2. **Redundância de Janelas:** Ao clicar em um link `kingo://` com o app já aberto, o Windows tenta abrir uma segunda instância do Kingo, resultando em duas janelas e erro de concorrência no banco de dados.\n## Proposta Técnica\n### 1. Extensão de Navegador (Kingo Bridge)\n* Criar uma extensão (Manifest v3) compatível com Chrome, Edge e Brave.\n* Adicionar um botão \"Baixar com Kingo\" abaixo dos vídeos ou um item no menu de contexto (botão direito).\n* A extensão chamará o protocolo: `kingo://open?url=[URL_VÍDEO]`.\n### 2. Implementação de SingleInstanceLock (Backend)\n* Utilizar a API nativa do **Wails v2** (`options.SingleInstanceLock`) no [main.go](cci:7://file:///c:/Downkingo/main.go:0:0-0:0).\n* Configurar um `UniqueId` para o projeto.\n* Implementar o callback `OnSecondInstanceLaunch` para:\n    * Trazer a janela existente para o primeiro plano (`WindowShow`).\n    * Capturar os argumentos da segunda instância.\n    * Emitir o evento `deep-link` para o frontend processar a URL na instância já aberta.\n## Dependências\n* Nenhuma (o Wails v2.11.0 já suporta SingleInstanceLock nativamente).\n## Tarefas\n- [ ] Criar projeto da extensão (HTML/JS básico para Manifest v3).\n- [ ] Implementar `SingleInstanceLock` no [main.go](cci:7://file:///c:/Downkingo/main.go:0:0-0:0).\n- [ ] Criar listener no [app.go](cci:7://file:///c:/Downkingo/app.go:0:0-0:0) para processar argumentos de segunda instância.\n- [ ] Validar se a URL recebida é segura antes de emitir o evento.\n- [ ] Testar fluxo: App aberto -> Clique na extensão -> URL preenchida automaticamente na janela existente.\n## Referências\n- Documentação Wails v2: [Single Instance Lock](https://wails.io/docs/guides/single-instance-lock)\n- Implementação inicial de Deep Link (Cold Start): `app.go:151-158`",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 1,
       "votes_up": 1,
       "votes_down": 0,
@@ -621,14 +621,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:43:35Z",
-      "shipped_at": "2026-02-14T06:00:17Z",
-      "friendly_title": "Extensão Oficial e Refinamento de Deep Links (Warm Start)"
+      "shipped_at": null,
+      "friendly_title": "feat(browser): Extensão Oficial e Refinamento de Deep Links (Warm Start)"
     },
     {
       "id": 35,
       "title": "feat(transcrição): atualizar Whisper.cpp para 1.9.1 e gerenciar runtime com integridade",
       "description": "## Ziel\nAktualisierung der lokalen Transkriptions-Engine auf Whisper.cpp 1.9.1, ohne von `latest`-Releases oder Legacy-Installationen abhängig zu sein.\n\n## Umfang\n- Version, URL und SHA-256 für das Windows x64-Paket festlegen.\n- Installation über Staging, Validierung und atomaren Austausch mit Rollback.\n- Pflichtdateien und `whisper-cli --version` validieren.\n- Modelle außerhalb des Runtime-Verzeichnisses aufbewahren.\n- Katalog, Größe und SHA-256 der Modelle validieren.\n- Quantisierte Modelle `small`, `medium` und `large-v3-turbo` anbieten.\n\n## Abnahmekriterien\n- [ ] Ungültige, unvollständige oder veraltete Runtime wird nicht aktiviert.\n- [ ] Das Update entfernt keine vorhandenen Modelle.\n- [ ] Installation und Modelle verfügen über Unit- und Opt-in-Integrationstests.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -641,14 +641,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:29:59Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Whisper.cpp auf 1.9.1 aktualisieren und Integrität verwalten"
     },
     {
       "id": 36,
       "title": "feat(transcrição): usar JSON oficial, detecção em uma execução e VAD opcional",
       "description": "## Ziel\nLokale Transkription stabiler, effizienter und unabhängig vom Terminal-Text machen.\n\n## Umfang\n- Audio/Video auf WAV PCM 16-Bit Mono 16 kHz mit FFmpeg normalisieren.\n- Erkennung und Transkription zusammen mit `-l auto -oj` ausführen.\n- Sprache, Offsets und Segmente über das offizielle JSON interpretieren.\n- TXT, SRT, VTT und DOCX in Go generieren.\n- Optionales Silero VAD v6.2.0 mit validiertem Download hinzufügen.\n- Exklusive temporäre Dateien verwenden.\n\n## Akzeptanzkriterien\n- [ ] Modell wird nur einmal pro Transkription geladen.\n- [ ] Parser ist nicht von der CLI-Textausgabe abhängig.\n- [ ] UTF-8, Zeitstempel und erkannte Sprache bleiben erhalten.\n- [ ] VAD bleibt standardmäßig deaktiviert und kann in der Oberfläche konfiguriert werden.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -661,14 +661,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:00Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Transkription mit offiziellem JSON, Einzelausführung und optionalem VAD"
     },
     {
       "id": 37,
       "title": "feat(download): gerenciar aria2c 1.37.0 com isolamento entre dev e produção",
       "description": "## Ziel\nBereitstellung des Turbo-Modus mit einer verifizierbaren und umgebungsisolierten aria2c-Runtime.\n\n## Umfang\n- aria2c 1.37.0 Paket, Größe und SHA-256-Hashes festlegen.\n- Ausführbare Datei, Version und Ausführungsfähigkeit validieren.\n- In temporäres Verzeichnis herunterladen, in Staging extrahieren und atomar aktivieren.\n- Dieselbe Validierung zwischen Launcher, Status und yt-dlp-Client teilen.\n- `%AppData%/DownKingo-dev` von `%AppData%/DownKingo` trennen.\n- Silent Fallback verhindern, wenn der aktivierte Turbo nicht verfügbar ist.\n\n## Akzeptanzkriterien\n- [ ] Dev-Installation ändert die Produktion nicht.\n- [ ] Leere, manipulierte oder inkompatible Dateien werden abgelehnt.\n- [ ] Validierungsfehler erzeugt eine explizite Fehlermeldung.\n- [ ] Festgelegte Runtime verfügt über einen Opt-in-Echtzeittest.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -681,14 +681,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:01Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "aria2c 1.37.0 mit Isolation zwischen Dev und Produktion"
     },
     {
       "id": 38,
       "title": "perf(download): otimizar yt-dlp/aria2c e corrigir telemetria de velocidade",
       "description": "## Ziel\nVerbesserung des lokalen Download-Durchsatzes und Anzeige einer konsistenten Geschwindigkeit für den Benutzer.\n\n## Umfang\n- Konfiguration von 16 aria2c-Verbindungen und minimalen Teilen von 1 MiB.\n- Anpassung von Verbindungen und DASH/HLS-Fragmenten ermöglichen.\n- Nativen Puffer und URL-Erneuerung bei Throttling konfigurieren.\n- HTTPS-Validierung aktiv lassen.\n- Durchschnittsgeschwindigkeit nach Prozentsatz und Gesamtgröße berechnen, falls verfügbar.\n- Messfenster beim Wechsel von Ziel/Format zurücksetzen.\n\n## Akzeptanzkriterien\n- [ ] aria2c erhält die vom Benutzer konfigurierten Parameter.\n- [ ] Fortschritt meldet Geschwindigkeit, ETA und Prozentsatz, ohne verschiedene Phasen zu vermischen.\n- [ ] Bei Fehlen berechenbarer Daten wird die Geschwindigkeit des Downloaders verwendet.\n- [ ] Tests decken das Parsing und den realen Aufruf von aria2c ab.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -702,14 +702,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:02Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "yt-dlp/aria2c optimieren und Geschwindigkeitstelemetrie"
     },
     {
       "id": 39,
       "title": "fix(instagram): detectar carrosséis e baixar imagens na resolução original",
       "description": "## Problem\nKarussell-Posts konnten als einzelnes Cover behandelt werden, und der Download nutzte möglicherweise ein reduziertes Vorschaubild, was zu einem Verlust an Auflösung und Qualität führte.\n\n## Umfang\n- Ein einzelnes OpenGraph-Bild als vorläufiges Ergebnis behandeln.\n- yt-dlp mit `--ignore-no-formats-error` für reine Bild-Karussells abfragen.\n- Elemente unter Beibehaltung der Reihenfolge deduplizieren.\n- Alle Thumbnails auswerten und den Kandidaten mit der höchsten Auflösung wählen.\n- Instagram-URLs ohne `stp`-Parameter für Größenänderung/Zuschneiden priorisieren.\n- `img_index` als initiale Auswahl berücksichtigen.\n\n## Akzeptanzkriterien\n- [ ] Post mit mehreren Bildern gibt alle Elemente zurück.\n- [ ] Download-Quelle ist nicht das reduzierte Vorschaubild.\n- [ ] Angezeigter Typ, Größe und Auflösung entsprechen der Quell-URL.\n- [ ] Der Regressions-Post mit acht Bildern besteht den Integrationstest.\n\n> Lokaler Fix in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -722,14 +722,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:02Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Karussells erkennen und Bilder in Originalauflösung laden"
     },
     {
       "id": 40,
       "title": "feat(imagens): adicionar download em lote, conversão, qualidade e escala",
       "description": "## Ziel\nAusgabesteuerung für Einzelbilder und Karussells bieten, ohne die Originaldatei zu opfern.\n\n## Umfang\n- Ausgewähltes Element oder alle Elemente des Karussells herunterladen.\n- Unterstützung für Original, JPG, PNG, WEBP und AVIF.\n- Skalierungen von 25% bis 200% zulassen.\n- Lanczos-Resizing über FFmpeg anwenden.\n- Qualität für verlustbehaftete Formate offenlegen.\n- Original-Bytes bei Original + 100% beibehalten.\n- Videos aus gemischten Karussells an die bestehende Warteschlange weiterleiten.\n\n## Akzeptanzkriterien\n- [ ] Original + 100% führt keine Konvertierung aus.\n- [ ] Optionen werden gleichermaßen auf Einzel- und Batch-Downloads angewendet.\n- [ ] Auflösungserhöhung wird nicht als Detailwiederherstellung beschrieben.\n- [ ] Gemischte Karussells verarbeiten Bilder und Videos in derselben Aktion.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -742,14 +742,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:03Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Batch-Download, Konvertierung und Skalierung von Bildern"
     },
     {
       "id": 41,
       "title": "feat(ui): unificar vídeos e imagens na experiência de Downloads",
       "description": "## Ziel\nDie robuste Video-Download-Oberfläche als zentralen Einstiegspunkt für Videos, Bilder und Karussells nutzen.\n\n## Umfang\n- Separate Video-/Bildeinträge im Menü und Dashboard durch Downloads ersetzen.\n- URL-Feld, Header, Turbo und visuelle Struktur des ursprünglichen Videobildschirms beibehalten.\n- YouTube, TikTok, Vimeo und direkte Videos in den bestehenden Flow leiten.\n- Instagram-, X/Twitter- und direkte Bild-Inspektoren im Ergebnisbereich rendern.\n- Warteschlange, Fortschritt, Geschwindigkeit, ETA, Abbruch und Verlauf für gefundene Videos wiederverwenden.\n\n## Akzeptanzkriterien\n- [ ] Es gibt keine konkurrierende Bildseite im Hauptfluss.\n- [ ] Ein einziges Feld akzeptiert alle unterstützten Typen.\n- [ ] Das spezifische Ergebnis dupliziert weder Header noch Formular.\n- [ ] Alte interne Zustände bleiben nur aus Kompatibilitätsgründen erhalten.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -762,14 +762,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Video- und Bild-Downloads vereinheitlichen"
     },
     {
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
       "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares acompanham apenas o modo claro/escuro.\n\n> Correções locais em desenvolvimento para a próxima versão.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -782,14 +782,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:04Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
-      "friendly_title": "corrigir layout da galeria, configurações rápidas e herança de tema"
+      "shipped_at": null,
+      "friendly_title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema"
     },
     {
       "id": 43,
       "title": "i18n: traduzir novos fluxos de downloads, imagens, Turbo e transcrição",
       "description": "## Ziel\nAlle neuen Funktionen in den fünf unterstützten Sprachen verfügbar halten.\n\n## Umfang\n- `pt-BR`, `en-US`, `es-ES`, `fr-FR` und `de-DE` aktualisieren.\n- Einheitliche Downloads, Karussell, Batch, Format, Skalierung und Qualität abdecken.\n- Turbo-Installation/Status und Schnelleinstellungen abdecken.\n- Whisper 1.9.1, VAD und quantisierte Modelle abdecken.\n- Flexible Texte für unterschiedliche Übersetzungslängen verwenden.\n\n## Akzeptanzkriterien\n- [ ] Keine Rohschlüssel erscheinen in der Benutzeroberfläche.\n- [ ] JSON-Dateien sind gültig.\n- [ ] Steuerelemente unterstützen die längsten Übersetzungen ohne Abschneiden.\n\n> Lokale Implementierung in Entwicklung für die nächste Version.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -802,14 +802,14 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:05Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "Neue Download-, Bild- und Transkriptions-Flows übersetzen"
     },
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
       "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
-      "status": "shipped",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
@@ -823,7 +823,7 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:06Z",
-      "shipped_at": "2026-07-11T21:40:08Z",
+      "shipped_at": null,
       "friendly_title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads"
     }
   ]
