@@ -223,20 +223,14 @@
   },
   "19": {
     "original_title": "feat(i18n): Suporte a 5 Idiomas",
-    "original_desc_hash": "###DescriçãoInternacionalizaçãocompletadainterfacedousuário.###DetalhesTécnicos-**Idiom_483",
+    "original_desc_hash": "###DescriçãoInternacionalizaçãocompletadainterfacedousuário.###DetalhesTécnicos-**Idiom_484",
     "title_i18n": {
-      "pt-BR": "Suporte a 5 Idiomas",
-      "en-US": "5-Language Support",
-      "es-ES": "Soporte para 5 Idiomas",
-      "fr-FR": "Support de 5 Langues",
-      "de-DE": "Unterstützung für 5 Sprachen"
+      "en-US": "Suporte a 5 Idiomas",
+      "pt-BR": "Suporte a 5 Idiomas"
     },
     "description_i18n": {
-      "pt-BR": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecção automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
-      "en-US": "### Description\nFull internationalization of the user interface.\n\n### Technical Details\n- **Languages:** \n  - 🇧🇷 Portuguese (Brazil) - Native\n  - 🇺🇸 English (US) - Native\n  - 🇪🇸 Spanish (basic/community)\n  - 🇫🇷 French (basic/community)\n  - 🇩🇪 German (basic/community)\n- **Technology:** Use of `i18next` in React and corresponding structure in Go.\n- **Detection:** Automatic detection of the operating system language on first use.\n\n### Status\n✅ Delivered in v2.0.0",
-      "es-ES": "### Descripción\nInternacionalización completa de la interfaz de usuario.\n\n### Detalles Técnicos\n- **Idiomas:** \n  - 🇧🇷 Portugués (Brasil) - Nativo\n  - 🇺🇸 Inglés (EE. UU.) - Nativo\n  - 🇪🇸 Español (básico/comunidad)\n  - 🇫🇷 Francés (básico/comunidad)\n  - 🇩🇪 Alemán (básico/comunidad)\n- **Tecnología:** Uso de `i18next` en React y estructura correspondiente en Go.\n- **Detección:** Detección automática del idioma del sistema operativo en el primer uso.\n\n### Estado\n✅ Entregado en v2.0.0",
-      "fr-FR": "### Description\nInternationalisation complète de l'interface utilisateur.\n\n### Détails Techniques\n- **Langues :** \n  - 🇧🇷 Portugais (Brésil) - Natif\n  - 🇺🇸 Anglais (US) - Natif\n  - 🇪🇸 Espagnol (basique/communauté)\n  - 🇫🇷 Français (basique/communauté)\n  - 🇩🇪 Allemand (basique/communauté)\n- **Technologie :** Utilisation de `i18next` dans React et structure correspondante dans Go.\n- **Détection :** Détection automatique de la langue du système d'exploitation lors de la première utilisation.\n\n### Statut\n✅ Livré dans la v2.0.0",
-      "de-DE": "### Beschreibung\nVollständige Internationalisierung der Benutzeroberfläche.\n\n### Technische Details\n- **Sprachen:** \n  - 🇧🇷 Portugiesisch (Brasilien) - Nativ\n  - 🇺🇸 Englisch (USA) - Nativ\n  - 🇪🇸 Spanisch (Basis/Community)\n  - 🇫🇷 Französisch (Basis/Community)\n  - 🇩🇪 Deutsch (Basis/Community)\n- **Technologie:** Verwendung von `i18next` in React und entsprechende Struktur in Go.\n- **Erkennung:** Automatische Erkennung der Betriebssystemsprache bei der ersten Verwendung.\n\n### Status\n✅ Geliefert in v2.0.0"
+      "en-US": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecç��o automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "pt-BR": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecç��o automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0"
     }
   },
   "20": {

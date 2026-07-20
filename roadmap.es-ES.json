@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-20T08:13:34.774Z",
+  "generated_at": "2026-07-20T09:01:23.087Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -134,7 +134,7 @@
       "id": 5,
       "title": "feat(network): Compartilhamento Local via QR Code (Magic Share)",
       "description": "## Contexto\nActualmente, después de descargar un video o imagen en Kingo (PC), el usuario no tiene una forma nativa y rápida de pasar este contenido al celular. Depender de la nube (Google Drive/WhatsApp) es lento y consume banda ancha innecesariamente.\n## Motivación\nCrear una experiencia de \"fricción cero\" donde el usuario solo apunta la cámara del celular a Kingo y la descarga comienza instantáneamente a través de la red local (P2P), aprovechando la velocidad máxima del Wi-Fi.\n## Problema\nTransferir archivos grandes de la PC a dispositivos móviles es un proceso tedioso que generalmente implica cables USB o subidas a servicios externos, lo que mata la agilidad de una aplicación de descarga.\n## Propuesta Técnica\nImplementar un **Servidor de Transmisión Efímero** en Go:\n1. **Backend (Go):** \n   - Utilizar `net/http` para subir un servidor web temporal en un puerto aleatorio.\n   - Implementar un sistema de **IP Discovery** para identificar la dirección de la PC en la red local (ej: 192.168.x.x).\n   - Servir el archivo di",
-      "status": "idea",
+      "status": "shipped",
       "votes": 1,
       "votes_up": 1,
       "votes_down": 1,
@@ -144,7 +144,7 @@
       "author": "Capman002",
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-04T20:34:40Z",
-      "shipped_at": null,
+      "shipped_at": "2026-07-20T09:01:04Z",
       "friendly_title": "Compartir Local vía Código QR (Magic Share)"
     },
     {
@@ -295,7 +295,7 @@
     {
       "id": 19,
       "title": "feat(i18n): Suporte a 5 Idiomas",
-      "description": "### Descripción\nInternacionalización completa de la interfaz de usuario.\n\n### Detalles Técnicos\n- **Idiomas:** \n  - 🇧🇷 Portugués (Brasil) - Nativo\n  - 🇺🇸 Inglés (EE. UU.) - Nativo\n  - 🇪🇸 Español (básico/comunidad)\n  - 🇫🇷 Francés (básico/comunidad)\n  - 🇩🇪 Alemán (básico/comunidad)\n- **Tecnología:** Uso de `i18next` en React y estructura correspondiente en Go.\n- **Detección:** Detección automática del idioma del sistema operativo en el primer uso.\n\n### Estado\n✅ Entregado en v2.0.0",
+      "description": "### Descrição\nInternacionalização completa da interface do usuário.\n\n### Detalhes Técnicos\n- **Idiomas:** \n  - 🇧🇷 Português (Brasil) - Nativo\n  - 🇺🇸 English (US) - Nativo\n  - 🇪🇸 Español (básico/comunidade)\n  - 🇫🇷 Français (básico/comunidade)\n  - 🇩🇪 Deutsch (básico/comunidade)\n- **Tecnologia:** Uso de `i18next` no React e estrutura correspondente no Go.\n- **Detecção:** Detecç��o automática do idioma do sistema operacional no primeiro uso.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -311,7 +311,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-01-08T15:03:01Z",
       "shipped_at": "2026-01-08T15:03:17Z",
-      "friendly_title": "Soporte para 5 Idiomas"
+      "friendly_title": "Suporte a 5 Idiomas"
     },
     {
       "id": 22,
