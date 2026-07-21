@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-21T21:48:08.634Z",
+  "generated_at": "2026-07-21T22:39:31.152Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -168,7 +168,7 @@
     {
       "id": 9,
       "title": "feat(storage): Migração para SQLite",
-      "description": "### Descrição\nMigra��ão do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMigração do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -626,7 +626,7 @@
     {
       "id": 35,
       "title": "feat(transcrição): atualizar Whisper.cpp para 1.9.1 e gerenciar runtime com integridade",
-      "description": "## Objetivo\nAtualizar o motor local de transcrição para Whisper.cpp 1.9.1 sem depender de releases `latest` ou instalações legadas.\n\n## Escopo\n- Fixar versão, URL e SHA-256 do pacote Windows x64.\n- Instalar por staging, valida��ão e substituição atômica com rollback.\n- Validar arquivos obrigatórios e `whisper-cli --version`.\n- Manter modelos fora do diretório do runtime.\n- Validar catálogo, tamanho e SHA-256 dos modelos.\n- Oferecer modelos quantizados `small`, `medium` e `large-v3-turbo`.\n\n## Critérios de aceite\n- [ ] Runtime inválido, incompleto ou legado não é ativado.\n- [ ] Atualização não remove modelos existentes.\n- [ ] Instalação e modelos possuem testes unitários e de integração opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nAtualizar o motor local de transcrição para Whisper.cpp 1.9.1 sem depender de releases `latest` ou instalações legadas.\n\n## Escopo\n- Fixar versão, URL e SHA-256 do pacote Windows x64.\n- Instalar por staging, validação e substituição atômica com rollback.\n- Validar arquivos obrigatórios e `whisper-cli --version`.\n- Manter modelos fora do diretório do runtime.\n- Validar catálogo, tamanho e SHA-256 dos modelos.\n- Oferecer modelos quantizados `small`, `medium` e `large-v3-turbo`.\n\n## Critérios de aceite\n- [ ] Runtime inválido, incompleto ou legado não é ativado.\n- [ ] Atualização não remove modelos existentes.\n- [ ] Instalação e modelos possuem testes unitários e de integração opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
@@ -666,7 +666,7 @@
     {
       "id": 37,
       "title": "feat(download): gerenciar aria2c 1.37.0 com isolamento entre dev e produção",
-      "description": "## Objetivo\nDisponibilizar o Modo Turbo com um runtime aria2c verificável e isolado por ambiente.\n\n## Escopo\n- Fixar pacote aria2c 1.37.0, tamanho e hashes SHA-256.\n- Validar executável, versão e capacidade de execu��ão.\n- Baixar em temporário, extrair em staging e ativar atomicamente.\n- Compartilhar a mesma validação entre launcher, status e cliente yt-dlp.\n- Separar `%AppData%/DownKingo-dev` de `%AppData%/DownKingo`.\n- Impedir fallback silencioso quando o Turbo habilitado estiver indisponível.\n\n## Critérios de aceite\n- [ ] Instalação dev não altera produção.\n- [ ] Arquivos vazios, adulterados ou incompatíveis são rejeitados.\n- [ ] Falha de validação produz erro explícito.\n- [ ] Runtime fixado possui teste real opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nDisponibilizar o Modo Turbo com um runtime aria2c verificável e isolado por ambiente.\n\n## Escopo\n- Fixar pacote aria2c 1.37.0, tamanho e hashes SHA-256.\n- Validar executável, versão e capacidade de execução.\n- Baixar em temporário, extrair em staging e ativar atomicamente.\n- Compartilhar a mesma validação entre launcher, status e cliente yt-dlp.\n- Separar `%AppData%/DownKingo-dev` de `%AppData%/DownKingo`.\n- Impedir fallback silencioso quando o Turbo habilitado estiver indisponível.\n\n## Critérios de aceite\n- [ ] Instalação dev não altera produção.\n- [ ] Arquivos vazios, adulterados ou incompatíveis são rejeitados.\n- [ ] Falha de validação produz erro explícito.\n- [ ] Runtime fixado possui teste real opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
