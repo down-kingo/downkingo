@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-21T16:45:17.691Z",
+  "generated_at": "2026-07-21T18:01:26.324Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -788,7 +788,7 @@
     {
       "id": 43,
       "title": "i18n: traduzir novos fluxos de downloads, imagens, Turbo e transcrição",
-      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flex��veis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flexíveis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
