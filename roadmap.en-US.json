@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-22T07:17:30.607Z",
+  "generated_at": "2026-07-22T09:41:13.679Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -728,7 +728,7 @@
     {
       "id": 40,
       "title": "feat(imagens): adicionar download em lote, conversão, qualidade e escala",
-      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não �� descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não é descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
