@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-24T14:27:13.928Z",
+  "generated_at": "2026-07-24T16:01:46.044Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -112,7 +112,7 @@
     {
       "id": 12,
       "title": "feat(download): Melhorias no Downloader de Vídeo",
-      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n�� Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -169,7 +169,7 @@
     {
       "id": 9,
       "title": "feat(storage): Migração para SQLite",
-      "description": "### Descrição\nMigra��ão do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMigração do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -646,7 +646,7 @@
     },
     {
       "id": 36,
-      "title": "feat(transcrição): usar JSON oficial, detecção em uma execução e VAD opcional",
+      "title": "feat(transcrição): usar JSON oficial, detecção em uma execu��ão e VAD opcional",
       "description": "## Objetivo\nTornar a transcrição local mais estável, eficiente e independente do texto exibido no terminal.\n\n## Escopo\n- Normalizar áudio/vídeo para WAV PCM 16-bit mono 16 kHz com FFmpeg.\n- Executar detecção e transcrição juntas com `-l auto -oj`.\n- Interpretar idioma, offsets e segmentos pelo JSON oficial.\n- Gerar TXT, SRT, VTT e DOCX no Go.\n- Adicionar VAD Silero v6.2.0 opcional com download validado.\n- Usar arquivos temporários exclusivos.\n\n## Critérios de aceite\n- [ ] Modelo é carregado apenas uma vez por transcrição.\n- [ ] Parser não depende da saída textual do CLI.\n- [ ] UTF-8, timestamps e idioma detectado são preservados.\n- [ ] VAD permanece desativado por padrão e pode ser configurado na interface.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
@@ -662,7 +662,7 @@
       "author_avatar": "https://avatars.githubusercontent.com/u/98176221?v=4",
       "created_at": "2026-07-11T21:30:00Z",
       "shipped_at": null,
-      "friendly_title": "feat(transcrição): usar JSON oficial, detecção em uma execução e VAD opcional"
+      "friendly_title": "feat(transcrição): usar JSON oficial, detecção em uma execu��ão e VAD opcional"
     },
     {
       "id": 37,
