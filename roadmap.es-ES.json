@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-24T04:21:53.803Z",
+  "generated_at": "2026-07-24T06:43:09.778Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -169,7 +169,7 @@
     {
       "id": 9,
       "title": "feat(storage): Migração para SQLite",
-      "description": "### Descrição\nMigração do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMigra��ão do sistema de armazenamento de arquivos JSON planos para um banco de dados relacional embarcado (SQLite).\n\n### Detalhes Técnicos\n- **Engine:** Implementação usando `modernc.org/sqlite` (versão pure Go, sem dependência de CGO).\n- **Schema:** Criação de tabelas normalizadas para `history`, `queue` e `settings`.\n- **Concorrência:** Suporte seguro a acesso concorrente (thread-safe).\n- **Migração:** Lógica para garantir a integridade dos dados ao atualizar da versão 1.x.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
