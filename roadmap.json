@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-07-30T18:39:42.033Z",
+  "generated_at": "2026-07-30T20:07:04.481Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -626,7 +626,7 @@
     {
       "id": 35,
       "title": "feat(transcrição): atualizar Whisper.cpp para 1.9.1 e gerenciar runtime com integridade",
-      "description": "## Objetivo\nAtualizar o motor local de transcrição para Whisper.cpp 1.9.1 sem depender de releases `latest` ou instalações legadas.\n\n## Escopo\n- Fixar versão, URL e SHA-256 do pacote Windows x64.\n- Instalar por staging, validação e substituição atômica com rollback.\n- Validar arquivos obrigatórios e `whisper-cli --version`.\n- Manter modelos fora do diretório do runtime.\n- Validar catálogo, tamanho e SHA-256 dos modelos.\n- Oferecer modelos quantizados `small`, `medium` e `large-v3-turbo`.\n\n## Critérios de aceite\n- [ ] Runtime inválido, incompleto ou legado não é ativado.\n- [ ] Atualização não remove modelos existentes.\n- [ ] Instalação e modelos possuem testes unitários e de integração opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nAtualizar o motor local de transcrição para Whisper.cpp 1.9.1 sem depender de releases `latest` ou instalações legadas.\n\n## Escopo\n- Fixar versão, URL e SHA-256 do pacote Windows x64.\n- Instalar por staging, validação e substituição atômica com rollback.\n- Validar arquivos obrigatórios e `whisper-cli --version`.\n- Manter modelos fora do diretório do runtime.\n- Validar catálogo, tamanho e SHA-256 dos modelos.\n- Oferecer modelos quantizados `small`, `medium` e `large-v3-turbo`.\n\n## Critérios de aceite\n- [ ] Runtime inválido, incompleto ou legado não �� ativado.\n- [ ] Atualização não remove modelos existentes.\n- [ ] Instalação e modelos possuem testes unitários e de integração opt-in.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
