@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-01T18:43:30.596Z",
+  "generated_at": "2026-08-01T19:58:48.208Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -547,7 +547,7 @@
     {
       "id": 30,
       "title": "feat(settings): Configurações de Aparência",
-      "description": "### Descrição\nAjustes finos da interface do usuário acessíveis pelo painel de configurações.\n\n### Detalhes Técnicos\n- **Tema:** Seleção explícita de tema (Claro/Escuro/Auto).\n- **Cores:** Seletor de cor de destaque (Accent Color).\n- **Densidade:** Ajuste global de espaçamento (padding/margin) dos componentes.\n- **Animações:** Opção para reduzir movimento (Reduced Motion).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nAjustes finos da interface do usuário acessíveis pelo painel de configurações.\n\n### Detalhes Técnicos\n- **Tema:** Seleção explícita de tema (Claro/Escuro/Auto).\n- **Cores:** Seletor de cor de destaque (Accent Color).\n- **Densidade:** Ajuste global de espa��amento (padding/margin) dos componentes.\n- **Animações:** Opção para reduzir movimento (Reduced Motion).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
