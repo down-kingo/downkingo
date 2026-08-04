@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-04T14:41:55.637Z",
+  "generated_at": "2026-08-04T16:32:40.693Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -358,7 +358,7 @@
     {
       "id": 26,
       "title": "feat(ui): Toast de Clipboard",
-      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detec��ão:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -728,7 +728,7 @@
     {
       "id": 40,
       "title": "feat(imagens): adicionar download em lote, conversão, qualidade e escala",
-      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não �� descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não é descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
