@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-07T20:51:18.298Z",
+  "generated_at": "2026-08-07T21:24:06.973Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -748,7 +748,7 @@
     {
       "id": 41,
       "title": "feat(ui): unificar vídeos e imagens na experiência de Downloads",
-      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e v��deos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma página de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e vídeos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma página de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
@@ -769,7 +769,7 @@
       "id": 42,
       "title": "fix(ui): corrigir layout da galeria, configurações rápidas e herança de tema",
       "description": "## Problema\nA galeria desperdiçava espaço, controles podiam truncar textos, o painel rápido não tinha hierarquia clara e alguns destaques permaneciam azuis em vez de seguir a paleta selecionada.\n\n## Escopo\n- Tornar galeria responsiva e remover alturas fixas ligadas à viewport.\n- Remover valores falsos como `0 Bytes` e badges internos de depuração.\n- Estilizar seletores de formato/escala conforme o design do app.\n- Dar área mínima de 40×40 px à engrenagem e separar Colar/Limpar.\n- Adicionar cabeçalho, fechamento, foco, `Esc` e agrupamento ao painel rápido.\n- Aplicar `theme` e `data-color` globalmente antes da primeira pintura.\n- Fazer “Ver histórico completo” e “Downloader” usarem tokens semânticos `surface-*`, sem assumir a cor primária.\n\n## Critérios de aceite\n- [ ] Layout ocupa adequadamente janelas grandes e pequenas.\n- [ ] Traduções não são truncadas nos seletores.\n- [ ] Painel rápido funciona por mouse e teclado.\n- [ ] Ações de destaque acompanham a cor primária; textos auxiliares acompanham apenas o modo claro/escuro.\n\n> Correções locais em desenvolvimento para a próxima versão.",
-      "status": "idea",
+      "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
       "votes_down": 0,
