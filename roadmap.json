@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-08T15:37:32.191Z",
+  "generated_at": "2026-08-08T16:11:49.277Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -420,7 +420,7 @@
     {
       "id": 8,
       "title": "feat(core): Reescrita Completa da Arquitetura",
-      "description": "### Descrição\nReescrita completa da arquitetura do aplicativo para a versão 2.0.0, visando resolver dívidas técnicas e preparar o terreno para novas funcionalidades.\n\n### Detalhes Técnicos\n- **Camadas:** Adoção de arquitetura em camadas (Service-Repository-Handler) para melhor separação de responsabilidades.\n- **Desacoplamento:** Separação clara entre a lógica de negócio (Go) e a interface (React/TypeScript).\n- **Injeção de Dependências:** Melhoria no gerenciamento de dependências internas.\n- **Performance:** Otimização de uso de memória e CPU através de profiling e refatoração.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nReescrita completa da arquitetura do aplicativo para a versão 2.0.0, visando resolver dívidas t��cnicas e preparar o terreno para novas funcionalidades.\n\n### Detalhes Técnicos\n- **Camadas:** Adoção de arquitetura em camadas (Service-Repository-Handler) para melhor separação de responsabilidades.\n- **Desacoplamento:** Separação clara entre a lógica de negócio (Go) e a interface (React/TypeScript).\n- **Injeção de Dependências:** Melhoria no gerenciamento de dependências internas.\n- **Performance:** Otimização de uso de memória e CPU através de profiling e refatoração.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
