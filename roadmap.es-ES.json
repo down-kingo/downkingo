@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-11T20:11:23.734Z",
+  "generated_at": "2026-08-11T21:06:46.021Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -484,7 +484,7 @@
     {
       "id": 32,
       "title": "feat(deep-link): Suporte a Links kingo://",
-      "description": "### Descrição\nIntegração profunda com o sistema operacional via protocolo customizado URL Scheme.\n\n### Detalhes Técnicos\n- **Protocolos:** Registro dos protocolos `kingo://` e `downkingo://` no registro do Windows/Linux/macOS.\n- **Parsing:** Capacidade de interpretar e limpar links passados via argumento na inicialização.\n- **Browser:** Permite criar bookmarklets ou extensões que enviam o link direto para o app.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nIntegração profunda com o sistema operacional via protocolo customizado URL Scheme.\n\n### Detalhes Técnicos\n- **Protocolos:** Registro dos protocolos `kingo://` e `downkingo://` no registro do Windows/Linux/macOS.\n- **Parsing:** Capacidade de interpretar e limpar links passados via argumento na inicialização.\n- **Browser:** Permite criar bookmarklets ou extensões que enviam o link direto para o app.\n\n### Status\n��� Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
