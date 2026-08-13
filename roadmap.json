@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-13T20:56:41.704Z",
+  "generated_at": "2026-08-13T21:55:22.105Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -315,7 +315,7 @@
     {
       "id": 22,
       "title": "feat(roadmap): Modal de Sugestões",
-      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usu��rio recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
