@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-15T16:54:11.547Z",
+  "generated_at": "2026-08-15T17:28:07.470Z",
   "lang": "fr-FR",
   "source": {
     "owner": "down-kingo",
@@ -708,7 +708,7 @@
     {
       "id": 39,
       "title": "fix(instagram): detectar carrosséis e baixar imagens na resolução original",
-      "description": "## Problema\nPosts em carrossel podiam ser tratados como uma única capa e o download podia usar uma miniatura reduzida de preview, causando perda de resolução e qualidade.\n\n## Escopo\n- Tratar uma única imagem OpenGraph como resultado provisório.\n- Consultar yt-dlp com `--ignore-no-formats-error` para carrosséis só de imagens.\n- Deduplicar itens preservando a ordem.\n- Avaliar todas as thumbnails e escolher a candidata de maior resolução.\n- Priorizar URLs do Instagram sem parâmetros `stp` de resize/crop.\n- Respeitar `img_index` como seleção inicial.\n\n## Critérios de aceite\n- [ ] Post com múltiplas imagens retorna todos os itens.\n- [ ] Fonte do download não é a imagem reduzida do preview.\n- [ ] Tipo, tamanho e resolução exibidos correspondem à URL de origem.\n- [ ] O post de regressão com oito imagens passa no teste de integração.\n\n> Correção local em desenvolvimento para a próxima versão.",
+      "description": "## Problema\nPosts em carrossel podiam ser tratados como uma única capa e o download podia usar uma miniatura reduzida de preview, causando perda de resolu��ão e qualidade.\n\n## Escopo\n- Tratar uma única imagem OpenGraph como resultado provisório.\n- Consultar yt-dlp com `--ignore-no-formats-error` para carrosséis só de imagens.\n- Deduplicar itens preservando a ordem.\n- Avaliar todas as thumbnails e escolher a candidata de maior resolução.\n- Priorizar URLs do Instagram sem parâmetros `stp` de resize/crop.\n- Respeitar `img_index` como seleção inicial.\n\n## Critérios de aceite\n- [ ] Post com múltiplas imagens retorna todos os itens.\n- [ ] Fonte do download não é a imagem reduzida do preview.\n- [ ] Tipo, tamanho e resolução exibidos correspondem à URL de origem.\n- [ ] O post de regressão com oito imagens passa no teste de integração.\n\n> Correção local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
