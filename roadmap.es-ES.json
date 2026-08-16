@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-16T23:00:32.563Z",
+  "generated_at": "2026-08-16T23:28:00.620Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -748,7 +748,7 @@
     {
       "id": 41,
       "title": "feat(ui): unificar vídeos e imagens na experiência de Downloads",
-      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e vídeos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma página de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e vídeos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma p��gina de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
