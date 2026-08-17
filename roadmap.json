@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-17T11:43:34.698Z",
+  "generated_at": "2026-08-17T12:01:28.199Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -27,7 +27,7 @@
     {
       "id": 20,
       "title": "feat(roadmap): Build-in-Public com Votação",
-      "description": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nIntegração do Roadmap do produto diretamente no aplicativo.\n\n### Detalhes Técnicos\n- **Visualização:** Renderização das colunas \"Em Pauta\", \"Planejando\", \"Construindo\" e \"No Ar\" usando dados do GitHub Projects.\n- **Interação:** Possibilidade de votar (reações) em cards para influenciar a priorização.\n- **Arquitetura:** Sistema híbrido: leitura rápida via CDN (JSON estático gerado periodicamente) e escritas (votos) via API do GitHub.\n\n### Status\n�� Entregue na v2.0.0",
       "status": "shipped",
       "votes": 1,
       "votes_up": 1,
