@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-18T07:46:20.858Z",
+  "generated_at": "2026-08-18T08:16:06.821Z",
   "lang": "pt-BR",
   "source": {
     "owner": "down-kingo",
@@ -463,7 +463,7 @@
     {
       "id": 25,
       "title": "feat(ux): Onboarding Interativo",
-      "description": "### Descrição\nExperiência de boas-vindas para novos usuários configurarem o app rapidamente.\n\n### Detalhes Técnicos\n- **Fluxo:** Sequência de passos na primeira inicialização.\n- **Configurações:** Definição inicial de idioma e tema.\n- **Legal:** Apresentação e aceite dos termos de responsabilidade (disclaimer).\n- **State:** Persistência do estado \"Onboarding Completed\" para não exibir novamente.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nExperiência de boas-vindas para novos usu��rios configurarem o app rapidamente.\n\n### Detalhes Técnicos\n- **Fluxo:** Sequência de passos na primeira inicialização.\n- **Configurações:** Definição inicial de idioma e tema.\n- **Legal:** Apresentação e aceite dos termos de responsabilidade (disclaimer).\n- **State:** Persistência do estado \"Onboarding Completed\" para não exibir novamente.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação cont��m comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
