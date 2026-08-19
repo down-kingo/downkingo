@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-19T05:37:51.984Z",
+  "generated_at": "2026-08-19T06:16:51.112Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -727,7 +727,7 @@
     {
       "id": 40,
       "title": "feat(imagens): adicionar download em lote, conversão, qualidade e escala",
-      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não �� descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nOferecer controle de saída para imagens individuais e carrosséis sem sacrificar o arquivo original.\n\n## Escopo\n- Baixar item selecionado ou todos os itens do carrossel.\n- Suportar Original, JPG, PNG, WEBP e AVIF.\n- Permitir escalas de 25% a 200%.\n- Aplicar Lanczos no redimensionamento via FFmpeg.\n- Expor qualidade para formatos com perdas.\n- Preservar bytes originais em Original + 100%.\n- Encaminhar vídeos de carrosséis mistos para a fila existente.\n\n## Critérios de aceite\n- [ ] Original + 100% não executa conversão.\n- [ ] Opções são aplicadas igualmente ao individual e ao lote.\n- [ ] Aumento de resolução não é descrito como recuperação de detalhes.\n- [ ] Carrossel misto processa imagens e vídeos na mesma ação.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
@@ -807,7 +807,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integra��ões reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
