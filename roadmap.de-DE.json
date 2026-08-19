@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-19T19:42:31.954Z",
+  "generated_at": "2026-08-19T20:01:48.718Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -687,7 +687,7 @@
     {
       "id": 38,
       "title": "perf(download): otimizar yt-dlp/aria2c e corrigir telemetria de velocidade",
-      "description": "## Objetivo\nMelhorar a vazão de downloads locais e apresentar velocidade coerente ao usuário.\n\n## Escopo\n- Configurar 16 conexões aria2c e partes mínimas de 1 MiB.\n- Permitir ajuste de conexões e fragmentos DASH/HLS.\n- Configurar buffer nativo e renovação de URL em throttling.\n- Manter validação HTTPS ativa.\n- Calcular velocidade média pelo percentual e tamanho total quando disponíveis.\n- Reiniciar a janela de medição na troca de destino/formato.\n\n## Critérios de aceite\n- [ ] aria2c recebe os parâmetros configurados pelo usuário.\n- [ ] Progresso informa velocidade, ETA e percentual sem misturar fases distintas.\n- [ ] Ausência de dados calculáveis usa a velocidade do downloader.\n- [ ] Testes cobrem parsing e invocação real do aria2c.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nMelhorar a vazão de downloads locais e apresentar velocidade coerente ao usuário.\n\n## Escopo\n- Configurar 16 conexões aria2c e partes mínimas de 1 MiB.\n- Permitir ajuste de conexões e fragmentos DASH/HLS.\n- Configurar buffer nativo e renovação de URL em throttling.\n- Manter validação HTTPS ativa.\n- Calcular velocidade média pelo percentual e tamanho total quando disponíveis.\n- Reiniciar a janela de mediç��o na troca de destino/formato.\n\n## Critérios de aceite\n- [ ] aria2c recebe os parâmetros configurados pelo usuário.\n- [ ] Progresso informa velocidade, ETA e percentual sem misturar fases distintas.\n- [ ] Ausência de dados calculáveis usa a velocidade do downloader.\n- [ ] Testes cobrem parsing e invocação real do aria2c.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
