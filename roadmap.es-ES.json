@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-22T22:51:02.897Z",
+  "generated_at": "2026-08-22T23:02:34.680Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -337,7 +337,7 @@
     {
       "id": 23,
       "title": "feat(ui): Tema Claro/Escuro",
-      "description": "### Descriç��o\nSuporte completo a temas visuais (Claro e Escuro).\n\n### Detalhes Técnicos\n- **Modos:**\n  - **Auto:** Segue a preferência do sistema operacional.\n  - **Light/Dark:** Definição manual pelo usuário.\n- **Consistência:** Aplicação de tokens de cor em todos os compoentes para garantir contraste adequado em ambos os modos.\n- **Transições:** Transições suaves entre trocas de tema.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nSuporte completo a temas visuais (Claro e Escuro).\n\n### Detalhes Técnicos\n- **Modos:**\n  - **Auto:** Segue a preferência do sistema operacional.\n  - **Light/Dark:** Definição manual pelo usuário.\n- **Consistência:** Aplicação de tokens de cor em todos os compoentes para garantir contraste adequado em ambos os modos.\n- **Transições:** Transições suaves entre trocas de tema.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -505,7 +505,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para efici��ncia.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
