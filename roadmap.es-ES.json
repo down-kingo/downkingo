@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-22T22:30:06.397Z",
+  "generated_at": "2026-08-22T22:51:02.897Z",
   "lang": "es-ES",
   "source": {
     "owner": "down-kingo",
@@ -337,7 +337,7 @@
     {
       "id": 23,
       "title": "feat(ui): Tema Claro/Escuro",
-      "description": "### Descrição\nSuporte completo a temas visuais (Claro e Escuro).\n\n### Detalhes Técnicos\n- **Modos:**\n  - **Auto:** Segue a preferência do sistema operacional.\n  - **Light/Dark:** Definição manual pelo usuário.\n- **Consistência:** Aplicação de tokens de cor em todos os compoentes para garantir contraste adequado em ambos os modos.\n- **Transições:** Transições suaves entre trocas de tema.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descriç��o\nSuporte completo a temas visuais (Claro e Escuro).\n\n### Detalhes Técnicos\n- **Modos:**\n  - **Auto:** Segue a preferência do sistema operacional.\n  - **Light/Dark:** Definição manual pelo usuário.\n- **Consistência:** Aplicação de tokens de cor em todos os compoentes para garantir contraste adequado em ambos os modos.\n- **Transições:** Transições suaves entre trocas de tema.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -505,7 +505,7 @@
     {
       "id": 33,
       "title": "feat(clipboard): Monitor V2 com Adaptive Backoff",
-      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para eficiência.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nSegunda versão do monitor de área de transferência, otimizado para efici��ncia.\n\n### Detalhes Técnicos\n- **Adaptive Backoff:** Algoritmo que ajusta a frequência de polling baseada na atividade do usuário (aumenta o intervalo quando ocioso).\n- **Regex:** Compilação otimizada de expressões regulares para detecção de URLs.\n- **Filters:** Ignora automaticamente tipos de conteúdo irrelevantes (texto puro sem URL, arquivos).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -748,7 +748,7 @@
     {
       "id": 41,
       "title": "feat(ui): unificar vídeos e imagens na experiência de Downloads",
-      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e vídeos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma p��gina de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nUsar a interface robusta de download de vídeos como entrada única para vídeos, imagens e carrosséis.\n\n## Escopo\n- Substituir entradas separadas de Vídeos/Imagens por Downloads no menu e dashboard.\n- Manter campo de URL, cabeçalho, Turbo e estrutura visual da tela original de vídeos.\n- Rotear YouTube, TikTok, Vimeo e vídeos diretos para o fluxo existente.\n- Renderizar o inspetor de Instagram, X/Twitter e imagens diretas na área de resultados.\n- Reutilizar fila, progresso, velocidade, ETA, cancelamento e histórico para vídeos encontrados.\n\n## Critérios de aceite\n- [ ] Não existe uma página de imagens concorrente no fluxo principal.\n- [ ] Um único campo aceita todos os tipos suportados.\n- [ ] O resultado específico não duplica cabeçalho nem formulário.\n- [ ] Estados internos antigos permanecem apenas para compatibilidade.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
