@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-24T02:51:43.302Z",
+  "generated_at": "2026-08-24T03:40:33.306Z",
   "source": {
     "owner": "down-kingo",
     "repo": "downkingo",
@@ -111,7 +111,7 @@
     {
       "id": 12,
       "title": "feat(download): Melhorias no Downloader de Vídeo",
-      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restriç��es regionais).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -315,7 +315,7 @@
     {
       "id": 22,
       "title": "feat(roadmap): Modal de Sugestões",
-      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usu��rio recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -546,7 +546,7 @@
     {
       "id": 30,
       "title": "feat(settings): Configurações de Aparência",
-      "description": "### Descrição\nAjustes finos da interface do usuário acessíveis pelo painel de configurações.\n\n### Detalhes Técnicos\n- **Tema:** Seleção explícita de tema (Claro/Escuro/Auto).\n- **Cores:** Seletor de cor de destaque (Accent Color).\n- **Densidade:** Ajuste global de espaçamento (padding/margin) dos componentes.\n- **Animações:** Opção para reduzir movimento (Reduced Motion).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nAjustes finos da interface do usuário acessíveis pelo painel de configurações.\n\n### Detalhes Técnicos\n- **Tema:** Seleção explícita de tema (Claro/Escuro/Auto).\n- **Cores:** Seletor de cor de destaque (Accent Color).\n- **Densidade:** Ajuste global de espa��amento (padding/margin) dos componentes.\n- **Animações:** Opção para reduzir movimento (Reduced Motion).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -787,7 +787,7 @@
     {
       "id": 43,
       "title": "i18n: traduzir novos fluxos de downloads, imagens, Turbo e transcrição",
-      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flex��veis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flexíveis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
