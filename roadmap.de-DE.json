@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-08-24T01:50:36.576Z",
+  "generated_at": "2026-08-24T02:51:43.302Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -316,7 +316,7 @@
     {
       "id": 22,
       "title": "feat(roadmap): Modal de Sugestões",
-      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usuário recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nCanal direto para usuários enviarem sugestões de novas funcionalidades ou reportarem bugs.\n\n### Detalhes Técnicos\n- **Integração:** Cria automaticamente uma Issue no repositório do GitHub com a tag adequada.\n- **Formulário:** Interface limpa para título e descrição da sugestão.\n- **Transparência:** O usu��rio recebe o link da issue criada para acompanhar o progresso.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -358,7 +358,7 @@
     {
       "id": 26,
       "title": "feat(ui): Toast de Clipboard",
-      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detec��ão:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -788,7 +788,7 @@
     {
       "id": 43,
       "title": "i18n: traduzir novos fluxos de downloads, imagens, Turbo e transcrição",
-      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flexíveis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nManter todos os recursos novos disponíveis nos cinco idiomas suportados.\n\n## Escopo\n- Atualizar `pt-BR`, `en-US`, `es-ES`, `fr-FR` e `de-DE`.\n- Cobrir Downloads unificado, carrossel, lote, formato, escala e qualidade.\n- Cobrir instalação/estado do Turbo e configurações rápidas.\n- Cobrir Whisper 1.9.1, VAD e modelos quantizados.\n- Usar textos flex��veis para diferentes comprimentos de tradução.\n\n## Critérios de aceite\n- [ ] Nenhuma chave aparece crua na interface.\n- [ ] Arquivos JSON são válidos.\n- [ ] Controles suportam as traduções mais longas sem corte.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
