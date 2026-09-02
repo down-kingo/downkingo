@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-09-01T22:06:32.635Z",
+  "generated_at": "2026-09-02T00:03:32.184Z",
   "lang": "de-DE",
   "source": {
     "owner": "down-kingo",
@@ -112,7 +112,7 @@
     {
       "id": 12,
       "title": "feat(download): Melhorias no Downloader de Vídeo",
-      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restri��ões regionais).\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nMelhorias significativas na estabilidade e performance do downloader de vídeos (baseado em yt-dlp).\n\n### Detalhes Técnicos\n- **Atualização:** Mecanismo para manter o yt-dlp sempre atualizado.\n- **Formatos:** Lógica aprimorada para seleção automática do melhor formato de vídeo/áudio.\n- **Metadata:** Melhor extração e tratamento de metadados (título, thumbnail, duração).\n- **Tratamento de Erros:** Resolução de problemas comuns (throttling, cookies, restrições regionais).\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -358,7 +358,7 @@
     {
       "id": 26,
       "title": "feat(ui): Toast de Clipboard",
-      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detecção:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nNotificação discreta e interativa ao detectar links suportados na área de transferência.\n\n### Detalhes Técnicos\n- **Detec��ão:** Monitoramento passivo do clipboard.\n- **UI:** Toast desliza na tela oferecendo a ação de download imediato.\n- **UX:** Evita interrupção do fluxo de trabalho do usuário, sendo \"Opt-in\".\n- **Inteligência:** Só aparece para links válidos de vídeo/imagem.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
