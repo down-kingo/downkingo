@@ -1,6 +1,6 @@
 {
   "version": "2.1.0",
-  "generated_at": "2026-09-14T22:32:46.012Z",
+  "generated_at": "2026-09-15T00:51:18.313Z",
   "lang": "en-US",
   "source": {
     "owner": "down-kingo",
@@ -421,7 +421,7 @@
     {
       "id": 8,
       "title": "feat(core): Reescrita Completa da Arquitetura",
-      "description": "### Descrição\nReescrita completa da arquitetura do aplicativo para a versão 2.0.0, visando resolver dívidas técnicas e preparar o terreno para novas funcionalidades.\n\n### Detalhes Técnicos\n- **Camadas:** Adoção de arquitetura em camadas (Service-Repository-Handler) para melhor separação de responsabilidades.\n- **Desacoplamento:** Separação clara entre a lógica de negócio (Go) e a interface (React/TypeScript).\n- **Injeção de Dependências:** Melhoria no gerenciamento de dependências internas.\n- **Performance:** Otimização de uso de memória e CPU através de profiling e refatoração.\n\n### Status\n✅ Entregue na v2.0.0",
+      "description": "### Descrição\nReescrita completa da arquitetura do aplicativo para a versão 2.0.0, visando resolver dívidas t��cnicas e preparar o terreno para novas funcionalidades.\n\n### Detalhes Técnicos\n- **Camadas:** Adoção de arquitetura em camadas (Service-Repository-Handler) para melhor separação de responsabilidades.\n- **Desacoplamento:** Separação clara entre a lógica de negócio (Go) e a interface (React/TypeScript).\n- **Injeção de Dependências:** Melhoria no gerenciamento de dependências internas.\n- **Performance:** Otimização de uso de memória e CPU através de profiling e refatoração.\n\n### Status\n✅ Entregue na v2.0.0",
       "status": "shipped",
       "votes": 0,
       "votes_up": 0,
@@ -808,7 +808,7 @@
     {
       "id": 44,
       "title": "test/docs: cobrir runtimes e documentar arquitetura de transcrição e downloads",
-      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integra��ões reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
+      "description": "## Objetivo\nRegistrar decisões técnicas e proteger os novos fluxos contra regressões.\n\n## Escopo\n- Documentar versões, hashes, diretórios, parâmetros e limitações.\n- Documentar isolamento dev/produção e checklist de atualização.\n- Adicionar testes unitários de runtime, parsing, conversão, roteamento e thumbnails.\n- Adicionar integrações opt-in para Whisper, aria2c, yt-dlp, FFmpeg e Instagram.\n- Regenerar bindings Wails após alterações dos contratos Go.\n\n## Critérios de aceite\n- [ ] `go test ./...` passa sem depender da rede.\n- [ ] Build, lint e testes do frontend passam.\n- [ ] Integrações reais usam diretórios temporários.\n- [ ] Documentação contém comandos reproduzíveis e não confunde app local com servidor intermediário.\n\n> Implementação local em desenvolvimento para a próxima versão.",
       "status": "in-progress",
       "votes": 0,
       "votes_up": 0,
